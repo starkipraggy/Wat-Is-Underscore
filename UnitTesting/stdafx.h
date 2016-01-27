@@ -5,9 +5,8 @@
 
 #pragma once
 
-#include "targetver.h"
-
-// Headers for CppUnitTest
-#include "CppUnitTest.h"
-
-// TODO: reference additional headers your program requires here
+#include <stdio.h>
+#include <string>
+#include <fstream>
+#include <iterator>
+#include <cerrno>
