@@ -16,6 +16,7 @@
     <ClCompile Include="..\source\Expression.cpp" />
     <ClCompile Include="..\source\Factor.cpp" />
     <ClCompile Include="..\source\Parser.cpp" />
+    <ClCompile Include="..\source\SimpleParser.cpp" />
     <ClCompile Include="..\source\PKB.cpp" />
     <ClCompile Include="..\source\Statement.cpp" />
     <ClCompile Include="..\source\TNode.cpp" />
@@ -29,6 +30,7 @@
     <ClInclude Include="..\source\Factor.h" />
     <ClInclude Include="..\source\PKB.h" />
     <ClInclude Include="..\source\Statement.h" />
+    <ClInclude Include="..\source\SimpleParser.h" />
     <ClInclude Include="..\source\TNode.h" />
     <ClInclude Include="..\source\Procedure.h" />
     <ClInclude Include="..\source\TypeDef.h" />
