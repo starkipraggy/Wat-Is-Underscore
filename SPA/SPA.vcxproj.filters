@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\PKB">
+      <UniqueIdentifier>{aad2864e-de29-4a76-8dda-705c0194fc3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\PKB">
+      <UniqueIdentifier>{ad9ad518-c573-49e5-869e-01e3f1629633}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\DesignExtractor.cpp">
@@ -22,18 +28,63 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\source\PKB.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\PKB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Procedure.cpp">
+      <Filter>Source Files\PKB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\StatementList.cpp">
+      <Filter>Source Files\PKB</Filter>
     </ClCompile>
     <ClCompile Include="..\source\TNode.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\PKB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Statement.cpp">
+      <Filter>Source Files\PKB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\While.cpp">
+      <Filter>Source Files\PKB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Assign.cpp">
+      <Filter>Source Files\PKB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Expression.cpp">
+      <Filter>Source Files\PKB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Factor.cpp">
+      <Filter>Source Files\PKB</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\PKB.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\PKB</Filter>
     </ClInclude>
     <ClInclude Include="..\source\TNode.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\PKB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Procedure.h">
+      <Filter>Header Files\PKB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\TypeDef.h">
+      <Filter>Header Files\PKB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\StatementList.h">
+      <Filter>Header Files\PKB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Statement.h">
+      <Filter>Header Files\PKB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Assign.h">
+      <Filter>Header Files\PKB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\While.h">
+      <Filter>Header Files\PKB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Expression.h">
+      <Filter>Header Files\PKB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Factor.h">
+      <Filter>Header Files\PKB</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
