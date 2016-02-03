@@ -63,22 +63,22 @@
     <ClCompile Include="..\source\While.cpp">
       <Filter>Source Files\PKB\AST</Filter>
     </ClCompile>
-    <ClCompile Include="VariableTable.cpp">
+    <ClCompile Include="..\source\ProcedureTable.cpp">
       <Filter>Source Files\PKB</Filter>
     </ClCompile>
-    <ClCompile Include="VariableTableVariable.cpp">
+    <ClCompile Include="..\source\ProcedureTableProcedure.cpp">
       <Filter>Source Files\PKB</Filter>
     </ClCompile>
-    <ClCompile Include="StatementTable.cpp">
+    <ClCompile Include="..\source\StatementTable.cpp">
       <Filter>Source Files\PKB</Filter>
     </ClCompile>
-    <ClCompile Include="StatementTableStatement.cpp">
+    <ClCompile Include="..\source\StatementTableStatement.cpp">
       <Filter>Source Files\PKB</Filter>
     </ClCompile>
-    <ClCompile Include="ProcedureTable.cpp">
+    <ClCompile Include="..\source\VariableTable.cpp">
       <Filter>Source Files\PKB</Filter>
     </ClCompile>
-    <ClCompile Include="ProcedureTableProcedure.cpp">
+    <ClCompile Include="..\source\VariableTableVariable.cpp">
       <Filter>Source Files\PKB</Filter>
     </ClCompile>
   </ItemGroup>
@@ -116,22 +116,22 @@
     <ClInclude Include="..\source\While.h">
       <Filter>Header Files\PKB\AST</Filter>
     </ClInclude>
-    <ClInclude Include="VariableTable.h">
+    <ClInclude Include="..\source\ProcedureTable.h">
       <Filter>Header Files\PKB</Filter>
     </ClInclude>
-    <ClInclude Include="VariableTableVariable.h">
+    <ClInclude Include="..\source\ProcedureTableProcedure.h">
       <Filter>Header Files\PKB</Filter>
     </ClInclude>
-    <ClInclude Include="StatementTable.h">
+    <ClInclude Include="..\source\StatementTable.h">
       <Filter>Header Files\PKB</Filter>
     </ClInclude>
-    <ClInclude Include="StatementTableStatement.h">
+    <ClInclude Include="..\source\StatementTableStatement.h">
       <Filter>Header Files\PKB</Filter>
     </ClInclude>
-    <ClInclude Include="ProcedureTable.h">
+    <ClInclude Include="..\source\VariableTable.h">
       <Filter>Header Files\PKB</Filter>
     </ClInclude>
-    <ClInclude Include="ProcedureTableProcedure.h">
+    <ClInclude Include="..\source\VariableTableVariable.h">
       <Filter>Header Files\PKB</Filter>
     </ClInclude>
   </ItemGroup>

@@ -23,12 +23,12 @@
     <ClCompile Include="..\source\Procedure.cpp" />
     <ClCompile Include="..\source\StatementList.cpp" />
     <ClCompile Include="..\source\While.cpp" />
-    <ClCompile Include="ProcedureTable.cpp" />
-    <ClCompile Include="ProcedureTableProcedure.cpp" />
-    <ClCompile Include="StatementTable.cpp" />
-    <ClCompile Include="StatementTableStatement.cpp" />
-    <ClCompile Include="VariableTable.cpp" />
-    <ClCompile Include="VariableTableVariable.cpp" />
+    <ClCompile Include="..\source\ProcedureTable.cpp" />
+    <ClCompile Include="..\source\ProcedureTableProcedure.cpp" />
+    <ClCompile Include="..\source\StatementTable.cpp" />
+    <ClCompile Include="..\source\StatementTableStatement.cpp" />
+    <ClCompile Include="..\source\VariableTable.cpp" />
+    <ClCompile Include="..\source\VariableTableVariable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\Assign.h" />
@@ -42,12 +42,12 @@
     <ClInclude Include="..\source\TypeDef.h" />
     <ClInclude Include="..\source\StatementList.h" />
     <ClInclude Include="..\source\While.h" />
-    <ClInclude Include="ProcedureTable.h" />
-    <ClInclude Include="ProcedureTableProcedure.h" />
-    <ClInclude Include="StatementTable.h" />
-    <ClInclude Include="StatementTableStatement.h" />
-    <ClInclude Include="VariableTable.h" />
-    <ClInclude Include="VariableTableVariable.h" />
+    <ClInclude Include="..\source\ProcedureTable.h" />
+    <ClInclude Include="..\source\ProcedureTableProcedure.h" />
+    <ClInclude Include="..\source\StatementTable.h" />
+    <ClInclude Include="..\source\StatementTableStatement.h" />
+    <ClInclude Include="..\source\VariableTable.h" />
+    <ClInclude Include="..\source\VariableTableVariable.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{DC21A1EA-D2C6-4D14-A2B4-E025B64BDE81}</ProjectGuid>
