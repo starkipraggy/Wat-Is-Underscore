@@ -1,24 +1,101 @@
-#pragma once
+/*! \class PKB
+	\brief Used to represent the Program Knowledge Base (PKB).
 
-/*
-#include<stdio.h>
-#include <iostream>
-#include <string>
-#include <vector>
-
-using namespace std;
-typedef short PROC;
-
-class TNode;
-class VarTable;  // no need to #include "VarTable.h" as all I need is pointer
+	This class is used to represent the Program Knowledge Base (PKB), and contains all data
+	structures necessary for said intentions and purposes. This class is a singleton for obvious
+	reasons, as we do not require the existence of multiple PKBs at the same time.
 */
 
-class PKB {
-public:
-	/*
-	static VarTable* varTable; 
-	static int setProcToAST(PROC p, TNode* r);
-	static TNode* getRootAST (PROC p);
-	*/
+#pragma once
 
+#include <string>
+#include "TypeDef.h"
+
+class PKB {
+private:
+	static PKB* instance;
+
+	PKB();
+	~PKB();
+public:
+	//! Allows access to the static reference to the lone singleton instance.
+	static PKB* getInstance();
+
+	//! Declares the beginning of a procedure.
+	/*!
+		One of the API functions that allows the SIMPLE parser to construct the PKB.
+		Call this function to declare the beginning of a procedure.
+		\param nameOfProcedure Name of the procedure that is beginning.
+	*/
+	void ProcedureStart(std::string nameOfProcedure);
+
+	//! Declares the end of a procedure.
+	/*!
+		One of the API functions that allows the SIMPLE parser to construct the PKB.
+		Call this function to declare the end of a procedure.
+	*/
+	void ProcedureEnd();
+
+	//! Declares an assignment statement.
+	/*!
+		One of the API functions that allows the SIMPLE parser to construct the PKB.
+		Call this function to declare an assignment statement (ie. y = a * x + b)
+		\param variable The name of the variable that is having a value assigned to
+		\param expression The expression used to assign the variable with
+	*/
+	void AssignStatement(NAME variable, std::string expression);
+
+	//! Declares a procedure calling statement.
+	/*!
+		One of the API functions that allows the SIMPLE parser to construct the PKB.
+		Call this function to declare a procedure calling statement.
+		\param procedure The name of the procedure that is being called by this statement.
+	*/
+	void CallStatement(std::string procedure);
+
+	//! Declares a statement starting a while-loop.
+	/*!
+		One of the API functions that allows the SIMPLE parser to construct the PKB.
+		Call this function to declare the start of a while-loop.
+		\param variable The name of the variable used to control the for-loop.
+	*/
+	void WhileStart(NAME variable);
+
+	//! Declares the end of a while-loop.
+	/*!
+		One of the API functions that allows the SIMPLE parser to construct the PKB.
+		Call this function to declare the end of a while-loop.
+	*/
+	void WhileEnd();
+
+	//! Declares the start of an if-else statement.
+	/*!
+		One of the API functions that allows the SIMPLE parser to construct the PKB.
+		Call this function to declare the start of an if-else statement.
+		All statements declared after this function is called is assumed to be in the
+		"then" statement list following the if-statement. Once the end of the "then"
+		statement list is reached, the ElseStart() function should be called to
+		proceed onto the declaration of the "else" statement list.
+		\param variable The name of the variable used to determine if the if-statement
+						executes the "then" statement list, or the "else" statement list
+	*/
+	void IfStart(NAME variable);
+
+	//! Declares the start of the "else" statement list of an if-else statement.
+	/*!
+		One of the API functions that allows the SIMPLE parser to construct the PKB.
+		Declares the end of the "then" statement list in an if-else statement, and the
+		start of the corresponding "else" statement list.
+		Once the end of the "else" statement list is reached, the IfElseEnd() function
+		should be called in order to terminate the declaration of this if-else statement.
+		The calling of this function is optional should the "else" statement list be empty.
+	*/
+	void ElseStart();
+
+	//! Declares the end of an if-else statement.
+	/*!
+		One of the API functions that allows the SIMPLE parser to construct the PKB.
+		Call this function to declare the end of an if-else statement.
+	*/
+	void IfElseEnd();
 };
