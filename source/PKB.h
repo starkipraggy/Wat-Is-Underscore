@@ -57,7 +57,7 @@ public:
 	/*!
 		One of the API functions that allows the SIMPLE parser to construct the PKB.
 		Call this function to declare the start of a while-loop.
-		\param variable The name of the variable used to control the for-loop.
+		\param variable The name of the variable used to control the while-loop.
 	*/
 	void WhileStart(NAME variable);
 
