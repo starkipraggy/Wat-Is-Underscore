@@ -1,5 +1,4 @@
 #include "TestWrapper.h"
-#include "SimpleParser.h"
 
 // implementation code of WrapperFactory - do NOT modify the next 5 lines
 AbstractWrapper* WrapperFactory::wrapper = 0;
@@ -20,6 +19,7 @@ TestWrapper::TestWrapper() {
 void TestWrapper::parse(std::string filename) {
 	// call your parser to do the parsing
   // ...rest of your code...
+	spa.processSimpleSourceFile(filename);
 }
 
 // method to evaluating a query

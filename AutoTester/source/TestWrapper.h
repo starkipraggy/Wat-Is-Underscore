@@ -1,14 +1,15 @@
 #ifndef TESTWRAPPER_H
 #define TESTWRAPPER_H
 
-#include <string>
-#include <iostream>
 #include <list>
 
 // include your other headers here
 #include "AbstractWrapper.h"
+#include "stdafx.h"
+#include "SPA.h"
 
 class TestWrapper : public AbstractWrapper {
+	SPA spa;
  public:
   // default constructor
   TestWrapper();

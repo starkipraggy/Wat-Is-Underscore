@@ -5,3 +5,6 @@
 #include <fstream>
 #include <iterator>
 #include <cerrno>
+#include <iostream>
+#include <sstream>
+#include <vector>

@@ -36,9 +36,6 @@
     <ClCompile Include="..\source\SimpleParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\Parser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\Assign.cpp">
       <Filter>Source Files\PKB\AST</Filter>
     </ClCompile>
@@ -83,6 +80,11 @@
     </ClCompile>
     <ClCompile Include="AST.cpp">
       <Filter>Source Files\PKB\AST</Filter>
+    <ClCompile Include="..\source\FileIO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\SPA.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -138,6 +140,10 @@
       <Filter>Header Files\PKB</Filter>
     </ClInclude>
     <ClInclude Include="AST.h">
+    <ClInclude Include="..\source\FileIO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\SPA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
