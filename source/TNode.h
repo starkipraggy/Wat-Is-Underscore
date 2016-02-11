@@ -11,7 +11,14 @@
 class TNode
 {
 private:
+	std::string nodeType;
+	int lineNumber;
 public:
 	TNode();
 	~TNode();
+	TNode(std::string nodeType, int lineNumber);
+	void setLineNumber(int lineNumber);
+	void setNodeType(std::string nodeType);
+	int getLineNumber();
+	std::string getNodeType();
 };
