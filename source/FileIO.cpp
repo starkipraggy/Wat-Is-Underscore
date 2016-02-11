@@ -4,11 +4,11 @@
  * Reads SIMPLE program file
  * Returns a string "contents" containing the contents of the program file
  */
-std::string FileIO::get_file_contents(const char * filename)
-{
+std::string FileIO::get_file_contents(std::string str) {
+	
+	const char * filename = str.c_str();
 	std::ifstream in(filename, std::ios::in | std::ios::binary);
-	if (in) 
-	{
+	if (in) {
 		std::string contents;
 		in.seekg(0, std::ios::end);
 		contents.reserve(in.tellg());
