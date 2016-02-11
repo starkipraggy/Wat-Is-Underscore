@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 #include "TNode.h"
+#include <iostream>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -14,6 +15,8 @@ namespace UnitTesting
 		{
 			TNode T;
 			// TODO: Your test code here
+			printf("LOL");
+			std::cin.get();
 		}
 
 	};

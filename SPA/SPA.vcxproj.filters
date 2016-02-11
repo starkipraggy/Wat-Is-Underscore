@@ -36,9 +36,6 @@
     <ClCompile Include="..\source\SimpleParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\Parser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\Assign.cpp">
       <Filter>Source Files\PKB\AST</Filter>
     </ClCompile>
@@ -80,6 +77,12 @@
     </ClCompile>
     <ClCompile Include="..\source\VariableTableVariable.cpp">
       <Filter>Source Files\PKB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\FileIO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\SPA.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -133,6 +136,12 @@
     </ClInclude>
     <ClInclude Include="..\source\VariableTableVariable.h">
       <Filter>Header Files\PKB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\FileIO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\SPA.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
