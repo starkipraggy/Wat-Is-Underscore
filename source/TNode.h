@@ -10,10 +10,25 @@
 
 #include "TypeDef.h"
 
+enum TNodeType {
+	Undefined,
+	Assign,
+	StmtLst,
+	If,
+	While,
+	VariableName,
+	IntegerValue,
+	OperatorPlus
+};
+
 class TNode
 {
 private:
-	std::string nodeType;	/**< Type of node: assign, stmtLst, if, while */
+	TNodeType type;  /**< Type of node: assign, stmtLst, if, while */
+	int value;  /**< value of the node if integer*/
+	char varName;  /**< name of the node if variable*/
+	
+	//std::string nodeType;	/**< Type of node: assign, stmtLst, if, while */
 	int lineNumber;	/**< line number of the statement this node is representing */
 	TNode* parentNode;	/**< the parent node of this node */
 	std::vector<TNode* > childNodes;	/**< List of children of the node */
@@ -27,12 +42,16 @@ public:
 	\param nodeType The type of statement that this TNode object is representing has.
 	\param lineNumber The line number of the statement that this TNode object is representing.
 	*/
-	TNode(std::string nodeType, int lineNumber);
+	TNode(TNodeType type, int lineNumber);
 
 	void setLineNumber(int lineNumber);	/**< setter for line number of node */
-	void setNodeType(std::string nodeType);	/**< setter for the type of the node */
 	int getLineNumber();	/**< getter for line number of node */
-	std::string getNodeType();	/**< getter for the type of the node */
+	void setNodeType(TNodeType type);	/**< setter for the type of the node */
+	TNodeType getNodeType();	/**< getter for the type of the node */
+	void setValue(int value);  /**< setter for the value of the node if integer */
+	int getValue();  /**< getter for the value of the node if integer*/
+	void setVariable(char varName);  /**< setter for the name of the node if variable */
+	char getVariable();  /**< getter for the name of the node if variable*/
 	void setParent(TNode* parent);	/**< setter for setting parent node of the TNode object */
 	TNode* getParent();	/**< getter for getting parent node of the TNode object */
 	

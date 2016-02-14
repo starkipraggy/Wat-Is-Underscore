@@ -4,35 +4,58 @@
 
 
 TNode::TNode() {
+	type = Undefined;
+	lineNumber = NULL;
+	value = NULL;
+	varName = NULL;
+	parentNode = NULL;
+	childNodes.clear();
 }
 
 TNode::~TNode() {
 }
 
-TNode::TNode(std::string nodeType, int lineNumber) {
-	TNode::nodeType = nodeType;
-	TNode::lineNumber = lineNumber;
-	parentNode = new TNode();
+TNode::TNode(TNodeType type, int lineNumber) {
+	TNode* node = new TNode;
+	node -> type = type;
+	node -> lineNumber = lineNumber;
+	//parentNode = new TNode();
 }
 
 void TNode::setLineNumber(int lineNumber) {
 	TNode::lineNumber = lineNumber;
 }
 
-void TNode::setNodeType(std::string nodeType) {
-	TNode::nodeType = nodeType;
-}
-
 int TNode::getLineNumber() {
 	return lineNumber;
 }
 
-std::string TNode::getNodeType() {
-	return nodeType;
+void TNode::setNodeType(TNodeType type) {
+	TNode::type = type;
+}
+
+TNodeType TNode::getNodeType() {
+	return type;
+}
+
+void TNode::setValue(int value) {
+	TNode::value = value;
+}
+
+int TNode::getValue() {
+	return value;
+}
+
+void TNode::setVariable(char varName) {
+	TNode::varName = varName;
+}
+
+char TNode::getVariable() {
+	return varName;
 }
 
 void TNode::setParent(TNode* parentNode) {
-	parentNode = parentNode;
+	TNode::parentNode = parentNode;
 }
 
 TNode* TNode::getParent() {
