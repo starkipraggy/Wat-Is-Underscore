@@ -1,150 +1,141 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Source Files\PKB">
-      <UniqueIdentifier>{aad2864e-de29-4a76-8dda-705c0194fc3f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\PKB">
-      <UniqueIdentifier>{ad9ad518-c573-49e5-869e-01e3f1629633}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\PKB\AST">
-      <UniqueIdentifier>{20bb4956-7644-4884-b047-0e7e48d41293}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\PKB\AST">
-      <UniqueIdentifier>{6b78f3ca-d481-4185-abb5-74fdbf7bb253}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="..\source\DesignExtractor.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\PKB.cpp">
-      <Filter>Source Files\PKB</Filter>
+    <ClCompile Include="..\source\FileIO.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="..\source\SimpleParser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\Assign.cpp">
-      <Filter>Source Files\PKB\AST</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\Expression.cpp">
-      <Filter>Source Files\PKB\AST</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\Factor.cpp">
-      <Filter>Source Files\PKB\AST</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\Procedure.cpp">
-      <Filter>Source Files\PKB\AST</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\Statement.cpp">
-      <Filter>Source Files\PKB\AST</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\StatementList.cpp">
-      <Filter>Source Files\PKB\AST</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\TNode.cpp">
-      <Filter>Source Files\PKB\AST</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\While.cpp">
-      <Filter>Source Files\PKB\AST</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\ProcedureTable.cpp">
-      <Filter>Source Files\PKB</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\ProcedureTableProcedure.cpp">
-      <Filter>Source Files\PKB</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\StatementTable.cpp">
-      <Filter>Source Files\PKB</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\StatementTableStatement.cpp">
-      <Filter>Source Files\PKB</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\VariableTable.cpp">
-      <Filter>Source Files\PKB</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\VariableTableVariable.cpp">
-      <Filter>Source Files\PKB</Filter>
-    </ClCompile>
-    <ClCompile Include="AST.cpp">
-      <Filter>Source Files\PKB\AST</Filter>
-    <ClCompile Include="..\source\FileIO.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="..\source\SPA.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="AST.cpp">
+      <Filter>Source\PKB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Assign.cpp">
+      <Filter>Source\PKB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Expression.cpp">
+      <Filter>Source\PKB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Factor.cpp">
+      <Filter>Source\PKB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\PKB.cpp">
+      <Filter>Source\PKB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Procedure.cpp">
+      <Filter>Source\PKB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\ProcedureTable.cpp">
+      <Filter>Source\PKB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\ProcedureTableProcedure.cpp">
+      <Filter>Source\PKB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Statement.cpp">
+      <Filter>Source\PKB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\StatementList.cpp">
+      <Filter>Source\PKB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\StatementTable.cpp">
+      <Filter>Source\PKB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\StatementTableStatement.cpp">
+      <Filter>Source\PKB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\TNode.cpp">
+      <Filter>Source\PKB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\VariableTable.cpp">
+      <Filter>Source\PKB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\VariableTableVariable.cpp">
+      <Filter>Source\PKB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\While.cpp">
+      <Filter>Source\PKB</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\source\PKB.h">
-      <Filter>Header Files\PKB</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\TypeDef.h">
-      <Filter>Header Files\PKB</Filter>
+    <ClInclude Include="..\source\FileIO.h">
+      <Filter>Header</Filter>
     </ClInclude>
     <ClInclude Include="..\source\SimpleParser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\Assign.h">
-      <Filter>Header Files\PKB\AST</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\Expression.h">
-      <Filter>Header Files\PKB\AST</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\Factor.h">
-      <Filter>Header Files\PKB\AST</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\Statement.h">
-      <Filter>Header Files\PKB\AST</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\StatementList.h">
-      <Filter>Header Files\PKB\AST</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\Procedure.h">
-      <Filter>Header Files\PKB\AST</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\TNode.h">
-      <Filter>Header Files\PKB\AST</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\While.h">
-      <Filter>Header Files\PKB\AST</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\ProcedureTable.h">
-      <Filter>Header Files\PKB</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\ProcedureTableProcedure.h">
-      <Filter>Header Files\PKB</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\StatementTable.h">
-      <Filter>Header Files\PKB</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\StatementTableStatement.h">
-      <Filter>Header Files\PKB</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\VariableTable.h">
-      <Filter>Header Files\PKB</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\VariableTableVariable.h">
-      <Filter>Header Files\PKB</Filter>
-    </ClInclude>
-    <ClInclude Include="AST.h">
-    <ClInclude Include="..\source\FileIO.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header</Filter>
     </ClInclude>
     <ClInclude Include="..\source\SPA.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header</Filter>
     </ClInclude>
+    <ClInclude Include="..\source\Factor.h">
+      <Filter>Header\PKB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Assign.h">
+      <Filter>Header\PKB</Filter>
+    </ClInclude>
+    <ClInclude Include="AST.h">
+      <Filter>Header\PKB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Expression.h">
+      <Filter>Header\PKB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\ProcedureTableProcedure.h">
+      <Filter>Header\PKB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Procedure.h">
+      <Filter>Header\PKB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\ProcedureTable.h">
+      <Filter>Header\PKB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\PKB.h">
+      <Filter>Header\PKB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Statement.h">
+      <Filter>Header\PKB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\StatementList.h">
+      <Filter>Header\PKB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\StatementTable.h">
+      <Filter>Header\PKB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\StatementTableStatement.h">
+      <Filter>Header\PKB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\TNode.h">
+      <Filter>Header\PKB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\TypeDef.h">
+      <Filter>Header\PKB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\VariableTable.h">
+      <Filter>Header\PKB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\VariableTableVariable.h">
+      <Filter>Header\PKB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\While.h">
+      <Filter>Header\PKB</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header">
+      <UniqueIdentifier>{95a3c696-f913-4311-ae51-b5ff670a61f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{08b0ff08-65ba-4108-b0ea-2da931eb8e5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\PKB">
+      <UniqueIdentifier>{2cbee0f5-7dc6-4fe5-95f4-bba50ff80e69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\PKB">
+      <UniqueIdentifier>{1fc51a76-019b-4834-a0f3-8b45982fc68e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
