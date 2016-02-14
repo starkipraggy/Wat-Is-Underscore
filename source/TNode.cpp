@@ -4,8 +4,6 @@
 
 
 TNode::TNode() {
-	TNode::nodeType = "";
-	TNode::lineNumber = 0;
 }
 
 TNode::~TNode() {
