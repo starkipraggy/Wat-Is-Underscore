@@ -17,7 +17,8 @@ int ProcedureTable::getNumberOfProcedures() {
 	return procedures->size();
 }
 
-void ProcedureTable::addProcedure(std::string procedure) {
+ProcedureTableProcedure* ProcedureTable::addProcedure(std::string procedure) {
 	ProcedureTableProcedure* newProcedure = new ProcedureTableProcedure(procedure, getNumberOfProcedures());
 	procedures->push_back(newProcedure);
+	return newProcedure;
 }

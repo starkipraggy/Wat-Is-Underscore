@@ -26,7 +26,8 @@ public:
 	//! Use this function to add a statement into the statement table.
 	/*!
 		This function is used to add a statement into the statement table.
-		\param lineNumber The oline number of the statement that is being added.
+		\param lineNumber The line number of the statement that is being added.
+		\return A pointer to the StatementTableStatement object that is created.
 	*/
-	void addStatement(int lineNumber);
+	StatementTableStatement* addStatement(int lineNumber);
 };
