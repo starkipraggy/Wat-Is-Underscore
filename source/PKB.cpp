@@ -25,9 +25,22 @@ void PKB::ProcedureEnd() {
 
 }
 
-void PKB::AssignStatement(NAME variable, std::string expression) {
+void PKB::AssignStatement(NAME variable, std::vector<int> intVector, std::vector<char> varVector) {
 	// Evaluate the expression based on the rules of SIMPLE
 	// and then assign it to the variable
+	int sum = 0;
+	
+	for (int i = 0; i < varVector.size(); i++) {
+		// char newVar = varVector[i];
+		// newVarValue = Variables.getValue(newVar[i];
+		// sum += newVarValue;
+	}
+
+	for (int j = 0; j < intVector.size(); j++) {
+		sum += intVector[i];
+	}
+
+	variable = sum;
 }
 
 void PKB::CallStatement(std::string procedure) {

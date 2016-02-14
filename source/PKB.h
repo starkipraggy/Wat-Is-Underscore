@@ -9,6 +9,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include "TypeDef.h"
 
 class PKB {
@@ -36,14 +37,24 @@ public:
 	*/
 	void ProcedureEnd();
 
-	//! Declares an assignment statement.
+	//! Declares an assignment statement by passing in the whole expression.
 	/*!
-		One of the API functions that allows the SIMPLE parser to construct the PKB.
-		Call this function to declare an assignment statement (ie. y = a * x + b)
-		\param variable The name of the variable that is having a value assigned to
-		\param expression The expression used to assign the variable with
+	One of the API functions that allows the SIMPLE parser to construct the PKB.
+	Call this function to declare an assignment statement (ie. y = a * x + b)
+	\param variable The name of the variable that is having a value assigned to
+	\param expression The expression used to assign the variable with
 	*/
 	void AssignStatement(NAME variable, std::string expression);
+
+	//! Declares an assignment statement by passing in tokens.
+	/*!
+	One of the API functions that allows the SIMPLE parser to construct the PKB.
+	Call this function to declare an assignment statement (ie. y = a * x + b)
+	\param variable The name of the variable that is having a value assigned to
+	\param intVector The vector containing all the variables to be added
+	\param varVector The vector containing all the variables to be added
+	*/
+	void AssignStatement(NAME variable, std::vector<int> intVector, std::vector<char> varVector);
 
 	//! Declares a procedure calling statement.
 	/*!
