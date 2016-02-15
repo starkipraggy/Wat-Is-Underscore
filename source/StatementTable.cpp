@@ -17,7 +17,8 @@ int StatementTable::getNumberOfStatements() {
 	return statements->size();
 }
 
-void StatementTable::addStatement(int lineNumber) {
+StatementTableStatement* StatementTable::addStatement(int lineNumber) {
 	StatementTableStatement* newStatement = new StatementTableStatement(lineNumber, getNumberOfStatements());
 	statements->push_back(newStatement);
+	return newStatement;
 }

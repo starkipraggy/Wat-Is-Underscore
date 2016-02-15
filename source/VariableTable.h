@@ -23,10 +23,20 @@ public:
 	*/
 	int getNumberOfVariables();
 
+	//! Returns the VariableTableVariable object that has the name of the variable you want from the variable table.
+	/*!
+		Returns the VariableTableVariable object that has the name of the variable you want from the variable table.
+		If no object with such name exists in the table, a new one would be created and returned.
+		\param name The name of the variable of which VariableTableVariable object you are looking for.
+		\return The VariableTableVariable object with the same name as the variable name passed.
+	*/
+	VariableTableVariable* getVariableObject(NAME name);
+
 	//! Use this function to add a variable into the variable table.
 	/*!
 		This function is used to add a variable into the variable table.
 		\param variable The name of the variable that is being added.
+		\return The newly created VariableTableVariable object.
 	*/
-	void addVariable(NAME variable);
+	VariableTableVariable* addVariable(NAME variable);
 };

@@ -20,6 +20,7 @@ public:
 	/*!
 		Returns the number of procedures in the procedure table.
 		Uses the size() function of the std::vector class.
+		\return The number of procedures in the proedure table.
 	*/
 	int getNumberOfProcedures();
 
@@ -27,6 +28,7 @@ public:
 	/*!
 		This function is used to add a procedure into the procedure table.
 		\param procedure The name of the procedure that is being added.
+		\return The pointer to the ProcedureTableProcedure object that was just added.
 	*/
-	void addProcedure(std::string procedure);
+	ProcedureTableProcedure* addProcedure(std::string procedure);
 };

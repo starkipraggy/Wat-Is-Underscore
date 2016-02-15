@@ -9,17 +9,42 @@
 #pragma once
 
 #include <string>
-#include "TypeDef.h"
+#include <vector>
+#include "ProcedureTable.h"
+#include "StatementTable.h"
+#include "VariableTable.h"
+
+enum ExpressionTokenType {
+	Variable,
+	Constant,
+	Operator,
+	Parenthesis
+};
 
 class PKB {
 private:
 	static PKB* instance;
 
+	int numberOfStatements;
+	ProcedureTable* procedureTable;
+	StatementTable* statementTable;
+	VariableTable* variableTable;
+
+	ProcedureTableProcedure* currentProcedure;	/**< Used during SIMPLE parsing, this pointer points to the current procedure
+													 that statements that are currently being inputted belongs to */
+
 	PKB();
 	~PKB();
+
+	//! This function is used by the API for the SIMPLE parser when a new statement that has a statement number is inputted.
+	StatementTableStatement* newStatement();
 public:
 	//! Allows access to the static reference to the lone singleton instance.
 	static PKB* getInstance();
+
+	// ---------------------------------------------------------------------------------
+	// API FUNCTIONS FOR SIMPLE PARSER STARTS HERE!!!
+	// ---------------------------------------------------------------------------------
 
 	//! Declares the beginning of a procedure.
 	/*!
@@ -36,14 +61,14 @@ public:
 	*/
 	void ProcedureEnd();
 
-	//! Declares an assignment statement.
+	//! Declares an assignment statement by passing in the whole expression.
 	/*!
 		One of the API functions that allows the SIMPLE parser to construct the PKB.
 		Call this function to declare an assignment statement (ie. y = a * x + b)
 		\param variable The name of the variable that is having a value assigned to
 		\param expression The expression used to assign the variable with
 	*/
-	void AssignStatement(NAME variable, std::string expression);
+	void AssignStatement(NAME variable, std::vector<std::string> tokens, std::vector<ExpressionTokenType> types);
 
 	//! Declares a procedure calling statement.
 	/*!
@@ -98,4 +123,8 @@ public:
 		Call this function to declare the end of an if-else statement.
 	*/
 	void IfElseEnd();
+
+	// ---------------------------------------------------------------------------------
+	// API FUNCTIONS FOR SIMPLE PARSER ENDS HERE!!!
+	// ---------------------------------------------------------------------------------
 };

@@ -29,4 +29,18 @@ public:
 	VariableTableVariable(NAME name, int index);
 
 	~VariableTableVariable();
+
+	//! Getter function for the name of the variable.
+	/*!
+		Getter function for the name of the variable; use this function to retrieve the name of the variable that this object is reprensenting.
+		\return The name of the variable that this object is representing has.
+	*/
+	NAME getName();
+
+	//! Getter function for the index number of the variable.
+	/*!
+		Getter function for the index number of the variable; use this function to retrieve the index number of the variable that this object is reprensenting.
+		\return The index number of the variable that this object is representing has.
+	*/
+	int getIndex();
 };

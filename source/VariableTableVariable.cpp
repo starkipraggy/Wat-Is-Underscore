@@ -11,3 +11,11 @@ VariableTableVariable::~VariableTableVariable() {
 	delete modifies;
 	delete uses;
 }
+
+NAME VariableTableVariable::getName() {
+	return name;
+}
+
+int VariableTableVariable::getIndex() {
+	return index;
+}
