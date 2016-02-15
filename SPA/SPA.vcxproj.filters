@@ -61,6 +61,27 @@
     <ClCompile Include="..\source\While.cpp">
       <Filter>Source\PKB</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\Preprocessor\Clause.cpp">
+      <Filter>Source\Preprocessor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Preprocessor\DeclarationMap.cpp">
+      <Filter>Source\Preprocessor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Preprocessor\PatternClause.cpp">
+      <Filter>Source\Preprocessor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Preprocessor\Preprocessor.cpp">
+      <Filter>Source\Preprocessor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Preprocessor\QueryTree.cpp">
+      <Filter>Source\Preprocessor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Preprocessor\StringUlti.cpp">
+      <Filter>Source\Preprocessor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Preprocessor\Variable.cpp">
+      <Filter>Source\Preprocessor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\FileIO.h">
@@ -123,6 +144,27 @@
     <ClInclude Include="..\source\While.h">
       <Filter>Header\PKB</Filter>
     </ClInclude>
+    <ClInclude Include="..\source\Preprocessor\Clause.h">
+      <Filter>Header\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Preprocessor\DeclarationMap.h">
+      <Filter>Header\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Preprocessor\PatternClause.h">
+      <Filter>Header\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Preprocessor\Preprocessor.h">
+      <Filter>Header\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Preprocessor\QueryTree.h">
+      <Filter>Header\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Preprocessor\StringUlti.h">
+      <Filter>Header\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Preprocessor\Variable.h">
+      <Filter>Header\Preprocessor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header">
@@ -136,6 +178,12 @@
     </Filter>
     <Filter Include="Source\PKB">
       <UniqueIdentifier>{1fc51a76-019b-4834-a0f3-8b45982fc68e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Preprocessor">
+      <UniqueIdentifier>{b5fb70f5-a56d-445c-a198-9e7af4cc929b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Preprocessor">
+      <UniqueIdentifier>{f6631b6f-ffc5-4601-80db-cf5f1ab95a14}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
