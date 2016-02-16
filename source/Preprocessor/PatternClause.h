@@ -4,7 +4,6 @@
 #include <string>
 #include "Variable.h"
 #include "Clause.h"
-using namespace std;
 
 class PatternClause : public Clause{
 public:

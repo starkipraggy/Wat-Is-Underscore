@@ -2,7 +2,11 @@
 #define Clause_H
 
 #include <string>
+#include <regex>
+
 #include "Variable.h"
+#include "Clause.h"
+#include "StringUlti.h"
 using namespace std;
 
 class Clause {

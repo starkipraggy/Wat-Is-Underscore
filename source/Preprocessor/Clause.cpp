@@ -1,7 +1,4 @@
-#include <string>
-#include <regex>
 #include "Clause.h"
-#include "StringUlti.h"
 
 Clause::Clause() {}
 
