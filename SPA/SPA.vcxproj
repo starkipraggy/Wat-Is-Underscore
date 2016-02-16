@@ -37,7 +37,8 @@
     <ClCompile Include="..\source\StatementTableStatement.cpp" />
     <ClCompile Include="..\source\VariableTable.cpp" />
     <ClCompile Include="..\source\VariableTableVariable.cpp" />
-    <ClCompile Include="AST.cpp" />
+    <ClCompile Include="..\source\AST.cpp" />
+    <ClCompile Include="..\source\DataStructureFunctions.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\Assign.h" />
@@ -66,7 +67,8 @@
     <ClInclude Include="..\source\StatementTableStatement.h" />
     <ClInclude Include="..\source\VariableTable.h" />
     <ClInclude Include="..\source\VariableTableVariable.h" />
-    <ClInclude Include="AST.h" />
+    <ClInclude Include="..\source\AST.h" />
+    <ClInclude Include="..\source\DataStructureFunctions.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{DC21A1EA-D2C6-4D14-A2B4-E025B64BDE81}</ProjectGuid>

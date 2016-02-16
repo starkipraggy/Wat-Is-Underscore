@@ -67,8 +67,9 @@ public:
 		Call this function to declare an assignment statement (ie. y = a * x + b)
 		\param variable The name of the variable that is having a value assigned to
 		\param expression The expression used to assign the variable with
+		\return True if successful, false if an error occurs (most likely tokens and types have differing sizes)
 	*/
-	void AssignStatement(NAME variable, std::vector<std::string> tokens, std::vector<ExpressionTokenType> types);
+	bool AssignStatement(NAME variable, std::vector<std::string> tokens, std::vector<ExpressionTokenType> types);
 
 	//! Declares a procedure calling statement.
 	/*!

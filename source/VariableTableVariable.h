@@ -10,15 +10,17 @@
 #pragma once
 
 #include "TypeDef.h"
-#include <vector>
+#include "DataStructureFunctions.h"
 
 class VariableTableVariable {
 private:
-	NAME name;					/**< The name used to refer to the variable */
-	int index;					/**< The index number given to the variable */
-
-	std::vector<int>* modifies;	/**< A list of the statement numbers of statements that modifies this variable */
-	std::vector<int>* uses;		/**< A list of the statement numbers of statements that uses this variable */
+	NAME name;								/**< The name used to refer to the variable */
+	int index;								/**< The index number given to the variable */
+	
+	std::vector<int>* statementModifies;	/**< A list of the statement numbers of statements that modifies this variable */
+	std::vector<int>* statementUses;		/**< A list of the statement numbers of statements that uses this variable */
+	std::vector<int>* procedureModifies;	/**< A list of the index numbers of procedures that modifies this variable */
+	std::vector<int>* procedureUses;		/**< A list of the index numbers of procedures that uses this variable */
 public:
 	//! Constructor for the VariableTableVariable.
 	/*!
@@ -43,4 +45,36 @@ public:
 		\return The index number of the variable that this object is representing has.
 	*/
 	int getIndex();
+	
+	//! Allows the adding of statements that modify this variable.
+	/*!
+		This function is used by the SIMPLE parser API to add statements that modify this variable.
+		\param statementNumber The statement number of the statement that modify this variable.
+		\return True if this statement is successfully added, and false if this statement is already inside.
+	*/
+	bool addStatementModifies(int statementNumber);
+
+	//! Allows the adding of statements that use this variable.
+	/*!
+		This function is used by the SIMPLE parser API to add statements that use this variable.
+		\param statementNumber The statement number of the statement that use this variable.
+		\return True if this statement is successfully added, and false if this statement is already inside.
+	*/
+	bool addStatementUses(int statementNumber);
+	
+	//! Allows the adding of procedures that modify this variable.
+	/*!
+		This function is used by the SIMPLE parser API to add procedures that modify this variable.
+		\param procedureNumber The index number of the procedure that modify this variable.
+		\return True if this procedure is successfully added, and false if this procedure is already inside.
+	*/
+	bool addProcedureModifies(int procedureNumber);
+
+	//! Allows the adding of procedures that use this variable.
+	/*!
+		This function is used by the SIMPLE parser API to add procedures that use this variable.
+		\param procedureNumber The index number of the procedure that use this variable.
+		\return True if this procedure is successfully added, and false if this procedure is already inside.
+	*/
+	bool addProcedureUses(int procedureNumber);
 };

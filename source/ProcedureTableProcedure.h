@@ -9,9 +9,9 @@
 
 #pragma once
 
-#include <vector>
 #include <string>
 #include "TypeDef.h"
+#include "DataStructureFunctions.h"
 
 class ProcedureTableProcedure {
 private:
@@ -31,6 +31,14 @@ public:
 	ProcedureTableProcedure(std::string name, int index);
 
 	~ProcedureTableProcedure();
+
+	//! Getter function for the index number of the procedure.
+	/*!
+		Getter function for the index number of the procedure; use this function to
+		retrieve the index number of the procedure that this object is reprensenting.
+		\return The index number of the procedure that this object is representing has.
+	*/
+	int getIndex();
 
 	//! Allows the adding of index numbers of additional statements that belongs to this procedure.
 	/*!

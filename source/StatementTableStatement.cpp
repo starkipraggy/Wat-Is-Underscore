@@ -13,3 +13,15 @@ StatementTableStatement::~StatementTableStatement() {
 	delete modifies;
 	delete uses;
 }
+
+int StatementTableStatement::getIndex() {
+	return index;
+}
+
+bool StatementTableStatement::addModifies(int variableIndexNumber) {
+	return addIntoVector(variableIndexNumber, modifies);
+}
+
+bool StatementTableStatement::addUses(int variableIndexNumber) {
+	return addIntoVector(variableIndexNumber, uses);
+}
