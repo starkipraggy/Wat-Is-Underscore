@@ -1,0 +1,197 @@
+stmt s, s1; assign a, a1, a2; while w; if ifstmt; procedure p; variable v; constant c; prog_line n, n1, n2;
+
+Select s such that Parent (s, s1) with s1.stmt# = 2;
+Select s such that Parent (s, s1) with s1.stmt# = 10;
+Select s such that Parent (s, s1) with s1.stmt# = 11;
+Select s such that Parent (s, s1) with s1.stmt# = 20;
+
+Select s such that Parent (s, 2);
+Select s such that Parent (s, 10);
+Select s such that Parent (s, 11);
+Select s such that Parent (s, 20);
+
+Select s such that Parent (2, s);
+Select s such that Parent (8, s);
+Select s such that Parent (9, s);
+Select s such that Parent (25, s);
+
+Select s such that Parent* (s, 2);
+Select s such that Parent* (s, 10);
+Select s such that Parent* (s, 11);
+Select s such that Parent* (s, 20);
+
+Select w such that Parent* (w, 9);
+Select w such that Parent* (w, 11);
+Select w such that Parent* (w, 13);
+Select w such that Parent* (w, 21);
+
+Select s such that Follows (s, 1);
+Select s such that Follows (s, 8);
+Select s such that Follows (s, 9);
+Select s such that Follows (s, 10);
+Select s such that Follows (s, 12);
+Select s such that Follows (s, 13);
+Select s such that Follows (s, 23);
+
+Select a such that Follows (a, 1);
+Select a such that Follows (a, 8);
+Select a such that Follows (a, 9);
+Select a such that Follows (a, 10);
+Select a such that Follows (a, 12);
+Select a such that Follows (a, 13);
+
+Select w such that Follows* (s, w);
+
+Select w such that Follows* (w, s);
+
+Select s such that Follows* (s, 1);
+Select s such that Follows* (s, 8);
+Select s such that Follows* (s, 9);
+Select s such that Follows* (s, 13);
+Select s such that Follows* (s, 19);
+Select s such that Follows* (s, 22);
+
+Select ifstmt such that Follows* (ifstmt, 8);
+Select ifstmt such that Follows* (ifstmt, 17);
+Select ifstmt such that Follows* (ifstmt, 25);
+Select ifstmt such that Follows* (ifstmt, 27);
+
+Select a such that Follows* (a, 6);
+Select a such that Follows* (a, 9);
+Select a such that Follows* (a, 10);
+Select a such that Follows* (a, 12);
+Select a such that Follows* (a, 17);
+Select a such that Follows* (a, 28);
+
+Select v such that Modifies (3, v);
+Select v such that Modifies (4, v);
+Select v such that Modifies (6, v);
+Select v such that Modifies (18, v);
+Select v such that Modifies (24, v);
+Select v such that Modifies (28, v);
+
+Select w such that Modifies (w, z);
+Select w such that Modifies (w, v);
+
+Select v such that Modifies ("Pear", v);
+
+Select s such that Uses (s, z);
+Select s such that Uses (s, v);
+
+Select v such that Uses (10, v);
+Select v such that Uses (18, v);
+Select v such that Uses (23, v);
+
+Select v such that Uses (a, v);
+
+Select a such that Modifies (a, y) and Uses (a, y);
+Select a such that Modifies (a, z) and Uses (a, z);
+Select a such that Modifies (a, t) and Uses (a, t);
+Select a such that Modifies (a, v) and Uses (a, v);
+
+Select a such that Modifies (a, "x") and Parent (w, a);
+
+Select a such that Parent (w, a) and Modifies (a, "x");
+
+Select a such that Modifies (a, "x") such that Parent (w, a);
+
+Select p such that Calls* (p, "Apricot");
+
+Select p such that Calls ("Apple", p) and Modifies (p, "v") and Uses (p, "y");
+
+Select p such that Calls* ("Apple", p) and Modifies (p, "v");
+
+Select a pattern a("z", _);
+
+Select a pattern a("x", "2 * y");
+
+Select a pattern a("y", _"x * y"_);
+
+Select a pattern a(_, "v -1");
+
+Select a pattern a(_, "z * 5 + 3");
+
+Select a pattern a(_, _"z + c * t"_);
+
+Select a pattern a(_, _"x * y + z");
+
+Select a pattern a(_, _"z + x"_);
+
+Select a pattern a(_, _"c + z"_);
+
+Select a pattern a(_, _"z + 2"_);
+
+Select a pattern a(_, _"z + 2 * y"_);
+
+Select a pattern a(_, _"3 * y"_);
+
+Select a pattern a(_, _"30 + 1"_);
+
+Select a1 pattern a("x", "y + v");
+
+Select a pattern a1(_, _"x + c"_);
+
+Select p pattern ifstmt("x", _, _);
+
+Select a pattern a("z", _) such that Follows (w, a);
+
+Select a pattern a("v", _) such that Follows (ifstmt, a);
+
+Select BOOLEAN pattern ifstmt("t", _, _) with c.value = 1;
+
+Select BOOLEAN pattern w ("t",_) with c.value = 1;
+
+Select s with s.stmt# = c.value;
+
+Select s1 with s.stmt# = c.value;
+
+Select n such that Next* (25, n) and Next* (n,26);
+
+Select n such that Next* (n, n);
+
+Select BOOLEAN such that Next (1, 2);
+Select BOOLEAN such that Next (6, 8);
+Select BOOLEAN such that Next (10, 11);
+Select BOOLEAN such that Next (12, 10);
+Select BOOLEAN such that Next (12, 11);
+Select BOOLEAN such that Next (13, 14);
+Select BOOLEAN such that Next (17, 18);
+Select BOOLEAN such that Next (23, 27);
+
+Select BOOLEAN such that Affects (1, 2);
+Select BOOLEAN such that Affects (1, 3);
+Select BOOLEAN such that Affects (1, 4);
+Select BOOLEAN such that Affects (2, 5);
+Select BOOLEAN such that Affects (2, 7);
+Select BOOLEAN such that Affects (3, 11);
+Select BOOLEAN such that Affects (3, 12);
+Select BOOLEAN such that Affects (14, 28);
+Select BOOLEAN such that Affects (25, 26);
+Select BOOLEAN such that Affects (25, 27);
+
+Select a1 such that Affects(a1, 1);
+Select a1 such that Affects(a1, 9);
+Select a1 such that Affects(a1, 22);
+Select a1 such that Affects(a1, 28);
+
+Select a2 such that Affects(1, a2);
+Select a2 such that Affects(12, a2);
+Select a2 such that Affects(22, a2);
+Select a2 such that Affects(28, a2);
+
+Select BOOLEAN such that Affects* (1, 2);
+Select BOOLEAN such that Affects* (1, 3);
+Select BOOLEAN such that Affects* (1, 5);
+Select BOOLEAN such that Affects* (1, 7);
+Select BOOLEAN such that Affects* (11, 11);
+Select BOOLEAN such that Affects* (11, 13);
+
+Select a1 such that Affects* (a1, 11);
+Select a1 such that Affects* (a1, 22);
+Select a1 such that Affects* (a1, 27);
+Select a1 such that Affects* (a1, 28);
+
+Select a2 such that Affects* (5, a2);
+Select a2 such that Affects* (19, a2);
+Select a2 such that Affects* (25, a2);
+Select a2 such that Affects* (28, a2);
