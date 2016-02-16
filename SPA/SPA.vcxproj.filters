@@ -64,27 +64,6 @@
     <ClCompile Include="..\source\AST.cpp">
       <Filter>Source\PKB</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Visual Studio 2015\Projects\Project2\Clause.cpp">
-      <Filter>Source\Preprocessor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Visual Studio 2015\Projects\Project2\DeclarationMap.cpp">
-      <Filter>Source\Preprocessor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Visual Studio 2015\Projects\Project2\PatternClause.cpp">
-      <Filter>Source\Preprocessor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Visual Studio 2015\Projects\Project2\Preprocessor.cpp">
-      <Filter>Source\Preprocessor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Visual Studio 2015\Projects\Project2\QueryTree.cpp">
-      <Filter>Source\Preprocessor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Visual Studio 2015\Projects\Project2\StringUlti.cpp">
-      <Filter>Source\Preprocessor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Visual Studio 2015\Projects\Project2\Variable.cpp">
-      <Filter>Source\Preprocessor</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\FileIO.h">
@@ -149,27 +128,6 @@
     </ClInclude>
     <ClInclude Include="..\source\AST.h">
       <Filter>Header\PKB</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Visual Studio 2015\Projects\Project2\Clause.h">
-      <Filter>Header\Preprocessor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Visual Studio 2015\Projects\Project2\DeclarationMap.h">
-      <Filter>Header\Preprocessor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Visual Studio 2015\Projects\Project2\PatternClause.h">
-      <Filter>Header\Preprocessor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Visual Studio 2015\Projects\Project2\Preprocessor.h">
-      <Filter>Header\Preprocessor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Visual Studio 2015\Projects\Project2\QueryTree.h">
-      <Filter>Header\Preprocessor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Visual Studio 2015\Projects\Project2\StringUlti.h">
-      <Filter>Header\Preprocessor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Visual Studio 2015\Projects\Project2\Variable.h">
-      <Filter>Header\Preprocessor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

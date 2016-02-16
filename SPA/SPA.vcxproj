@@ -11,13 +11,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Visual Studio 2015\Projects\Project2\Clause.cpp" />
-    <ClCompile Include="..\..\..\Visual Studio 2015\Projects\Project2\DeclarationMap.cpp" />
-    <ClCompile Include="..\..\..\Visual Studio 2015\Projects\Project2\PatternClause.cpp" />
-    <ClCompile Include="..\..\..\Visual Studio 2015\Projects\Project2\Preprocessor.cpp" />
-    <ClCompile Include="..\..\..\Visual Studio 2015\Projects\Project2\QueryTree.cpp" />
-    <ClCompile Include="..\..\..\Visual Studio 2015\Projects\Project2\StringUlti.cpp" />
-    <ClCompile Include="..\..\..\Visual Studio 2015\Projects\Project2\Variable.cpp" />
     <ClCompile Include="..\source\Assign.cpp" />
     <ClCompile Include="..\source\DesignExtractor.cpp" />
     <ClCompile Include="..\source\Expression.cpp" />
@@ -41,13 +34,6 @@
     <ClCompile Include="..\source\DataStructureFunctions.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Visual Studio 2015\Projects\Project2\Clause.h" />
-    <ClInclude Include="..\..\..\Visual Studio 2015\Projects\Project2\DeclarationMap.h" />
-    <ClInclude Include="..\..\..\Visual Studio 2015\Projects\Project2\PatternClause.h" />
-    <ClInclude Include="..\..\..\Visual Studio 2015\Projects\Project2\Preprocessor.h" />
-    <ClInclude Include="..\..\..\Visual Studio 2015\Projects\Project2\QueryTree.h" />
-    <ClInclude Include="..\..\..\Visual Studio 2015\Projects\Project2\StringUlti.h" />
-    <ClInclude Include="..\..\..\Visual Studio 2015\Projects\Project2\Variable.h" />
     <ClInclude Include="..\source\Assign.h" />
     <ClInclude Include="..\source\Expression.h" />
     <ClInclude Include="..\source\Factor.h" />
