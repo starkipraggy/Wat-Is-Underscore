@@ -2,6 +2,8 @@
 #define Variable_H
 
 #include <string>
+#include <regex>
+#include "StringUlti.h"
 using namespace std;
 
 class Variable {
@@ -13,14 +15,9 @@ public:
 	string getType();
 	string toString();
 	bool equals(Variable v);
-	static string findSuchThatType(string raw);
-	static string findPatternType(string raw);
 private:
 	string name;
 	string type;
-
-	static bool isName(string raw);
-	static bool isExpr(string raw);
 };
 
 #endif

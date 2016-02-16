@@ -3,17 +3,25 @@
 
 #include <string>
 #include <vector>
+#include <regex>
+#include <list>
+
 #include "Clause.h"
 #include "PatternClause.h"
+#include "StringUlti.h"
 using namespace std;
 
 class QueryTree {
 public:
 	static QueryTree* Instance();
 
-	void setQueryTree(string statement);
 	Variable getSelect();
+	void setSelect(Variable v);
+	void addClause(Clause* c);
 	std::vector<Clause*> getClauses();
+	void newTree();
+	void buildTree();
+	bool v1Validation();
 	
 private:
 	static QueryTree* m_pInstance;
@@ -23,18 +31,6 @@ private:
 	QueryTree();
 	QueryTree(QueryTree const&) {};
 	QueryTree& operator=(QueryTree const&) {};
-
-	string getQuery(string statement);
-	std::pair<std::string, std::string> getSelect(string query);
-	void processClauses(string declarationQueries);
-	Clause* toClause(string rawClause, string condition);
-	Clause* toSuchThatClause(string rawClause);
-	Clause* toPatternClause(string rawClause);
-	Clause* toAffectVariable(string clauseType, Variable first, Variable second);
-	Clause* toDefaultClause(string clauseType, Variable first, Variable second);
-	bool isProcedureCallStatement(string statement);
-	void buildTree();
-	bool v1Validation();
 };
 
 #endif
