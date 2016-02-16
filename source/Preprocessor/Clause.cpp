@@ -15,6 +15,14 @@ string Clause::getClause() {
 	return clause;
 }
 
+Variable Clause::getVariableOne() {
+	return variableOne;
+}
+
+Variable Clause::getVariableTwo() {
+	return variableTwo;
+}
+
 string Clause::getQuery() {
 	return variableOne.toString() + "+" + variableTwo.toString();
 }
@@ -41,4 +49,9 @@ Variable Clause::getLinkedVariable(Variable v) {
 	else {
 		return variableOne;
 	}
+}
+
+bool Clause::hasAtMostOneCommonSynonym(Clause* c) {
+	return !((variableOne.equals(c->getVariableOne()) && variableTwo.equals(c->getVariableTwo()))
+		|| (variableOne.equals(c->getVariableTwo()) && variableTwo.equals(c->getVariableOne())));
 }
