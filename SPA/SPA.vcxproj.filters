@@ -64,6 +64,27 @@
     <ClCompile Include="..\source\AST.cpp">
       <Filter>Source\PKB</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\Preprocessor\Clause.cpp">
+      <Filter>Source\Preprocessor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Preprocessor\DeclarationMap.cpp">
+      <Filter>Source\Preprocessor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Preprocessor\PatternClause.cpp">
+      <Filter>Source\Preprocessor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Preprocessor\Preprocessor.cpp">
+      <Filter>Source\Preprocessor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Preprocessor\QueryTree.cpp">
+      <Filter>Source\Preprocessor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Preprocessor\StringUlti.cpp">
+      <Filter>Source\Preprocessor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Preprocessor\Variable.cpp">
+      <Filter>Source\Preprocessor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\FileIO.h">
@@ -128,6 +149,27 @@
     </ClInclude>
     <ClInclude Include="..\source\AST.h">
       <Filter>Header\PKB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Preprocessor\Clause.h">
+      <Filter>Header\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Preprocessor\DeclarationMap.h">
+      <Filter>Header\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Preprocessor\PatternClause.h">
+      <Filter>Header\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Preprocessor\Preprocessor.h">
+      <Filter>Header\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Preprocessor\QueryTree.h">
+      <Filter>Header\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Preprocessor\StringUlti.h">
+      <Filter>Header\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Preprocessor\Variable.h">
+      <Filter>Header\Preprocessor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
