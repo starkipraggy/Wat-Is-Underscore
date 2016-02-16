@@ -8,7 +8,16 @@ string conditions[] = { "Follows","Follows*","Parent","Parent*","Modifies","Uses
 
 QueryTree::QueryTree() {}
 
-QueryTree::QueryTree(string statement) {
+QueryTree* QueryTree::m_pInstance = NULL;
+
+QueryTree* QueryTree::Instance() {
+	if (!m_pInstance) {
+		m_pInstance = new QueryTree;
+	}
+	return m_pInstance;
+}
+
+void QueryTree::setQueryTree(string statement) {
 	string query = getQuery(statement);
 	std::pair<std::string, std::string> selectPair = getSelect(query);
 	string name = selectPair.first;
@@ -16,15 +25,16 @@ QueryTree::QueryTree(string statement) {
 	selectVariable = Variable(name, type);
 	
 	string declarationQueries = selectPair.second;
-	clauses = processClauses(declarationQueries);
+	processClauses(declarationQueries);
 	buildTree();
+	v1Validation();
 }
 
 Variable QueryTree::getSelect() {
 	return selectVariable;
 }
 
-std::vector<Clause> QueryTree::getClauses() {
+std::vector<Clause*> QueryTree::getClauses() {
 	return clauses;
 }
 
@@ -72,8 +82,7 @@ std::pair<std::string, std::string> QueryTree::getSelect(string query) {
 	return myPair;
 }
 
-std::vector<Clause> QueryTree::processClauses(string declarationQueries) {
-	std::vector<Clause> vect(0);
+void QueryTree::processClauses(string declarationQueries) {
 
 	std::vector<std::string> tokenizedQueries = tokenize(declarationQueries);
 
@@ -85,8 +94,8 @@ std::vector<Clause> QueryTree::processClauses(string declarationQueries) {
 			if (StringToUpper(tokenizedQueries[i]) == "SUCH" && i + 1 < tokenizedQueries.size()) {
 				if (StringToUpper(tokenizedQueries[i + 1]) == "THAT") {
 					if (prevClause != "") {
-						Clause clause = toClause(prevQuery, prevClause);
-						vect.push_back(clause);
+						Clause* clause = toClause(prevQuery, prevClause);
+						clauses.push_back(clause);
 						prevQuery = "";
 					}
 					prevClause = "SUCH THAT";
@@ -98,8 +107,8 @@ std::vector<Clause> QueryTree::processClauses(string declarationQueries) {
 			}
 			else if (StringToUpper(tokenizedQueries[i]) == "PATTERN") {
 				if (prevClause != "") {
-					Clause clause = toClause(prevQuery, prevClause);
-					vect.push_back(clause);
+					Clause* clause = toClause(prevQuery, prevClause);
+					clauses.push_back(clause);
 					prevQuery = "";
 				}
 				prevClause = "PATTERN";
@@ -110,8 +119,8 @@ std::vector<Clause> QueryTree::processClauses(string declarationQueries) {
 			}
 		}
 		if (StringToUpper(tokenizedQueries[tokenizedQueries.size() - 1]) != "PATTERN") {
-			Clause clause = toClause(prevQuery, prevClause);
-			vect.push_back(clause);
+			Clause* clause = toClause(prevQuery, prevClause);
+			clauses.push_back(clause);
 		}
 		else {
 			throw "Cannot end query with clause";
@@ -120,12 +129,10 @@ std::vector<Clause> QueryTree::processClauses(string declarationQueries) {
 	catch (const char* msg) {
 		throw msg;
 	}
-
-	return vect;
 }
 
-Clause QueryTree::toClause(string rawClause, string condition) {
-	Clause clause;
+Clause* QueryTree::toClause(string rawClause, string condition) {
+	Clause* clause;
 	try {
 		if (condition == "PATTERN") {
 			clause = toPatternClause(rawClause);
@@ -140,8 +147,8 @@ Clause QueryTree::toClause(string rawClause, string condition) {
 	return clause;
 }
 
-Clause QueryTree::toSuchThatClause(string rawClause) {
-	Clause clause;
+Clause* QueryTree::toSuchThatClause(string rawClause) {
+	Clause* clause;
 
 	try{
 		rawClause = trim(rawClause);
@@ -201,7 +208,7 @@ Clause QueryTree::toSuchThatClause(string rawClause) {
 	return clause;
 }
 
-Clause QueryTree::toPatternClause(string rawClause) {
+Clause* QueryTree::toPatternClause(string rawClause) {
 	rawClause = trim(rawClause);
 	int openBracket = rawClause.find("(");
 	if (openBracket == string::npos) {
@@ -234,19 +241,18 @@ Clause QueryTree::toPatternClause(string rawClause) {
 	Variable var1 = Variable(firstVariable, firstType);
 	Variable var2 = Variable(secondVariable, secondType);
 
-	Clause clause = PatternClause("PATTERN", var1, var2, assignedVar);
-
+	Clause *clause = new PatternClause("PATTERN", var1, var2, assignedVar);
 	return clause;
 }
 
-Clause QueryTree::toAffectVariable(string clauseType, Variable first, Variable second) {
+Clause* QueryTree::toAffectVariable(string clauseType, Variable first, Variable second) {
 	string firstType = first.getType();
 	string secondType = second.getType();
-	Clause clause;
+	Clause* clause;
 
 	if ((firstType == "assign" || firstType == "while" || firstType == "procedure" || isProcedureCallStatement(firstType))
 		&& secondType == "variable") {
-		clause = Clause(clauseType, first, second);
+		clause = new Clause(clauseType, first, second);
 	}
 	else {
 		throw "invalid clause";
@@ -254,12 +260,12 @@ Clause QueryTree::toAffectVariable(string clauseType, Variable first, Variable s
 	return clause;
 }
 
-Clause QueryTree::toDefaultClause(string clauseType, Variable first, Variable second) {
+Clause* QueryTree::toDefaultClause(string clauseType, Variable first, Variable second) {
 	string firstType = first.getType();
 	string secondType = second.getType();
-	Clause clause;
+	Clause* clause;
 
-	clause = Clause(clauseType, first, second);
+	clause = new Clause(clauseType, first, second);
 
 	return clause;
 }
@@ -279,9 +285,9 @@ bool QueryTree::isProcedureCallStatement(string statement) {
 }
 
 void QueryTree::buildTree() {
-	std::list<Clause> tree;
-	std::list<Clause> remaining;
-	std::list<Clause> temp(clauses.begin(), clauses.end());
+	std::list<Clause*> tree;
+	std::list<Clause*> remaining;
+	std::list<Clause*> temp(clauses.begin(), clauses.end());
 	std::list<Variable> newLink;
 	newLink.push_back(selectVariable);
 	Variable currentVariable;
@@ -290,10 +296,10 @@ void QueryTree::buildTree() {
 		currentVariable = newLink.front();
 		newLink.pop_front();
 		for (auto& x : temp) {
-			if (x.hasVariable(currentVariable)) {
+			if (x->hasVariable(currentVariable)) {
 				tree.push_back(x);
-				if (x.hasLinkedVariable(currentVariable)) {
-					newLink.push_back(x.getLinkedVariable(currentVariable));
+				if (x->hasLinkedVariable(currentVariable)) {
+					newLink.push_back(x->getLinkedVariable(currentVariable));
 				}
 			}
 			else {
@@ -302,4 +308,19 @@ void QueryTree::buildTree() {
 		}
 		temp.assign(remaining.begin(), remaining.end());
 	}
+}
+
+bool QueryTree::v1Validation() {
+	if (clauses.size() > 2) {
+		throw "only can have max two clause";
+	}
+	else if(clauses.size() == 2){
+		if (clauses[0]->getClause() == "PATTERN" && clauses[1]->getClause() == "PATTERN") {
+			throw "cannot have more than one pattern";
+		}
+	}
+	if (!clauses[0]->hasAtMostOneCommonSynonym(clauses[1])) {
+		throw "clauses can only have one common synonym";
+	}
+	return true;
 }
