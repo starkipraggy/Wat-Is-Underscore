@@ -7,7 +7,7 @@
 using namespace std;
 
 int main() {
-	string statement = "variable a,b , c, v,e;select a such that follows(a, v) such that follows(b, e) such that follows(c, b) pattern a(_, \"y\")";
+	string statement = "variable a,b , c, v,e;select a such that follows(a, v) pattern a(_, \"y\")";
 
 	try {
 		DeclarationMap::Instance()->setMap(statement);
@@ -21,14 +21,14 @@ int main() {
 	}
 
 	try {
-		QueryTree queryTree = QueryTree(statement);
+		QueryTree::Instance()->setQueryTree(statement);
 
-		Variable selectVariable = queryTree.getSelect();
+		Variable selectVariable = QueryTree::Instance()->getSelect();
 		std::cout << "Select:" << selectVariable.toString() << std::endl;
 
-		std::vector<Clause> clauses = queryTree.getClauses();
+		std::vector<Clause*> clauses = QueryTree::Instance()->getClauses();
 		for (auto& x : clauses) {
-			std::cout << x.getClause() << ": " << x.getQuery() << std::endl;
+			std::cout << x->getClause() << ": " << x->getQuery() << std::endl;
 		}
 	}
 	catch (const char* msg) {
