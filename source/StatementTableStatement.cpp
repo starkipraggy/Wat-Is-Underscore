@@ -3,6 +3,8 @@
 StatementTableStatement::StatementTableStatement(int lineNumber, int index) {
 	this->lineNumber = lineNumber;
 	this->index = index;
+	type = Undefined;
+
 	follows = 0;
 	parent = 0;
 	modifies = new std::vector<int>();
@@ -20,6 +22,10 @@ bool StatementTableStatement::hasParent() {
 
 int StatementTableStatement::getParent() {
 	return parent;
+}
+
+void StatementTableStatement::setType(TNodeType type) {
+	this->type = type;
 }
 
 void StatementTableStatement::setFollows(int follows) {

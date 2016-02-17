@@ -18,7 +18,8 @@ enum TNodeType {
 	While,
 	VariableName,
 	IntegerValue,
-	OperatorPlus
+	OperatorPlus,
+	Call // For statements that call a procedure
 };
 
 class TNode

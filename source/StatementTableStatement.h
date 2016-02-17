@@ -10,10 +10,12 @@
 #pragma once
 
 #include "DataStructureObject.h"
+#include "TNode.h"
 
 class StatementTableStatement : public DataStructureObject {
 private:
 	int lineNumber;				/**< The line number of this statement */
+	TNodeType type;				/**< The type of this statement */
 
 	int follows;				/**< The statement number of the statement that this statement follows
 									 (this statement appears immediately after the one it follows) */
@@ -45,6 +47,14 @@ public:
 		\return Statement number of this statement's parent, or 0 if it does not have any.
 	*/
 	int getParent();
+
+	//! Setter function for the type of the statement that this object is representing.
+	/*!
+		Setter function for the type of the statement that this object is representing; use
+		this function to assign the type of the statement that this object is reprensenting.
+		\param type TNodeType::Undefined, TNodeType::Assign, TNodeType::If, TNodeType::While, or TNodeType::Call
+	*/
+	void setType(TNodeType type);
 
 	//! Setter function for the statement number of the statement that this statement is following.
 	/*!

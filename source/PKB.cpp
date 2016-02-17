@@ -108,7 +108,6 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 		return false;
 	}
 
-	
 	StatementTableStatement* currentStatement;
 
 	// Fixed throughout the entire function as there is only one
@@ -125,6 +124,9 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 
 	// Create a new statement for this assign statement, adding the statement number into current procedure
 	currentStatement = newStatement();
+
+	// Set the type of the statement to be an assignment
+	currentStatement->setType(Assign);
 
 	// Add variable on the left side into the current procedure AND statement as a Modifies(p, v) relationship
 	addRelationship(leftVariable, currentProcedure, Modifies);
@@ -178,6 +180,9 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 void PKB::CallStatement(std::string procedure) {
 	StatementTableStatement* currentStatement = newStatement();
 
+	// Set the type of the statement to be a call
+	currentStatement->setType(Call);
+
 	// Add the procedure you're calling into the Calls relationship of the procedure that this statement belongs to
 	ProcedureTableProcedure* procedureBeingCalled = procedureTable->getProcedure(procedure);
 	procedureBeingCalled->addStatementsCalls(currentStatement->getIndex());
@@ -187,6 +192,9 @@ void PKB::CallStatement(std::string procedure) {
 void PKB::WhileStart(NAME variable) {
 	StatementTableStatement* currentStatement = newStatement();
 	VariableTableVariable* currentVariable = variableTable->getVariableObject(variable);
+
+	// Set the type of the statement to be a while-loop
+	currentStatement->setType(While);
 
 	// Push 0 into statement stack trace to indicate a new level of nesting
 	// 0 so the next statement has its Follows set to 0, ie it does not follow any statements
@@ -234,6 +242,9 @@ bool PKB::WhileEnd() {
 void PKB::IfStart(NAME variable) {
 	StatementTableStatement* currentStatement = newStatement();
 	VariableTableVariable* currentVariable = variableTable->getVariableObject(variable);
+
+	// Set the type of the statement to be an if-statement
+	currentStatement->setType(If);
 
 	// Push 0 into statement stack trace to indicate a new level of nesting
 	// 0 so the next statement has its Follows set to 0, ie it does not follow any statements
