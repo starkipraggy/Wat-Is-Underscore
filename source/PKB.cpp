@@ -10,12 +10,15 @@ PKB::PKB() {
 	variableTable = new VariableTable();
 
 	currentProcedure = NULL;
+	statementStackTrace = new std::stack<int>();
+	statementStackTrace->push(0);
 }
 
 PKB::~PKB() {
 	delete procedureTable;
 	delete statementTable;
 	delete variableTable;
+	delete statementStackTrace;
 }
 
 StatementTableStatement* PKB::newStatement() {
@@ -30,6 +33,14 @@ StatementTableStatement* PKB::newStatement() {
 
 	// Create a new statement in StatementTable with the index number
 	StatementTableStatement* currentStatement = statementTable->addStatement(numberOfStatements);
+
+	// Sets this statement's Follows and Parent relationship using the statement stack trace
+	currentStatement->setFollows(statementStackTrace->top());
+	statementStackTrace->pop();
+	if (statementStackTrace->size() > 0) {
+		currentStatement->setParent(statementStackTrace->top());
+	}
+	statementStackTrace->push(numberOfStatements);
 
 	return currentStatement;
 }
@@ -60,43 +71,58 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 
 	StatementTableStatement* currentStatement;
 	VariableTableVariable* currentVariable;
+	int currentVariableIndex;
+	int parentStatementIndex;
 
 	// Create a new statement for this assign statement, adding the statement number into current procedure
 	currentStatement = newStatement();
 
 	// Add variable on the left side into the current procedure AND statement as a Modifies(p, v) relationship
 	currentVariable = variableTable->getVariableObject(variable);
-	currentProcedure->addModifies(currentVariable->getIndex());
+	currentVariableIndex = currentVariable->getIndex();
+	currentProcedure->addModifies(currentVariableIndex);
 	currentVariable->addProcedureModifies(currentProcedure->getIndex());
-	currentStatement->addModifies(currentVariable->getIndex());
+	currentStatement->addModifies(currentVariableIndex);
 	currentVariable->addStatementModifies(currentStatement->getIndex());
 
-	// @todo Add the Modifies relationship into statement's parent, and its parent, and its parent, etc., recursively
+	// Add the Modifies relationship into statement's parent, and its parent, and its parent, etc.
+	while (currentStatement->hasParent()) {
+		parentStatementIndex = currentStatement->getParent();
+		currentStatement = statementTable->getStatement(parentStatementIndex);
+		currentStatement->addModifies(currentVariableIndex);
+		currentVariable->addStatementModifies(parentStatementIndex);
+	}
 
 	// @todo Add the Modifies relationship into procedures that call the procedure, and all other procedures that call those procedures, etc., recursively
 
 	// @todo Add the Modifies relationship into statements that call the above procedures
 
-	// Add variables on the right side into the current procedure AND statement as a Uses(p, v) relationship
 	for (unsigned int i = 0; i < size; i++) {
 		if (types[i] == Variable) {
 			currentVariable = variableTable->getVariableObject(tokens[i]);
-			currentProcedure->addUses(currentVariable->getIndex());
+			currentVariableIndex = currentVariable->getIndex();
+
+			// Add variables on the right side into the current procedure AND statement as a Uses(p, v) relationship
+			currentProcedure->addUses(currentVariableIndex);
 			currentVariable->addProcedureUses(currentProcedure->getIndex());
-			currentStatement->addUses(currentVariable->getIndex());
+			currentStatement->addUses(currentVariableIndex);
 			currentVariable->addStatementUses(currentStatement->getIndex());
+
+			// Add the Uses relationship into statement's parent, and its parent, and its parent, etc., recursively
+			while (currentStatement->hasParent()) {
+				parentStatementIndex = currentStatement->getParent();
+				currentStatement = statementTable->getStatement(parentStatementIndex);
+				currentStatement->addUses(currentVariableIndex);
+				currentVariable->addStatementUses(parentStatementIndex);
+			}
+
+			// @todo Add the Uses relationship into procedures that call the procedure, and all other procedures that call those procedures, etc., recursively
+
+			// @todo Add the Uses relationship into statements that call the above procedures
 		}
 	}
 
-	// @todo Add the Uses relationship into statement's parent, and its parent, and its parent, etc., recursively
-
-	// @todo Add the Uses relationship into procedures that call the procedure, and all other procedures that call those procedures, etc., recursively
-
-	// @todo Add the Uses relationship into statements that call the above procedures
-
-	// @todo Implement being able to find the statement it follows (this statement appears immediately after the one it follows)
-
-	// @todo Implement being able to find the parent of this statement
+	return true;
 }
 
 void PKB::CallStatement(std::string procedure) {

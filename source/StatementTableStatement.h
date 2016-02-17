@@ -39,6 +39,37 @@ public:
 		\return The statement number of the statement that this object is representing has.
 	*/
 	int getIndex();
+
+	//! Checks if this is a statement assigned to be the parent of this statement.
+	/*!
+		Checks if this is a statement assigned to be the parent of this statement.
+		\return True if there is, and false if there is not.
+	*/
+	bool hasParent();
+
+	//! Getter function for the statement number of the parent of this statement.
+	/*!
+		Getter function for the statement number of the parent of this statement; use this function to
+		retrieve the statement number of the parent of the statement that this object is reprensenting.
+		\return Statement number of this statement's parent, or 0 if it does not have any.
+	*/
+	int getParent();
+
+	//! Setter function for the statement number of the statement that this statement is following.
+	/*!
+		Setter function for the statement number of the statement that this statement is following; use this function to
+		assign the statement number of the statement that the statement that this object is reprensenting is following.
+		\param follows Statement number of the statement that this statement is following, or 0 if it does not have any.
+	*/
+	void setFollows(int follows);
+
+	//! Setter function for the statement number of the parent of this statement.
+	/*!
+		Setter function for the statement number of the parent of this statement; use this function to
+		assign the statement number of the parent of the statement that this object is reprensenting.
+		\param parent Statement number of this statement's parent, or 0 if it does not have any.
+	*/
+	void setParent(int parent);
 	
 	//! Allows the adding of variables that this statement modifies.
 	/*!

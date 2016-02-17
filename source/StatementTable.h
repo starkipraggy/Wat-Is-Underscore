@@ -23,6 +23,16 @@ public:
 	*/
 	int getNumberOfStatements();
 
+	//! Given a specific statement number, look for the object representing that statement in the StatementTable.
+	/*!
+		Given a specific statement number, look for the object representing that statement in
+		the StatementTable, and returns it.
+		\param statementIndex The statement number of the statement that you would like to retrieve.
+		\return The StatementTableStatement object that has the statement number passed in, or NULL if
+				this statement cannot be found in the StatementTable.
+	*/
+	StatementTableStatement* getStatement(int statementNumber);
+
 	//! Use this function to add a statement into the statement table.
 	/*!
 		This function is used to add a statement into the statement table.

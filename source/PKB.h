@@ -9,7 +9,7 @@
 #pragma once
 
 #include <string>
-#include <vector>
+#include <stack>
 #include "ProcedureTable.h"
 #include "StatementTable.h"
 #include "VariableTable.h"
@@ -32,6 +32,8 @@ private:
 
 	ProcedureTableProcedure* currentProcedure;	/**< Used during SIMPLE parsing, this pointer points to the current procedure
 													 that statements that are currently being inputted belongs to */
+	std::stack<int>* statementStackTrace;		/**< Used during SIMPLE parsing, this is a list of statement numbers of statements
+													 that belong to different nesting levels, used to keep track of Parent and Follow*/
 
 	PKB();
 	~PKB();

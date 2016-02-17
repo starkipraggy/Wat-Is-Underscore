@@ -18,6 +18,22 @@ int StatementTableStatement::getIndex() {
 	return index;
 }
 
+bool StatementTableStatement::hasParent() {
+	return (parent > 0);
+}
+
+int StatementTableStatement::getParent() {
+	return parent;
+}
+
+void StatementTableStatement::setFollows(int follows) {
+	this->follows = follows;
+}
+
+void StatementTableStatement::setParent(int parent) {
+	this->parent = parent;
+}
+
 bool StatementTableStatement::addModifies(int variableIndexNumber) {
 	return addIntoVector(variableIndexNumber, modifies);
 }
