@@ -54,7 +54,7 @@ PKB* PKB::getInstance() {
 void PKB::ProcedureStart(std::string nameOfProcedure) {
 	/* Create an entry for this new procedure in the procedure table, and keep a pointer to it in currentProcedure, 
 	   so that statements being inputted can have their statement numbers added under it */
-	currentProcedure = procedureTable->addProcedure(nameOfProcedure);
+	currentProcedure = procedureTable->getProcedure(nameOfProcedure);
 }
 
 void PKB::ProcedureEnd() {
@@ -105,7 +105,7 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 	for (int i = 0; i < procedureCallsSize; i++) {
 		proceduresStack.push(currentProcedure->getProcedureCall(i));
 	}
-	while (!proceduresStack.empty) {
+	while (!proceduresStack.empty()) {
 		// Check if this procedure is already modifying the current variable
 		procedureForAddingRelationshipIndex = proceduresStack.top();
 		totalListOfProcedures.push_back(procedureForAddingRelationshipIndex);
@@ -164,7 +164,7 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 			}
 
 			// Add the Uses relationship into statements that call the above procedures
-			int size = totalListOfStatements.size();
+			size = totalListOfStatements.size();
 			for (int i = 0; i < size; i++) {
 				statementForAddingRelationshipIndex = totalListOfStatements[i];
 				if (currentVariable->addStatementUses(statementForAddingRelationshipIndex)) {
@@ -178,11 +178,12 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 }
 
 void PKB::CallStatement(std::string procedure) {
-	newStatement();
-
-	// @todo More implementation after I start working on the other two structures (currently still doing 1st one, ProcedureTable)
+	StatementTableStatement* currentStatement = newStatement();
 
 	// @todo Add the procedure you're calling into the Calls relationship of the procedure that this statement belongs to
+	ProcedureTableProcedure* procedureBeingCalled = procedureTable->getProcedure(procedure);
+	procedureBeingCalled->addStatementsCalls(currentStatement->getIndex());
+	procedureBeingCalled->addProcedureCalls(currentProcedure->getIndex());
 }
 
 void PKB::WhileStart(NAME variable) {

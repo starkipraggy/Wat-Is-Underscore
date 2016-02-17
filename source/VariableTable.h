@@ -12,6 +12,16 @@
 class VariableTable {
 private:
 	std::vector<VariableTableVariable*>* variables;	/**< List of variables in the table */
+
+	//! Use this function to add a variable into the variable table.
+	/*!
+		This function is used to add a variable into the variable table.
+		It is set as private to prevent the adding of variables with the same name.
+		To add a variable that does not exist in the table, use the getVariableObject() function.
+		\param variable The name of the variable that is being added.
+		\return The newly created VariableTableVariable object.
+	*/
+	VariableTableVariable* addVariable(NAME variable);
 public:
 	VariableTable();
 	~VariableTable();
@@ -31,12 +41,4 @@ public:
 		\return The VariableTableVariable object with the same name as the variable name passed.
 	*/
 	VariableTableVariable* getVariableObject(NAME name);
-
-	//! Use this function to add a variable into the variable table.
-	/*!
-		This function is used to add a variable into the variable table.
-		\param variable The name of the variable that is being added.
-		\return The newly created VariableTableVariable object.
-	*/
-	VariableTableVariable* addVariable(NAME variable);
 };

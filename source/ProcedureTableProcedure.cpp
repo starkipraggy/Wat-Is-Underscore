@@ -20,6 +20,10 @@ ProcedureTableProcedure::~ProcedureTableProcedure() {
 	delete statementCalls;
 }
 
+std::string ProcedureTableProcedure::getName() {
+	return name;
+}
+
 int ProcedureTableProcedure::getIndex() {
 	return index;
 }

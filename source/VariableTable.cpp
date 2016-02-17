@@ -1,5 +1,11 @@
 #include "VariableTable.h"
 
+VariableTableVariable* VariableTable::addVariable(NAME variable) {
+	VariableTableVariable* newVariable = new VariableTableVariable(variable, getNumberOfVariables());
+	variables->push_back(newVariable);
+	return newVariable;
+}
+
 VariableTable::VariableTable() {
 	variables = new std::vector<VariableTableVariable*>();
 }
@@ -29,10 +35,4 @@ VariableTableVariable* VariableTable::getVariableObject(NAME name) {
 	}
 
 	return addVariable(name);
-}
-
-VariableTableVariable* VariableTable::addVariable(NAME variable) {
-	VariableTableVariable* newVariable = new VariableTableVariable(variable, getNumberOfVariables());
-	variables->push_back(newVariable);
-	return newVariable;
 }

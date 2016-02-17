@@ -1,5 +1,11 @@
 #include "ProcedureTable.h"
 
+ProcedureTableProcedure* ProcedureTable::addProcedure(std::string procedure) {
+	ProcedureTableProcedure* newProcedure = new ProcedureTableProcedure(procedure, getNumberOfProcedures());
+	procedures->push_back(newProcedure);
+	return newProcedure;
+}
+
 ProcedureTable::ProcedureTable() {
 	procedures = new std::vector<ProcedureTableProcedure*>();
 }
@@ -29,8 +35,14 @@ ProcedureTableProcedure* ProcedureTable::getProcedure(int procedureNumber) {
 	return NULL;
 }
 
-ProcedureTableProcedure* ProcedureTable::addProcedure(std::string procedure) {
-	ProcedureTableProcedure* newProcedure = new ProcedureTableProcedure(procedure, getNumberOfProcedures());
-	procedures->push_back(newProcedure);
-	return newProcedure;
+ProcedureTableProcedure* ProcedureTable::getProcedure(std::string procedureName) {
+	int size = getNumberOfProcedures();
+	ProcedureTableProcedure* procedure;
+	for (int i = 0; i < size; i++) {
+		procedure = procedures->at(i);
+		if (procedure->getName() == procedureName) {
+			return procedure;
+		}
+	}
+	return addProcedure(procedureName);
 }

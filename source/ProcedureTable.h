@@ -12,6 +12,16 @@
 class ProcedureTable {
 private:
 	std::vector<ProcedureTableProcedure*>* procedures;	/**< List of procedures in the table */
+
+	//! Use this function to add a procedure into the procedure table.
+	/*!
+		This function is used to add a procedure into the procedure table.
+		It is set as private to prevent the adding of variables with the same name.
+		To add a variable that does not exist in the table, use the getVariableObject() function.
+		\param procedure The name of the procedure that is being added.
+		\return The pointer to the ProcedureTableProcedure object that was just added.
+	*/
+	ProcedureTableProcedure* addProcedure(std::string procedure);
 public:
 	ProcedureTable();
 	~ProcedureTable();
@@ -34,11 +44,12 @@ public:
 	*/
 	ProcedureTableProcedure* getProcedure(int procedureNumber);
 
-	//! Use this function to add a procedure into the procedure table.
+	//! Given the name of a procedure, look for the object representing that procedure in the ProcedureTable.
 	/*!
-		This function is used to add a procedure into the procedure table.
-		\param procedure The name of the procedure that is being added.
-		\return The pointer to the ProcedureTableProcedure object that was just added.
+		Given the name of a procedure, look for the object representing that procedure in the ProcedureTable, and returns it.
+		If no object with such name exists in the table, a new one would be created and returned.
+		\param procedureName The name of the procedure that you would like to retrieve.
+		\return The ProcedureTableProcedure object with the same name as the procedure name passed in.
 	*/
-	ProcedureTableProcedure* addProcedure(std::string procedure);
+	ProcedureTableProcedure* getProcedure(std::string procedureName);
 };

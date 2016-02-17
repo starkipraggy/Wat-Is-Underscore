@@ -34,6 +34,14 @@ public:
 
 	~ProcedureTableProcedure();
 
+	//! Getter function for the name of the procedure.
+	/*!
+		Getter function for the name of the procedure; use this function to
+		retrieve the name of the procedure that this object is reprensenting.
+		\return The name of the procedure that this object is representing has.
+	*/
+	std::string getName();
+
 	//! Getter function for the index number of the procedure.
 	/*!
 		Getter function for the index number of the procedure; use this function to
