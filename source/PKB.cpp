@@ -178,7 +178,7 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 void PKB::CallStatement(std::string procedure) {
 	StatementTableStatement* currentStatement = newStatement();
 
-	// @todo Add the procedure you're calling into the Calls relationship of the procedure that this statement belongs to
+	// Add the procedure you're calling into the Calls relationship of the procedure that this statement belongs to
 	ProcedureTableProcedure* procedureBeingCalled = procedureTable->getProcedure(procedure);
 	procedureBeingCalled->addStatementsCalls(currentStatement->getIndex());
 	procedureBeingCalled->addProcedureCalls(currentProcedure);
@@ -186,21 +186,38 @@ void PKB::CallStatement(std::string procedure) {
 
 void PKB::WhileStart(NAME variable) {
 	StatementTableStatement* currentStatement = newStatement();
+	VariableTableVariable* currentVariable = variableTable->getVariableObject(variable);
 
 	// Push 0 into statement stack trace to indicate a new level of nesting
 	// 0 so the next statement has its Follows set to 0, ie it does not follow any statements
 	statementStackTrace->push(0);
 
 	// Adds Uses relationship with the variable being used to control the while-loop
-	VariableTableVariable* currentVariable = variableTable->getVariableObject(variable);
-	currentStatement->addUses(currentVariable->getIndex());
-	currentVariable->addStatementUses(currentStatement->getIndex());
+	addRelationship(currentVariable, currentStatement, Uses);
 
-	// @todo Add Uses relationship with parent, parent's parent, etc.
+	// Add Uses relationship with parent, parent's parent, etc.
+	StatementTableStatement* statementToIterateThroughParents = currentStatement;
+	while (statementToIterateThroughParents->hasParent()) {
+		statementToIterateThroughParents = statementTable->getStatement(statementToIterateThroughParents->getParent());
+		addRelationship(currentVariable, statementToIterateThroughParents, Uses);
+	}
 
-	// @todo Add the Uses relationship into procedures that call the procedure, and all other procedures that call those procedures, etc.
+	// Add the Uses relationship into procedures that call the procedure, and all other procedures that call those procedures, etc.
+	std::set<int>* proceduresSet = currentProcedure->getIndirectProcedureCalls();
+	std::set<int>::iterator end = proceduresSet->end();
+	ProcedureTableProcedure* procedureForAddingRelationship;
+	for (std::set<int>::iterator i = proceduresSet->begin(); i != end; i++) {
+		procedureForAddingRelationship = procedureTable->getProcedure(*i);
+		addRelationship(currentVariable, procedureForAddingRelationship, Uses);
 
-	// @todo Add the Uses relationship into statements that call the above procedures
+		// Add the Uses relationship into statements that call the above procedures
+		int statementCallsSize = procedureForAddingRelationship->getStatementCallsSize();
+		StatementTableStatement* statementForAddingRelationship;
+		for (int x = 0; x < statementCallsSize; x++) {
+			statementForAddingRelationship = statementTable->getStatement(procedureForAddingRelationship->getStatementCall(x));
+			addRelationship(currentVariable, statementForAddingRelationship, Uses);
+		}
+	}
 }
 
 bool PKB::WhileEnd() {
