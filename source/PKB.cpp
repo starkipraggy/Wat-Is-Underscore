@@ -93,9 +93,43 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 		currentVariable->addStatementModifies(parentStatementIndex);
 	}
 
-	// @todo Add the Modifies relationship into procedures that call the procedure, and all other procedures that call those procedures, etc., recursively
+	// Add the Modifies relationship into procedures that call the procedure, and all other procedures that call those procedures, etc.
+	std::stack<int> proceduresStack;
+	ProcedureTableProcedure* procedureForAddingRelationship; /* Name is intentionally long to not confused    */
+	int procedureForAddingRelationshipIndex;				 /* with similarly named currentProcedure pointer */
+	int procedureCallsSize = currentProcedure->getProcedureCallsSize();
+	for (int i = 0; i < procedureCallsSize; i++) {
+		proceduresStack.push(currentProcedure->getProcedureCall(i));
+	}
+	while (!proceduresStack.empty) {
+		// Check if this procedure is already modifying the current variable
+		procedureForAddingRelationshipIndex = proceduresStack.top();
+		procedureForAddingRelationship = procedureTable->getProcedure(procedureForAddingRelationshipIndex);
+		if (!procedureForAddingRelationship->addModifies(currentVariableIndex)) {
+			// If it is not, add the relationships
+			currentVariable->addProcedureModifies(procedureForAddingRelationshipIndex);
 
-	// @todo Add the Modifies relationship into statements that call the above procedures
+			// And, add all procedures that call it into the procedure stack
+			procedureCallsSize = procedureForAddingRelationship->getProcedureCallsSize();
+			for (int i = 0; i < procedureCallsSize; i++) {
+				proceduresStack.push(procedureForAddingRelationship->getProcedureCall(i));
+			}
+		}
+
+		// Add the Modifies relationship into statements that call the above procedures
+		StatementTableStatement* statementForAddingRelationship;	/* Name is intentionally long to not confused    */
+		int statementForAddingRelationshipIndex;					/* with similarly named currentStatement pointer */
+		int statementCallsSize = procedureForAddingRelationship->getStatementCallsSize();
+		for (int i = 0; i < statementCallsSize; i++) {
+			statementForAddingRelationshipIndex = procedureForAddingRelationship->getStatementCall(i);
+			statementForAddingRelationship = statementTable->getStatement(statementForAddingRelationshipIndex);
+			statementForAddingRelationship->addModifies(currentVariableIndex);
+			currentVariable->addStatementModifies(statementForAddingRelationshipIndex);
+		}
+
+		// Remove it from the procedure stack
+		proceduresStack.pop();
+	}
 
 	for (unsigned int i = 0; i < size; i++) {
 		if (types[i] == Variable) {
@@ -130,6 +164,7 @@ void PKB::CallStatement(std::string procedure) {
 
 	// @todo More implementation after I start working on the other two structures (currently still doing 1st one, ProcedureTable)
 
+	// @todo Add the procedure you're calling into the Calls relationship of the procedure that this statement belongs to
 }
 
 void PKB::WhileStart(NAME variable) {

@@ -24,6 +24,16 @@ public:
 	*/
 	int getNumberOfProcedures();
 
+	//! Given a specific index number of a procedure, look for the object representing that procedure in the ProcedureTable.
+	/*!
+		Given a specific index number of a procedure, look for the object representing
+		that procedure in the ProcedureTable, and returns it.
+		\param procedureIndex The index number of the procedure that you would like to retrieve.
+		\return The ProcedureTableProcedure object that has the index number passed in, or NULL if
+		this procedure cannot be found in the ProcedureTable.
+	*/
+	ProcedureTableProcedure* getProcedure(int procedureNumber);
+
 	//! Use this function to add a procedure into the procedure table.
 	/*!
 		This function is used to add a procedure into the procedure table.
