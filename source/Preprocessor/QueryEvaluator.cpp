@@ -17,23 +17,30 @@ std::vector<std::string> QueryEvaluator::process() {
 			string clause = x->getClause();
 			Variable var1 = x->getVariableOne();
 			Variable var2 = x->getVariableTwo();
-			if (regex_match(var1.getType(), designEntityRegex)) {
-				query(clause, var1, var2, 1);
-			}
-			else if (regex_match(var2.getType(), designEntityRegex)) {
-				query(clause, var2, var1, 2);
-			}
-			else if(var1.getType() == "placeholder"){
-				//addResult(getClause(clause, var2, 1, select.getType()));
-			}
-			else if (var2.getType() == "placeholder") {
-				//addResult(getClause(clause, var1, 2, select.getType()));
+			if (clause == "PATTERN") {
+				PatternClause* p = dynamic_cast<PatternClause*>(x);
+				Variable assignVar = p->getAssignedVariable();
+				//getPattern(var1, var2, assignVar.getType());
 			}
 			else {
-				//queryResult = getClause(clause, var2, 1, var1.getType());
-				if (find(queryResult.begin(), queryResult.end(), var1) == queryResult.end()) {
-					result = {};
-					break;
+				if (regex_match(var1.getType(), designEntityRegex)) {
+					query(clause, var1, var2, 1);
+				}
+				else if (regex_match(var2.getType(), designEntityRegex)) {
+					query(clause, var2, var1, 2);
+				}
+				else if (var1.getType() == "placeholder") {
+					//addResult(getClause(clause, var2, 1, select.getType()));
+				}
+				else if (var2.getType() == "placeholder") {
+					//addResult(getClause(clause, var1, 2, select.getType()));
+				}
+				else {
+					//queryResult = getClause(clause, var2, 1, var1.getType());
+					if (find(queryResult.begin(), queryResult.end(), var1) == queryResult.end()) {
+						result = {};
+						break;
+					}
 				}
 			}
 		}
