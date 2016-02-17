@@ -126,15 +126,17 @@ public:
 		Once the end of the "else" statement list is reached, the IfElseEnd() function
 		should be called in order to terminate the declaration of this if-else statement.
 		The calling of this function is optional should the "else" statement list be empty.
+		\return True if successful, and false if there is no if-statement currently to end.
 	*/
-	void ElseStart();
+	bool ElseStart();
 
 	//! Declares the end of an if-else statement.
 	/*!
 		One of the API functions that allows the SIMPLE parser to construct the PKB.
 		Call this function to declare the end of an if-else statement.
+		\return True if successful, and false if there is no else-statement currently to end.
 	*/
-	void IfElseEnd();
+	bool IfElseEnd();
 
 	// ---------------------------------------------------------------------------------
 	// API FUNCTIONS FOR SIMPLE PARSER ENDS HERE!!!

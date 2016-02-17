@@ -222,7 +222,7 @@ void PKB::WhileStart(NAME variable) {
 
 bool PKB::WhileEnd() {
 	// Pop from statement stack trace to indicate the end of current level of nesting
-	if (statementStackTrace->empty()) {
+	if (statementStackTrace->size() < 2) {
 		return false;
 	}
 
@@ -232,18 +232,59 @@ bool PKB::WhileEnd() {
 }
 
 void PKB::IfStart(NAME variable) {
-	newStatement();
+	StatementTableStatement* currentStatement = newStatement();
+	VariableTableVariable* currentVariable = variableTable->getVariableObject(variable);
 
-	// @todo More implementation after I start working on the other two structures (currently still doing 1st one, ProcedureTable)
+	// Push 0 into statement stack trace to indicate a new level of nesting
+	// 0 so the next statement has its Follows set to 0, ie it does not follow any statements
+	statementStackTrace->push(0);
 
+	// Adds Uses relationship with the variable being used to control the while-loop
+	addRelationship(currentVariable, currentStatement, Uses);
+
+	// Add Uses relationship with parent, parent's parent, etc.
+	StatementTableStatement* statementToIterateThroughParents = currentStatement;
+	while (statementToIterateThroughParents->hasParent()) {
+		statementToIterateThroughParents = statementTable->getStatement(statementToIterateThroughParents->getParent());
+		addRelationship(currentVariable, statementToIterateThroughParents, Uses);
+	}
+
+	// Add the Uses relationship into procedures that call the procedure, and all other procedures that call those procedures, etc.
+	std::set<int>* proceduresSet = currentProcedure->getIndirectProcedureCalls();
+	std::set<int>::iterator end = proceduresSet->end();
+	ProcedureTableProcedure* procedureForAddingRelationship;
+	for (std::set<int>::iterator i = proceduresSet->begin(); i != end; i++) {
+		procedureForAddingRelationship = procedureTable->getProcedure(*i);
+		addRelationship(currentVariable, procedureForAddingRelationship, Uses);
+
+		// Add the Uses relationship into statements that call the above procedures
+		int statementCallsSize = procedureForAddingRelationship->getStatementCallsSize();
+		StatementTableStatement* statementForAddingRelationship;
+		for (int x = 0; x < statementCallsSize; x++) {
+			statementForAddingRelationship = statementTable->getStatement(procedureForAddingRelationship->getStatementCall(x));
+			addRelationship(currentVariable, statementForAddingRelationship, Uses);
+		}
+	}
 }
 
-void PKB::ElseStart() {
-	// @todo More implementation after I start working on the other two structures (currently still doing 1st one, ProcedureTable)
+bool PKB::ElseStart() {
+	if (statementStackTrace->size() < 2) {
+		return false;
+	}
 
+	statementStackTrace->pop();
+	statementStackTrace->push(0);
+
+	return true;
 }
 
-void PKB::IfElseEnd() {
-	// @todo More implementation after I start working on the other two structures (currently still doing 1st one, ProcedureTable)
+bool PKB::IfElseEnd() {
+	if (statementStackTrace->size() < 2) {
+		return false;
+	}
+
+	statementStackTrace->pop();
+
+	return true;
 
 }
