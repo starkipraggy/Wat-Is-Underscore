@@ -95,8 +95,12 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 
 	// Add the Modifies relationship into procedures that call the procedure, and all other procedures that call those procedures, etc.
 	std::stack<int> proceduresStack;
-	ProcedureTableProcedure* procedureForAddingRelationship; /* Name is intentionally long to not confused    */
-	int procedureForAddingRelationshipIndex;				 /* with similarly named currentProcedure pointer */
+	std::vector<int> totalListOfProcedures; // Keep a list so that we can refer to it later again
+	std::vector<int> totalListOfStatements; // Keep a list so that we can refer to it later again
+	ProcedureTableProcedure* procedureForAddingRelationship;	/* Name is intentionally long to not confused    */
+	int procedureForAddingRelationshipIndex;					/* with similarly named currentProcedure pointer */
+	StatementTableStatement* statementForAddingRelationship;	/* Name is intentionally long to not confused    */
+	int statementForAddingRelationshipIndex;					/* with similarly named currentStatement pointer */
 	int procedureCallsSize = currentProcedure->getProcedureCallsSize();
 	for (int i = 0; i < procedureCallsSize; i++) {
 		proceduresStack.push(currentProcedure->getProcedureCall(i));
@@ -104,8 +108,9 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 	while (!proceduresStack.empty) {
 		// Check if this procedure is already modifying the current variable
 		procedureForAddingRelationshipIndex = proceduresStack.top();
+		totalListOfProcedures.push_back(procedureForAddingRelationshipIndex);
 		procedureForAddingRelationship = procedureTable->getProcedure(procedureForAddingRelationshipIndex);
-		if (!procedureForAddingRelationship->addModifies(currentVariableIndex)) {
+		if (procedureForAddingRelationship->addModifies(currentVariableIndex)) {
 			// If it is not, add the relationships
 			currentVariable->addProcedureModifies(procedureForAddingRelationshipIndex);
 
@@ -117,10 +122,9 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 		}
 
 		// Add the Modifies relationship into statements that call the above procedures
-		StatementTableStatement* statementForAddingRelationship;	/* Name is intentionally long to not confused    */
-		int statementForAddingRelationshipIndex;					/* with similarly named currentStatement pointer */
 		int statementCallsSize = procedureForAddingRelationship->getStatementCallsSize();
 		for (int i = 0; i < statementCallsSize; i++) {
+			totalListOfStatements.push_back(statementForAddingRelationshipIndex);
 			statementForAddingRelationshipIndex = procedureForAddingRelationship->getStatementCall(i);
 			statementForAddingRelationship = statementTable->getStatement(statementForAddingRelationshipIndex);
 			statementForAddingRelationship->addModifies(currentVariableIndex);
@@ -150,9 +154,23 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 				currentVariable->addStatementUses(parentStatementIndex);
 			}
 
-			// @todo Add the Uses relationship into procedures that call the procedure, and all other procedures that call those procedures, etc., recursively
+			// Add the Uses relationship into procedures that call the procedure, and all other procedures that call those procedures, etc.
+			int size = totalListOfProcedures.size();
+			for (int i = 0; i < size; i++) {
+				procedureForAddingRelationshipIndex = totalListOfProcedures[i];
+				if (currentVariable->addProcedureUses(procedureForAddingRelationshipIndex)) {
+					procedureTable->getProcedure(procedureForAddingRelationshipIndex)->addUses(currentVariableIndex);
+				}
+			}
 
-			// @todo Add the Uses relationship into statements that call the above procedures
+			// Add the Uses relationship into statements that call the above procedures
+			int size = totalListOfStatements.size();
+			for (int i = 0; i < size; i++) {
+				statementForAddingRelationshipIndex = totalListOfStatements[i];
+				if (currentVariable->addStatementUses(statementForAddingRelationshipIndex)) {
+					statementTable->getStatement(statementForAddingRelationshipIndex)->addUses(currentVariableIndex);
+				}
+			}
 		}
 	}
 
