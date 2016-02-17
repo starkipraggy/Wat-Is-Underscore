@@ -32,9 +32,9 @@ private:
 
 	string findSuchThatType(string raw);
 	string findPatternType(string raw);
-	bool isStmtRef(Variable v);
-	bool isEntRef(Variable v);
-	bool isExprSpec(Variable v);
+	static bool isStmtRef(Variable v);
+	static bool isEntRef(Variable v);
+	static bool isExprSpec(Variable v);
 };
 
 #endif

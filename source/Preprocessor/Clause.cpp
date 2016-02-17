@@ -24,6 +24,11 @@ string Clause::getQuery() {
 	return variableOne.toString() + "+" + variableTwo.toString();
 }
 
+bool Clause::equals(Clause* c) {
+	return clause == c->getClause() && variableOne.equals(c->getVariableOne())
+		&& variableTwo.equals(c->getVariableTwo());
+}
+
 bool Clause::hasVariable(Variable v) {
 	return variableOne.equals(v) || variableTwo.equals(v);
 }

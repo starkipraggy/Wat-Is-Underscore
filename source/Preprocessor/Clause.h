@@ -18,6 +18,7 @@ public:
 	Variable getVariableOne();
 	Variable getVariableTwo();
 	virtual string getQuery();
+	virtual bool equals(Clause* c);
 	bool hasVariable(Variable v);
 	bool hasLinkedVariable(Variable v);
 	Variable getLinkedVariable(Variable v);

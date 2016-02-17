@@ -11,6 +11,7 @@ public:
 
 	Variable getAssignedVariable();
 	string getQuery();
+	bool equals(Clause* c);
 protected:
 	Variable assignedVariable;
 };

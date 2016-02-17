@@ -64,9 +64,6 @@
     <ClCompile Include="..\source\Preprocessor\Clause.cpp">
       <Filter>Source\Preprocessor</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\Preprocessor\DeclarationMap.cpp">
-      <Filter>Source\Preprocessor</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\Preprocessor\PatternClause.cpp">
       <Filter>Source\Preprocessor</Filter>
     </ClCompile>
@@ -148,9 +145,6 @@
       <Filter>Header\PKB</Filter>
     </ClInclude>
     <ClInclude Include="..\source\Preprocessor\Clause.h">
-      <Filter>Header\Preprocessor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\Preprocessor\DeclarationMap.h">
       <Filter>Header\Preprocessor</Filter>
     </ClInclude>
     <ClInclude Include="..\source\Preprocessor\PatternClause.h">

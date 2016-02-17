@@ -11,6 +11,7 @@ const regex expressionRegex("(^\"[[:alpha:]])([[:alnum:]]+|#+)*\"$");
 const regex partOfExpressionRegex("(^_\"[[:alpha:]])([[:alnum:]]+|#+)*\"_$");
 
 const regex designEntityRegex("^(STMT|ASSIGN|WHILE|VARIABLE|CONSTANT|PROG_LINE)$",icase);
+const regex whiteSpaceRegex("\s");
 
 void Preprocessor::process(string statement) {
 	setMap(statement);
@@ -52,7 +53,7 @@ void Preprocessor::setDeclaration(string line) {
 		second = trim(second);
 		vector<string> variables = tokenize(second, ",");
 		for (auto& x : variables) {
-			if (!std::regex_match(x, std::regex("\s"))) {
+			if (!std::regex_match(x, whiteSpaceRegex)) {
 				std::pair<std::string, std::string> newPair(x, first);
 				if (declarationMap.find(x) != declarationMap.end()) {
 					throw "cannot have synonym with the same name";
@@ -75,10 +76,12 @@ void Preprocessor::setQueryTree(string statement) {
 	QueryTree::Instance()->setSelect(Variable(name, type));
 
 	string declarationQueries = selectPair.second;
-	processClauses(declarationQueries);
-	
-	QueryTree::Instance()->buildTree();
-	QueryTree::Instance()->v1Validation();
+	if (declarationQueries != "") {
+		processClauses(declarationQueries);
+
+		QueryTree::Instance()->buildTree();
+		QueryTree::Instance()->v1Validation();
+	}
 }
 
 string Preprocessor::getQuery(string statement) {
@@ -116,8 +119,9 @@ std::pair<std::string, std::string> Preprocessor::getSelect(string query) {
 
 		declarationQueries = trim(query.substr(position + 1, query.length()));
 	}
-	else {
-		throw "Query cannot be two word";
+	else {//no clause
+		querySynonym = query;
+		declarationQueries = "";
 	}
 
 	std::pair<std::string, std::string> myPair(querySynonym, declarationQueries);

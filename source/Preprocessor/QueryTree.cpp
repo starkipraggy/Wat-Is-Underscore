@@ -69,9 +69,9 @@ bool QueryTree::v1Validation() {
 		else if (!(clauses[0]->getClause() == "PATTERN" || clauses[1]->getClause() == "PATTERN")) {
 			throw "can only have one such that clause";
 		}
-	}
-	if (!clauses[0]->hasAtMostOneCommonSynonym(clauses[1])) {
-		throw "clauses can only have one common synonym";
+		if (!clauses[0]->hasAtMostOneCommonSynonym(clauses[1])) {
+			throw "clauses can only have one common synonym";
+		}
 	}
 	return true;
 }
