@@ -36,11 +36,11 @@ std::vector<std::string> QueryEvaluator::process() {
 					//addResult(getClause(clause, var1, 2, select.getType()));
 				}
 				else {
-					//queryResult = getClause(clause, var2, 1, var1.getType());
+					/*queryResult = getClause(clause, var2, 1, var1.getType());
 					if (find(queryResult.begin(), queryResult.end(), var1) == queryResult.end()) {
 						result = {};
 						break;
-					}
+					}*/
 				}
 			}
 		}
@@ -69,7 +69,7 @@ vector<string> QueryEvaluator::getEachResult() {
 }
 
 void QueryEvaluator::addResult(vector<string> currResult) {
-	if (result.empty) {
+	if (result.empty()) {
 		std::copy(currResult.begin(), currResult.end(), std::inserter(result, result.begin()));
 	}
 	else {
