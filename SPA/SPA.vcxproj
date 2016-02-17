@@ -19,6 +19,7 @@
     <ClCompile Include="..\source\Preprocessor\Clause.cpp" />
     <ClCompile Include="..\source\Preprocessor\PatternClause.cpp" />
     <ClCompile Include="..\source\Preprocessor\Preprocessor.cpp" />
+    <ClCompile Include="..\source\Preprocessor\QueryEvaluator.cpp" />
     <ClCompile Include="..\source\Preprocessor\QueryTree.cpp" />
     <ClCompile Include="..\source\Preprocessor\StringUlti.cpp" />
     <ClCompile Include="..\source\Preprocessor\Variable.cpp" />
@@ -48,6 +49,7 @@
     <ClInclude Include="..\source\Preprocessor\Clause.h" />
     <ClInclude Include="..\source\Preprocessor\PatternClause.h" />
     <ClInclude Include="..\source\Preprocessor\Preprocessor.h" />
+    <ClInclude Include="..\source\Preprocessor\QueryEvaluator.h" />
     <ClInclude Include="..\source\Preprocessor\QueryTree.h" />
     <ClInclude Include="..\source\Preprocessor\StringUlti.h" />
     <ClInclude Include="..\source\Preprocessor\Variable.h" />

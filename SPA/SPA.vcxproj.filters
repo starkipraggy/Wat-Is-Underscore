@@ -82,6 +82,9 @@
     <ClCompile Include="..\source\DataStructureObject.cpp">
       <Filter>Source\PKB</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\Preprocessor\QueryEvaluator.cpp">
+      <Filter>Source\Preprocessor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\FileIO.h">
@@ -164,6 +167,9 @@
     </ClInclude>
     <ClInclude Include="..\source\DataStructureObject.h">
       <Filter>Header\PKB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Preprocessor\QueryEvaluator.h">
+      <Filter>Header\Preprocessor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
