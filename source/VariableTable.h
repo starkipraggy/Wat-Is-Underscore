@@ -41,4 +41,12 @@ public:
 		\return The VariableTableVariable object with the same name as the variable name passed.
 	*/
 	VariableTableVariable* getVariableObject(NAME name);
+
+	//! Returns the VariableTableVariable object that has the index of the variable you want from the variable table.
+	/*!
+		Returns the VariableTableVariable object that has the index of the variable you want from the variable table.
+		\param index The index of the variable of which VariableTableVariable object you are looking for.
+		\return The VariableTableVariable object with the same index as the variable name passed, or NULL if it does not exist.
+	*/
+	VariableTableVariable* getVariableObject(int index);
 };

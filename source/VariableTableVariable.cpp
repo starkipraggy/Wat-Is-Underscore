@@ -20,10 +20,6 @@ NAME VariableTableVariable::getName() {
 	return name;
 }
 
-int VariableTableVariable::getIndex() {
-	return index;
-}
-
 bool VariableTableVariable::addStatementModifies(int statementNumber) {
 	return addIntoVector(statementNumber, statementModifies);
 }

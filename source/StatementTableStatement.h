@@ -9,12 +9,11 @@
 
 #pragma once
 
-#include "DataStructureFunctions.h"
+#include "DataStructureObject.h"
 
-class StatementTableStatement {
+class StatementTableStatement : public DataStructureObject {
 private:
 	int lineNumber;				/**< The line number of this statement */
-	int index;					/**< The index number given to the statement */
 
 	int follows;				/**< The statement number of the statement that this statement follows
 									 (this statement appears immediately after the one it follows) */
@@ -31,14 +30,6 @@ public:
 	StatementTableStatement(int lineNumber, int index);
 
 	~StatementTableStatement();
-
-	//! Getter function for the index number of the statement.
-	/*!
-		Getter function for the statement number of the statement; use this function to
-		retrieve the statement number of the statement that this object is reprensenting.
-		\return The statement number of the statement that this object is representing has.
-	*/
-	int getIndex();
 
 	//! Checks if this is a statement assigned to be the parent of this statement.
 	/*!

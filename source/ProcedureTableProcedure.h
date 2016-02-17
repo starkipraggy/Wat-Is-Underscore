@@ -10,19 +10,23 @@
 #pragma once
 
 #include <string>
+#include <set>
 #include "TypeDef.h"
-#include "DataStructureFunctions.h"
+#include "DataStructureObject.h"
 
-class ProcedureTableProcedure {
+class ProcedureTableProcedure : public DataStructureObject {
 private:
-	std::string name;					/**< The name of this procedure */
-	int index;							/**< The index number given to the procedure */
-	std::vector<int>* statements;		/**< The index numbers of the statements that belongs to this procedure */
+	std::string name;										/**< The name of this procedure */
+	std::vector<int>* statements;							/**< The index numbers of the statements that belongs to this procedure */
 
-	std::vector<int>* modifies;			/**< A list of the index numbers of variables that this procedure modifies */
-	std::vector<int>* uses;				/**< A list of the index numbers of variables that this procedure uses */
-	std::vector<int>* procedureCalls;	/**< A list of the index numbers of procedures that call this procedure */
-	std::vector<int>* statementCalls;	/**< A list of the index numbers of statements that call this procedure */
+	std::vector<int>* modifies;								/**< A list of the index numbers of variables that this procedure modifies */
+	std::vector<int>* uses;									/**< A list of the index numbers of variables that this procedure uses */
+	std::vector<ProcedureTableProcedure*>* procedureCalls;	/**< A list of pointers to procedures that call this procedure */
+	std::vector<int>* statementCalls;						/**< A list of the index numbers of statements that call this procedure */
+
+	std::set<int>* indirectProcedureCalls;					/**< This set is used as a cache for the getIndirectProcedureCalls() function,
+																 as the function is computationally expensive when data set is large */
+	bool isIndirectProcedureCallsModified;					/**< Boolean used as a control on whether to use cached set */
 public:
 	//! Constructor for the ProcedureTableProcedure.
 	/*!
@@ -42,25 +46,17 @@ public:
 	*/
 	std::string getName();
 
-	//! Getter function for the index number of the procedure.
-	/*!
-		Getter function for the index number of the procedure; use this function to
-		retrieve the index number of the procedure that this object is reprensenting.
-		\return The index number of the procedure that this object is representing has.
-	*/
-	int getIndex();
-
 	//! Getter function for members of the procedure calls vector.
 	/*!
 		Getter function for the members of the procedure calls vector; use this function to
-		retrieve the individual index number of procedures that are calling this procedure.
+		retrieve the individual pointer to procedures that are calling this procedure.
 		As this function requires the passing of vector index number, which is generally
 		unavailable outside, this function is recommended to be used only with the iteration
 		of the entire vector.
 		\param index The index number of the member of the procedure calls vector inside the vector.
-		\return The index number of the procedure in the procedure calls vector.
+		\return The pointer to the procedure in the procedure calls vector.
 	*/
-	int getProcedureCall(int index);
+	ProcedureTableProcedure* getProcedureCall(int index);
 
 	//! Getter function for the size of the procedure calls vector.
 	/*!
@@ -70,7 +66,13 @@ public:
 	*/
 	int getProcedureCallsSize();
 
-
+	//! Returns a list of index numbers of procedures that calls this procedure, whether directly or indirectly.
+	/*!
+		This function compiles a list of the index numbers of procedures that calls this procedure, whether directly
+		or indirectly, and returns it as a set, as no duplicates are needed.
+		\return A list of index numbers of procedures that calls this procedure.
+	*/
+	std::set<int>* getIndirectProcedureCalls();
 
 	//! Getter function for members of the statement calls vector.
 	/*!
@@ -121,7 +123,7 @@ public:
 	\param procedureIndexNumber The index number of the procedure that call this procedure.
 	\return True if this procedure is successfully added, and false if this procedure is already inside.
 	*/
-	bool addProcedureCalls(int procedureIndexNumber);
+	bool addProcedureCalls(ProcedureTableProcedure* procedure);
 
 	//! Allows the adding of statements that calls this procedure.
 	/*!

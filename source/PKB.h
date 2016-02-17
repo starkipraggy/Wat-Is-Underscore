@@ -21,6 +21,11 @@ enum ExpressionTokenType {
 	Parenthesis
 };
 
+enum RelationshipType {
+	Modifies,
+	Uses
+};
+
 class PKB {
 private:
 	static PKB* instance;
@@ -40,6 +45,9 @@ private:
 
 	//! This function is used by the API for the SIMPLE parser when a new statement that has a statement number is inputted.
 	StatementTableStatement* newStatement();
+	//! These functions is used by the API for the SIMPLE parser to add a relationship between two items (variables, statements, procedures, etc.).
+	bool addRelationship(VariableTableVariable* variable, ProcedureTableProcedure* procedure, RelationshipType relationship);
+	bool addRelationship(VariableTableVariable* variable, StatementTableStatement* statement, RelationshipType relationship);
 public:
 	//! Allows access to the static reference to the lone singleton instance.
 	static PKB* getInstance();
@@ -93,8 +101,9 @@ public:
 	/*!
 		One of the API functions that allows the SIMPLE parser to construct the PKB.
 		Call this function to declare the end of a while-loop.
+		\return True if successful, and false if there is no while-loop currently to end.
 	*/
-	void WhileEnd();
+	bool WhileEnd();
 
 	//! Declares the start of an if-else statement.
 	/*!

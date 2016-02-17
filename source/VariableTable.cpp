@@ -36,3 +36,17 @@ VariableTableVariable* VariableTable::getVariableObject(NAME name) {
 
 	return addVariable(name);
 }
+
+VariableTableVariable* VariableTable::getVariableObject(int index) {
+	int size = getNumberOfVariables();
+	VariableTableVariable* currentVariable;
+
+	for (int i = 0; i < size; i++) {
+		currentVariable = variables->at(i);
+		if (currentVariable->getIndex() == index) {
+			return currentVariable;
+		}
+	}
+
+	return NULL;
+}

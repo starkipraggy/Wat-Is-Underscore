@@ -14,10 +14,6 @@ StatementTableStatement::~StatementTableStatement() {
 	delete uses;
 }
 
-int StatementTableStatement::getIndex() {
-	return index;
-}
-
 bool StatementTableStatement::hasParent() {
 	return (parent > 0);
 }

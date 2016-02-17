@@ -58,9 +58,6 @@
     <ClCompile Include="..\source\While.cpp">
       <Filter>Source\PKB</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\DataStructureFunctions.cpp">
-      <Filter>Source\PKB</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\AST.cpp">
       <Filter>Source\PKB</Filter>
     </ClCompile>
@@ -84,6 +81,9 @@
     </ClCompile>
     <ClCompile Include="..\source\Preprocessor\Variable.cpp">
       <Filter>Source\Preprocessor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\DataStructureObject.cpp">
+      <Filter>Source\PKB</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -144,9 +144,6 @@
     <ClInclude Include="..\source\While.h">
       <Filter>Header\PKB</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\DataStructureFunctions.h">
-      <Filter>Header\PKB</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\AST.h">
       <Filter>Header\PKB</Filter>
     </ClInclude>
@@ -170,6 +167,9 @@
     </ClInclude>
     <ClInclude Include="..\source\Preprocessor\Variable.h">
       <Filter>Header\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\DataStructureObject.h">
+      <Filter>Header\PKB</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

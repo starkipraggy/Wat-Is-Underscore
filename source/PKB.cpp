@@ -45,6 +45,45 @@ StatementTableStatement* PKB::newStatement() {
 	return currentStatement;
 }
 
+bool PKB::addRelationship(VariableTableVariable* variable, ProcedureTableProcedure* procedure, RelationshipType relationship) {
+	int variableIndex = variable->getIndex();
+	int procedureIndex = procedure->getIndex();
+
+	switch (relationship) {
+	case Modifies:
+		procedure->addModifies(variableIndex);
+		variable->addProcedureModifies(procedureIndex);
+		break;
+	case Uses:
+		procedure->addUses(variableIndex);
+		variable->addProcedureUses(procedureIndex);
+		break;
+	default:
+		return false;
+	}
+
+	return true;
+}
+
+bool PKB::addRelationship(VariableTableVariable* variable, StatementTableStatement* statement, RelationshipType relationship) {
+	int variableIndex = variable->getIndex();
+	int statementIndex = statement->getIndex();
+
+	switch (relationship) {
+	case Modifies:
+		statement->addModifies(variableIndex);
+		variable->addStatementModifies(statementIndex);
+		break;
+	case Uses:
+		statement->addUses(variableIndex);
+		variable->addStatementUses(statementIndex);
+	default:
+		return false;
+	}
+
+	return true;
+}
+
 PKB* PKB::getInstance() {
 	if (instance == NULL)
 		instance = new PKB();
@@ -69,107 +108,66 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 		return false;
 	}
 
+	
 	StatementTableStatement* currentStatement;
-	VariableTableVariable* currentVariable;
-	int currentVariableIndex;
-	int parentStatementIndex;
+
+	// Fixed throughout the entire function as there is only one
+	VariableTableVariable* leftVariable = variableTable->getVariableObject(variable); 
+
+	// Used in for-loops for iterations, as there may be multiple right variables
+	std::vector<VariableTableVariable*> rightVariables;
+	for (unsigned int i = 0; i < size; i++) {
+		if (types[i] == Variable) {
+			rightVariables.push_back(variableTable->getVariableObject(tokens[i]));
+		}
+	}
+	int rightVariablesSize = rightVariables.size();
 
 	// Create a new statement for this assign statement, adding the statement number into current procedure
 	currentStatement = newStatement();
 
 	// Add variable on the left side into the current procedure AND statement as a Modifies(p, v) relationship
-	currentVariable = variableTable->getVariableObject(variable);
-	currentVariableIndex = currentVariable->getIndex();
-	currentProcedure->addModifies(currentVariableIndex);
-	currentVariable->addProcedureModifies(currentProcedure->getIndex());
-	currentStatement->addModifies(currentVariableIndex);
-	currentVariable->addStatementModifies(currentStatement->getIndex());
+	addRelationship(leftVariable, currentProcedure, Modifies);
+	addRelationship(leftVariable, currentStatement, Modifies);
 
-	// Add the Modifies relationship into statement's parent, and its parent, and its parent, etc.
-	while (currentStatement->hasParent()) {
-		parentStatementIndex = currentStatement->getParent();
-		currentStatement = statementTable->getStatement(parentStatementIndex);
-		currentStatement->addModifies(currentVariableIndex);
-		currentVariable->addStatementModifies(parentStatementIndex);
+	// Add variables on the right side into the current procedure AND statement as a Uses(p, v) relationship
+	for (int i = 0; i < rightVariablesSize; i++) {
+		addRelationship(rightVariables[i], currentProcedure, Uses);
+		addRelationship(rightVariables[i], currentStatement, Uses);
 	}
 
-	// Add the Modifies relationship into procedures that call the procedure, and all other procedures that call those procedures, etc.
-	std::stack<int> proceduresStack;
-	std::vector<int> totalListOfProcedures; // Keep a list so that we can refer to it later again
-	std::vector<int> totalListOfStatements; // Keep a list so that we can refer to it later again
-	ProcedureTableProcedure* procedureForAddingRelationship;	/* Name is intentionally long to not confused    */
-	int procedureForAddingRelationshipIndex;					/* with similarly named currentProcedure pointer */
-	StatementTableStatement* statementForAddingRelationship;	/* Name is intentionally long to not confused    */
-	int statementForAddingRelationshipIndex;					/* with similarly named currentStatement pointer */
-	int procedureCallsSize = currentProcedure->getProcedureCallsSize();
-	for (int i = 0; i < procedureCallsSize; i++) {
-		proceduresStack.push(currentProcedure->getProcedureCall(i));
-	}
-	while (!proceduresStack.empty()) {
-		// Check if this procedure is already modifying the current variable
-		procedureForAddingRelationshipIndex = proceduresStack.top();
-		totalListOfProcedures.push_back(procedureForAddingRelationshipIndex);
-		procedureForAddingRelationship = procedureTable->getProcedure(procedureForAddingRelationshipIndex);
-		if (procedureForAddingRelationship->addModifies(currentVariableIndex)) {
-			// If it is not, add the relationships
-			currentVariable->addProcedureModifies(procedureForAddingRelationshipIndex);
+	StatementTableStatement* statementToIterateThroughParents = currentStatement;
+	while (statementToIterateThroughParents->hasParent()) {
+		statementToIterateThroughParents = statementTable->getStatement(statementToIterateThroughParents->getParent());
 
-			// And, add all procedures that call it into the procedure stack
-			procedureCallsSize = procedureForAddingRelationship->getProcedureCallsSize();
-			for (int i = 0; i < procedureCallsSize; i++) {
-				proceduresStack.push(procedureForAddingRelationship->getProcedureCall(i));
-			}
+		// Add the Modifies relationship into statement's parent, and its parent, and its parent, etc.
+		addRelationship(leftVariable, statementToIterateThroughParents, Modifies);
+
+		// Add the Uses relationship into statement's parent, and its parent, and its parent, etc.
+		for (int i = 0; i < rightVariablesSize; i++) {
+			addRelationship(rightVariables[i], statementToIterateThroughParents, Uses);
+		}
+	}
+
+	// Add the Modifies and Uses relationships into procedures that call the procedure, and all other procedures that call those procedures, etc.
+	std::set<int>* proceduresSet = currentProcedure->getIndirectProcedureCalls();
+	std::set<int>::iterator end = proceduresSet->end();
+	ProcedureTableProcedure* procedureForAddingRelationship;
+	for (std::set<int>::iterator i = proceduresSet->begin(); i != end; i++) {
+		procedureForAddingRelationship = procedureTable->getProcedure(*i);
+		addRelationship(leftVariable, procedureForAddingRelationship, Modifies);
+		for (int x = 0; x < rightVariablesSize; x++) {
+			addRelationship(rightVariables[x], procedureForAddingRelationship, Uses);
 		}
 
-		// Add the Modifies relationship into statements that call the above procedures
+		// Add the Modifies and Uses relationships into statements that call the above procedures
 		int statementCallsSize = procedureForAddingRelationship->getStatementCallsSize();
-		for (int i = 0; i < statementCallsSize; i++) {
-			totalListOfStatements.push_back(statementForAddingRelationshipIndex);
-			statementForAddingRelationshipIndex = procedureForAddingRelationship->getStatementCall(i);
-			statementForAddingRelationship = statementTable->getStatement(statementForAddingRelationshipIndex);
-			statementForAddingRelationship->addModifies(currentVariableIndex);
-			currentVariable->addStatementModifies(statementForAddingRelationshipIndex);
-		}
-
-		// Remove it from the procedure stack
-		proceduresStack.pop();
-	}
-
-	for (unsigned int i = 0; i < size; i++) {
-		if (types[i] == Variable) {
-			currentVariable = variableTable->getVariableObject(tokens[i]);
-			currentVariableIndex = currentVariable->getIndex();
-
-			// Add variables on the right side into the current procedure AND statement as a Uses(p, v) relationship
-			currentProcedure->addUses(currentVariableIndex);
-			currentVariable->addProcedureUses(currentProcedure->getIndex());
-			currentStatement->addUses(currentVariableIndex);
-			currentVariable->addStatementUses(currentStatement->getIndex());
-
-			// Add the Uses relationship into statement's parent, and its parent, and its parent, etc., recursively
-			while (currentStatement->hasParent()) {
-				parentStatementIndex = currentStatement->getParent();
-				currentStatement = statementTable->getStatement(parentStatementIndex);
-				currentStatement->addUses(currentVariableIndex);
-				currentVariable->addStatementUses(parentStatementIndex);
-			}
-
-			// Add the Uses relationship into procedures that call the procedure, and all other procedures that call those procedures, etc.
-			int size = totalListOfProcedures.size();
-			for (int i = 0; i < size; i++) {
-				procedureForAddingRelationshipIndex = totalListOfProcedures[i];
-				if (currentVariable->addProcedureUses(procedureForAddingRelationshipIndex)) {
-					procedureTable->getProcedure(procedureForAddingRelationshipIndex)->addUses(currentVariableIndex);
-				}
-			}
-
-			// Add the Uses relationship into statements that call the above procedures
-			size = totalListOfStatements.size();
-			for (int i = 0; i < size; i++) {
-				statementForAddingRelationshipIndex = totalListOfStatements[i];
-				if (currentVariable->addStatementUses(statementForAddingRelationshipIndex)) {
-					statementTable->getStatement(statementForAddingRelationshipIndex)->addUses(currentVariableIndex);
-				}
+		StatementTableStatement* statementForAddingRelationship;
+		for (int x = 0; x < statementCallsSize; x++) {
+			statementForAddingRelationship = statementTable->getStatement(procedureForAddingRelationship->getStatementCall(x));
+			addRelationship(leftVariable, statementForAddingRelationship, Modifies);
+			for (int y = 0; y < rightVariablesSize; y++) {
+				addRelationship(rightVariables[y], statementForAddingRelationship, Uses);
 			}
 		}
 	}
@@ -183,19 +181,37 @@ void PKB::CallStatement(std::string procedure) {
 	// @todo Add the procedure you're calling into the Calls relationship of the procedure that this statement belongs to
 	ProcedureTableProcedure* procedureBeingCalled = procedureTable->getProcedure(procedure);
 	procedureBeingCalled->addStatementsCalls(currentStatement->getIndex());
-	procedureBeingCalled->addProcedureCalls(currentProcedure->getIndex());
+	procedureBeingCalled->addProcedureCalls(currentProcedure);
 }
 
 void PKB::WhileStart(NAME variable) {
-	newStatement();
+	StatementTableStatement* currentStatement = newStatement();
 
-	// @todo More implementation after I start working on the other two structures (currently still doing 1st one, ProcedureTable)
+	// Push 0 into statement stack trace to indicate a new level of nesting
+	// 0 so the next statement has its Follows set to 0, ie it does not follow any statements
+	statementStackTrace->push(0);
 
+	// Adds Uses relationship with the variable being used to control the while-loop
+	VariableTableVariable* currentVariable = variableTable->getVariableObject(variable);
+	currentStatement->addUses(currentVariable->getIndex());
+	currentVariable->addStatementUses(currentStatement->getIndex());
+
+	// @todo Add Uses relationship with parent, parent's parent, etc.
+
+	// @todo Add the Uses relationship into procedures that call the procedure, and all other procedures that call those procedures, etc.
+
+	// @todo Add the Uses relationship into statements that call the above procedures
 }
 
-void PKB::WhileEnd() {
-	// @todo More implementation after I start working on the other two structures (currently still doing 1st one, ProcedureTable)
+bool PKB::WhileEnd() {
+	// Pop from statement stack trace to indicate the end of current level of nesting
+	if (statementStackTrace->empty()) {
+		return false;
+	}
 
+	statementStackTrace->pop();
+
+	return true;
 }
 
 void PKB::IfStart(NAME variable) {
