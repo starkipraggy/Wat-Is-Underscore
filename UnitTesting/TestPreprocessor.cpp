@@ -19,25 +19,29 @@ namespace UnitTesting {
 		Variable placeholderVar, partOfExpressionVar, exprVar, integerVar, 
 			stmtVar, assignVar, whileVar, variableVar, constantVar, progLineVar, 
 			invalidVar;
-		Clause* usesClause;
+		Clause* usesClause, patternClause;
 		vector<Clause*> oneClauses;
 
-		const string simpleQuery = "variable a; select a";
-		const string usesQuery = "variable a; constant b; select a such that uses(a, b)";
+		const string simpleQuery = "assign a; select a",
+			usesQuery = "assign a; constant c; select a such that uses(a, c)",
+			patternQuery = "assign a; select a pattern a(_,_\"abc\"_)",
+			combinedQuery = "assign a; constant c; select a such that uses(a, c) pattern a(_,_\"abc\"_)";
+	
 
 		TEST_METHOD_INITIALIZE(build) {
 			placeholderVar = Variable("_", "placeholder");
 			partOfExpressionVar = Variable("_\"abc\"_", "part_of_expr"); //only pattern
 			exprVar = Variable("\"abc\"", "expr");
 			integerVar = Variable("123", "integer");
-			stmtVar = Variable("a", "stmt");
+			stmtVar = Variable("s", "stmt");
 			assignVar = Variable("a", "assign");
-			whileVar = Variable("a", "while");
-			variableVar = Variable("a", "variable");
-			constantVar = Variable("b", "constant");
-			progLineVar = Variable("a", "prog_line");
+			whileVar = Variable("w", "while");
+			variableVar = Variable("v", "variable");
+			constantVar = Variable("c", "constant");
+			progLineVar = Variable("p", "prog_line");
 
-			usesClause = new Clause("USES", variableVar, constantVar);
+			usesClause = new Clause("USES", assignVar, constantVar);
+			patternClause = PatternClause("PATTERN", placeholderVar, partOfExpressionVar, assignVar);
 			
 			oneClauses.push_back(usesClause);
 
@@ -50,7 +54,7 @@ namespace UnitTesting {
 			select = QueryTree::Instance()->getSelect();
 			clauses = QueryTree::Instance()->getClauses();
 
-			Assert::IsTrue(select.equals(variableVar));
+			Assert::IsTrue(select.equals(assignVar));
 			Assert::IsTrue(clauses.empty());
 		}
 
@@ -60,8 +64,29 @@ namespace UnitTesting {
 			select = QueryTree::Instance()->getSelect();
 			clauses = QueryTree::Instance()->getClauses();
 			
-			Assert::IsTrue(select.equals(variableVar));
+			Assert::IsTrue(select.equals(assignVar));
 			Assert::IsTrue(clauses.at(0)->equals(usesClause));
+		}
+
+		TEST_METHOD(PatternQuery)
+		{
+			p.process(patternQuery);
+			select = QueryTree::Instance()->getSelect();
+			clauses = QueryTree::Instance()->getClauses();
+
+			Assert::IsTrue(select.equals(assignVar));
+			Assert::IsTrue(patternClause.equals(clauses.at(0)));
+		}
+
+		TEST_METHOD(CombinedQuery)
+		{
+			p.process(combinedQuery);
+			select = QueryTree::Instance()->getSelect();
+			clauses = QueryTree::Instance()->getClauses();
+
+			Assert::IsTrue(select.equals(assignVar));
+			Assert::IsTrue(clauses.at(0)->equals(usesClause));
+			Assert::IsTrue(patternClause.equals(clauses.at(1)));
 		}
 	};
 }
