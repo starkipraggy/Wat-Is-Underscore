@@ -17,7 +17,7 @@ static std::vector<std::string> tokens;
 int state = 0;
 bool isErrorDetected = false;
 PKB* pkb;
-//pkb = PKB::getInstance();
+pkb = PKB::getInstance();
 
 SimpleParser::SimpleParser() {
 	fio = new FileIO();
@@ -89,7 +89,7 @@ void SimpleParser::processLine() {
 	else {
 
 
-		std::string leftStr;
+		
 
 		for (int i = 0;i < tokens.size();i++) {
 			switch (checkWord(tokens[i])) {
@@ -175,22 +175,30 @@ int SimpleParser::checkAssign(int position) {
 	
 	bool isEquals = false;
 	bool isOperator = false;
-
+	std::string leftStr;
 
 	for (position;position < tokens.size();position++) {
 		switch (isCharAnOperator(tokens[position])) {
 		case 1:
+			// token is "=";
 			isEquals = true;
 			break;
 		case 2:
+			// token is "+";
 			break;
 		case 3:
+			// token is "*";
 			break;
 		case 4:
+			// token is "-";
 			break;
 		case 5:
+			// token is ";";
 			break;
 		case 0:
+			if (isEquals == false && isOperator == false) {
+				leftStr = tokens[position];
+			}
 			break;
 		default:
 			break;
