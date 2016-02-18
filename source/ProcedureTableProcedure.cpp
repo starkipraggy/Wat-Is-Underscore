@@ -46,7 +46,7 @@ std::set<int>* ProcedureTableProcedure::getIndirectProcedureCalls() {
 		// Iterate through the procedures that call this procedure
 		int size = getProcedureCallsSize();
 		for (int i = 0; i < size; i++) {
-			procedureCall = getProcedureCall(i);
+			ProcedureTableProcedure* procedureCall = getProcedureCall(i);
 			procedureCallIndex = procedureCall->getIndex();
 
 			// Check if you need to add this procedure's indirect procedure calls list to your own
