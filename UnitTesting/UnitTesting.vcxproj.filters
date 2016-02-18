@@ -35,9 +35,6 @@
     <ClCompile Include="ParserTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestClause.cpp">
-      <Filter>Source Files\Preprocessor</Filter>
-    </ClCompile>
     <ClCompile Include="TestPreprocessor.cpp">
       <Filter>Source Files\Preprocessor</Filter>
     </ClCompile>
