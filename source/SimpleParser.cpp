@@ -7,12 +7,20 @@
 #include "SimpleParser.h"
 #include "PKB.h"
 #include "TNode.h"
+#include "ProcedureTableProcedure.h"
+#include "StatementTableStatement.h"
+#include "VariableTableVariable.h"
+
 
 std::vector<std::string> namesProcedure;
 std::vector<std::string> namesVariables;
 std::vector<std::string> typesVariables;
 std::vector<std::string> stackParenthesis;
 static std::vector<std::string> tokens;
+
+// procedure / while / if /else
+std::vector<std::string> currentContainer;
+
 
 int state = 0;
 bool isErrorDetected = false;
@@ -75,19 +83,15 @@ void SimpleParser::processLine() {
 	// if procstate== 0; means there is invalid procedure.
 	// if procstate == 1; procedure is valid.
 	int procState = 0;
+	
 
 	std::cout << "Tokens Size = " << tokens.size();
 	std::cout << std::endl;
 
-	// check proc, procName, opening brace
 	if (tokens.size() < 4) {
 		// invalid program
 		isErrorDetected = true;
-	}
-	else {
-
-
-		
+	} else {
 
 		for (unsigned int i = 0; i < tokens.size(); i++) {
 			switch (checkWord(tokens[i])) {
@@ -98,15 +102,17 @@ void SimpleParser::processLine() {
 				i++;
 				std::cout << "ProcName = " << tokens[i];
 				std::cout << std::endl;
-				PKB::getInstance()->ProcedureStart(tokens[i]);
+
+				//PKB::getInstance()->ProcedureStart(tokens[i]);
 				i++;
 				std::cout << "OpeningBrace = " << tokens[i];
 				std::cout << std::endl;
 				switch (isCharABrace(tokens[i])) {
-				case 1:
+				case 1: // "{"
 					stackParenthesis.push_back(tokens[i]);
+					currentContainer.push_back("procedure");
 					break;
-				case 2:
+				case 2: // "}"
 					stackParenthesis.pop_back();
 					break;
 				default:
@@ -125,11 +131,20 @@ void SimpleParser::processLine() {
 				i++;
 				std::cout << "while var = " << tokens[i];
 				std::cout << std::endl;
-				PKB::getInstance()->WhileStart(tokens[i]);
+				//PKB::getInstance()->WhileStart(tokens[i]);
 				i++;
 				std::cout << "OpeningBrace = " << tokens[i];
 				std::cout << std::endl;
 
+				switch (isCharABrace(tokens[i])) {
+				case 1: // "{"
+					stackParenthesis.push_back(tokens[i]);
+					currentContainer.push_back("while");
+					break;
+				default:
+					isErrorDetected = true;
+					break;
+				}
 				break;
 			case 3:
 				// first word is if
@@ -146,7 +161,40 @@ void SimpleParser::processLine() {
 					isErrorDetected = true;
 					break;
 				}
-				i = checkAssign(i);
+
+				if (isCharABrace(tokens[i]) == 1) {
+
+				}
+				else if (isCharABrace(tokens[i]) == 2) {
+					try
+					{
+						std::string back = currentContainer.back();
+						if (back.compare("while") == 0) {
+							stackParenthesis.pop_back();
+							currentContainer.pop_back();
+							//PKB::getInstance()->WhileEnd();
+							//std::cout << "LOLLOL " <<tokens[i];
+							//std::cout << std::endl;
+						} else if (back.compare("procedure") == 0) {
+							stackParenthesis.pop_back();
+							currentContainer.pop_back();
+							//PKB::getInstance()->ProcedureEnd();
+							//std::cout << "LOLLOL " << tokens[i];
+							//std::cout << std::endl;
+						}
+					}
+					catch (int e)
+					{
+						std::cout << "Invalid Program " <<'\n';
+						isErrorDetected = true;
+					}
+					
+					
+				}
+				else {
+					i = checkAssign(i);
+				}
+				
 
 				break;
 			default:
@@ -168,41 +216,111 @@ void SimpleParser::processLine() {
 }
 
 int SimpleParser::checkAssign(unsigned int position) {
-	std::cout << "Start Assignment ";
-	std::cout << std::endl;
+	/* 
+	When entering this function, it will iterate the tokens from the passed in position,
+	until reaching semi colon.
+	It will check whether the assignment statement's validity.
+	*/
+	//std::cout << "Start Assignment ";
+	//std::cout << std::endl;
 	
+	std::vector<ExpressionTokenType> types;
+
+	// If an equal operator is found, = true
 	bool isEquals = false;
+	// If maths operator is found, = true
+	// If the next token is another operator,
+	// Invalid program.
 	bool isOperator = false;
-	std::string leftStr;
+	
+	// Left side of assignment statement
+	std::string leftVar;
+	// Right side of assignment statement
+	std::vector<std::string> rightVariables;
+	
 
 	for (position;position < tokens.size();position++) {
 		switch (isCharAnOperator(tokens[position])) {
 		case 1:
 			// token is "=";
+			// First "=" in statement
 			isEquals = true;
 			break;
 		case 2:
 			// token is "+";
+			if (isOperator == true) {
+				isErrorDetected = true;
+				break;
+			}
+
+			isOperator = true;
+			rightVariables.push_back(tokens[position]);
+			types.push_back(Operator);
 			break;
 		case 3:
 			// token is "*";
+			if (isOperator == true) {
+				isErrorDetected = true;
+				break;
+			}
+			isOperator = true;
+			rightVariables.push_back(tokens[position]);
+			types.push_back(Operator);
 			break;
 		case 4:
 			// token is "-";
+			if (isOperator == true) {
+				isErrorDetected = true;
+				break;
+			}
+			isOperator = true;
+			rightVariables.push_back(tokens[position]);
+			types.push_back(Operator);
 			break;
 		case 5:
-			// token is ";";
-			break;
+			// token is ";"
+			if (isEquals == true && isOperator == false) {
+				//PKB::getInstance()->AssignStatement(leftVar,rightVariables,types);
+			} else{
+				isErrorDetected = true;
+			}
+
+			for (unsigned int j = 0;j < rightVariables.size();j++) {
+				std::cout<< rightVariables[j] << " ";
+			}
+			std::cout << std::endl;
+
+
+
+			rightVariables.clear();
+			types.clear();
+			leftVar = "";
+			//std::cout << position;
+			//std::cout << std::endl;
+			return position;
 		case 0:
+			isOperator = false;
 			if (isEquals == false && isOperator == false) {
-				leftStr = tokens[position];
+				// First variable in statement
+				leftVar = tokens[position];
+			}
+			else if (isEquals == true && isOperator == false) {
+				rightVariables.push_back(tokens[position]);
+				types.push_back(Variable);
+			}
+			else
+			{
+				isErrorDetected = true;
+				break;
 			}
 			break;
 		default:
 			break;
 		}
+		
 
 	}
+	
 	return position;
 }
 
@@ -225,7 +343,7 @@ int SimpleParser::isCharABrace(std::string cChar) {
 	if (cChar.compare("{") == 0) {
 		return 1;
 	}
-	else if (cChar.compare("}")) {
+	else if (cChar.compare("}")==0) {
 		return 2;
 	}
 	else {
