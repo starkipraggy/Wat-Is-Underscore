@@ -69,4 +69,10 @@ public:
 		\return True if this procedure is successfully added, and false if this procedure is already inside.
 	*/
 	bool addProcedureUses(int procedureNumber);
+	
+	int getProceduresUses(int index);
+	
+	int getProceduresUsesSize();
+	int getStatementUses(int index);
+	int getStatementUsesSize();
 };

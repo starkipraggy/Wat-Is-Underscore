@@ -155,6 +155,8 @@ public:
 	*/
 	std::vector<std::string> PQLSelect(TNodeType outputType);
 
+	std::vector<std::string> PQLUses(std::string input, int argumentPosition, std::string outputType);
+
 	//! Returns a list of items that fit the specified pattern condition.
 	/*!
 		One of the API functions that allows the PQL parser to extract information from the PKB.

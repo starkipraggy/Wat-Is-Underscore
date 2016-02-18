@@ -132,4 +132,6 @@ public:
 	\return True if this statement is successfully added, and false if this statement is already inside.
 	*/
 	bool addStatementsCalls(int statementIndexNumber);
+	int getUses(int index);
+	int getUsesSize();
 };

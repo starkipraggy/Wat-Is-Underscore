@@ -86,3 +86,11 @@ int StatementTableStatement::getFollows() {
 TNodeType StatementTableStatement::getType() {
 	return type;
 }
+
+int StatementTableStatement::getUses(int index) {
+	uses->at(index);
+}
+
+int StatementTableStatement::getUsesSize() {
+	return uses->size();
+}

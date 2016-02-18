@@ -135,4 +135,8 @@ public:
 	*/
 	TNodeType getType();
 
+	int getUses(int index);
+
+	int getUsesSize();
+
 };
