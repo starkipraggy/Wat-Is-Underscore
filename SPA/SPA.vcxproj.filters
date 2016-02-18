@@ -85,6 +85,12 @@
     <ClCompile Include="..\source\Preprocessor\QueryEvaluator.cpp">
       <Filter>Source\Preprocessor</Filter>
     </ClCompile>
+    <ClCompile Include="Projector.cpp">
+      <Filter>Source\Preprocessor</Filter>
+    </ClCompile>
+    <ClCompile Include="PQLController.cpp">
+      <Filter>Source\Preprocessor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\FileIO.h">
@@ -170,6 +176,15 @@
     </ClInclude>
     <ClInclude Include="..\source\Preprocessor\QueryEvaluator.h">
       <Filter>Header\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Projector.h">
+      <Filter>Header\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="PQLController.h">
+      <Filter>Header\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="ExpressionToken.h">
+      <Filter>Header\PKB</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

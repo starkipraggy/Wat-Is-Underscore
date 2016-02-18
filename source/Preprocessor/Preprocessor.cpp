@@ -135,7 +135,7 @@ void Preprocessor::processClauses(string declarationQueries) {
 	string prevQuery = "";
 
 	try {
-		for (int i = 0; i < tokenizedQueries.size(); i++) {
+		for (unsigned int i = 0; i < tokenizedQueries.size(); i++) {
 			if (StringToUpper(tokenizedQueries[i]) == "SUCH" && i + 1 < tokenizedQueries.size()) {
 				if (StringToUpper(tokenizedQueries[i + 1]) == "THAT") {
 					if (prevClause != "") {
