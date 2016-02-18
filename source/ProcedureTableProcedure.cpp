@@ -97,3 +97,11 @@ bool ProcedureTableProcedure::addProcedureCalls(ProcedureTableProcedure* procedu
 bool ProcedureTableProcedure::addStatementsCalls(int statementIndexNumber) {
 	return addIntoVector(statementIndexNumber, statementCalls);
 }
+
+int ProcedureTableProcedure::getUses(int index) {
+	uses->at(index);
+}
+
+int ProcedureTableProcedure::getUsesSize() {
+	return uses->size();
+}

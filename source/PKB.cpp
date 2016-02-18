@@ -334,6 +334,69 @@ std::vector<std::string> PKB::PQLSelect(TNodeType outputType) {
 	return returnList;
 }
 
+std::vector<std::string> PKB::PQLUses(std::string input, int argumentPosition, std::string outputType) {
+	std::vector<std::string> returnList;
+	VariableTableVariable* variableToBeChecked = variableTable->getVariableUsingName(input);
+	if (argumentPosition == 1) { //check which procedure, assignment, while or statement number uses a variable
+		if (outputType == "procedure") { //
+			for (int i = 0; i < variableToBeChecked->getProceduresUsesSize(); i++) {
+				int procedureIndex = variableToBeChecked->getProceduresUses(i);
+				std::string procedureName = procedureTable->getProcedure(procedureIndex)->getName();
+				returnList.push_back(procedureName);
+			}
+		}
+		else if (outputType == "statement") {
+			for (int i = 0; i < variableToBeChecked->getStatementUsesSize(); i++) {
+				int statementNumber = variableToBeChecked->getStatementUses(i);
+				returnList.push_back(std::to_string(statementNumber));
+			}
+		}
+		else if (outputType == "assign") {
+			for (int i = 0; i < variableToBeChecked->getStatementUsesSize(); i++) {
+				int statementNumber = variableToBeChecked->getStatementUses(i);
+				StatementTableStatement* statement = statementTable->getStatementUsingStatementNumber(statementNumber);
+				if (statement->getType() == Assign){
+					returnList.push_back(std::to_string(statementNumber));
+				}
+			}
+		}
+		else if (outputType == "while") {
+			for (int i = 0; i < variableToBeChecked->getStatementUsesSize(); i++) {
+				int statementNumber = variableToBeChecked->getStatementUses(i);
+				StatementTableStatement* statement = statementTable->getStatementUsingStatementNumber(statementNumber);
+				if (statement->getType() == While) {
+					returnList.push_back(std::to_string(statementNumber));
+				}
+			}
+		}
+		else {
+			;
+		}
+	}
+	else { //check what variables are used by a procedure or statement number
+		if (outputType == "procedure") {
+			ProcedureTableProcedure* procedure = procedureTable->getProcedure(input);
+			for (int i = 0; i < procedure->getUsesSize(); i++) {
+				int indexOfVariable = procedure->getUses(i);
+				std::string nameOfVariable = variableTable->getVariableUsingVariableIndexNumber(indexOfVariable)->getName();
+				returnList.push_back(nameOfVariable);
+			}
+		}
+		else if (outputType == "statement") {
+			int statementNumber = atoi(input.c_str());
+			StatementTableStatement* statement = statementTable->getStatementUsingStatementNumber(statementNumber);
+			for (int i = 0; i < statement->getUsesSize(); i++) {
+				int indexOfVariable = statement->getUses(i);
+				std::string nameOfVariable = variableTable->getVariableUsingVariableIndexNumber(indexOfVariable)->getName();
+				returnList.push_back(nameOfVariable);
+			}
+		}
+		else {
+			;
+		}
+	}
+}
+
 std::vector<int> PKB::PQLPattern(NAME leftVariable, std::string rightExpression, bool isUnderscored) {
 	// @todo Wait for Alan and Chun How's confirmation
 	std::vector<int> lol;

@@ -35,3 +35,19 @@ bool VariableTableVariable::addProcedureModifies(int procedureNumber) {
 bool VariableTableVariable::addProcedureUses(int procedureNumber) {
 	return addIntoVector(procedureNumber, procedureUses);
 }
+
+int VariableTableVariable::getProceduresUses(int index) {
+	procedureUses->at(index);
+}
+
+int VariableTableVariable::getProceduresUsesSize() {
+	return procedureUses->size();
+}
+
+int VariableTableVariable::getStatementUses(int index) {
+	statementUses->at(index);
+}
+
+int VariableTableVariable::getStatementUsesSize() {
+	return statementUses->size();
+}
