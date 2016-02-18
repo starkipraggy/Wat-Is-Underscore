@@ -6,7 +6,7 @@ SPA::SPA() {
 }
 
 /*Functions*/
-void SPA::processSimpleSourceFile(std::string sourceFile){
+void SPA::processSimpleSourceFile(std::string sourceFile) {
 	sp->processSimple(sourceFile);
 	sp->processLine();
 

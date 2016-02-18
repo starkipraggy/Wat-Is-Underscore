@@ -16,7 +16,7 @@ static std::vector<std::string> tokens;
 
 int state = 0;
 bool isErrorDetected = false;
-//pkb = new PKB();
+PKB* pkb = PKB::getInstance();
 
 SimpleParser::SimpleParser() {
 	fio = new FileIO();
@@ -86,6 +86,11 @@ void SimpleParser::processLine() {
 		isErrorDetected = true;
 	}
 	else {
+
+		bool isEquals = false;
+		bool isOperator = false;
+		std::string leftStr;
+
 		for (int i = 0;i < tokens.size();i++) {
 			switch (checkWord(tokens[i])) {
 			case 1:
@@ -95,7 +100,7 @@ void SimpleParser::processLine() {
 				i++;
 				std::cout << "ProcName = " << tokens[i];
 				std::cout << std::endl;
-				//PKB::ProcedureStart(tokens[i]);
+				pkb->ProcedureStart(tokens[i]);
 				i++;
 				std::cout << "OpeningBrace = " << tokens[i];
 				std::cout << std::endl;
@@ -122,11 +127,11 @@ void SimpleParser::processLine() {
 				i++;
 				std::cout << "while var = " << tokens[i];
 				std::cout << std::endl;
-				// PKB::WhileStart(tokens[i]);
+				pkb->WhileStart(tokens[i]);
 				i++;
 				std::cout << "OpeningBrace = " << tokens[i];
 				std::cout << std::endl;
-				
+
 				break;
 			case 3:
 				// first word is if
@@ -139,19 +144,19 @@ void SimpleParser::processLine() {
 			case 4:
 				// assign statement
 				// eats tokens until semi colon
-				std::cout << "Cse 4 = ";
+				std::cout << "Start Assignment ";
 				std::cout << std::endl;
 				if (procState == 0) {
 					isErrorDetected = true;
 					break;
 				}
 
-				bool isEquals = false;
-				bool isOperator = false;
+
 
 				for (i;i < tokens.size();i++) {
-					switch (isCharAnOperator(tokens[j])) {
+					switch (isCharAnOperator(tokens[i])) {
 					case 1:
+						isEquals = true;
 						break;
 					case 2:
 						break;
@@ -161,11 +166,22 @@ void SimpleParser::processLine() {
 						break;
 					case 5:
 						break;
+					case 0:
+						if (isEquals == false && isOperator == false) {
+							leftStr = tokens[i];
+						}
+						else if (isEquals == false && isOperator == false) {
+
+						}
+
+						break;
 					default:
 						break;
 					}
 
 				}
+
+
 				break;
 			default:
 				std::cout << "Cse DEf = ";
@@ -177,7 +193,7 @@ void SimpleParser::processLine() {
 			if (isErrorDetected == true) {
 				break;
 			}
-			
+
 		}
 	}
 
@@ -201,7 +217,7 @@ int SimpleParser::checkWord(std::string word) {
 }
 
 int SimpleParser::isCharABrace(std::string cChar) {
-	if (cChar.compare("{")==0) {
+	if (cChar.compare("{") == 0) {
 		return 1;
 	}
 	else if (cChar.compare("}")) {
@@ -216,16 +232,16 @@ int SimpleParser::isCharAnOperator(std::string cChar) {
 	if (cChar.compare("=") == 0) {
 		return 1;
 	}
-	else if (cChar.compare("+")) {
+	else if (cChar.compare("+") == 0) {
 		return 2;
 	}
-	else if (cChar.compare("*")) {
+	else if (cChar.compare("*") == 0) {
 		return 3;
 	}
-	else if (cChar.compare("-")) {
+	else if (cChar.compare("-") == 0) {
 		return 4;
 	}
-	else if (cChar.compare(";")) {
+	else if (cChar.compare(";") == 0) {
 		return 5;
 	}
 	else {
