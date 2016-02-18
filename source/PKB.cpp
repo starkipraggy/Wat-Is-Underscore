@@ -34,11 +34,17 @@ StatementTableStatement* PKB::newStatement() {
 	// Create a new statement in StatementTable with the index number
 	StatementTableStatement* currentStatement = statementTable->addStatement(numberOfStatements);
 
-	// Sets this statement's Follows and Parent relationship using the statement stack trace
-	currentStatement->setFollows(statementStackTrace->top());
+	// Sets this statement's Follows relationship using the statement stack trace
+	int beingFollowed = statementStackTrace->top();
+	currentStatement->setFollows(beingFollowed);
+	statementTable->getStatement(beingFollowed)->setFollowedBy(numberOfStatements);
+
+	// Sets this statement's Parent relationship using the statement stack trace
 	statementStackTrace->pop();
 	if (statementStackTrace->size() > 0) {
-		currentStatement->setParent(statementStackTrace->top());
+		int parent = statementStackTrace->top();
+		currentStatement->setParent(parent);
+		statementTable->getStatement(parent)->addChild(numberOfStatements);
 	}
 	statementStackTrace->push(numberOfStatements);
 
@@ -411,4 +417,9 @@ std::vector<int>* PKB::QueryPKBWithoutPatternFollowsParent(std::string queryType
 
 		}
 	}
+}
+
+std::vector<int>* PKB::QueryPKBPattern(NAME leftVariable, std::string rightExpression, bool isUnderscored) {
+	// @todo Wait for Alan and Chun How's confirmation
+	return NULL;
 }

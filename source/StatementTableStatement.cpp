@@ -6,12 +6,15 @@ StatementTableStatement::StatementTableStatement(int lineNumber, int index) {
 	type = Undefined;
 
 	follows = 0;
+	followedBy = 0;
 	parent = 0;
+	children = new std::vector<int>();
 	modifies = new std::vector<int>();
 	uses = new std::vector<int>();
 }
 
 StatementTableStatement::~StatementTableStatement() {
+	delete children;
 	delete modifies;
 	delete uses;
 }
@@ -32,8 +35,16 @@ void StatementTableStatement::setFollows(int follows) {
 	this->follows = follows;
 }
 
+void StatementTableStatement::setFollowedBy(int followedBy) {
+	this->followedBy = followedBy;
+}
+
 void StatementTableStatement::setParent(int parent) {
 	this->parent = parent;
+}
+
+void StatementTableStatement::addChild(int child) {
+	children->push_back(child);
 }
 
 bool StatementTableStatement::addModifies(int variableIndexNumber) {

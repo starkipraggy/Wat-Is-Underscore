@@ -19,7 +19,10 @@ private:
 
 	int follows;				/**< The statement number of the statement that this statement follows
 									 (this statement appears immediately after the one it follows) */
+	int followedBy;				/**< The statement number of the statement that this statement is followed
+									 (that statement appears immediately after this statement ) */
 	int parent;					/**< The statement number of the statement that is parent to this statement */
+	std::vector<int>* children;	/**< A list of the statement numbers of statements that have this statement as parent */
 	std::vector<int>* modifies;	/**< A list of the index numbers of variables that this statement modifies */
 	std::vector<int>* uses;		/**< A list of the index numbers of variables that this statement uses */
 public:
@@ -64,6 +67,14 @@ public:
 	*/
 	void setFollows(int follows);
 
+	//! Setter function for the statement number of the statement that is following this statement.
+	/*!
+		Setter function for the statement number of the statement that is following this statement; use this function to
+		assign the statement number of the statement that is following the statement that this object is reprensenting.
+		\param followedBy Statement number of the statement that is following this statement, or 0 if it does not have any.
+	*/
+	void setFollowedBy(int followedBy);
+
 	//! Setter function for the statement number of the parent of this statement.
 	/*!
 		Setter function for the statement number of the parent of this statement; use this function to
@@ -71,6 +82,13 @@ public:
 		\param parent Statement number of this statement's parent, or 0 if it does not have any.
 	*/
 	void setParent(int parent);
+
+	//! Allows the adding of statements that have this statement as a parent.
+	/*!
+		This function is used by the SIMPLE parser API to add statements that have this statement as a parent.
+		\param child The statement number of the statement that havs this statement as a parent.
+	*/
+	void addChild(int child);
 	
 	//! Allows the adding of variables that this statement modifies.
 	/*!
