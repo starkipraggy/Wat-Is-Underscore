@@ -35,16 +35,16 @@ StatementTableStatement* PKB::newStatement() {
 	StatementTableStatement* currentStatement = statementTable->addStatement(numberOfStatements);
 
 	// Sets this statement's Follows relationship using the statement stack trace
-	int beingFollowed = statementStackTrace->top();
+	StatementTableStatement* beingFollowed = statementTable->getStatement(statementStackTrace->top());
 	currentStatement->setFollows(beingFollowed);
-	statementTable->getStatement(beingFollowed)->setFollowedBy(numberOfStatements);
+	beingFollowed->setFollowedBy(numberOfStatements);
 
 	// Sets this statement's Parent relationship using the statement stack trace
 	statementStackTrace->pop();
 	if (statementStackTrace->size() > 0) {
-		int parent = statementStackTrace->top();
+		StatementTableStatement* parent = statementTable->getStatement(statementStackTrace->top());
 		currentStatement->setParent(parent);
-		statementTable->getStatement(parent)->addChild(numberOfStatements);
+		parent->addChild(numberOfStatements);
 	}
 	statementStackTrace->push(numberOfStatements);
 

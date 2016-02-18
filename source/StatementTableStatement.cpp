@@ -11,36 +11,60 @@ StatementTableStatement::StatementTableStatement(int lineNumber, int index) {
 	children = new std::vector<int>();
 	modifies = new std::vector<int>();
 	uses = new std::vector<int>();
+
+	parentStar = new std::vector<int>();
+	followsStar = new std::vector<int>();
 }
 
 StatementTableStatement::~StatementTableStatement() {
 	delete children;
 	delete modifies;
 	delete uses;
+
+	delete parentStar;
+	delete followsStar;
 }
 
 bool StatementTableStatement::hasParent() {
 	return (parent > 0);
 }
 
+bool StatementTableStatement::hasFollows() {
+	return (follows > 0);
+}
+
 int StatementTableStatement::getParent() {
-	return parent;
+	return parent->getIndex();
 }
 
 void StatementTableStatement::setType(TNodeType type) {
 	this->type = type;
 }
 
-void StatementTableStatement::setFollows(int follows) {
+void StatementTableStatement::setFollows(StatementTableStatement* follows) {
 	this->follows = follows;
+
+	followsStar->clear();
+	StatementTableStatement* stmt = this;
+	while (stmt->hasFollows()) {
+		stmt = stmt->follows;
+		followsStar->push_back(stmt->getIndex());
+	}
 }
 
 void StatementTableStatement::setFollowedBy(int followedBy) {
 	this->followedBy = followedBy;
 }
 
-void StatementTableStatement::setParent(int parent) {
+void StatementTableStatement::setParent(StatementTableStatement* parent) {
 	this->parent = parent;
+
+	parentStar->clear();
+	StatementTableStatement* stmt = this;
+	while (stmt->hasParent()) {
+		stmt = stmt->parent;
+		parentStar->push_back(stmt->getIndex());
+	}
 }
 
 void StatementTableStatement::addChild(int child) {
@@ -64,5 +88,5 @@ std::vector<int>* StatementTableStatement::getModifies() {
 }
 
 int StatementTableStatement::getFollows() {
-	return follows;
+	return follows->getIndex();
 }
