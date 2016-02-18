@@ -378,6 +378,9 @@ std::vector<int>* PKB::QueryPKBWithoutPatternFollowsParent(std::string queryType
 		else { //check statements that has follows(input, s)
 			StatementTableStatement* statement = statementTable->getStatement(input);
 			int follows = statement->getFollows();
+			std::vector<int>* returnList = new std::vector<int>();
+			returnList->push_back(follows);
+			return returnList;
 		}
 	}
 	else if (queryType == "follows*") {
@@ -395,6 +398,9 @@ std::vector<int>* PKB::QueryPKBWithoutPatternFollowsParent(std::string queryType
 		else { //check statements that has parent(input, s)
 			StatementTableStatement* statement = statementTable->getStatement(input);
 			int parent = statement->getParent();
+			std::vector<int>* returnList = new std::vector<int>();
+			returnList->push_back(parent);
+			return returnList;
 		}
 	}
 	else { //parent* relationship
