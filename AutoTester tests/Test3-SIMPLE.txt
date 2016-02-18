@@ -1,0 +1,12 @@
+Procedure Meow {
+    a = b + c + d + e + f;
+    while i {
+        a = b;
+        b = c;
+        c = d;
+        d = a;
+        while j {
+            i = i - 1;
+            while k {
+            j = j - 1; }}}
+    c = c + d * a; }

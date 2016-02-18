@@ -1,0 +1,40 @@
+stmt s, s1; assign a, a1, a2; while w; if ifstmt; procedure p; variable v; constant c; prog_line n, n1, n2;
+
+Select a such that Uses(a, "a");
+Select s such that Uses(s, "c");
+Select v such that Uses(1, v);
+
+Select s such that Modifies(s, "c");
+Select v such that Modifies(s, v);
+Select a such that Modifies(a, "a");
+
+Select a such that Follows(2, a);
+Select s such that Follows(1, a);
+Select s such that Follows(7, a);
+
+Select a such that Follows*(3, a);
+Select w such that Follows*(w, a);
+Select s such that Follows*(s, 1);
+
+Select s such that Parent(1, s);
+Select s such that Parent(s, s1);
+Select a such that Parent(a, 7);
+
+Select w such that Parent*(w, 11);
+Select w such that Parent*(w, a);
+Select a such that Parent*(w, a);
+
+Select a pattern a(_, _"c+d"_);
+Select a pattern a(_, _"b + c + d"_);
+Select s pattern a(_, "d * a");
+
+Select w such that Parent(w, s) and Parent(s, s1) pattern w(i, _);
+Select a such that Uses(a, "b") and Parent(s, a) pattern a("a", _);
+Select s such that Uses(s, "b") and Modifies(s, "c") pattern s("i", _);
+Select s such that Uses(s, v) and Modifies(s, v) pattern s(_, _"d"_);
+Select BOOLEAN such that Uses(7, "j") and Parent(s, 7) pattern a(_,"a");
+Select ifstmt such that Follows*(3, s) and Parent(w, 11) pattern a("c", _);
+Select s such that Modifies(s, j) and Uses(s, j) pattern s(j, _);
+Select s such that Uses(s,k) and Follows*(s,s1);
+Select a such that Modifies(a, "b") pattern s("a", _);
+Select v such that Modifies(s, v) and Follows(s1, s) pattern s1(v, _);
