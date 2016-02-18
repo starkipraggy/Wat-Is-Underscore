@@ -12,11 +12,11 @@ namespace UnitTesting {
 		Preprocessor p;
 
 		//temp
-		Variable select;
+		Ref select;
 		vector<Clause*> clauses;
 
 
-		Variable placeholderVar, partOfExpressionVar, exprVar, integerVar, 
+		Ref placeholderVar, partOfExpressionVar, exprVar, integerVar,
 			stmtVar, assignVar, whileVar, variableVar, constantVar, progLineVar, 
 			invalidVar;
 		Clause* usesClause, patternClause;
@@ -29,16 +29,16 @@ namespace UnitTesting {
 	
 
 		TEST_METHOD_INITIALIZE(build) {
-			placeholderVar = Variable("_", "placeholder");
-			partOfExpressionVar = Variable("_\"abc\"_", "part_of_expr"); //only pattern
-			exprVar = Variable("\"abc\"", "expr");
-			integerVar = Variable("123", "integer");
-			stmtVar = Variable("s", "stmt");
-			assignVar = Variable("a", "assign");
-			whileVar = Variable("w", "while");
-			variableVar = Variable("v", "variable");
-			constantVar = Variable("c", "constant");
-			progLineVar = Variable("p", "prog_line");
+			placeholderVar = Ref("_", "placeholder");
+			partOfExpressionVar = Ref("_\"abc\"_", "part_of_expr"); //only pattern
+			exprVar = Ref("\"abc\"", "expr");
+			integerVar = Ref("123", "integer");
+			stmtVar = Ref("s", "stmt");
+			assignVar = Ref("a", "assign");
+			whileVar = Ref("w", "while");
+			variableVar = Ref("v", "variable");
+			constantVar = Ref("c", "constant");
+			progLineVar = Ref("p", "prog_line");
 
 			usesClause = new Clause("USES", assignVar, constantVar);
 			patternClause = PatternClause("PATTERN", placeholderVar, partOfExpressionVar, assignVar);
