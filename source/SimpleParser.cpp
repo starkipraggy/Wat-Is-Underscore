@@ -16,8 +16,6 @@ static std::vector<std::string> tokens;
 
 int state = 0;
 bool isErrorDetected = false;
-PKB* pkb;
-pkb = PKB::getInstance();
 
 SimpleParser::SimpleParser() {
 	fio = new FileIO();
@@ -45,7 +43,7 @@ void SimpleParser::processSimple(std::string sourceFile) {
 			// Tokens are by per line basis
 			tokens.push_back(buf);
 		}
-		for (int i = 0; i < tokens.size(); ++i) {
+		for (unsigned int i = 0; i < tokens.size(); ++i) {
 			std::cout << tokens[i] << ' ';
 		}
 		std::cout << std::endl;
@@ -56,8 +54,8 @@ void SimpleParser::processSimple(std::string sourceFile) {
 std::string SimpleParser::addSpaceToString(std::string input) {
 	std::vector<std::string> dictionary = { "{", "}", "=", "+", "-" , "*" ,";" };
 
-	for (int i = 0;i < dictionary.size(); i++) {
-		int pos = 0;
+	for (unsigned int i = 0;i < dictionary.size(); i++) {
+		unsigned int pos = 0;
 		int counter = 0;
 		do {
 			pos = input.find(dictionary[i], pos + counter);
@@ -91,7 +89,7 @@ void SimpleParser::processLine() {
 
 		
 
-		for (int i = 0;i < tokens.size();i++) {
+		for (unsigned int i = 0; i < tokens.size(); i++) {
 			switch (checkWord(tokens[i])) {
 			case 1:
 				// first word is procedure
@@ -100,7 +98,7 @@ void SimpleParser::processLine() {
 				i++;
 				std::cout << "ProcName = " << tokens[i];
 				std::cout << std::endl;
-				//pkb->ProcedureStart(tokens[i]);
+				PKB::getInstance()->ProcedureStart(tokens[i]);
 				i++;
 				std::cout << "OpeningBrace = " << tokens[i];
 				std::cout << std::endl;
@@ -127,7 +125,7 @@ void SimpleParser::processLine() {
 				i++;
 				std::cout << "while var = " << tokens[i];
 				std::cout << std::endl;
-				//pkb->WhileStart(tokens[i]);
+				PKB::getInstance()->WhileStart(tokens[i]);
 				i++;
 				std::cout << "OpeningBrace = " << tokens[i];
 				std::cout << std::endl;
@@ -169,7 +167,7 @@ void SimpleParser::processLine() {
 
 }
 
-int SimpleParser::checkAssign(int position) {
+int SimpleParser::checkAssign(unsigned int position) {
 	std::cout << "Start Assignment ";
 	std::cout << std::endl;
 	
