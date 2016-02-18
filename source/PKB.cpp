@@ -488,6 +488,7 @@ std::vector<std::string> PKB::PQLFollows(int statementNumber, int argumentPositi
 	else {
 		;
 	}
+	return returnList;
 }
 
 std::vector<std::string> PKB::PQLFollowsStar(int statementNumber, int argumentPosition) {
@@ -518,6 +519,7 @@ std::vector<std::string> PKB::PQLFollowsStar(int statementNumber, int argumentPo
 	else {
 		;
 	}
+	return returnList;
 }
 
 std::vector<std::string> PKB::PQLParent(int statementNumber, int argumentPosition) {
@@ -546,6 +548,7 @@ std::vector<std::string> PKB::PQLParent(int statementNumber, int argumentPositio
 	else {
 		;
 	}
+	return returnList;
 }
 
 std::vector<std::string> PKB::PQLParentStar(int statementNumber, int argumentPosition) {
@@ -576,6 +579,7 @@ std::vector<std::string> PKB::PQLParentStar(int statementNumber, int argumentPos
 	else {
 		;
 	}
+	return returnList;
 }
 
 std::vector<int> PKB::PQLPattern(NAME leftVariable, std::string rightExpression, bool isUnderscored) {
