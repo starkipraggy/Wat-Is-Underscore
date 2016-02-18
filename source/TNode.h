@@ -19,7 +19,10 @@ enum TNodeType {
 	VariableName,
 	IntegerValue,
 	OperatorPlus,
-	Call // For statements that call a procedure
+	Call, // For statements that call a procedure
+	Stmt,
+	Const,
+	Prog_line
 };
 
 class TNode
