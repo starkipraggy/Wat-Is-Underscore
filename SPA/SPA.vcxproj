@@ -71,7 +71,6 @@
     <ClInclude Include="..\source\VariableTableVariable.h" />
     <ClInclude Include="..\source\AST.h" />
     <ClInclude Include="..\source\DataStructureObject.h" />
-    <ClInclude Include="ExpressionToken.h" />
     <ClInclude Include="..\source\Preprocessor\PQLController.h" />
     <ClInclude Include="..\source\Preprocessor\Projector.h" />
   </ItemGroup>

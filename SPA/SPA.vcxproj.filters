@@ -82,15 +82,11 @@
     <ClCompile Include="..\source\Preprocessor\QueryEvaluator.cpp">
       <Filter>Source\Preprocessor</Filter>
     </ClCompile>
-    <ClCompile Include="Projector.cpp">
-      <Filter>Source\Preprocessor</Filter>
-    </ClCompile>
-    <ClCompile Include="PQLController.cpp">
-      <Filter>Source\Preprocessor</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\Preprocessor\Ref.cpp">
       <Filter>Source\Preprocessor</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\Preprocessor\PQLController.cpp" />
+    <ClCompile Include="..\source\Preprocessor\Projector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\FileIO.h">
@@ -174,18 +170,11 @@
     <ClInclude Include="..\source\Preprocessor\QueryEvaluator.h">
       <Filter>Header\Preprocessor</Filter>
     </ClInclude>
-    <ClInclude Include="Projector.h">
-      <Filter>Header\Preprocessor</Filter>
-    </ClInclude>
-    <ClInclude Include="PQLController.h">
-      <Filter>Header\Preprocessor</Filter>
-    </ClInclude>
-    <ClInclude Include="ExpressionToken.h">
-      <Filter>Header\PKB</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\Preprocessor\Ref.h">
       <Filter>Header\Preprocessor</Filter>
     </ClInclude>
+    <ClInclude Include="..\source\Preprocessor\PQLController.h" />
+    <ClInclude Include="..\source\Preprocessor\Projector.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header">
