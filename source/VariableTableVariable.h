@@ -33,7 +33,7 @@ public:
 
 	//! Getter function for the name of the variable.
 	/*!
-		Getter function for the name of the variable; use this function to retrieve the name of the variable that this object is reprensenting.
+		Getter function for the name of the variable; use this function to retrieve the name of the variable that this object is representing.
 		\return The name of the variable that this object is representing has.
 	*/
 	NAME getName();
@@ -70,9 +70,83 @@ public:
 	*/
 	bool addProcedureUses(int procedureNumber);
 	
+	//! Getter function for members of the procedureUses vector.
+	/*!
+		Getter function for the members of the procedureUses vector; use this function to
+		retrieve the individual procedure index numbers that uses the variable.
+		As this function requires the passing of vector index number, which is generally
+		unavailable outside, this function is recommended to be used only with the iteration
+		of the entire vector.
+		\param index The index number of the member of the procedure inside the vector.
+		\return The index number of the procedures in the procedureUses vector.
+	*/
 	int getProceduresUses(int index);
 	
+	//! Getter function for the size of the procedureUses vector.
+	/*!
+		Getter function for the size of the procedureUses vector; use this function to
+		retrieve the number of procedures that uses this variable.
+		\return The number of procedures that uses this variable.
+	*/
 	int getProceduresUsesSize();
+	
+	//! Getter function for members of the procedureModifies vector.
+	/*!
+		Getter function for the members of the procedureModifies vector; use this function to
+		retrieve the individual procedure index numbers that modifies the variable.
+		As this function requires the passing of vector index number, which is generally
+		unavailable outside, this function is recommended to be used only with the iteration
+		of the entire vector.
+		\param index The index number of the member of the procedure inside the vector.
+		\return The index number of the procedures in the procedureModifies vector.
+	*/
+	int getProceduresModifies(int index);
+
+	//! Getter function for the size of the procedureModifies vector.
+	/*!
+		Getter function for the size of the procedureModifies vector; use this function to
+		retrieve the number of procedures that modifies this variable.
+		\return The number of procedures that modifies this variable.
+	*/
+	int getProceduresModifiesSize();
+	
+	//! Getter function for members of the statementUses vector.
+	/*!
+		Getter function for the members of the statementUses vector; use this function to
+		retrieve the individual statement numbers that uses the variable.
+		As this function requires the passing of vector index number, which is generally
+		unavailable outside, this function is recommended to be used only with the iteration
+		of the entire vector.
+		\param index The index number of the member of the statement inside the vector.
+		\return The statement number of the statement in the statementUses vector.
+	*/
 	int getStatementUses(int index);
+
+	//! Getter function for the size of the statementUses vector.
+	/*!
+		Getter function for the size of the statementUses vector; use this function to
+		retrieve the number of statements that uses this variable.
+		\return The number of statements that uses this variable.
+	*/
 	int getStatementUsesSize();
+
+	//! Getter function for members of the statementModifies vector.
+	/*!
+		Getter function for the members of the statementModifies vector; use this function to
+		retrieve the individual statement numbers that modifies the variable.
+		As this function requires the passing of vector index number, which is generally
+		unavailable outside, this function is recommended to be used only with the iteration
+		of the entire vector.
+		\param index The index number of the member of the statement inside the vector.
+		\return The statement number of the statement in the statementModifies vector.
+	*/
+	int getStatementModifies(int index);
+
+	//! Getter function for the size of the statementModifies vector.
+	/*!
+		Getter function for the size of the statementModifies vector; use this function to
+		retrieve the number of statements that modifies this variable.
+		\return The number of statements that modifies this variable.
+	*/
+	int getStatementModifiesSize();
 };

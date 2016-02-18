@@ -397,6 +397,187 @@ std::vector<std::string> PKB::PQLUses(std::string input, int argumentPosition, s
 	}
 }
 
+std::vector<std::string> PKB::PQLModifies(std::string input, int argumentPosition, std::string outputType) {
+	std::vector<std::string> returnList;
+	VariableTableVariable* variableToBeChecked = variableTable->getVariableUsingName(input);
+	if (argumentPosition == 1) { //check which procedure, assignment, while or statement number modifies a variable
+		if (outputType == "procedure") { //
+			for (int i = 0; i < variableToBeChecked->getProceduresModifiesSize(); i++) {
+				int procedureIndex = variableToBeChecked->getProceduresModifies(i);
+				std::string procedureName = procedureTable->getProcedure(procedureIndex)->getName();
+				returnList.push_back(procedureName);
+			}
+		}
+		else if (outputType == "statement") {
+			for (int i = 0; i < variableToBeChecked->getStatementModifiesSize(); i++) {
+				int statementNumber = variableToBeChecked->getStatementModifies(i);
+				returnList.push_back(std::to_string(statementNumber));
+			}
+		}
+		else if (outputType == "assign") {
+			for (int i = 0; i < variableToBeChecked->getStatementModifiesSize(); i++) {
+				int statementNumber = variableToBeChecked->getStatementModifies(i);
+				StatementTableStatement* statement = statementTable->getStatementUsingStatementNumber(statementNumber);
+				if (statement->getType() == Assign) {
+					returnList.push_back(std::to_string(statementNumber));
+				}
+			}
+		}
+		else if (outputType == "while") {
+			for (int i = 0; i < variableToBeChecked->getStatementModifiesSize(); i++) {
+				int statementNumber = variableToBeChecked->getStatementModifies(i);
+				StatementTableStatement* statement = statementTable->getStatementUsingStatementNumber(statementNumber);
+				if (statement->getType() == While) {
+					returnList.push_back(std::to_string(statementNumber));
+				}
+			}
+		}
+		else {
+			;
+		}
+	}
+	else { //check what variables are used by a procedure or statement number
+		if (outputType == "procedure") {
+			ProcedureTableProcedure* procedure = procedureTable->getProcedure(input);
+			for (int i = 0; i < procedure->getModifiesSize(); i++) {
+				int indexOfVariable = procedure->getModifies(i);
+				std::string nameOfVariable = variableTable->getVariableUsingVariableIndexNumber(indexOfVariable)->getName();
+				returnList.push_back(nameOfVariable);
+			}
+		}
+		else if (outputType == "statement") {
+			int statementNumber = atoi(input.c_str());
+			StatementTableStatement* statement = statementTable->getStatementUsingStatementNumber(statementNumber);
+			for (int i = 0; i < statement->getModifiesSize(); i++) {
+				int indexOfVariable = statement->getModifies(i);
+				std::string nameOfVariable = variableTable->getVariableUsingVariableIndexNumber(indexOfVariable)->getName();
+				returnList.push_back(nameOfVariable);
+			}
+		}
+		else {
+			;
+		}
+	}
+	if (returnList.empty()) {
+		returnList.push_back("none");
+	}
+	return returnList;
+}
+
+std::vector<std::string> PKB::PQLFollows(int statementNumber, int argumentPosition) {
+	std::vector<std::string> returnList;
+	StatementTableStatement* statement = statementTable->getStatementUsingStatementNumber(statementNumber);
+	if (argumentPosition == 1) { //check followed by
+		int followedBy = statement->getFollowedBy();
+		if (followedBy == 0) { //not followed by anyone
+			returnList.push_back("none");
+		}
+		else { //followed by someone
+			returnList.push_back(std::to_string(followedBy));
+		}
+	}
+	else if (argumentPosition == 2) { //check follows
+		int follows = statement->getFollows();
+		if (follows == 0) { //not following anyone
+			returnList.push_back("none");
+		}
+		else { //following someone
+			returnList.push_back(std::to_string(follows));
+		}
+	}
+	else {
+		;
+	}
+}
+
+std::vector<std::string> PKB::PQLFollowsStar(int statementNumber, int argumentPosition) {
+	std::vector<std::string> returnList;
+	StatementTableStatement* statement = statementTable->getStatementUsingStatementNumber(statementNumber);
+	if (argumentPosition == 1) { //check followedBy*
+		/*if (statement->getFollowedByStarSize() == 1 && statement->getFollowedByStar(0) == 0) { //not followedBy*
+			returnList.push_back("none");
+		}
+		else { //followedBy* relationship
+			for (int i = 0; i < statement->getFollowedByStarSize(); i++) {
+				int followedByStarStmtNumber = statement->getFollowedByStar(i);
+				returnList.push_back(std::to_string(followedByStarStmtNumber));
+			}
+		}*/
+	}
+	else if (argumentPosition == 2) { //check follows*
+		if (statement->getFollowsStarSize() == 1 && statement->getFollowsStar(0) == 0) { //not follows* anyone
+			returnList.push_back("none");
+		}
+		else { //have follows* relation
+			for (int i = 0; i < statement->getFollowsStarSize(); i++) {
+				int followsStarStmtNumber = statement->getFollowsStar(i);
+				returnList.push_back(std::to_string(followsStarStmtNumber));
+			}
+		}
+	}
+	else {
+		;
+	}
+}
+
+std::vector<std::string> PKB::PQLParent(int statementNumber, int argumentPosition) {
+	std::vector<std::string> returnList;
+	StatementTableStatement* statement = statementTable->getStatementUsingStatementNumber(statementNumber);
+	if (argumentPosition == 1) { //find parent
+		int parent = statement->getParent();
+		if (parent == 0) { //no parent
+			returnList.push_back("none");
+		}
+		else { //have parent
+			returnList.push_back(std::to_string(parent));
+		}
+	}
+	else if (argumentPosition == 2) { //find children
+		if (statement->getChildrenSize() == 1 && statement->getChildren(0) == 0) { //no children
+			returnList.push_back("none");
+		}
+		else { //have children
+			for (int i = 0; i < statement->getChildrenSize(); i++) {
+				int childStmtNumber = statement->getChildren(i);
+				returnList.push_back(std::to_string(childStmtNumber));
+			}
+		}
+	}
+	else {
+		;
+	}
+}
+
+std::vector<std::string> PKB::PQLParentStar(int statementNumber, int argumentPosition) {
+	std::vector<std::string> returnList;
+	StatementTableStatement* statement = statementTable->getStatementUsingStatementNumber(statementNumber);
+	if (argumentPosition == 1) { //find parent*
+		if (statement->getParentStarSize() == 1 && statement->getParentStar(0) == 0) { //no parent*
+			returnList.push_back("none");
+		}
+		else { //have parent*
+			for (int i = 0; i < statement->getParentStarSize(); i++) {
+				int parentStarStmtNumber = statement->getParentStar(i);
+				returnList.push_back(std::to_string(parentStarStmtNumber));
+			}
+		}
+	}
+	else if (argumentPosition == 2) { //find children*
+		/*if (statement->getChildrenStarSize() == 1 && statement->getChildrenStar(0) == 0) { //no children
+			returnList.push_back("none");
+		}
+		else { //have children*
+			for (int i = 0; i < statement->getChildrenStarSize(); i++) {
+				int childStarStmtNumber = statement->getChildrenStar(i);
+				returnList.push_back(std::to_string(childStarStmtNumber));
+			}
+		}*/
+	}
+	else {
+		;
+	}
+}
+
 std::vector<int> PKB::PQLPattern(NAME leftVariable, std::string rightExpression, bool isUnderscored) {
 	// @todo Wait for Alan and Chun How's confirmation
 	std::vector<int> lol;

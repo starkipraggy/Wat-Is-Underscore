@@ -59,7 +59,7 @@ public:
 	//! Getter function for the statement number of the parent of this statement.
 	/*!
 		Getter function for the statement number of the parent of this statement; use this function to
-		retrieve the statement number of the parent of the statement that this object is reprensenting.
+		retrieve the statement number of the parent of the statement that this object is representing.
 		\return Statement number of this statement's parent, or 0 if it does not have any.
 	*/
 	int getParent();
@@ -67,7 +67,7 @@ public:
 	//! Setter function for the type of the statement that this object is representing.
 	/*!
 		Setter function for the type of the statement that this object is representing; use
-		this function to assign the type of the statement that this object is reprensenting.
+		this function to assign the type of the statement that this object is representing.
 		\param type TNodeType::Undefined, TNodeType::Assign, TNodeType::If, TNodeType::While, or TNodeType::Call
 	*/
 	void setType(TNodeType type);
@@ -75,7 +75,7 @@ public:
 	//! Setter function for the statement number of the statement that this statement is following.
 	/*!
 		Setter function for the statement number of the statement that this statement is following; use this function to
-		assign the statement number of the statement that the statement that this object is reprensenting is following.
+		assign the statement number of the statement that the statement that this object is representing is following.
 		\param follows Pointer to the statement that this statement is following, or 0 if it does not have any.
 	*/
 	void setFollows(StatementTableStatement* follows);
@@ -83,7 +83,7 @@ public:
 	//! Setter function for the statement number of the statement that is following this statement.
 	/*!
 		Setter function for the statement number of the statement that is following this statement; use this function to
-		assign the statement number of the statement that is following the statement that this object is reprensenting.
+		assign the statement number of the statement that is following the statement that this object is representing.
 		\param followedBy Statement number of the statement that is following this statement, or 0 if it does not have any.
 	*/
 	void setFollowedBy(int followedBy);
@@ -91,7 +91,7 @@ public:
 	//! Setter function for the statement number of the parent of this statement.
 	/*!
 		Setter function for the statement number of the parent of this statement; use this function to
-		assign the statement number of the parent of the statement that this object is reprensenting.
+		assign the statement number of the parent of the statement that this object is representing.
 		\param parent Pointer to this statement's parent, or 0 if it does not have any.
 	*/
 	void setParent(StatementTableStatement* parent);
@@ -122,10 +122,18 @@ public:
 	//! Getter function for the statement number of the follows of this statement.
 	/*!
 		Getter function for the statement number of the follows of this statement; use this function to
-		retrieve the statement number of the follows of the statement that this object is reprensenting.
+		retrieve the statement number of the follows of the statement that this object is representing.
 		\return Statement number of this statement's follows, or 0 if it does not have any.
 	*/
 	int getFollows();
+
+	//! Getter function for the statement number of the followedBy of this statement.
+	/*!
+		Getter function for the statement number of the followedBy of this statement; use this function to
+		retrieve the statement number of the followedBy of the statement that this object is representing.
+		\return Statement number of this statement's follows, or 0 if it does not have any.
+	*/
+	int getFollowedBy();
 
 	//! Getter function for the type of this statement.
 	/*!
@@ -135,8 +143,104 @@ public:
 	*/
 	TNodeType getType();
 
+	//! Getter function for members of the uses vector.
+	/*!
+		Getter function for the members of the uses vector; use this function to
+		retrieve the individual variable index numbers that is used by this statement.
+		As this function requires the passing of vector index number, which is generally
+		unavailable outside, this function is recommended to be used only with the iteration
+		of the entire vector.
+		\param index The index number of the member of the variable inside the vector.
+		\return The index number of the variables in the uses vector.
+	*/
 	int getUses(int index);
 
+	//! Getter function for the size of the uses vector.
+	/*!
+		Getter function for the size of the uses vector; use this function to
+		retrieve the number of variables that this statement uses.
+		\return The number of variables that this statement uses.
+	*/
 	int getUsesSize();
+
+	//! Getter function for members of the modifies vector.
+	/*!
+		Getter function for the members of the modifies vector; use this function to
+		retrieve the individual variable index numbers that is modified by this statement.
+		As this function requires the passing of vector index number, which is generally
+		unavailable outside, this function is recommended to be used only with the iteration
+		of the entire vector.
+		\param index The index number of the member of the variable inside the vector.
+		\return The index number of the variables in the modifies vector.
+	*/
+	int getModifies(int index);
+
+	//! Getter function for the size of the modifies vector.
+	/*!
+		Getter function for the size of the modifies vector; use this function to
+		retrieve the number of variables that this statement modifies.
+		\return The number of variables that this statement modifies.
+	*/
+	int getModifiesSize();
+
+	//! Getter function for members of the followsStar vector.
+	/*!
+		Getter function for the members of the followsStar vector; use this function to
+		retrieve the individual statement numbers that follows* this statement.
+		As this function requires the passing of vector index number, which is generally
+		unavailable outside, this function is recommended to be used only with the iteration
+		of the entire vector.
+		\param index The index number of the member of the statement inside the vector.
+		\return The statement number of the statement in the followsStar vector.
+	*/
+	int getFollowsStar(int index);
+
+	//! Getter function for the size of the followsStar vector.
+	/*!
+		Getter function for the size of the followsStar vector; use this function to
+		retrieve the number of statements that follows* this statement.
+		\return The number of statements that follows* this statement.
+	*/
+	int getFollowsStarSize();
+
+	//! Getter function for members of the children vector.
+	/*!
+		Getter function for the members of the children vector; use this function to
+		retrieve the individual statement numbers that are children of this statement.
+		As this function requires the passing of vector index number, which is generally
+		unavailable outside, this function is recommended to be used only with the iteration
+		of the entire vector.
+		\param index The index number of the member of the statement inside the vector.
+		\return The statement number of the statement in the children vector.
+	*/
+	int getChildren(int index);
+
+	//! Getter function for the size of the children vector.
+	/*!
+		Getter function for the size of the children vector; use this function to
+		retrieve the number of statements that are children of this statement.
+		\return The number of statements that are children of this statement.
+	*/
+	int getChildrenSize();
+
+	//! Getter function for members of the parentStar vector.
+	/*!
+		Getter function for the members of the parentStar vector; use this function to
+		retrieve the individual statement numbers that are parent* of this statement.
+		As this function requires the passing of vector index number, which is generally
+		unavailable outside, this function is recommended to be used only with the iteration
+		of the entire vector.
+		\param index The index number of the member of the statement inside the vector.
+		\return The statement number of the statement in the parentStar vector.
+	*/
+	int getParentStar(int index);
+
+	//! Getter function for the size of the parentStar vector.
+	/*!
+		Getter function for the size of the parentStar vector; use this function to
+		retrieve the number of statements that are parent* of this statement.
+		\return The number of statements that are parent* of this statement.
+	*/
+	int getParentStarSize();
 
 };

@@ -31,7 +31,7 @@ public:
 	//! Getter function for the index number of the item.
 	/*!
 		Getter function for the index number of the item; use this function
-		to retrieve the index number of the item that this object is reprensenting.
+		to retrieve the index number of the item that this object is representing.
 		\return The index number of the variable that this item is representing has.
 	*/
 	int getIndex();

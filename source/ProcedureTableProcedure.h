@@ -41,7 +41,7 @@ public:
 	//! Getter function for the name of the procedure.
 	/*!
 		Getter function for the name of the procedure; use this function to
-		retrieve the name of the procedure that this object is reprensenting.
+		retrieve the name of the procedure that this object is representing.
 		\return The name of the procedure that this object is representing has.
 	*/
 	std::string getName();
@@ -111,27 +111,65 @@ public:
 
 	//! Allows the adding of variables that this procedure uses.
 	/*!
-	This function is used by the SIMPLE parser API to add variables that this procedure uses.
-	\param variableIndexNumber The index number of the variable that this procedure uses.
-	\return True if this variable is successfully added, and false if this variable is already inside.
+		This function is used by the SIMPLE parser API to add variables that this procedure uses.
+		\param variableIndexNumber The index number of the variable that this procedure uses.
+		\return True if this variable is successfully added, and false if this variable is already inside.
 	*/
 	bool addUses(int variableIndexNumber);
 
 	//! Allows the adding of procedures that calls this procedure.
 	/*!
-	This function is used by the SIMPLE parser API to add procedures that call this procedure.
-	\param procedureIndexNumber The index number of the procedure that call this procedure.
-	\return True if this procedure is successfully added, and false if this procedure is already inside.
+		This function is used by the SIMPLE parser API to add procedures that call this procedure.
+		\param procedureIndexNumber The index number of the procedure that call this procedure.
+		\return True if this procedure is successfully added, and false if this procedure is already inside.
 	*/
 	bool addProcedureCalls(ProcedureTableProcedure* procedure);
 
 	//! Allows the adding of statements that calls this procedure.
 	/*!
-	This function is used by the SIMPLE parser API to add statements that call this procedure.
-	\param statementIndexNumber The index number of the statement that call this procedure.
-	\return True if this statement is successfully added, and false if this statement is already inside.
+		This function is used by the SIMPLE parser API to add statements that call this procedure.
+		\param statementIndexNumber The index number of the statement that call this procedure.
+		\return True if this statement is successfully added, and false if this statement is already inside.
 	*/
 	bool addStatementsCalls(int statementIndexNumber);
+	
+	//! Getter function for members of the uses vector.
+	/*!
+		Getter function for the members of the uses vector; use this function to
+		retrieve the individual variable index numbers that this procedure uses.
+		As this function requires the passing of vector index number, which is generally
+		unavailable outside, this function is recommended to be used only with the iteration
+		of the entire vector.
+		\param index The index number of the member of the uses variable inside the vector.
+		\return The index number of the variable in the uses vector.
+	*/
 	int getUses(int index);
+
+	//! Getter function for the size of the uses vector.
+	/*!
+		Getter function for the size of the uses vector; use this function to
+		retrieve the number of variables that used by this procedure.
+		\return The number of variables this procedure uses.
+	*/
 	int getUsesSize();
+
+	//! Getter function for members of the modifies vector.
+	/*!
+		Getter function for the members of the modifies vector; use this function to
+		retrieve the individual variable index numbers that this procedure modifies.
+		As this function requires the passing of vector index number, which is generally
+		unavailable outside, this function is recommended to be used only with the iteration
+		of the entire vector.
+		\param index The index number of the member of the modifies variable inside the vector.
+		\return The index number of the variable in the modifies vector.
+	*/
+	int getModifies(int index);
+
+	//! Getter function for the size of the modifies vector.
+	/*!
+		Getter function for the size of the modifies vector; use this function to
+		retrieve the number of variables that modified by this procedure.
+		\return The number of variables this procedure modifies.
+	*/
+	int getModifiesSize();
 };

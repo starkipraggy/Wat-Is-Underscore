@@ -155,7 +155,68 @@ public:
 	*/
 	std::vector<std::string> PQLSelect(TNodeType outputType);
 
+	//! Returns a list of items that fit the conditions of the specified item for the PQL parser.
+	/*!
+		One of the API functions that allows the PQL parser to extract information from the PKB.
+		Call this function for selection of uses clauses.
+		\param input the known variable in the clause
+		\param argumentPosition the position of the input in the clause
+		\param outputType the type of conditions to check for
+		\return the vector<string> of the statement numbers or variable names.
+	*/
 	std::vector<std::string> PQLUses(std::string input, int argumentPosition, std::string outputType);
+
+	//! Returns a list of items that fit the conditions of the specified item for the PQL parser.
+	/*!
+		One of the API functions that allows the PQL parser to extract information from the PKB.
+		Call this function for selection of modifies clauses.
+		\param input the known variable in the clause
+		\param argumentPosition the position of the input in the clause
+		\param outputType the type of conditions to check for
+		\return the vector<string> of the statement numbers or variable names.
+	*/
+	std::vector<std::string> PQLModifies(std::string input, int argumentPosition, std::string outputType);
+
+	//! Returns a list of items that fit the conditions of the specified item for the PQL parser.
+	/*!
+		One of the API functions that allows the PQL parser to extract information from the PKB.
+		Call this function for selection of follows clauses.
+		\param input the known variable in the clause
+		\param argumentPosition the position of the input in the clause
+		\return the vector<string> of the statement numbers.
+	*/
+	std::vector<std::string> PQLFollows(int input, int argumentPosition);
+
+	//! Returns a list of items that fit the conditions of the specified item for the PQL parser.
+	/*!
+		One of the API functions that allows the PQL parser to extract information from the PKB.
+		Call this function for selection of follows* clauses.
+		\param input the known variable in the clause
+		\param argumentPosition the position of the input in the clause
+		\return the vector<string> of the statement numbers.
+	*/
+	std::vector<std::string> PQLFollowsStar(int input, int argumentPosition);
+
+	//! Returns a list of items that fit the conditions of the specified item for the PQL parser.
+	/*!
+		One of the API functions that allows the PQL parser to extract information from the PKB.
+		Call this function for selection of parent clauses.
+		\param input the known variable in the clause
+		\param argumentPosition the position of the input in the clause
+		\return the vector<string> of the statement numbers.
+	*/
+	std::vector<std::string> PQLParent(int statementNumber, int argumentPosition);
+
+	//! Returns a list of items that fit the conditions of the specified item for the PQL parser.
+	/*!
+		One of the API functions that allows the PQL parser to extract information from the PKB.
+		Call this function for selection of parent* clauses.
+		\param input the known variable in the clause
+		\param argumentPosition the position of the input in the clause
+		\return the vector<string> of the statement numbers.
+	*/
+	std::vector<std::string> PQLParentStar(int statementNumber, int argumentPosition);
+
 
 	//! Returns a list of items that fit the specified pattern condition.
 	/*!
@@ -170,7 +231,6 @@ public:
 		\param ??? :D
 		\return the vector<int>* of the list of integers of statements.
 	*/
-
 	std::vector<int> PQLPattern(NAME leftVariable, std::string rightExpression, bool isUnderscored);
 
 	// ---------------------------------------------------------------------------------
