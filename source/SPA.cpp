@@ -13,3 +13,7 @@ void SPA::processSimpleSourceFile(std::string sourceFile) {
 
 	std::cin;
 }
+
+string SPA::evaluate(std::string query) {
+	return pql.process(query);
+}
