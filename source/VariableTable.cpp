@@ -23,7 +23,7 @@ int VariableTable::getNumberOfVariables() {
 	return variables->size();
 }
 
-VariableTableVariable* VariableTable::getVariableObject(NAME name) {
+VariableTableVariable* VariableTable::getVariableUsingName(NAME name) {
 	int size = getNumberOfVariables();
 	VariableTableVariable* currentVariable;
 
@@ -37,7 +37,7 @@ VariableTableVariable* VariableTable::getVariableObject(NAME name) {
 	return addVariable(name);
 }
 
-VariableTableVariable* VariableTable::getVariableObject(int index) {
+VariableTableVariable* VariableTable::getVariableUsingVariableIndexNumber(int index) {
 	int size = getNumberOfVariables();
 	VariableTableVariable* currentVariable;
 
@@ -49,4 +49,14 @@ VariableTableVariable* VariableTable::getVariableObject(int index) {
 	}
 
 	return NULL;
+}
+
+VariableTableVariable* VariableTable::getVariableUsingVectorIndexNumber(int vectorIndex) {
+	if (vectorIndex < 0) {
+		return NULL;
+	}
+	if (vectorIndex >= getNumberOfVariables()) {
+		return NULL;
+	}
+	return variables->at(vectorIndex);
 }

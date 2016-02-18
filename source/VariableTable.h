@@ -40,13 +40,23 @@ public:
 		\param name The name of the variable of which VariableTableVariable object you are looking for.
 		\return The VariableTableVariable object with the same name as the variable name passed.
 	*/
-	VariableTableVariable* getVariableObject(NAME name);
+	VariableTableVariable* getVariableUsingName(NAME name);
 
 	//! Returns the VariableTableVariable object that has the index of the variable you want from the variable table.
 	/*!
 		Returns the VariableTableVariable object that has the index of the variable you want from the variable table.
-		\param index The index of the variable of which VariableTableVariable object you are looking for.
+		\param variableIndex The index of the variable of which VariableTableVariable object you are looking for.
 		\return The VariableTableVariable object with the same index as the variable name passed, or NULL if it does not exist.
 	*/
-	VariableTableVariable* getVariableObject(int index);
+	VariableTableVariable* getVariableUsingVariableIndexNumber(int variableIndex);
+
+	//! Returns the VariableTableVariable object that has the index of the variable you want in the variables vector.
+	/*!
+		Returns the VariableTableVariable object that has the index of the variable you want in the variables vector.
+		Passing 0 in gets the first object in the vector, and passing in size-1 gets the last.
+		\param vectorIndex The index of the variable in the vector of which VariableTableVariable object you are looking for.
+		\return The VariableTableVariable object with the same index as the variable name passed, or NULL if vectorIndex passed
+				in is less than 0 or more than size-1.
+	*/
+	VariableTableVariable* getVariableUsingVectorIndexNumber(int vectorIndex);
 };

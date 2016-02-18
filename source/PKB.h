@@ -148,11 +148,12 @@ public:
 
 	//! Extraction from PKB for just selection.
 	/*!
-	One of the API functions that allows the PQL parser to extract information from the PKB.
-	Call this function for selection without clauses.
-	\return the vector<string> of the statement numbers or names.
+		One of the API functions that allows the PQL parser to extract information from the PKB.
+		Call this function for selection without clauses.
+		\param outputType VariableName (for variables), Assign, If, While, Call, Undefined (for any statements)
+		\return the vector<string> of the statement numbers or names.
 	*/
-	std::vector<std::string>* QueryPKBSelect(std::string outputType);
+	std::vector<std::string> QueryPKBSelect(TNodeType outputType);
 
 	//! Extraction from PKB for uses and modifies relationships without pattern.
 	/*!
@@ -160,7 +161,7 @@ public:
 		Call this function for uses and modifies relationships without patterns.
 		\return the vector<int>* of the list of integers.
 	*/
-	std::vector<int>* QueryPKBWithoutPatternUsesMods(std::string queryType, std::string input, int argumentPosition, std::string outputType);
+	std::vector<int> QueryPKBWithoutPatternUsesMods(std::string queryType, std::string input, int argumentPosition, std::string outputType);
 
 	//! Extraction from PKB for follows and parent relationships without pattern.
 	/*!
@@ -168,7 +169,7 @@ public:
 		Call this function for follows and parent relationships without patterns.
 		\return the vector<int>* of the list of integers of statements.
 	*/
-	std::vector<int>* QueryPKBWithoutPatternFollowsParent(std::string queryType, int input, int argumentPosition, std::string outputType);
+	std::vector<int> QueryPKBWithoutPatternFollowsParent(std::string queryType, int input, int argumentPosition, std::string outputType);
 
 	//! Extraction from PKB for pattern clauses.
 	/*!
@@ -177,7 +178,7 @@ public:
 		\return the vector<int>* of the list of integers of statements.
 	*/
 
-	std::vector<int>* QueryPKBPattern(NAME leftVariable, std::string rightExpression, bool isUnderscored);
+	std::vector<int> QueryPKBPattern(NAME leftVariable, std::string rightExpression, bool isUnderscored);
 
 	// ---------------------------------------------------------------------------------
 	// API FUNCTIONS FOR PQL PARSER ENDS HERE!!!

@@ -27,11 +27,22 @@ public:
 	/*!
 		Given a specific statement number, look for the object representing that statement in
 		the StatementTable, and returns it.
-		\param statementIndex The statement number of the statement that you would like to retrieve.
+		\param statementNumber The statement number of the statement that you would like to retrieve.
 		\return The StatementTableStatement object that has the statement number passed in, or NULL if
 				this statement cannot be found in the StatementTable.
 	*/
-	StatementTableStatement* getStatement(int statementNumber);
+	StatementTableStatement* getStatementUsingStatementNumber(int statementNumber);
+
+	//! Given a specific vector index number, look for the object representing that statement in the StatementTable.
+	/*!
+		Given a specific vector index number, look for the object representing that statement in
+		the StatementTable, and returns it. 0 is the first statement in the StatementTable, and
+		size-1 is the last.
+		\param vectorIndexNumber The index number in the vector of the statement that you would like to retrieve.
+		\return The StatementTableStatement object that has the vector index number passed in, or NULL if
+		number passed in is less than 0, or more than size-1.
+	*/
+	StatementTableStatement* getStatementUsingVectorIndexNumber(int vectorIndexNumber);
 
 	//! Use this function to add a statement into the statement table.
 	/*!

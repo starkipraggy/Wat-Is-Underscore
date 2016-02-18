@@ -35,14 +35,14 @@ StatementTableStatement* PKB::newStatement() {
 	StatementTableStatement* currentStatement = statementTable->addStatement(numberOfStatements);
 
 	// Sets this statement's Follows relationship using the statement stack trace
-	StatementTableStatement* beingFollowed = statementTable->getStatement(statementStackTrace->top());
+	StatementTableStatement* beingFollowed = statementTable->getStatementUsingStatementNumber(statementStackTrace->top());
 	currentStatement->setFollows(beingFollowed);
 	beingFollowed->setFollowedBy(numberOfStatements);
 
 	// Sets this statement's Parent relationship using the statement stack trace
 	statementStackTrace->pop();
 	if (statementStackTrace->size() > 0) {
-		StatementTableStatement* parent = statementTable->getStatement(statementStackTrace->top());
+		StatementTableStatement* parent = statementTable->getStatementUsingStatementNumber(statementStackTrace->top());
 		currentStatement->setParent(parent);
 		parent->addChild(numberOfStatements);
 	}
@@ -117,13 +117,13 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 	StatementTableStatement* currentStatement;
 
 	// Fixed throughout the entire function as there is only one
-	VariableTableVariable* leftVariable = variableTable->getVariableObject(variable); 
+	VariableTableVariable* leftVariable = variableTable->getVariableUsingName(variable);
 
 	// Used in for-loops for iterations, as there may be multiple right variables
 	std::vector<VariableTableVariable*> rightVariables;
 	for (unsigned int i = 0; i < size; i++) {
 		if (types[i] == Variable) {
-			rightVariables.push_back(variableTable->getVariableObject(tokens[i]));
+			rightVariables.push_back(variableTable->getVariableUsingName(tokens[i]));
 		}
 	}
 	int rightVariablesSize = rightVariables.size();
@@ -146,7 +146,7 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 
 	StatementTableStatement* statementToIterateThroughParents = currentStatement;
 	while (statementToIterateThroughParents->hasParent()) {
-		statementToIterateThroughParents = statementTable->getStatement(statementToIterateThroughParents->getParent());
+		statementToIterateThroughParents = statementTable->getStatementUsingStatementNumber(statementToIterateThroughParents->getParent());
 
 		// Add the Modifies relationship into statement's parent, and its parent, and its parent, etc.
 		addRelationship(leftVariable, statementToIterateThroughParents, Modifies);
@@ -172,7 +172,7 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 		int statementCallsSize = procedureForAddingRelationship->getStatementCallsSize();
 		StatementTableStatement* statementForAddingRelationship;
 		for (int x = 0; x < statementCallsSize; x++) {
-			statementForAddingRelationship = statementTable->getStatement(procedureForAddingRelationship->getStatementCall(x));
+			statementForAddingRelationship = statementTable->getStatementUsingStatementNumber(procedureForAddingRelationship->getStatementCall(x));
 			addRelationship(leftVariable, statementForAddingRelationship, Modifies);
 			for (int y = 0; y < rightVariablesSize; y++) {
 				addRelationship(rightVariables[y], statementForAddingRelationship, Uses);
@@ -197,7 +197,7 @@ void PKB::CallStatement(std::string procedure) {
 
 void PKB::WhileStart(NAME variable) {
 	StatementTableStatement* currentStatement = newStatement();
-	VariableTableVariable* currentVariable = variableTable->getVariableObject(variable);
+	VariableTableVariable* currentVariable = variableTable->getVariableUsingName(variable);
 
 	// Set the type of the statement to be a while-loop
 	currentStatement->setType(While);
@@ -212,7 +212,7 @@ void PKB::WhileStart(NAME variable) {
 	// Add Uses relationship with parent, parent's parent, etc.
 	StatementTableStatement* statementToIterateThroughParents = currentStatement;
 	while (statementToIterateThroughParents->hasParent()) {
-		statementToIterateThroughParents = statementTable->getStatement(statementToIterateThroughParents->getParent());
+		statementToIterateThroughParents = statementTable->getStatementUsingStatementNumber(statementToIterateThroughParents->getParent());
 		addRelationship(currentVariable, statementToIterateThroughParents, Uses);
 	}
 
@@ -228,7 +228,7 @@ void PKB::WhileStart(NAME variable) {
 		int statementCallsSize = procedureForAddingRelationship->getStatementCallsSize();
 		StatementTableStatement* statementForAddingRelationship;
 		for (int x = 0; x < statementCallsSize; x++) {
-			statementForAddingRelationship = statementTable->getStatement(procedureForAddingRelationship->getStatementCall(x));
+			statementForAddingRelationship = statementTable->getStatementUsingStatementNumber(procedureForAddingRelationship->getStatementCall(x));
 			addRelationship(currentVariable, statementForAddingRelationship, Uses);
 		}
 	}
@@ -247,7 +247,7 @@ bool PKB::WhileEnd() {
 
 void PKB::IfStart(NAME variable) {
 	StatementTableStatement* currentStatement = newStatement();
-	VariableTableVariable* currentVariable = variableTable->getVariableObject(variable);
+	VariableTableVariable* currentVariable = variableTable->getVariableUsingName(variable);
 
 	// Set the type of the statement to be an if-statement
 	currentStatement->setType(If);
@@ -262,7 +262,7 @@ void PKB::IfStart(NAME variable) {
 	// Add Uses relationship with parent, parent's parent, etc.
 	StatementTableStatement* statementToIterateThroughParents = currentStatement;
 	while (statementToIterateThroughParents->hasParent()) {
-		statementToIterateThroughParents = statementTable->getStatement(statementToIterateThroughParents->getParent());
+		statementToIterateThroughParents = statementTable->getStatementUsingStatementNumber(statementToIterateThroughParents->getParent());
 		addRelationship(currentVariable, statementToIterateThroughParents, Uses);
 	}
 
@@ -278,7 +278,7 @@ void PKB::IfStart(NAME variable) {
 		int statementCallsSize = procedureForAddingRelationship->getStatementCallsSize();
 		StatementTableStatement* statementForAddingRelationship;
 		for (int x = 0; x < statementCallsSize; x++) {
-			statementForAddingRelationship = statementTable->getStatement(procedureForAddingRelationship->getStatementCall(x));
+			statementForAddingRelationship = statementTable->getStatementUsingStatementNumber(procedureForAddingRelationship->getStatementCall(x));
 			addRelationship(currentVariable, statementForAddingRelationship, Uses);
 		}
 	}
@@ -306,46 +306,36 @@ bool PKB::IfElseEnd() {
 
 }
 
-std::vector<std::string>* PKB::QueryPKBSelect(std::string outputType) {
-	std::vector<std::string>* returnList = new std::vector<std::string>();
-	if (outputType == "assign") {
-		int statementTableSize = statementTable->getNumberOfStatements();
-		for (int i = 0; i < statementTableSize; i++) {
-			StatementTableStatement* statement = statementTable->getStatement(i);
-			if (statement->getType() == Assign) {
-				returnList->push_back(std::to_string(i));
-			}
-		}
-	}
-	else if (outputType == "statement") {
-		int statementTableSize = statementTable->getNumberOfStatements();
-		for (int i = 0; i < statementTableSize; i++) {
-			returnList->push_back(std::to_string(i));
-		}
-	}
-	else if (outputType == "while") {
-		int statementTableSize = statementTable->getNumberOfStatements();
-		for (int i = 0; i < statementTableSize; i++) {
-			StatementTableStatement* statement = statementTable->getStatement(i);
-			if (statement->getType() == While) {
-				returnList->push_back(std::to_string(i));
-			}
-		}
-	}
-	else if (outputType == "variable") {
+std::vector<std::string> PKB::QueryPKBSelect(TNodeType outputType) {
+	std::vector<std::string> returnList;
+	StatementTableStatement* statement;
+
+	// return all variables
+	if (outputType == Variable) {
 		int variableTableSize = variableTable->getNumberOfVariables();
 		for (int i = 0; i < variableTableSize; i++) {
-			VariableTableVariable* variable = variableTable->getVariableObject(i);
-			returnList->push_back(variable->getName());
+			returnList.push_back(variableTable->getVariableUsingVectorIndexNumber(i)->getName());
 		}
 	}
-	else {
-		;
+
+	// If outputType is not Assign, If, While, or Call, return all statements
+	bool returnAllStatements = true;
+	if ((outputType == Assign) || (outputType == If) || (outputType == While) || (outputType == Call)) {
+		returnAllStatements = false;
+	}
+
+	int statementTableSize = statementTable->getNumberOfStatements();
+	for (int i = 0; i < statementTableSize; i++) {
+		statement = statementTable->getStatementUsingVectorIndexNumber(i);
+		if ((returnAllStatements) || (statement->getType() == outputType)) {
+			returnList.push_back(std::to_string(statement->getIndex()));
+		}
 	}
 	return returnList;
 }
 
-std::vector<int>* PKB::QueryPKBWithoutPatternUsesMods(std::string queryType, std::string input, int argumentPosition, std::string outputType) {
+std::vector<int> PKB::QueryPKBWithoutPatternUsesMods(std::string queryType, std::string input, int argumentPosition, std::string outputType) {
+	/*
 	if (queryType == "uses") {
 		if (argumentPosition == 1) { //check which procedure, assignment or statement number uses a variable
 			if (outputType == "procedure") { //
@@ -413,9 +403,13 @@ std::vector<int>* PKB::QueryPKBWithoutPatternUsesMods(std::string queryType, std
 			}
 		}
 	}
+	*/
+	std::vector<int> lol;
+	return lol;
 }
 
-std::vector<int>* PKB::QueryPKBWithoutPatternFollowsParent(std::string queryType, int input, int argumentPosition, std::string outputType) {
+std::vector<int> PKB::QueryPKBWithoutPatternFollowsParent(std::string queryType, int input, int argumentPosition, std::string outputType) {
+	/*
 	if (queryType == "follows") {
 		if (argumentPosition == 1) { //check statements that has follows(s, input)
 
@@ -456,9 +450,14 @@ std::vector<int>* PKB::QueryPKBWithoutPatternFollowsParent(std::string queryType
 
 		}
 	}
+	*/
+
+	std::vector<int> lol;
+	return lol;
 }
 
-std::vector<int>* PKB::QueryPKBPattern(NAME leftVariable, std::string rightExpression, bool isUnderscored) {
+std::vector<int> PKB::QueryPKBPattern(NAME leftVariable, std::string rightExpression, bool isUnderscored) {
 	// @todo Wait for Alan and Chun How's confirmation
-	return NULL;
+	std::vector<int> lol;
+	return lol;
 }

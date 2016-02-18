@@ -17,7 +17,7 @@ int StatementTable::getNumberOfStatements() {
 	return statements->size();
 }
 
-StatementTableStatement* StatementTable::getStatement(int statementNumber) {
+StatementTableStatement* StatementTable::getStatementUsingStatementNumber(int statementNumber) {
 	int size = getNumberOfStatements();
 	StatementTableStatement* statement;
 	for (int i = 0; i < size; i++) {
@@ -27,6 +27,16 @@ StatementTableStatement* StatementTable::getStatement(int statementNumber) {
 		}
 	}
 	return NULL;
+}
+
+StatementTableStatement* StatementTable::getStatementUsingVectorIndexNumber(int vectorIndexNumber) {
+	if (vectorIndexNumber < 0) {
+		return NULL;
+	}
+	if (vectorIndexNumber >= getNumberOfStatements()) {
+		return NULL;
+	}
+	return statements->at(vectorIndexNumber);
 }
 
 StatementTableStatement* StatementTable::addStatement(int lineNumber) {
