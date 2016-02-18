@@ -32,7 +32,7 @@ void QueryTree::newTree() {
 	clauses = {};
 }
 
-void QueryTree::buildTree() {
+/*void QueryTree::buildTree() {
 	std::list<Clause*> tree;
 	std::list<Clause*> remaining;
 	std::list<Clause*> temp(clauses.begin(), clauses.end());
@@ -56,7 +56,7 @@ void QueryTree::buildTree() {
 		}
 		temp.assign(remaining.begin(), remaining.end());
 	}
-}
+}*/
 
 bool QueryTree::v1Validation() {
 	if (clauses.size() > 2) {

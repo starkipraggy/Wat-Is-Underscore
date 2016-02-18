@@ -78,7 +78,7 @@ void Preprocessor::setQueryTree(string statement) {
 	if (declarationQueries != "") {
 		processClauses(declarationQueries);
 
-		QueryTree::Instance()->buildTree();
+		//QueryTree::Instance()->buildTree();
 		QueryTree::Instance()->v1Validation();
 	}
 }
