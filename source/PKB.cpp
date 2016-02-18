@@ -306,6 +306,45 @@ bool PKB::IfElseEnd() {
 
 }
 
+std::vector<std::string>* PKB::QueryPKBSelect(std::string outputType) {
+	std::vector<std::string>* returnList = new std::vector<std::string>();
+	if (outputType == "assign") {
+		int statementTableSize = statementTable->getNumberOfStatements();
+		for (int i = 0; i < statementTableSize; i++) {
+			StatementTableStatement* statement = statementTable->getStatement(i);
+			if (statement->getType() == Assign) {
+				returnList->push_back(std::to_string(i));
+			}
+		}
+	}
+	else if (outputType == "statement") {
+		int statementTableSize = statementTable->getNumberOfStatements();
+		for (int i = 0; i < statementTableSize; i++) {
+			returnList->push_back(std::to_string(i));
+		}
+	}
+	else if (outputType == "while") {
+		int statementTableSize = statementTable->getNumberOfStatements();
+		for (int i = 0; i < statementTableSize; i++) {
+			StatementTableStatement* statement = statementTable->getStatement(i);
+			if (statement->getType() == While) {
+				returnList->push_back(std::to_string(i));
+			}
+		}
+	}
+	else if (outputType == "variable") {
+		int variableTableSize = variableTable->getNumberOfVariables();
+		for (int i = 0; i < variableTableSize; i++) {
+			VariableTableVariable* variable = variableTable->getVariableObject(i);
+			returnList->push_back(variable->getName());
+		}
+	}
+	else {
+		;
+	}
+	return returnList;
+}
+
 std::vector<int>* PKB::QueryPKBWithoutPatternUsesMods(std::string queryType, std::string input, int argumentPosition, std::string outputType) {
 	if (queryType == "uses") {
 		if (argumentPosition == 1) { //check which procedure, assignment or statement number uses a variable

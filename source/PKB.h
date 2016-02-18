@@ -146,6 +146,14 @@ public:
 	// API FUNCTIONS FOR PQL PARSER STARTS HERE!!!
 	// ---------------------------------------------------------------------------------
 
+	//! Extraction from PKB for just selection.
+	/*!
+	One of the API functions that allows the PQL parser to extract information from the PKB.
+	Call this function for selection without clauses.
+	\return the vector<string> of the statement numbers or names.
+	*/
+	std::vector<std::string>* QueryPKBSelect(std::string outputType);
+
 	//! Extraction from PKB for uses and modifies relationships without pattern.
 	/*!
 		One of the API functions that allows the PQL parser to extract information from the PKB.

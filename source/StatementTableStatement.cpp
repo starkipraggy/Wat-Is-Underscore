@@ -90,3 +90,7 @@ std::vector<int>* StatementTableStatement::getModifies() {
 int StatementTableStatement::getFollows() {
 	return follows->getIndex();
 }
+
+TNodeType StatementTableStatement::getType() {
+	return type;
+}
