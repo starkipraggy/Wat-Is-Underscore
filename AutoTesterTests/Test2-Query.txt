@@ -1,10 +1,24 @@
 stmt s, s1; assign a, a1, a2; while w; if ifstmt; procedure p; variable v; constant c; prog_line n, n1, n2;
-
+1 - Modifies 1
+stmt s;
 Select s such that Modifies(s, "i");
+9
+5000
+2 - Modifies 2
+stmt s;
 Select s such that Modifies(v, "s");
+none
+5000
+3 - Modifies 3
+stmt s; assign a;
 Select s such that Modifies(a, "z");
-
+1,2,3,4,5,6,7,8,9,10,11
+5000
+4 - Uses 1
+stmt s;
 Select s such that Uses(s, "x");
+
+
 Select s such that Uses(y, "x");
 Select w such that Uses(w, "x");
 
