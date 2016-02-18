@@ -11,7 +11,6 @@ const regex expressionRegex("(^\"[[:alpha:]])([[:alnum:]]+|#+)*\"$");
 const regex partOfExpressionRegex("(^_\"[[:alpha:]])([[:alnum:]]+|#+)*\"_$");
 
 const regex designEntityRegex("^(STMT|ASSIGN|WHILE|VARIABLE|CONSTANT|PROG_LINE)$",icase);
-const regex whiteSpaceRegex("\s");
 
 void Preprocessor::process(string statement) {
 	setMap(statement);
@@ -53,7 +52,7 @@ void Preprocessor::setDeclaration(string line) {
 		second = trim(second);
 		vector<string> variables = tokenize(second, ",");
 		for (auto& x : variables) {
-			if (!std::regex_match(x, whiteSpaceRegex)) {
+			if (std::regex_match(x, identRegex)) {
 				std::pair<std::string, std::string> newPair(x, first);
 				if (declarationMap.find(x) != declarationMap.end()) {
 					throw "cannot have synonym with the same name";
