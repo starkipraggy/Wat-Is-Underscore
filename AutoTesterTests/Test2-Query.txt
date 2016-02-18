@@ -1,8 +1,7 @@
-stmt s, s1; assign a, a1, a2; while w; if ifstmt; procedure p; variable v; constant c; prog_line n, n1, n2;
 1 - Modifies 1
 stmt s;
 Select s such that Modifies(s, "i");
-9
+5, 9
 5000
 2 - Modifies 2
 stmt s;
@@ -12,47 +11,145 @@ none
 3 - Modifies 3
 stmt s; assign a;
 Select s such that Modifies(a, "z");
-1,2,3,4,5,6,7,8,9,10,11
+1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17
 5000
 4 - Uses 1
 stmt s;
 Select s such that Uses(s, "x");
-
-
+7,10,11,13,15
+5000
+5 - Uses 2
+stmt s;
 Select s such that Uses(y, "x");
+none
+5000;
+6 - Uses 3
+while w;
 Select w such that Uses(w, "x");
-
-Select p such that Calls(p, Second);
-Select p such that Calls(Second, "p");
-Select s such that Calls(First, Second);
-
+6
+5000
+7 - Parent 1
+while w;
 Select w such that Parent(w, 8);
+6
+5000
+8 - Parent 2
+while w; stmt s;
 Select w such that Parent(s, w);
+none
+5000
+9 - Parent 3
+while w;
 Select w such that Parent(w, 15);
-
-Select a such that Pattern a(_, _"x"_);
-Select w such that Pattern w(c, _);
-Select ifstmt such that Pattern ifstmt(x, _);
-
-Select s such that Parent*(s, "a");
+none
+5000
+10 - Pattern 1
+assign a;
+Select a Pattern a(_, _"x"_);
+7, 11, 13, 15
+5000
+11 - Pattern 2
+while w; constant c;
+Select w Pattern w(c, _);
+none
+5000
+12 - Pattern 3
+if ifstmt;
+Select ifstmt Pattern ifstmt("x", _);
+10
+5000
+13 - Parent* 1
+stmt s; assign a;
+Select s such that Parent*(s, a);
+6, 10
+5000
+14 - Parent* 2
+stmt s;
 Select s such that Parent*(s, 5);
-Select s such that Parent*(12, s);
-
+none
+5000
+15 - Parent* 3
+stmt s;
+Select s such that Parent*(10, s);
+11,12
+5000
+16 - Follows 1
+stmt s;
 Select s such that Follows(s, 1);
+none
+5000
+17 - Follows 2
+stmt s;
 Select s such that Follows(1, s);
+2
+5000
+18 - Follows 3
+stmt s;
 Select s such that Follows(6, 7);
+1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17
+5000
+19 - Follows* 1
+stmt s;
+Select s such that Follows*(s, 9);
+7,8
+5000
+20 - Follows* 2
 
-Select s such that Follows*(s, 11);
 Select BOOLEAN such that Follows* (11, 12);
+false
+5000
+21 - Follows* 3
+stmt s;
 Select s such that Follows*(10, s);
-
-Select s such that Uses(s, x) and Modifies(s, x) pattern s(x, _);
+11,12
+5000
+22 - Check for common synonyms
+stmt s;
+Select s such that Uses(s, "x") and Modifies(s, "x") pattern s("x", _);
+none
+5000;
+23 - Different statements
+assign a; stmt s;
 Select a such that Modifies (s, x) pattern a(x, _);
-Select s such that Follows(1, s) and Modifies(s, x);
-Select w such that Parent(w, 9) and Follows(w, 13) pattern w("i", _);
+1,4,7,11,15
+5000
+24 - Check if it checks called functions as well
+stmt s; 
+Select s such that Follows(1, s) and Modifies(s, "x");
+none
+5000
+25 - check if CFG is properly constructed after while loop 
+while w;
+Select w such that Parent(w, 9) and Follows(w, 10) pattern w("i", _);
+6
+5000
+26 - Checks if procedure is handled properly
+procedure p;
 Select p such that Calls(Second, p) and Modifies(p, "z");
+Third
+5000
+27 - check boolean behaviour
+assign a; stmt s;
 Select a such that Uses(s, "i"), and Modifies(s, "i");
-Select v such that Uses(p, "v") and Modifies(p, "v");
+1,2,4,5,7,9,11,12,13,14,15,16,17
+5000
+28 - check if procedure interacts with uses and modifies
+variable v; procedure p;
+Select v such that Uses(p, v) and Modifies(p, v);
+i, x, y, z
+5000
+29 - test combination
+if ifstmt;
 Select ifstmt such that Uses(ifstmt, "x") and Modifies(ifstmt, "z") pattern ifstmt("x", _);
+10
+5000
+30 - test combination
+stmt s,s1;
 Select s such that Uses(s, "x") and Follows(s1, s);
+13,15
+5000
+31 - check while loop CFG
+stmt s,s1; 
 Select s such that Follows*(s1, s) and Follows*(s, s1);
+6,7,8,9
+5000

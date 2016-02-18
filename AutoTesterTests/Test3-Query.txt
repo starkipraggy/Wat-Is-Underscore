@@ -1,4 +1,3 @@
-stmt s, s1; assign a, a1, a2; while w; if ifstmt; procedure p; variable v; constant c; prog_line n, n1, n2;
 1 - Uses 1
 assign a;
 Select a such that Uses(a, "a");
