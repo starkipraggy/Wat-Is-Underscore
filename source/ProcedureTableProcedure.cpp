@@ -99,7 +99,7 @@ bool ProcedureTableProcedure::addStatementsCalls(int statementIndexNumber) {
 }
 
 int ProcedureTableProcedure::getUses(int index) {
-	uses->at(index);
+	return uses->at(index);
 }
 
 int ProcedureTableProcedure::getUsesSize() {
@@ -107,7 +107,7 @@ int ProcedureTableProcedure::getUsesSize() {
 }
 
 int ProcedureTableProcedure::getModifies(int index) {
-	uses->at(index);
+	return uses->at(index);
 }
 
 int ProcedureTableProcedure::getModifiesSize() {

@@ -395,6 +395,7 @@ std::vector<std::string> PKB::PQLUses(std::string input, int argumentPosition, s
 			;
 		}
 	}
+	return returnList;
 }
 
 std::vector<std::string> PKB::PQLModifies(std::string input, int argumentPosition, std::string outputType) {

@@ -92,7 +92,7 @@ TNodeType StatementTableStatement::getType() {
 }
 
 int StatementTableStatement::getUses(int index) {
-	uses->at(index);
+	return uses->at(index);
 }
 
 int StatementTableStatement::getUsesSize() {
@@ -100,7 +100,7 @@ int StatementTableStatement::getUsesSize() {
 }
 
 int StatementTableStatement::getModifies(int index) {
-	uses->at(index);
+	return uses->at(index);
 }
 
 int StatementTableStatement::getModifiesSize() {
@@ -108,7 +108,7 @@ int StatementTableStatement::getModifiesSize() {
 }
 
 int StatementTableStatement::getFollowsStar(int index) {
-	followsStar->at(index);
+	return followsStar->at(index);
 }
 
 int StatementTableStatement::getFollowsStarSize() {
@@ -124,7 +124,7 @@ int StatementTableStatement::getFollowedByStarSize() {
 }*/
 
 int StatementTableStatement::getChildren(int index) {
-	children->at(index);
+	return children->at(index);
 }
 
 int StatementTableStatement::getChildrenSize() {
@@ -132,7 +132,7 @@ int StatementTableStatement::getChildrenSize() {
 }
 
 int StatementTableStatement::getParentStar(int index) {
-	parentStar->at(index);
+	return parentStar->at(index);
 }
 
 int StatementTableStatement::getParentStarSize() {

@@ -37,7 +37,7 @@ bool VariableTableVariable::addProcedureUses(int procedureNumber) {
 }
 
 int VariableTableVariable::getProceduresUses(int index) {
-	procedureUses->at(index);
+	return procedureUses->at(index);
 }
 
 int VariableTableVariable::getProceduresUsesSize() {
@@ -45,7 +45,7 @@ int VariableTableVariable::getProceduresUsesSize() {
 }
 
 int VariableTableVariable::getProceduresModifies(int index) {
-	procedureUses->at(index);
+	return procedureUses->at(index);
 }
 
 int VariableTableVariable::getProceduresModifiesSize() {
@@ -53,7 +53,7 @@ int VariableTableVariable::getProceduresModifiesSize() {
 }
 
 int VariableTableVariable::getStatementUses(int index) {
-	statementUses->at(index);
+	return statementUses->at(index);
 }
 
 int VariableTableVariable::getStatementUsesSize() {
@@ -61,7 +61,7 @@ int VariableTableVariable::getStatementUsesSize() {
 }
 
 int VariableTableVariable::getStatementModifies(int index) {
-	statementUses->at(index);
+	return statementUses->at(index);
 }
 
 int VariableTableVariable::getStatementModifiesSize() {
