@@ -69,4 +69,32 @@ public:
 		\return True if this procedure is successfully added, and false if this procedure is already inside.
 	*/
 	bool addProcedureUses(int procedureNumber);
+	
+	//! Getter function for the list of procedures that uses this variable.
+	/*!
+	Getter function for the list of procedures that uses this variable.
+	\return a list of indexes of procedure using this variable.
+	*/
+	std::vector<int>* getProcedureUses();
+
+	//! Getter function for the list of statements that uses this variable.
+	/*!
+	Getter function for the list of statements that uses this variable.
+	\return a list of statement numbers using this variable.
+	*/
+	std::vector<int>* getStatementUses();
+
+	//! Getter function for the list of procedures that modifies this variable.
+	/*!
+	Getter function for the list of procedures that modifies this variable.
+	\return a list of indexes of procedures modifying this variable.
+	*/
+	std::vector<int>* getProcedureModifies();
+
+	//! Getter function for the list of statements that modifies this variable.
+	/*!
+	Getter function for the list of statements that modifies this variable.
+	\return a list of indexes of statement numbers modifying this variable.
+	*/
+	std::vector<int>* getStatementModifies();
 };

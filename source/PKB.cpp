@@ -299,3 +299,110 @@ bool PKB::IfElseEnd() {
 	return true;
 
 }
+
+std::vector<int>* PKB::QueryPKBWithoutPatternUsesMods(std::string queryType, std::string input, int argumentPosition, std::string outputType) {
+	if (queryType == "uses") {
+		if (argumentPosition == 1) { //check which procedure, assignment or statement number uses a variable
+			if (outputType == "procedure") { //
+				VariableTableVariable* variableToBeChecked = variableTable->getVariableObject(input);
+				std::vector<int>* procedureUses = variableToBeChecked->getProcedureUses();
+				return procedureUses;
+			}
+			else if (outputType == "statement") {
+				VariableTableVariable* variableToBeChecked = variableTable->getVariableObject(input);
+				std::vector<int>* statementUses = variableToBeChecked->getStatementUses();
+				return statementUses;
+			}
+			else { //assignment uses
+				VariableTableVariable* variableToBeChecked = variableTable->getVariableObject(input);
+
+			}
+		}
+		else { //check what variables are used by a procedure or statement
+			if (outputType == "procedure") {
+				ProcedureTableProcedure* procedure = procedureTable->getProcedure(input);
+				std::vector<int>* usesList = procedure->getUses();
+				return usesList;
+			}
+			else if (outputType == "statement") {
+				int inputInteger = atoi(input.c_str());
+				StatementTableStatement* statement = statementTable->getStatement(inputInteger);
+				std::vector<int>* usesList = statement->getUses();
+				return usesList;
+			}
+			else {
+
+			}
+		}
+	}
+	else {
+		if (argumentPosition == 1) { //check which procedure, assignment or statement number modifies a variable
+			if (outputType == "procedure") { //
+				VariableTableVariable* variableToBeChecked = variableTable->getVariableObject(input);
+				std::vector<int>* procedureModifies = variableToBeChecked->getProcedureModifies();
+				return procedureModifies;
+			}
+			else if (outputType == "statement") {
+				VariableTableVariable* variableToBeChecked = variableTable->getVariableObject(input);
+				std::vector<int>* statementModifies = variableToBeChecked->getStatementModifies();
+				return statementModifies;
+			}
+			else {
+
+			}
+		}
+		else { //check what variables are modified by a procedure or statement
+			if (outputType == "procedure") {
+				ProcedureTableProcedure* procedure = procedureTable->getProcedure(input);
+				std::vector<int>* modifiesList = procedure->getModifies();
+				return modifiesList;
+			}
+			else if (outputType == "statement") {
+				int inputInteger = atoi(input.c_str());
+				StatementTableStatement* statement = statementTable->getStatement(inputInteger);
+				std::vector<int>* modifiesList = statement->getModifies();
+				return modifiesList;
+			}
+			else {
+
+			}
+		}
+	}
+}
+
+std::vector<int>* PKB::QueryPKBWithoutPatternFollowsParent(std::string queryType, int input, int argumentPosition, std::string outputType) {
+	if (queryType == "follows") {
+		if (argumentPosition == 1) { //check statements that has follows(s, input)
+
+		}
+		else { //check statements that has follows(input, s)
+			StatementTableStatement* statement = statementTable->getStatement(input);
+			int follows = statement->getFollows();
+		}
+	}
+	else if (queryType == "follows*") {
+		if (argumentPosition == 1) { //check statements that has follows*(s, input)
+
+		}
+		else { //check statements that has follows*(input, s)
+
+		}
+	}
+	else if (queryType == "parent") {
+		if (argumentPosition == 1) { //check statements that has parent(s, input)
+
+		}
+		else { //check statements that has parent(input, s)
+			StatementTableStatement* statement = statementTable->getStatement(input);
+			int parent = statement->getParent();
+		}
+	}
+	else { //parent* relationship
+		if (argumentPosition == 1) { //check statements that has parent*(s, input)
+
+		}
+		else { //check statements that has parent*(input, s)
+
+		}
+	}
+}
