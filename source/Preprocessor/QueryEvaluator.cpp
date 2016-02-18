@@ -4,22 +4,25 @@ using namespace std::regex_constants;
 
 const regex designEntityRegex("^(STMT|ASSIGN|WHILE|VARIABLE|CONSTANT|PROG_LINE)$", icase);
 
+PKB* pkb;
+
 std::vector<std::string> QueryEvaluator::process() {
-	Variable select = QueryTree::Instance()->getSelect();
+	class Variable::Variable select = QueryTree::Instance()->getSelect();
 	vector<Clause*> clauses = QueryTree::Instance()->getClauses();
 	vector<string> queryResult;
+	pkb = PKB::getInstance();
 
 	if (clauses.empty()) {
-		//addResult(getSelect(select.getType()));
+		addResult(pkb->PQLSelect(toTNodeType(select.getType())));
 	}
 	else {
 		for (auto& x : clauses) {
 			string clause = x->getClause();
-			Variable var1 = x->getVariableOne();
-			Variable var2 = x->getVariableTwo();
+			class Variable::Variable var1 = x->getVariableOne();
+			class Variable::Variable var2 = x->getVariableTwo();
 			if (clause == "PATTERN") {
 				PatternClause* p = dynamic_cast<PatternClause*>(x);
-				Variable assignVar = p->getAssignedVariable();
+				class Variable::Variable assignVar = p->getAssignedVariable();
 				//getPattern(var1, var2, assignVar.getType());
 			}
 			else {
@@ -87,11 +90,11 @@ void QueryEvaluator::addResult(vector<string> currResult) {
 	}
 }
 
-void QueryEvaluator::query(string clause, Variable source, Variable dest, int position) {
+void QueryEvaluator::query(string clause, class Variable::Variable source, class Variable::Variable dest, int position) {
 	vector<string> queryResult;
 
 	if (regex_match(dest.getType(), designEntityRegex)) {
-		//queryResult = getSelect(dest.getType());
+		queryResult = pkb->PQLSelect(toTNodeType(dest.getType()));
 		for (auto& x : queryResult) {
 			//accumulate(getClause(clause, x, position, source.getType()));
 		}
@@ -100,4 +103,33 @@ void QueryEvaluator::query(string clause, Variable source, Variable dest, int po
 	else {
 		//addResult(getClause(clause, dest, position, source.getType()));
 	}
+}
+
+TNodeType QueryEvaluator::toTNodeType(string type) {
+	type = StringToUpper(type);
+	TNodeType n = Undefined;
+
+	if (type == "STMT") {
+		return Stmt;
+	}
+	else if (type == "ASSIGN") {
+		return Assign;
+	}
+	else if (type == "WHILE") {
+		return While;
+	}
+	else if (type == "Variable") {
+		return VariableName;
+	}
+	else if (type == "Constant") {
+		return Const;
+	}
+	else if (type == "PROG_LINE") {
+		return Prog_line;
+	}
+	else {
+		return Undefined;
+	}
+
+	return n;
 }

@@ -15,6 +15,8 @@ Query base and call PKB to process them
 #include "Clause.h"
 #include "PatternClause.h"
 #include "QueryTree.h"
+#include "PKB.h"
+#include "Variable.h"
 
 #include "StringUlti.h"
 
@@ -56,6 +58,12 @@ private:
 	/*!
 	Internal method of process to query a such that clause
 	*/
-	void query(string clause, Variable source, Variable dest, int position);
+	void query(string clause, class Variable::Variable source, class Variable::Variable dest, int position);
+
+	//! Convert a string type to its TNodeType
+	/*!
+	Convert a string type to its TNodeType to parse to PKB
+	*/
+	TNodeType toTNodeType(string type);
 };
 #endif
