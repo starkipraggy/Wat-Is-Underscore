@@ -20,6 +20,10 @@ This this the main component to read a query statement and parse it into QueryTr
 
 class Preprocessor {
 public:
+	//! Process statement and generate QueryTree
+	/*!
+	Main method to Process statement and generate QueryTree
+	*/
 	void process(string statement);
 private:
 	std::unordered_map<std::string, std::string> declarationMap;   /**< map to store declaration */

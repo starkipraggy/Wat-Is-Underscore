@@ -22,6 +22,10 @@ Query base and call PKB to process them
 
 class QueryEvaluator {
 public:
+	//! Process QueryTree and generate result
+	/*!
+	Main method to Process QueryTree and generate result
+	*/
 	std::vector<string> process();
 
 private:
