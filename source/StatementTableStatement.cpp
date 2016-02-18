@@ -79,14 +79,6 @@ bool StatementTableStatement::addUses(int variableIndexNumber) {
 	return addIntoVector(variableIndexNumber, uses);
 }
 
-std::vector<int>* StatementTableStatement::getUses() {
-	return uses;
-}
-
-std::vector<int>* StatementTableStatement::getModifies() {
-	return modifies;
-}
-
 int StatementTableStatement::getFollows() {
 	return follows->getIndex();
 }

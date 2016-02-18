@@ -119,20 +119,6 @@ public:
 	*/
 	bool addUses(int variableIndexNumber);
 
-	//! Getter function for the list of uses by this statement.
-	/*!
-		Getter function for the list of indexes of variables used by this statement.
-		\return a list of indexes of variables used by the statement.
-	*/
-	std::vector<int>* getUses();
-
-	//! Getter function for the list of modifies by this statement.
-	/*!
-		Getter function for the list of indexes of variables modifies by this statement.
-		\return a list of indexes of variables modifies by the statement.
-	*/
-	std::vector<int>* getModifies();
-
 	//! Getter function for the statement number of the follows of this statement.
 	/*!
 		Getter function for the statement number of the follows of this statement; use this function to

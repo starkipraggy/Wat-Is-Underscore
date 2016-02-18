@@ -132,18 +132,4 @@ public:
 	\return True if this statement is successfully added, and false if this statement is already inside.
 	*/
 	bool addStatementsCalls(int statementIndexNumber);
-	
-	//! Getter function for the size of the procedure uses vector.
-	/*!
-	This function is used by the PQL parser API to extract the variables used by this procedure.
-	\return the list of integers of indexes of the variables.
-	*/
-	std::vector<int>* getUses();
-
-	//! Getter function for the size of the procedure modifies vector.
-	/*!
-	This function is used by the PQL parser API to extract the variables modified by this procedure.
-	\return the list of integers of indexes of the variables.
-	*/
-	std::vector<int>* getModifies();
 };

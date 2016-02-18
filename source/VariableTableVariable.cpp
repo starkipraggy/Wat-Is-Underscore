@@ -35,19 +35,3 @@ bool VariableTableVariable::addProcedureModifies(int procedureNumber) {
 bool VariableTableVariable::addProcedureUses(int procedureNumber) {
 	return addIntoVector(procedureNumber, procedureUses);
 }
-
-std::vector<int>* VariableTableVariable::getProcedureUses() {
-	return procedureUses;
-}
-
-std::vector<int>* VariableTableVariable::getStatementUses() {
-	return statementUses;
-}
-
-std::vector<int>* VariableTableVariable::getProcedureModifies() {
-	return procedureModifies;
-}
-
-std::vector<int>* VariableTableVariable::getStatementModifies() {
-	return statementModifies;
-}
