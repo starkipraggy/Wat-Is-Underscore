@@ -146,39 +146,30 @@ public:
 	// API FUNCTIONS FOR PQL PARSER STARTS HERE!!!
 	// ---------------------------------------------------------------------------------
 
-	//! Extraction from PKB for just selection.
+	//! Returns a list of items that fit the conditions of the specified item for the PQL parser.
 	/*!
 		One of the API functions that allows the PQL parser to extract information from the PKB.
 		Call this function for selection without clauses.
 		\param outputType VariableName (for variables), Assign, If, While, Call, Undefined (for any statements)
 		\return the vector<string> of the statement numbers or names.
 	*/
-	std::vector<std::string> QueryPKBSelect(TNodeType outputType);
+	std::vector<std::string> PQLSelect(TNodeType outputType);
 
-	//! Extraction from PKB for uses and modifies relationships without pattern.
-	/*!
-		One of the API functions that allows the PQL parser to extract information from the PKB.
-		Call this function for uses and modifies relationships without patterns.
-		\return the vector<int>* of the list of integers.
-	*/
-	std::vector<int> QueryPKBWithoutPatternUsesMods(std::string queryType, std::string input, int argumentPosition, std::string outputType);
-
-	//! Extraction from PKB for follows and parent relationships without pattern.
-	/*!
-		One of the API functions that allows the PQL parser to extract information from the PKB.
-		Call this function for follows and parent relationships without patterns.
-		\return the vector<int>* of the list of integers of statements.
-	*/
-	std::vector<int> QueryPKBWithoutPatternFollowsParent(std::string queryType, int input, int argumentPosition, std::string outputType);
-
-	//! Extraction from PKB for pattern clauses.
+	//! Returns a list of items that fit the specified pattern condition.
 	/*!
 		One of the API functions that allows the PQL parser to extract information from the PKB.
 		Call this function for pattern clauses.
+		\param ??? STILL
+		\param ??? WORK
+		\param ??? IN 
+		\param ??? PROGRESS
+		\param ??? !!!
+		\param ??? LOL
+		\param ??? :D
 		\return the vector<int>* of the list of integers of statements.
 	*/
 
-	std::vector<int> QueryPKBPattern(NAME leftVariable, std::string rightExpression, bool isUnderscored);
+	std::vector<int> PQLPattern(NAME leftVariable, std::string rightExpression, bool isUnderscored);
 
 	// ---------------------------------------------------------------------------------
 	// API FUNCTIONS FOR PQL PARSER ENDS HERE!!!
