@@ -84,7 +84,7 @@ int StatementTableStatement::getFollows() {
 }
 
 int StatementTableStatement::getFollowedBy() {
-	return followedBy->getIndex();
+	return followedBy;
 }
 
 TNodeType StatementTableStatement::getType() {
