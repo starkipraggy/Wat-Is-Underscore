@@ -13,8 +13,10 @@ public:
 
 	void processSimple(std::string);
 	void processLine();
-	void checkProcedure(std::vector<std::string>);
+	int checkWord(std::string);
 	int isCharABrace(std::string cChar);
+	int isCharAnOperator(std::string);
 	std::string SimpleParser::addSpaceToString(std::string);
+
 };
 
