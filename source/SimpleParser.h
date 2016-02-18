@@ -17,6 +17,7 @@ public:
 	int isCharABrace(std::string cChar);
 	int isCharAnOperator(std::string);
 	std::string SimpleParser::addSpaceToString(std::string);
+	int SimpleParser::checkAssign(int);
 
 };
 

@@ -16,7 +16,8 @@ static std::vector<std::string> tokens;
 
 int state = 0;
 bool isErrorDetected = false;
-//PKB* pkb = PKB::getInstance();
+PKB* pkb;
+//pkb = PKB::getInstance();
 
 SimpleParser::SimpleParser() {
 	fio = new FileIO();
@@ -87,8 +88,7 @@ void SimpleParser::processLine() {
 	}
 	else {
 
-		bool isEquals = false;
-		bool isOperator = false;
+
 		std::string leftStr;
 
 		for (int i = 0;i < tokens.size();i++) {
@@ -144,36 +144,11 @@ void SimpleParser::processLine() {
 			case 4:
 				// assign statement
 				// eats tokens until semi colon
-				std::cout << "Start Assignment ";
-				std::cout << std::endl;
 				if (procState == 0) {
 					isErrorDetected = true;
 					break;
 				}
-
-
-
-				for (i;i < tokens.size();i++) {
-					switch (isCharAnOperator(tokens[i])) {
-					case 1:
-						isEquals = true;
-						break;
-					case 2:
-						break;
-					case 3:
-						break;
-					case 4:
-						break;
-					case 5:
-						break;
-					case 0:
-						break;
-					default:
-						break;
-					}
-
-				}
-
+				i = checkAssign(i);
 
 				break;
 			default:
@@ -192,6 +167,37 @@ void SimpleParser::processLine() {
 
 
 
+}
+
+int SimpleParser::checkAssign(int position) {
+	std::cout << "Start Assignment ";
+	std::cout << std::endl;
+	
+	bool isEquals = false;
+	bool isOperator = false;
+
+
+	for (position;position < tokens.size();position++) {
+		switch (isCharAnOperator(tokens[position])) {
+		case 1:
+			isEquals = true;
+			break;
+		case 2:
+			break;
+		case 3:
+			break;
+		case 4:
+			break;
+		case 5:
+			break;
+		case 0:
+			break;
+		default:
+			break;
+		}
+
+	}
+	return position;
 }
 
 int SimpleParser::checkWord(std::string word) {
