@@ -270,6 +270,9 @@ void Preprocessor::addPatternClause(string rawClause) {
 	string assignedVariable = rawClause.substr(0, openBracket);
 	assignedVariable = trim(assignedVariable);
 	string assignedType = declarationMap.find(assignedVariable)->second;
+	if (assignedType != "assign") {
+		throw "syn-assign must be of type assign";
+	}
 	Variable assignedVar = Variable(assignedVariable, assignedType);
 
 	string remaining = rawClause.substr(openBracket + 1, string::npos);
