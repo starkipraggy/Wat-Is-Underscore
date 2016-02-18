@@ -16,7 +16,7 @@ static std::vector<std::string> tokens;
 
 int state = 0;
 bool isErrorDetected = false;
-PKB* pkb = PKB::getInstance();
+//PKB* pkb = PKB::getInstance();
 
 SimpleParser::SimpleParser() {
 	fio = new FileIO();
@@ -100,7 +100,7 @@ void SimpleParser::processLine() {
 				i++;
 				std::cout << "ProcName = " << tokens[i];
 				std::cout << std::endl;
-				pkb->ProcedureStart(tokens[i]);
+				//pkb->ProcedureStart(tokens[i]);
 				i++;
 				std::cout << "OpeningBrace = " << tokens[i];
 				std::cout << std::endl;
@@ -127,7 +127,7 @@ void SimpleParser::processLine() {
 				i++;
 				std::cout << "while var = " << tokens[i];
 				std::cout << std::endl;
-				pkb->WhileStart(tokens[i]);
+				//pkb->WhileStart(tokens[i]);
 				i++;
 				std::cout << "OpeningBrace = " << tokens[i];
 				std::cout << std::endl;
@@ -167,13 +167,6 @@ void SimpleParser::processLine() {
 					case 5:
 						break;
 					case 0:
-						if (isEquals == false && isOperator == false) {
-							leftStr = tokens[i];
-						}
-						else if (isEquals == false && isOperator == false) {
-
-						}
-
 						break;
 					default:
 						break;
