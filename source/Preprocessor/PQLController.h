@@ -9,8 +9,8 @@ This is a controller for PQL. It is used to process a query and return the resul
 #include <string>
 #include <vector>
 
-#include "Preprocessor\Preprocessor.h"
-#include "Preprocessor\QueryEvaluator.h"
+#include "Preprocessor.h"
+#include "QueryEvaluator.h"
 #include "Projector.h"
 
 class PQLController {

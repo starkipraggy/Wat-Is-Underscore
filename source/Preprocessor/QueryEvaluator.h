@@ -15,7 +15,7 @@ Query base and call PKB to process them
 #include "Clause.h"
 #include "PatternClause.h"
 #include "QueryTree.h"
-#include "PKB.h"
+#include "../PKB.h"
 #include "Ref.h"
 
 #include "StringUlti.h"

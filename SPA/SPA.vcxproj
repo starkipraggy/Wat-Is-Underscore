@@ -39,8 +39,8 @@
     <ClCompile Include="..\source\VariableTableVariable.cpp" />
     <ClCompile Include="..\source\AST.cpp" />
     <ClCompile Include="..\source\DataStructureObject.cpp" />
-    <ClCompile Include="PQLController.cpp" />
-    <ClCompile Include="Projector.cpp" />
+    <ClCompile Include="..\source\Preprocessor\PQLController.cpp" />
+    <ClCompile Include="..\source\Preprocessor\Projector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\Assign.h" />
@@ -72,8 +72,8 @@
     <ClInclude Include="..\source\AST.h" />
     <ClInclude Include="..\source\DataStructureObject.h" />
     <ClInclude Include="ExpressionToken.h" />
-    <ClInclude Include="PQLController.h" />
-    <ClInclude Include="Projector.h" />
+    <ClInclude Include="..\source\Preprocessor\PQLController.h" />
+    <ClInclude Include="..\source\Preprocessor\Projector.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{DC21A1EA-D2C6-4D14-A2B4-E025B64BDE81}</ProjectGuid>
