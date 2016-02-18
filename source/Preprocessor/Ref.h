@@ -1,22 +1,22 @@
-/*! \class Variable
+/*! \class Ref
 \brief Used to represent each reference made in query
 
 This class is used to represent each reference made in query. These reference are:
 synonymn, integer, ident, placeholder, partOfExpr
 */
 
-#ifndef Variable_H
-#define Variable_H
+#ifndef Ref_H
+#define Ref_H
 
 #include <string>
 #include <regex>
 #include "StringUlti.h"
 using namespace std;
 
-class Variable {
+class Ref {
 public:
-	Variable();
-	Variable::Variable(string nam, string typ);
+	Ref();
+	Ref::Ref(string nam, string typ);
 
 	//! Getter for Name
 	/*!
@@ -40,7 +40,7 @@ public:
 	/*!
 	Return true if Variable has the same name and type with another Variable
 	*/
-	bool equals(Variable v);
+	bool equals(Ref v);
 private:
 	string name; /**< name of the reference */
 	string type; /**< type of the reference */

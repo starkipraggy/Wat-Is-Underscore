@@ -11,7 +11,7 @@ has some comparative method such as hasLinkedVariable and hasAtMostOneCommonSyno
 #include <string>
 #include <regex>
 
-#include "Variable.h"
+#include "Ref.h"
 #include "Clause.h"
 #include "StringUlti.h"
 using namespace std;
@@ -19,7 +19,7 @@ using namespace std;
 class Clause {
 public:
 	Clause();
-	Clause::Clause(string clau, Variable var1, Variable var2);
+	Clause::Clause(string clau, Ref var1, Ref var2);
 
 	//! Getter for Clause
 	/*!
@@ -31,13 +31,13 @@ public:
 	/*!
 	Return VariableOne for object of this instance.
 	*/
-	Variable getVariableOne();
+	Ref getRefOne();
 
 	//! Getter for VariableTwo
 	/*!
 	Return VariableTwo for object of this instance.
 	*/
-	Variable getVariableTwo();
+	Ref getRefTwo();
 
 	//! Get string representation of Clause
 	/*!
@@ -56,7 +56,7 @@ public:
 	/*!
 	Return true if variableOne or variableTwo is equals to input Variable
 	*/
-	bool hasVariable(Variable v);
+	bool hasRef(Ref v);
 
 	//! Check if Clause contain a particular linkable Variable
 	/*!
@@ -65,7 +65,7 @@ public:
 
 	A linkable Variable has to have the type of design-entity
 	*/
-	bool hasLinkedVariable(Variable v);
+	bool hasLinkedRef(Ref v);
 
 	//! Return the variable linked to input variable
 	/*!
@@ -73,7 +73,7 @@ public:
 
 	A linkable Variable has to have the type of design-entity
 	*/
-	Variable getLinkedVariable(Variable v);
+	Ref getLinkedRef(Ref v);
 
 	//! Check if input Clause has at most one common Synonymn with Clause
 	/*!
@@ -82,8 +82,8 @@ public:
 	bool hasAtMostOneCommonSynonym(Clause* c);
 protected:
 	string clause; /**< Contain relCond of a such that clause */
-	Variable variableOne; /**< The first arguement of the relCond */
-	Variable variableTwo; /**< The second arguement of the relCond */
+	Ref refOne; /**< The first arguement of the relCond */
+	Ref refTwo; /**< The second arguement of the relCond */
 };
 
 #endif

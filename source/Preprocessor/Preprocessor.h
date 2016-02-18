@@ -100,17 +100,17 @@ private:
 	/*!
 	return true if type is stmtRef
 	*/
-	static bool isStmtRef(Variable v);
+	static bool isStmtRef(Ref v);
 	//! Check if type is EntRef
 	/*!
 	return true if type is EntRef
 	*/
-	static bool isEntRef(Variable v);
+	static bool isEntRef(Ref v);
 	//! Check if type is ExprSpec
 	/*!
 	return true if type is ExprSpec
 	*/
-	static bool isExprSpec(Variable v);
+	static bool isExprSpec(Ref v);
 };
 
 #endif

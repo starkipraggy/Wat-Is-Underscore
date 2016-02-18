@@ -72,7 +72,7 @@ void Preprocessor::setQueryTree(string statement) {
 	std::pair<std::string, std::string> selectPair = getSelect(query);
 	string name = selectPair.first;
 	string type = declarationMap.find(name)->second;
-	QueryTree::Instance()->setSelect(Variable(name, type));
+	QueryTree::Instance()->setSelect(Ref(name, type));
 
 	string declarationQueries = selectPair.second;
 	if (declarationQueries != "") {
@@ -227,8 +227,8 @@ void Preprocessor::addSuchThatClause(string rawClause) {
 		secondVariable = trim(secondVariable);
 		string firstType = findSuchThatType(firstVariable);
 		string secondType = findSuchThatType(secondVariable);
-		Variable var1 = Variable(firstVariable, firstType);
-		Variable var2 = Variable(secondVariable, secondType);
+		Ref var1 = Ref(firstVariable, firstType);
+		Ref var2 = Ref(secondVariable, secondType);
 		
 		if (!isStmtRef(var1)) {
 			throw "invalid var1";
@@ -272,7 +272,7 @@ void Preprocessor::addPatternClause(string rawClause) {
 	if (assignedType != "assign") {
 		throw "syn-assign must be of type assign";
 	}
-	Variable assignedVar = Variable(assignedVariable, assignedType);
+	Ref assignedVar = Ref(assignedVariable, assignedType);
 
 	string remaining = rawClause.substr(openBracket + 1, string::npos);
 	remaining = trim(remaining);
@@ -293,8 +293,8 @@ void Preprocessor::addPatternClause(string rawClause) {
 	secondVariable = trim(secondVariable);
 	string firstType = findPatternType(firstVariable);
 	string secondType = findPatternType(secondVariable);
-	Variable var1 = Variable(firstVariable, firstType);
-	Variable var2 = Variable(secondVariable, secondType);
+	Ref var1 = Ref(firstVariable, firstType);
+	Ref var2 = Ref(secondVariable, secondType);
 
 	if (isEntRef(var1) && isExprSpec(var2)) {
 		QueryTree::Instance()->addClause(new PatternClause("PATTERN", var1, var2, assignedVar));
@@ -355,21 +355,21 @@ string Preprocessor::findPatternType(string raw) {
 	return result;
 }
 
-bool Preprocessor::isStmtRef(Variable v) {
+bool Preprocessor::isStmtRef(Ref v) {
 	string type = v.getType();
 	
 	return (type == "placeholder" || type == "integer" ||
 		regex_match(type, designEntityRegex));
 }
 
-bool Preprocessor::isEntRef(Variable v) {
+bool Preprocessor::isEntRef(Ref v) {
 	string type = v.getType();
 
 	return (type == "placeholder" || type == "expr" ||
 		regex_match(type, designEntityRegex));
 }
 
-bool Preprocessor::isExprSpec(Variable v) {
+bool Preprocessor::isExprSpec(Ref v) {
 	string type = v.getType();
 
 	return (type == "placeholder" || type == "part_of_expr");

@@ -9,18 +9,18 @@ to present a pattern clause.
 #define PatternClause_H
 
 #include <string>
-#include "Variable.h"
+#include "Ref.h"
 #include "Clause.h"
 
 class PatternClause : public Clause{
 public:
-	PatternClause(string clau, Variable var1, Variable var2, Variable var3);
+	PatternClause(string clau, Ref var1, Ref var2, Ref var3);
 
 	//! Getter for AssignedVariable
 	/*!
 	Return AssignedVariable for object of this instance.
 	*/
-	Variable getAssignedVariable();
+	Ref getAssignedVariable();
 
 	//! Get string representation of Clause
 	/*!
@@ -36,7 +36,7 @@ public:
 	*/
 	bool equals(Clause* c);
 protected:
-	Variable assignedVariable;  /**< syn-assign of Pattern Clause */
+	Ref assignedVariable;  /**< syn-assign of Pattern Clause */
 };
 
 #endif

@@ -7,7 +7,7 @@ const regex designEntityRegex("^(STMT|ASSIGN|WHILE|VARIABLE|CONSTANT|PROG_LINE)$
 PKB* pkb;
 
 std::vector<std::string> QueryEvaluator::process() {
-	class Variable::Variable select = QueryTree::Instance()->getSelect();
+	Ref select = QueryTree::Instance()->getSelect();
 	vector<Clause*> clauses = QueryTree::Instance()->getClauses();
 	vector<string> queryResult;
 	pkb = PKB::getInstance();
@@ -18,11 +18,11 @@ std::vector<std::string> QueryEvaluator::process() {
 	else {
 		for (auto& x : clauses) {
 			string clause = x->getClause();
-			class Variable::Variable var1 = x->getVariableOne();
-			class Variable::Variable var2 = x->getVariableTwo();
+			Ref var1 = x->getRefOne();
+			Ref var2 = x->getRefTwo();
 			if (clause == "PATTERN") {
 				PatternClause* p = dynamic_cast<PatternClause*>(x);
-				class Variable::Variable assignVar = p->getAssignedVariable();
+				Ref assignVar = p->getAssignedVariable();
 				//getPattern(var1, var2, assignVar.getType());
 			}
 			else {
@@ -90,7 +90,7 @@ void QueryEvaluator::addResult(vector<string> currResult) {
 	}
 }
 
-void QueryEvaluator::query(string clause, class Variable::Variable source, class Variable::Variable dest, int position) {
+void QueryEvaluator::query(string clause, Ref source, Ref dest, int position) {
 	vector<string> queryResult;
 
 	if (regex_match(dest.getType(), designEntityRegex)) {

@@ -26,14 +26,14 @@ public:
 	/*!
 	Return the Variable for select
 	*/
-	Variable getSelect();
+	Ref getSelect();
 
 
 	//! Setter for Clause
 	/*!
 	Set the Variable for select
 	*/
-	void setSelect(Variable v);
+	void setSelect(Ref v);
 
 
 	//! Setter for Clause
@@ -68,7 +68,7 @@ public:
 	
 private:
 	static QueryTree* m_pInstance;
-	Variable selectVariable; /**< variable of the select clause */
+	Ref selectVariable; /**< variable of the select clause */
 	std::vector<Clause*> clauses; /**< collection of clauses */
 
 	QueryTree();

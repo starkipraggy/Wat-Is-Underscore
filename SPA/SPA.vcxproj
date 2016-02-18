@@ -22,7 +22,7 @@
     <ClCompile Include="..\source\Preprocessor\QueryEvaluator.cpp" />
     <ClCompile Include="..\source\Preprocessor\QueryTree.cpp" />
     <ClCompile Include="..\source\Preprocessor\StringUlti.cpp" />
-    <ClCompile Include="..\source\Preprocessor\Variable.cpp" />
+    <ClCompile Include="..\source\Preprocessor\Ref.cpp" />
     <ClCompile Include="..\source\SimpleParser.cpp" />
     <ClCompile Include="..\source\PKB.cpp" />
     <ClCompile Include="..\source\SPA.cpp" />
@@ -54,7 +54,7 @@
     <ClInclude Include="..\source\Preprocessor\QueryEvaluator.h" />
     <ClInclude Include="..\source\Preprocessor\QueryTree.h" />
     <ClInclude Include="..\source\Preprocessor\StringUlti.h" />
-    <ClInclude Include="..\source\Preprocessor\Variable.h" />
+    <ClInclude Include="..\source\Preprocessor\Ref.h" />
     <ClInclude Include="..\source\SPA.h" />
     <ClInclude Include="..\source\Statement.h" />
     <ClInclude Include="..\source\SimpleParser.h" />

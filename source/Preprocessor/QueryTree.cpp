@@ -12,11 +12,11 @@ QueryTree* QueryTree::Instance() {
 	return m_pInstance;
 }
 
-Variable QueryTree::getSelect() {
+Ref QueryTree::getSelect() {
 	return selectVariable;
 }
 
-void QueryTree::setSelect(Variable v) {
+void QueryTree::setSelect(Ref v) {
 	selectVariable = v;
 }
 
@@ -28,7 +28,7 @@ std::vector<Clause*> QueryTree::getClauses() {
 }
 
 void QueryTree::newTree() {
-	selectVariable = Variable();
+	selectVariable = Ref();
 	clauses = {};
 }
 
