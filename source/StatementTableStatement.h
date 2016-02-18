@@ -128,4 +128,12 @@ public:
 	*/
 	int getFollows();
 
+	//! Getter function for the type of this statement.
+	/*!
+	Getter function for the type of this statement; use this function to
+	retrieve the type of the statement that this object is representing.
+	\return the type of the statement as defined by enum TNodeType.
+	*/
+	TNodeType getType();
+
 };

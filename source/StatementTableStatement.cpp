@@ -66,3 +66,7 @@ std::vector<int>* StatementTableStatement::getModifies() {
 int StatementTableStatement::getFollows() {
 	return follows;
 }
+
+TNodeType StatementTableStatement::getType() {
+	return type;
+}
