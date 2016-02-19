@@ -18,6 +18,7 @@ public:
 		sp = new SimpleParser();
 		//Act
 		std::vector<std::string> tokens;
+		simple = sp->addSpaceToString(simple);
 		tokens = sp->setTokens(simple);
 
 		//Assert
@@ -32,6 +33,7 @@ public:
 		sp = new SimpleParser();
 		//Act
 		std::vector<std::string> tokens;
+		simple = sp->addSpaceToString(simple);
 		tokens = sp->setTokens(simple);
 
 		//Assert
