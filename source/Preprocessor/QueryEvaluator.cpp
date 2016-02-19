@@ -23,7 +23,7 @@ std::vector<std::string> QueryEvaluator::process() {
 			if (clause == "PATTERN") {
 				PatternClause* p = dynamic_cast<PatternClause*>(x);
 				Ref assignVar = p->getAssignedVariable();
-				pkb->PQLPattern(var1.getName(), var2.getName(), false);
+				pkb->PQLPattern(Assign, var1, var2);
 			}
 			else {
 				if (regex_match(var1.getType(), designEntityRegex)) {

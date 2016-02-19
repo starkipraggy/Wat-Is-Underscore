@@ -225,10 +225,8 @@ void Preprocessor::addSuchThatClause(string rawClause) {
 		string secondVariable = remaining.substr(semicolonAfterBracket + 1, closeBracket - semicolonAfterBracket - 1);
 		firstVariable = trim(firstVariable);
 		secondVariable = trim(secondVariable);
-		string firstType = findSuchThatType(firstVariable);
-		string secondType = findSuchThatType(secondVariable);
-		Ref var1 = Ref(firstVariable, firstType);
-		Ref var2 = Ref(secondVariable, secondType);
+		Ref var1 = createSuchThatRef(firstVariable);
+		Ref var2 = createSuchThatRef(secondVariable);
 		
 		if (!isStmtRef(var1)) {
 			throw "invalid var1";
@@ -291,10 +289,8 @@ void Preprocessor::addPatternClause(string rawClause) {
 	string secondVariable = remaining.substr(semicolonAfterBracket + 1, closeBracket - semicolonAfterBracket - 1);
 	firstVariable = trim(firstVariable);
 	secondVariable = trim(secondVariable);
-	string firstType = findPatternType(firstVariable);
-	string secondType = findPatternType(secondVariable);
-	Ref var1 = Ref(firstVariable, firstType);
-	Ref var2 = Ref(secondVariable, secondType);
+	Ref var1 = createPatternRef(firstVariable);
+	Ref var2 = createPatternRef(secondVariable);
 
 	if (isEntRef(var1) && isExprSpec(var2)) {
 		QueryTree::Instance()->addClause(new PatternClause("PATTERN", var1, var2, assignedVar));
@@ -304,21 +300,21 @@ void Preprocessor::addPatternClause(string rawClause) {
 	}
 }
 
-string Preprocessor::findSuchThatType(string raw) {
-	string result;
+Ref Preprocessor::createSuchThatRef(string name) {
+	Ref result;
 
-	if (regex_match(raw, expressionRegex)) {
-		result = "expr";
+	if (regex_match(name, expressionRegex)) {
+		result = Ref(name.substr(1, name.length()-2), "expr");
 	}
-	else if (regex_match(raw, integerRegex)) {
-		result = "integer";
+	else if (regex_match(name, integerRegex)) {
+		result = Ref(name, "integer");
 	}
-	else if (regex_match(raw, placeholderRegex)) {
-		result = "placeholder";
+	else if (regex_match(name, placeholderRegex)) {
+		result = Ref(name, "placeholder");
 	}
-	else if (regex_match(raw, identRegex)) {
+	else if (regex_match(name, identRegex)) {
 		try {
-			result = declarationMap.find(raw)->second;
+			result = Ref(name, declarationMap.find(name)->second);
 		}
 		catch (const char* msg) {
 			throw msg;
@@ -330,20 +326,20 @@ string Preprocessor::findSuchThatType(string raw) {
 	return result;
 }
 
-string Preprocessor::findPatternType(string raw) {
-	string result;
-	if (regex_match(raw, placeholderRegex)) {
-		result = "placeholder";
+Ref Preprocessor::createPatternRef(string name) {
+	Ref ref;
+	if (regex_match(name, placeholderRegex)) {
+		ref = Ref(name, "placeholder");
 	}
-	else if (regex_match(raw, partOfExpressionRegex)) {
-		result = "part_of_expr";
+	else if (regex_match(name, partOfExpressionRegex)) {
+		ref = Ref(name.substr(2, name.length() - 4), "part_of_expr");
 	}
-	else if (regex_match(raw, expressionRegex)) {
-		result = "expr";
+	else if (regex_match(name, expressionRegex)) {
+		ref = Ref(name.substr(1, name.length() - 2), "expr");
 	}
-	else if (regex_match(raw, identRegex)) {
+	else if (regex_match(name, identRegex)) {
 		try {
-			result = declarationMap.find(raw)->second;
+			ref = Ref(name, declarationMap.find(name)->second);
 		}
 		catch (const char* msg) {
 			throw msg;
@@ -352,7 +348,7 @@ string Preprocessor::findPatternType(string raw) {
 	else {
 		throw "invalid pattern";
 	}
-	return result;
+	return ref;
 }
 
 bool Preprocessor::isStmtRef(Ref v) {

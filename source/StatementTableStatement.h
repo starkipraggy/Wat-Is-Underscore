@@ -15,23 +15,41 @@
 
 class StatementTableStatement {
 private:
-	int lineNumber;						/**< The line number of this statement */
-	int index;							/**< The index number assigned to the item this object is representing */
-	TNodeType type;						/**< The type of this statement */
+	int lineNumber;										/**< The line number of this statement */
+	int index;											/**< The index number assigned to the item this object is representing */
+	TNodeType type;										/**< The type of this statement */
 
-	StatementTableStatement* follows;	/**< The pointer to the statement that this statement follows
-											 (this statement appears immediately after the one it follows) */
-	int followedBy;						/**< The statement number of the statement that this statement is followed
-											 (that statement appears immediately after this statement ) */
-	StatementTableStatement* parent;	/**< The pointer to the statement that is parent to this statement */
-	std::vector<int>* children;			/**< A list of the statement numbers of statements that have this statement as parent */
-	std::vector<int>* modifies;			/**< A list of the index numbers of variables that this statement modifies */
-	std::vector<int>* uses;				/**< A list of the index numbers of variables that this statement uses */
+	StatementTableStatement* follows;					/**< The pointer to the statement that this statement follows
+															 (this statement appears immediately after the one it follows) */
+	StatementTableStatement* followedBy;				/**< The statement number of the statement that this statement is followed
+															 (that statement appears immediately after this statement ) */
+	StatementTableStatement* parent;					/**< The pointer to the statement that is parent to this statement */
+	std::vector<StatementTableStatement*>* children;	/**< A list of pointers to statements that have this statement as parent */
+	std::vector<int>* modifies;							/**< A list of the index numbers of variables that this statement modifies */
+	std::vector<int>* uses;								/**< A list of the index numbers of variables that this statement uses */
 
-	std::vector<int>* parentStar;		/**< A list of statement numbers; has its parent, its parent's parent, etc.
-											 Used for the Parent* relationship */
-	std::vector<int>* followsStar;		/**< A list of statement numbers; has the statement it follows, its follow's follow, etc.
-											 Used for the Follows* relationship */
+	std::vector<int>* parentStar;						/**< A list of statement numbers; has its parent, its parent's parent, etc.
+															 Used for the Parent* relationship */
+	std::vector<int>* followsStar;						/**< A list of statement numbers; has the statement it follows, its follow's follow, etc.
+															 Used for the Follows* relationship */
+
+	std::set<int>* childrenStar;						/**< A list of statement numbers; has its children, its children's children, etc.
+															 Used for the Parent* relationship */
+	bool hasItsChildrenStarChanged;						/**< Boolean control to check if a new childrenStar set should be fetched, or just use the one cached */
+	//! Used to set "hasItsChildrenStarChanged" boolean to true, so that it can no longer used cached childrenStar set
+	/*!
+		Used to set "hasItsChildrenStarChanged" boolean to true, so that it can no longer used cached childrenStar set
+	*/
+	void childrenStarHasBeingModified();
+
+	std::vector<int>* followedByStar;					/**< A list of statement numbers; has the one following it, the one following the one following it, etc.
+															 Used for the Follows* relationship */
+	bool hasItsFollowedByStarChanged;					/**< Boolean control to check if a new followedByStar vector should be fetched, or just use the one cached */
+	//! Used to set "hasItsFollowedByStarChanged" boolean to true, so that it can no longer used cached followedByStar vector
+	/*!
+		Used to set "hasItsFollowedByStarChanged" boolean to true, so that it can no longer used cached followedByStar vector
+	*/
+	void followedByStarHasBeingModified();
 public:
 	//! Constructor for the StatementTableStatement.
 	/*!
@@ -65,6 +83,13 @@ public:
 	*/
 	bool hasFollows();
 
+	//! Checks if there is a statement following this statement.
+	/*!
+		Checks if there is a statement following this statement.
+		\return True if there is, and false is there is not.
+	*/
+	bool hasFollowedBy();
+
 	//! Getter function for the statement number of the parent of this statement.
 	/*!
 		Getter function for the statement number of the parent of this statement; use this function to
@@ -89,13 +114,13 @@ public:
 	*/
 	void setFollows(StatementTableStatement* follows);
 
-	//! Setter function for the statement number of the statement that is following this statement.
+	//! Setter function for the pointer to the statement that is following this statement.
 	/*!
-		Setter function for the statement number of the statement that is following this statement; use this function to
-		assign the statement number of the statement that is following the statement that this object is representing.
-		\param followedBy Statement number of the statement that is following this statement, or 0 if it does not have any.
+		Setter function for pointer to the statement that is following this statement; use this function to
+		assign the pointer to the statement that is following the statement that this object is representing.
+		\param followedBy Pointer to the statement that is following this statement, or NULL if it does not have any.
 	*/
-	void setFollowedBy(int followedBy);
+	void setFollowedBy(StatementTableStatement* followedBy);
 
 	//! Setter function for the statement number of the parent of this statement.
 	/*!
@@ -108,9 +133,9 @@ public:
 	//! Allows the adding of statements that have this statement as a parent.
 	/*!
 		This function is used by the SIMPLE parser API to add statements that have this statement as a parent.
-		\param child The statement number of the statement that havs this statement as a parent.
+		\param child The pointer to the statement that havs this statement as a parent.
 	*/
-	void addChild(int child);
+	void addChild(StatementTableStatement* child);
 	
 	//! Allows the adding of variables that this statement modifies.
 	/*!
@@ -212,6 +237,33 @@ public:
 	*/
 	int getFollowsStarSize();
 
+	//! Getter function for members of the followedByStar vector.
+	/*!
+		Getter function for the members of the followedByStar vector; use this function to
+		retrieve the individual statement numbers that have this statement as Follows*.
+		As this function requires the passing of vector index number, which is generally
+		unavailable outside, this function is recommended to be used only with the iteration
+		of the entire vector.
+		\param index The index number of the member of the statement inside the vector.
+		\return The statement number of the statement in the childrenStar vector.
+	*/
+	int getFollowedByStar(int index);
+
+	//! Getter function for the size of the followedByStar vector.
+	/*!
+		Getter function for the size of the followedByStar vector; use this function to
+		retrieve the number of statements that are Follows* of this statement.
+		\return The number of statements that are Follows* of this statement.
+	*/
+	int getFollowedByStarSize();
+
+	//! This function is called when the followedByStar vector is needed but is outdated.
+	/*!
+		This function is called when the followedByStar vector is needed but is outdated.
+		A new vector would be generated.
+	*/
+	void fetchNewCopyOfFollowedByStar();
+
 	//! Getter function for members of the children vector.
 	/*!
 		Getter function for the members of the children vector; use this function to
@@ -252,4 +304,30 @@ public:
 	*/
 	int getParentStarSize();
 
+	//! Getter function for members of the childrenStar vector.
+	/*!
+		Getter function for the members of the childrenStar vector; use this function to
+		retrieve the individual statement numbers that have this statement as parent*.
+		As this function requires the passing of vector index number, which is generally
+		unavailable outside, this function is recommended to be used only with the iteration
+		of the entire vector.
+		\param index The index number of the member of the statement inside the vector.
+		\return The statement number of the statement in the childrenStar vector.
+	*/
+	int getChildrenStar(int index);
+
+	//! Getter function for the size of the childrenStar vector.
+	/*!
+		Getter function for the size of the parentStar vector; use this function to
+		retrieve the number of statements that are parent* of this statement.
+		\return The number of statements that are parent* of this statement.
+	*/
+	int getChildrenStarSize();
+
+	//! This function is called when the childrenStar vector is needed but is outdated.
+	/*!
+		This function is called when the childrenStar vector is needed but is outdated.
+		A new vector would be generated.
+	*/
+	void fetchNewCopyOfChildrenStar();
 };

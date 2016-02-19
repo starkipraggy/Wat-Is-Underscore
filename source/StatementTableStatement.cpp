@@ -1,4 +1,13 @@
+#include <stack>
 #include "StatementTableStatement.h"
+
+void StatementTableStatement::childrenStarHasBeingModified() {
+	hasItsChildrenStarChanged = true;
+}
+
+void StatementTableStatement::followedByStarHasBeingModified() {
+	hasItsFollowedByStarChanged = true;
+}
 
 StatementTableStatement::StatementTableStatement(int lineNumber, int index) {
 	this->lineNumber = lineNumber;
@@ -8,12 +17,18 @@ StatementTableStatement::StatementTableStatement(int lineNumber, int index) {
 	follows = 0;
 	followedBy = 0;
 	parent = 0;
-	children = new std::vector<int>();
+	children = new std::vector<StatementTableStatement*>();
 	modifies = new std::vector<int>();
 	uses = new std::vector<int>();
 
 	parentStar = new std::vector<int>();
 	followsStar = new std::vector<int>();
+
+	childrenStar = new std::set<int>();
+	hasItsChildrenStarChanged = false;
+
+	followedByStar = new std::vector<int>();
+	hasItsFollowedByStarChanged = false;
 }
 
 StatementTableStatement::~StatementTableStatement() {
@@ -23,6 +38,8 @@ StatementTableStatement::~StatementTableStatement() {
 
 	delete parentStar;
 	delete followsStar;
+	delete childrenStar;
+	delete followedByStar;
 }
 
 int StatementTableStatement::getIndex() {
@@ -30,11 +47,15 @@ int StatementTableStatement::getIndex() {
 }
 
 bool StatementTableStatement::hasParent() {
-	return (parent > 0);
+	return (parent != NULL);
 }
 
 bool StatementTableStatement::hasFollows() {
-	return (follows > 0);
+	return (follows != NULL);
+}
+
+bool StatementTableStatement::hasFollowedBy() {
+	return (followedBy != NULL);
 }
 
 int StatementTableStatement::getParent() {
@@ -53,10 +74,11 @@ void StatementTableStatement::setFollows(StatementTableStatement* follows) {
 	while (stmt->hasFollows()) {
 		stmt = stmt->follows;
 		followsStar->push_back(stmt->getIndex());
+		stmt->followedByStarHasBeingModified();
 	}
 }
 
-void StatementTableStatement::setFollowedBy(int followedBy) {
+void StatementTableStatement::setFollowedBy(StatementTableStatement* followedBy) {
 	this->followedBy = followedBy;
 }
 
@@ -68,10 +90,11 @@ void StatementTableStatement::setParent(StatementTableStatement* parent) {
 	while (stmt->hasParent()) {
 		stmt = stmt->parent;
 		parentStar->push_back(stmt->getIndex());
+		stmt->childrenStarHasBeingModified();
 	}
 }
 
-void StatementTableStatement::addChild(int child) {
+void StatementTableStatement::addChild(StatementTableStatement* child) {
 	children->push_back(child);
 }
 
@@ -88,7 +111,7 @@ int StatementTableStatement::getFollows() {
 }
 
 int StatementTableStatement::getFollowedBy() {
-	return followedBy;
+	return followedBy->getIndex();
 }
 
 TNodeType StatementTableStatement::getType() {
@@ -119,16 +142,38 @@ int StatementTableStatement::getFollowsStarSize() {
 	return followsStar->size();
 }
 
-/*int StatementTableStatement::getFollowedByStar(int index) {
-	followsStar->at(index);
+int StatementTableStatement::getFollowedByStar(int index) {
+	if (hasItsFollowedByStarChanged) {
+		fetchNewCopyOfFollowedByStar(); // Fetch new copy
+
+		hasItsFollowedByStarChanged = false;
+	}
+
+	return (followedByStar->at(index));
 }
 
 int StatementTableStatement::getFollowedByStarSize() {
-	return followsStar->size();
-}*/
+	if (hasItsFollowedByStarChanged) {
+		fetchNewCopyOfFollowedByStar(); // Fetch new copy
+
+		hasItsFollowedByStarChanged = false;
+	}
+
+	return followedByStar->size();
+}
+
+void StatementTableStatement::fetchNewCopyOfFollowedByStar() {
+	followedByStar->clear();
+
+	StatementTableStatement* statementFollowing = this;
+	while (statementFollowing->hasFollowedBy()) {
+		followedByStar->push_back(followedBy->getIndex());
+		statementFollowing = statementFollowing->followedBy;
+	}
+}
 
 int StatementTableStatement::getChildren(int index) {
-	return children->at(index);
+	return children->at(index)->getIndex();
 }
 
 int StatementTableStatement::getChildrenSize() {
@@ -143,10 +188,50 @@ int StatementTableStatement::getParentStarSize() {
 	return parentStar->size();
 }
 
-/*int StatementTableStatement::getChildrenStar(int index) {
-	childrenStar->at(index);
+int StatementTableStatement::getChildrenStar(int index) {
+	if (hasItsChildrenStarChanged) {
+		fetchNewCopyOfChildrenStar(); // Fetch new copy
+
+		hasItsChildrenStarChanged = false;
+	}
+
+	std::set<int>::iterator it = childrenStar->begin();
+	std::advance(it, index);
+	return *it;
 }
 
 int StatementTableStatement::getChildrenStarSize() {
+	if (hasItsChildrenStarChanged) {
+		fetchNewCopyOfChildrenStar(); // Fetch new copy
+
+		hasItsChildrenStarChanged = false;
+	}
+
 	return childrenStar->size();
-}*/
+}
+
+void StatementTableStatement::fetchNewCopyOfChildrenStar() {
+	childrenStar->clear();
+	std::stack<StatementTableStatement*> stackForProcessingChildren;
+
+	int childrenSize = getChildrenSize();
+	for (int i = 0; i < childrenSize; i++) {
+		stackForProcessingChildren.push(children->at(i));
+	}
+
+	StatementTableStatement* child;
+	while (!stackForProcessingChildren.empty()) {
+		child = stackForProcessingChildren.top();
+
+		if (childrenStar->count(child->getIndex()) == 0) { // Not already in the list, need to add its children into stack for processing
+			childrenStar->insert(child->getIndex());
+
+			childrenSize = child->getChildrenSize();
+			for (int x = 0; x < childrenSize; x++) {
+				stackForProcessingChildren.push(child->children->at(x));
+			}
+		}
+
+		stackForProcessingChildren.pop();
+	}
+}
