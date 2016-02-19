@@ -13,6 +13,7 @@
 #include "ProcedureTable.h"
 #include "StatementTable.h"
 #include "VariableTable.h"
+#include "Preprocessor/Ref.h"
 
 enum ExpressionTokenType {
 	Variable,
@@ -229,16 +230,12 @@ public:
 	/*!
 		One of the API functions that allows the PQL parser to extract information from the PKB.
 		Call this function for pattern clauses.
-		\param ??? STILL
-		\param ??? WORK
-		\param ??? IN 
-		\param ??? PROGRESS
-		\param ??? !!!
-		\param ??? LOL
-		\param ??? :D
+		\param type The type of statements that you are looking for (eg. "Statement", "Assign", "While", etc.)
+		\param left The first item in the parentheses of the pattern clause
+		\param right The second item in the parentheses of the pattern clause
 		\return the vector<int>* of the list of integers of statements.
 	*/
-	std::vector<int> PQLPattern(NAME leftVariable, std::string rightExpression, bool isUnderscored);
+	std::vector<std::string> PQLPattern(TNodeType type, Ref left, Ref right);
 
 	// ---------------------------------------------------------------------------------
 	// API FUNCTIONS FOR PQL PARSER ENDS HERE!!!

@@ -134,6 +134,13 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 	// Set the type of the statement to be an assignment
 	currentStatement->setType(Assign);
 
+	// Set expression of this statement
+	std::string rightHandSideExpression = "";
+	for (unsigned int i = 0; i < size; i++) {
+		rightHandSideExpression += tokens[i];
+	}
+	currentStatement->setRightHandSideExpression(rightHandSideExpression);
+
 	// Add variable on the left side into the current procedure AND statement as a Modifies(p, v) relationship
 	addRelationship(leftVariable, currentProcedure, Modifies);
 	addRelationship(leftVariable, currentStatement, Modifies);
@@ -560,8 +567,36 @@ std::vector<std::string> PKB::PQLParentStar(int statementNumber, int argumentPos
 	return returnList;
 }
 
-std::vector<int> PKB::PQLPattern(NAME leftVariable, std::string rightExpression, bool isUnderscored) {
-	// @todo Wait for Alan and Chun How's confirmation
-	std::vector<int> lol;
-	return lol;
+std::vector<std::string> PKB::PQLPattern(TNodeType type, Ref left, Ref right) {
+	std::vector<std::string> returnList;
+	
+	// @todo Supposedly to use AST to check this, but since AST is not up yet, let's go with the lazy method
+	// @todo I'm really sorry for this. Will make sure this is no longer done like this by iteration 2./
+
+	int size = statementTable->getNumberOfStatements();
+	for (int i = 0; i < size; i++) {
+		StatementTableStatement* statement = statementTable->getStatementUsingVectorIndexNumber(i);
+		if (statement->getType() == type) {
+			if (type == Assign) {
+				// There should only be a single modify for an assign statement
+				if ((left.getType() == "placeholder") || (variableTable->getVariableUsingVariableIndexNumber(statement->getModifies(0))->getName() == left.getName())) {
+					if ((right.getType() == "placeholder") ||
+							((right.getType() == "part_of_expr") && (right.getName() == statement->getRightHandSideExpression().substr(0, right.getName().length())) ||
+							((right.getType() == "expr") && (right.getName() == statement->getRightHandSideExpression())))) {
+						returnList.push_back(std::to_string(statement->getIndex()));
+					}
+				}
+			}
+			else if ((type == While) || (type == If)) {
+				if ((left.getType() == "placeholder") || (statement->getControlVariable() == left.getName())) {
+					returnList.push_back(std::to_string(statement->getIndex()));
+				}
+			}
+		}
+	}
+
+	if (returnList.empty()) {
+		returnList.push_back("none");
+	}
+	return returnList;
 }

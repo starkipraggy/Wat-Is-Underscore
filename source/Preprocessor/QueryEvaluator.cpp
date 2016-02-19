@@ -110,7 +110,7 @@ TNodeType QueryEvaluator::toTNodeType(string type) {
 	TNodeType n = Undefined;
 
 	if (type == "STMT") {
-		return Stmt;
+		return Undefined; // Just Undefined will do, I will know that it's a statement. - Wei Liang
 	}
 	else if (type == "ASSIGN") {
 		return Assign;
@@ -125,7 +125,7 @@ TNodeType QueryEvaluator::toTNodeType(string type) {
 		return Const;
 	}
 	else if (type == "PROG_LINE") {
-		return Prog_line;
+		return Undefined;  // Just Undefined will do, I will know that it's a statement. - Wei Liang
 	}
 	else {
 		return Undefined;

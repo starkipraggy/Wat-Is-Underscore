@@ -18,6 +18,8 @@ private:
 	int lineNumber;										/**< The line number of this statement */
 	int index;											/**< The index number assigned to the item this object is representing */
 	TNodeType type;										/**< The type of this statement */
+	std::string rightHandSideExpression;				/**< Right hand side expression, specifically for assign statements, for pattern clauses */
+	NAME controlVariable;								/**< Control variable, specifically for if and while statements, for pattern clauses */
 
 	StatementTableStatement* follows;					/**< The pointer to the statement that this statement follows
 															 (this statement appears immediately after the one it follows) */
@@ -69,12 +71,34 @@ public:
 	*/
 	int getIndex();
 
+	//! Getter function for right hand side expression of the assign statement.
+	/*!
+		Getter function for the right hand side expression of the assign statement.
+		\return Expression, or "" if this is not an assign statement.
+	*/
+	std::string getRightHandSideExpression();
+
+	//! Getter function for the control variable of the if/while statement.
+	/*!
+		Getter function for the control variable of the if/while statement.
+		\return Control variable, or "" if this is not a if/while statement.
+	*/
+	NAME getControlVariable();
+
 	//! Checks if this is a statement assigned to be the parent of this statement.
 	/*!
 		Checks if this is a statement assigned to be the parent of this statement.
 		\return True if there is, and false if there is not.
 	*/
 	bool hasParent();
+
+	//! Getter function for the statement number of the parent of this statement.
+	/*!
+	Getter function for the statement number of the parent of this statement; use this function to
+	retrieve the statement number of the parent of the statement that this object is representing.
+	\return Statement number of this statement's parent, or 0 if it does not have any.
+	*/
+	int getParent();
 
 	//! Checks if this is a statement that this statement is following.
 	/*!
@@ -90,14 +114,6 @@ public:
 	*/
 	bool hasFollowedBy();
 
-	//! Getter function for the statement number of the parent of this statement.
-	/*!
-		Getter function for the statement number of the parent of this statement; use this function to
-		retrieve the statement number of the parent of the statement that this object is representing.
-		\return Statement number of this statement's parent, or 0 if it does not have any.
-	*/
-	int getParent();
-
 	//! Setter function for the type of the statement that this object is representing.
 	/*!
 		Setter function for the type of the statement that this object is representing; use
@@ -105,6 +121,22 @@ public:
 		\param type TNodeType::Undefined, TNodeType::Assign, TNodeType::If, TNodeType::While, or TNodeType::Call
 	*/
 	void setType(TNodeType type);
+
+	//! Setter function for the right hand side expression of this assign statement.
+	/*!
+		Setter function for the right hand side expression of this assign statement.
+		Please don't call this function if this statement is not an assign statement!
+		\param rightHandSideExpression Right hand side expression of this assign statement, ie. "x+y"
+	*/
+	void setRightHandSideExpression(std::string rightHandSideExpression);
+	
+	//! Setter function for the control variable of this if/while statement.
+	/*!
+		Setter function for the control variable of this if/while statement.
+		Please don't call this function if this statement is not a if/while statement!
+		\param controlVariable The name of the variable that controls this
+	*/
+	void setControlVariable(NAME controlVariable);
 
 	//! Setter function for the statement number of the statement that this statement is following.
 	/*!

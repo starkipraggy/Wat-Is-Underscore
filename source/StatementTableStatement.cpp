@@ -13,6 +13,8 @@ StatementTableStatement::StatementTableStatement(int lineNumber, int index) {
 	this->lineNumber = lineNumber;
 	this->index = index;
 	type = Undefined;
+	rightHandSideExpression = "";
+	controlVariable = "";
 
 	follows = 0;
 	followedBy = 0;
@@ -46,8 +48,20 @@ int StatementTableStatement::getIndex() {
 	return index;
 }
 
+std::string StatementTableStatement::getRightHandSideExpression() {
+	return rightHandSideExpression;
+}
+
+NAME StatementTableStatement::getControlVariable() {
+	return controlVariable;
+}
+
 bool StatementTableStatement::hasParent() {
 	return (parent != NULL);
+}
+
+int StatementTableStatement::getParent() {
+	return parent->getIndex();
 }
 
 bool StatementTableStatement::hasFollows() {
@@ -58,12 +72,16 @@ bool StatementTableStatement::hasFollowedBy() {
 	return (followedBy != NULL);
 }
 
-int StatementTableStatement::getParent() {
-	return parent->getIndex();
-}
-
 void StatementTableStatement::setType(TNodeType type) {
 	this->type = type;
+}
+
+void StatementTableStatement::setRightHandSideExpression(std::string rightHandSideExpression) {
+	this->rightHandSideExpression = rightHandSideExpression;
+}
+
+void StatementTableStatement::setControlVariable(NAME controlVariable) {
+	this->controlVariable = controlVariable;
 }
 
 void StatementTableStatement::setFollows(StatementTableStatement* follows) {
