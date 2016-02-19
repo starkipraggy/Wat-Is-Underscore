@@ -37,14 +37,14 @@ StatementTableStatement* PKB::newStatement() {
 	// Sets this statement's Follows relationship using the statement stack trace
 	StatementTableStatement* beingFollowed = statementTable->getStatementUsingStatementNumber(statementStackTrace->top());
 	currentStatement->setFollows(beingFollowed);
-	beingFollowed->setFollowedBy(numberOfStatements);
+	beingFollowed->setFollowedBy(currentStatement);
 
 	// Sets this statement's Parent relationship using the statement stack trace
 	statementStackTrace->pop();
 	if (statementStackTrace->size() > 0) {
 		StatementTableStatement* parent = statementTable->getStatementUsingStatementNumber(statementStackTrace->top());
 		currentStatement->setParent(parent);
-		parent->addChild(numberOfStatements);
+		parent->addChild(currentStatement);
 	}
 	statementStackTrace->push(numberOfStatements);
 
@@ -472,26 +472,21 @@ std::vector<std::string> PKB::PQLModifies(std::string input, int argumentPositio
 std::vector<std::string> PKB::PQLFollows(int statementNumber, int argumentPosition) {
 	std::vector<std::string> returnList;
 	StatementTableStatement* statement = statementTable->getStatementUsingStatementNumber(statementNumber);
-	if (argumentPosition == 1) { //check followed by
-		int followedBy = statement->getFollowedBy();
-		if (followedBy == 0) { //not followed by anyone
-			returnList.push_back("none");
+	if (statement != NULL) { // In case a non-existing statement number was given
+		if (argumentPosition == 1) { //check followed by
+			if (statement->hasFollowedBy()) {
+				returnList.push_back(std::to_string(statement->getFollowedBy()));
+			}
 		}
-		else { //followed by someone
-			returnList.push_back(std::to_string(followedBy));
-		}
-	}
-	else if (argumentPosition == 2) { //check follows
-		int follows = statement->getFollows();
-		if (follows == 0) { //not following anyone
-			returnList.push_back("none");
-		}
-		else { //following someone
-			returnList.push_back(std::to_string(follows));
+		else if (argumentPosition == 2) { //check follows
+			if (statement->hasFollows()) {
+				returnList.push_back(std::to_string(statement->getFollows()));
+			}
 		}
 	}
-	else {
-		;
+
+	if (returnList.empty()) {
+		returnList.push_back("none");
 	}
 	return returnList;
 }
@@ -499,30 +494,24 @@ std::vector<std::string> PKB::PQLFollows(int statementNumber, int argumentPositi
 std::vector<std::string> PKB::PQLFollowsStar(int statementNumber, int argumentPosition) {
 	std::vector<std::string> returnList;
 	StatementTableStatement* statement = statementTable->getStatementUsingStatementNumber(statementNumber);
-	if (argumentPosition == 1) { //check followedBy*
-		/*if (statement->getFollowedByStarSize() == 1 && statement->getFollowedByStar(0) == 0) { //not followedBy*
-			returnList.push_back("none");
-		}
-		else { //followedBy* relationship
-			for (int i = 0; i < statement->getFollowedByStarSize(); i++) {
-				int followedByStarStmtNumber = statement->getFollowedByStar(i);
-				returnList.push_back(std::to_string(followedByStarStmtNumber));
+	if (statement != NULL) {
+		int size;
+		if (argumentPosition == 1) { //check followedBy*
+			size = statement->getFollowedByStarSize();
+			for (int i = 0; i < size; i++) {
+				returnList.push_back(std::to_string(statement->getFollowedByStar(i)));
 			}
-		}*/
-	}
-	else if (argumentPosition == 2) { //check follows*
-		if (statement->getFollowsStarSize() == 1 && statement->getFollowsStar(0) == 0) { //not follows* anyone
-			returnList.push_back("none");
 		}
-		else { //have follows* relation
-			for (int i = 0; i < statement->getFollowsStarSize(); i++) {
-				int followsStarStmtNumber = statement->getFollowsStar(i);
-				returnList.push_back(std::to_string(followsStarStmtNumber));
+		else if (argumentPosition == 2) { //check follows*
+			size = statement->getFollowsStarSize();
+			for (int i = 0; i < size; i++) {
+				returnList.push_back(std::to_string(statement->getFollowsStar(i)));
 			}
 		}
 	}
-	else {
-		;
+
+	if (returnList.empty()) {
+		returnList.push_back("none");
 	}
 	return returnList;
 }
@@ -531,27 +520,19 @@ std::vector<std::string> PKB::PQLParent(int statementNumber, int argumentPositio
 	std::vector<std::string> returnList;
 	StatementTableStatement* statement = statementTable->getStatementUsingStatementNumber(statementNumber);
 	if (argumentPosition == 1) { //find parent
-		int parent = statement->getParent();
-		if (parent == 0) { //no parent
-			returnList.push_back("none");
-		}
-		else { //have parent
-			returnList.push_back(std::to_string(parent));
+		if (statement->hasParent()) {
+			returnList.push_back(std::to_string(statement->getParent()));
 		}
 	}
 	else if (argumentPosition == 2) { //find children
-		if (statement->getChildrenSize() == 1 && statement->getChildren(0) == 0) { //no children
-			returnList.push_back("none");
-		}
-		else { //have children
-			for (int i = 0; i < statement->getChildrenSize(); i++) {
-				int childStmtNumber = statement->getChildren(i);
-				returnList.push_back(std::to_string(childStmtNumber));
-			}
+		int size = statement->getChildrenSize();
+		for (int i = 0; i < size; i++) {
+			returnList.push_back(std::to_string(statement->getChildren(i)));
 		}
 	}
-	else {
-		;
+
+	if (returnList.empty()) {
+		returnList.push_back("none");
 	}
 	return returnList;
 }
@@ -559,30 +540,22 @@ std::vector<std::string> PKB::PQLParent(int statementNumber, int argumentPositio
 std::vector<std::string> PKB::PQLParentStar(int statementNumber, int argumentPosition) {
 	std::vector<std::string> returnList;
 	StatementTableStatement* statement = statementTable->getStatementUsingStatementNumber(statementNumber);
+	int size;
 	if (argumentPosition == 1) { //find parent*
-		if (statement->getParentStarSize() == 1 && statement->getParentStar(0) == 0) { //no parent*
-			returnList.push_back("none");
-		}
-		else { //have parent*
-			for (int i = 0; i < statement->getParentStarSize(); i++) {
-				int parentStarStmtNumber = statement->getParentStar(i);
-				returnList.push_back(std::to_string(parentStarStmtNumber));
-			}
+		size = statement->getParentStarSize();
+		for (int i = 0; i < size; i++) {
+			returnList.push_back(std::to_string(statement->getParentStar(i)));
 		}
 	}
 	else if (argumentPosition == 2) { //find children*
-		/*if (statement->getChildrenStarSize() == 1 && statement->getChildrenStar(0) == 0) { //no children
-			returnList.push_back("none");
+		size = statement->getChildrenStarSize();
+		for (int i = 0; i < size; i++) {
+			returnList.push_back(std::to_string(statement->getChildrenStar(i)));
 		}
-		else { //have children*
-			for (int i = 0; i < statement->getChildrenStarSize(); i++) {
-				int childStarStmtNumber = statement->getChildrenStar(i);
-				returnList.push_back(std::to_string(childStarStmtNumber));
-			}
-		}*/
 	}
-	else {
-		;
+
+	if (returnList.empty()) {
+		returnList.push_back("none");
 	}
 	return returnList;
 }

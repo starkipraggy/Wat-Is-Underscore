@@ -181,33 +181,36 @@ public:
 	*/
 	std::vector<std::string> PQLModifies(std::string input, int argumentPosition, std::string outputType);
 
-	//! Returns a list of items that fit the conditions of the specified item for the PQL parser.
+	//! Returns a list of items that fit Follows(x, y) conditions for the PQL parser.
 	/*!
 		One of the API functions that allows the PQL parser to extract information from the PKB.
-		Call this function for selection of follows clauses.
-		\param input the known variable in the clause
-		\param argumentPosition the position of the input in the clause
-		\return the vector<string> of the statement numbers.
+		Call this function for selection of Follows clauses.
+		\param input The known statement in the clause
+		\param argumentPosition If 1, look for the statement that this statement is followed by (ie. Follows(s, _))
+								If 2, look for the statement that this statement is following (ie. Follows(_, s))
+		\return The vector<string> of the statement numbers, or ["none"] if empty.
 	*/
 	std::vector<std::string> PQLFollows(int input, int argumentPosition);
 
-	//! Returns a list of items that fit the conditions of the specified item for the PQL parser.
+	//! Returns a list of items that fit Follows*(x, y) conditions for the PQL parser.
 	/*!
 		One of the API functions that allows the PQL parser to extract information from the PKB.
-		Call this function for selection of follows* clauses.
-		\param input the known variable in the clause
-		\param argumentPosition the position of the input in the clause
-		\return the vector<string> of the statement numbers.
+		Call this function for selection of Follows* clauses.
+		\param statementNumber The known statement in the clause
+		\param argumentPosition If 1, look for the statements that this statement is indirectly followed by (ie. Follows*(s, _))
+								If 2, look for the statements that this statement is indirectly following (ie. Follows*(_, s))
+		\return The vector<string> of the statement numbers, or ["none"] if empty.
 	*/
-	std::vector<std::string> PQLFollowsStar(int input, int argumentPosition);
+	std::vector<std::string> PQLFollowsStar(int statementNumber, int argumentPosition);
 
-	//! Returns a list of items that fit the conditions of the specified item for the PQL parser.
+	//! Returns a list of items that fit Parent(x, y) conditions for the PQL parser.
 	/*!
 		One of the API functions that allows the PQL parser to extract information from the PKB.
-		Call this function for selection of parent clauses.
-		\param input the known variable in the clause
-		\param argumentPosition the position of the input in the clause
-		\return the vector<string> of the statement numbers.
+		Call this function for selection of Parent clauses.
+		\param statementNumber The known statement in the clause
+		\param argumentPosition If 1, look for the statements that this statement is a parent of (ie. Parent(s, _))
+								If 2, look for the statements that this statement has as a parent (ie. Parent(_, s))
+		\return The vector<string> of the statement numbers, or ["none"] if empty.
 	*/
 	std::vector<std::string> PQLParent(int statementNumber, int argumentPosition);
 
@@ -217,7 +220,7 @@ public:
 		Call this function for selection of parent* clauses.
 		\param input the known variable in the clause
 		\param argumentPosition the position of the input in the clause
-		\return the vector<string> of the statement numbers.
+		\return the vector<string> of the statement numbers, or ["none"] if empty.
 	*/
 	std::vector<std::string> PQLParentStar(int statementNumber, int argumentPosition);
 
