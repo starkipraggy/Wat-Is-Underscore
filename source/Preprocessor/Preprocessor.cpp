@@ -303,10 +303,7 @@ void Preprocessor::addPatternClause(string rawClause) {
 Ref Preprocessor::createSuchThatRef(string name) {
 	Ref result;
 
-	if (regex_match(name, expressionRegex)) {
-		result = Ref(name.substr(1, name.length()-2), "expr");
-	}
-	else if (regex_match(name, integerRegex)) {
+	if (regex_match(name, integerRegex)) {
 		result = Ref(name, "integer");
 	}
 	else if (regex_match(name, placeholderRegex)) {
@@ -319,6 +316,9 @@ Ref Preprocessor::createSuchThatRef(string name) {
 		catch (const char* msg) {
 			throw msg;
 		}
+	}
+	else if (regex_match(name = removeSpace(name), expressionRegex)) {
+		result = Ref(name.substr(1, name.length() - 2), "expr");
 	}
 	else {
 		throw "invalid variable";
