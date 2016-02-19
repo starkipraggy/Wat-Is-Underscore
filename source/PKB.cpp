@@ -576,22 +576,15 @@ std::vector<std::string> PKB::PQLPattern(TNodeType type, Ref left, Ref right) {
 	int size = statementTable->getNumberOfStatements();
 	for (int i = 0; i < size; i++) {
 		StatementTableStatement* statement = statementTable->getStatementUsingVectorIndexNumber(i);
-		if (statement->getType() == type) {
-			if (type == Assign) {
-				// There should only be a single modify for an assign statement
-				if ((left.getType() == "placeholder") || (variableTable->getVariableUsingVariableIndexNumber(statement->getModifies(0))->getName() == left.getName())) {
-					if ((right.getType() == "placeholder") ||
-							((right.getType() == "part_of_expr") && (right.getName() == statement->getRightHandSideExpression().substr(0, right.getName().length())) ||
-							((right.getType() == "expr") && (right.getName() == statement->getRightHandSideExpression())))) {
-						returnList.push_back(std::to_string(statement->getIndex()));
-					}
-				}
-			}
-			else if ((type == While) || (type == If)) {
-				if ((left.getType() == "placeholder") || (statement->getControlVariable() == left.getName())) {
-					returnList.push_back(std::to_string(statement->getIndex()));
-				}
-			}
+		if ((statement->getType() == type) &&
+				(((type == Assign) &&
+				(((left.getType() == "placeholder") || (variableTable->getVariableUsingVariableIndexNumber(statement->getModifies(0))->getName() == left.getName())) &&
+				((right.getType() == "placeholder") ||
+				((right.getType() == "part_of_expr") && (right.getName() == statement->getRightHandSideExpression().substr(0, right.getName().length())) ||
+				((right.getType() == "expr") && (right.getName() == statement->getRightHandSideExpression())))))) ||
+				(((type == While) || (type == If)) &&
+				((left.getType() == "placeholder") || (statement->getControlVariable() == left.getName()))))) {
+			returnList.push_back(std::to_string(statement->getIndex()));
 		}
 	}
 
