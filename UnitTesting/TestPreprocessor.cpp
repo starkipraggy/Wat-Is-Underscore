@@ -30,8 +30,8 @@ namespace UnitTesting {
 
 		TEST_METHOD_INITIALIZE(build) {
 			placeholderVar = Ref("_", "placeholder");
-			partOfExpressionVar = Ref("_\"abc\"_", "part_of_expr"); //only pattern
-			exprVar = Ref("\"abc\"", "expr");
+			partOfExpressionVar = Ref("abc", "part_of_expr"); //only pattern
+			exprVar = Ref("abc", "expr");
 			integerVar = Ref("123", "integer");
 			stmtVar = Ref("s", "stmt");
 			assignVar = Ref("a", "assign");
