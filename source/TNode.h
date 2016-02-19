@@ -20,9 +20,9 @@ enum TNodeType {
 	IntegerValue,
 	OperatorPlus,
 	Call, // For statements that call a procedure
-	Stmt,
+	//Stmt, // Guys, why is Stmt here? If, While, Assign and Call can be a Stmt
 	Const,
-	Prog_line
+	//Prog_line // Guys, why is Stmt here? If, While, Assign and Call can be a Stmt
 };
 
 class TNode

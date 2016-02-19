@@ -29,6 +29,10 @@ std::string ProcedureTableProcedure::getName() {
 	return name;
 }
 
+int ProcedureTableProcedure::getIndex() {
+	return index;
+}
+
 ProcedureTableProcedure* ProcedureTableProcedure::getProcedureCall(int index) {
 	return procedureCalls->at(index);
 }
@@ -82,20 +86,20 @@ void ProcedureTableProcedure::addStatement(int statement) {
 }
 
 bool ProcedureTableProcedure::addModifies(int variableIndexNumber) {
-	return addIntoVector(variableIndexNumber, modifies);
+	return DataStructureObject::addIntoVector(variableIndexNumber, modifies);
 }
 
 bool ProcedureTableProcedure::addUses(int variableIndexNumber) {
-	return addIntoVector(variableIndexNumber, uses);
+	return DataStructureObject::addIntoVector(variableIndexNumber, uses);
 }
 
 bool ProcedureTableProcedure::addProcedureCalls(ProcedureTableProcedure* procedure) {
-	return addIntoVector(procedure, procedureCalls);
+	return DataStructureObject::addIntoVector(procedure, procedureCalls);
 	isIndirectProcedureCallsModified = true;
 }
 
 bool ProcedureTableProcedure::addStatementsCalls(int statementIndexNumber) {
-	return addIntoVector(statementIndexNumber, statementCalls);
+	return DataStructureObject::addIntoVector(statementIndexNumber, statementCalls);
 }
 
 int ProcedureTableProcedure::getUses(int index) {

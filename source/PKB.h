@@ -13,6 +13,7 @@
 #include "ProcedureTable.h"
 #include "StatementTable.h"
 #include "VariableTable.h"
+#include "Preprocessor/Ref.h"
 
 enum ExpressionTokenType {
 	Variable,
@@ -155,55 +156,62 @@ public:
 	*/
 	std::vector<std::string> PQLSelect(TNodeType outputType);
 
-	//! Returns a list of items that fit the conditions of the specified item for the PQL parser.
+	//! Returns a list of items that fit Uses(x, y) conditions for the PQL parser.
 	/*!
 		One of the API functions that allows the PQL parser to extract information from the PKB.
-		Call this function for selection of uses clauses.
-		\param input the known variable in the clause
-		\param argumentPosition the position of the input in the clause
-		\param outputType the type of conditions to check for
-		\return the vector<string> of the statement numbers or variable names.
+		Call this function for selection of Uses clauses.
+		\param input The known variable/statement/procedure in the clause
+		\param argumentPosition If 1, look for statements and procedures that uses the variable named "input"
+								If 2, look for variables that the statement with statement type "input" or
+								      the procedure with procedure name "input" uses
+		\param outputType The type of conditions to check for (eg. "procedure", "statement", "assign", "while", "if", "call")
+		\return The vector<string> of the statement numbers or variable names, or ["none"] if empty.
 	*/
 	std::vector<std::string> PQLUses(std::string input, int argumentPosition, std::string outputType);
 
-	//! Returns a list of items that fit the conditions of the specified item for the PQL parser.
+	//! Returns a list of items that fit Modifies(x, y) conditions for the PQL parser.
 	/*!
 		One of the API functions that allows the PQL parser to extract information from the PKB.
-		Call this function for selection of modifies clauses.
-		\param input the known variable in the clause
-		\param argumentPosition the position of the input in the clause
-		\param outputType the type of conditions to check for
-		\return the vector<string> of the statement numbers or variable names.
+		Call this function for selection of Modifies clauses.
+		\param input The known variable/statement/procedure in the clause
+		\param argumentPosition If 1, look for statements and procedures that uses the variable named "input"
+								If 2, look for variables that the statement with statement type "input" or
+								      the procedure with procedure name "input" uses
+		\param outputType The type of conditions to check for (eg. "procedure", "statement", "assign", "while", "if", "call")
+		\return The vector<string> of the statement numbers or variable names, or ["none"] if empty.
 	*/
 	std::vector<std::string> PQLModifies(std::string input, int argumentPosition, std::string outputType);
 
-	//! Returns a list of items that fit the conditions of the specified item for the PQL parser.
+	//! Returns a list of items that fit Follows(x, y) conditions for the PQL parser.
 	/*!
 		One of the API functions that allows the PQL parser to extract information from the PKB.
-		Call this function for selection of follows clauses.
-		\param input the known variable in the clause
-		\param argumentPosition the position of the input in the clause
-		\return the vector<string> of the statement numbers.
+		Call this function for selection of Follows clauses.
+		\param input The known statement in the clause
+		\param argumentPosition If 1, look for the statement that this statement is followed by (ie. Follows(s, _))
+								If 2, look for the statement that this statement is following (ie. Follows(_, s))
+		\return The vector<string> of the statement numbers, or ["none"] if empty.
 	*/
 	std::vector<std::string> PQLFollows(int input, int argumentPosition);
 
-	//! Returns a list of items that fit the conditions of the specified item for the PQL parser.
+	//! Returns a list of items that fit Follows*(x, y) conditions for the PQL parser.
 	/*!
 		One of the API functions that allows the PQL parser to extract information from the PKB.
-		Call this function for selection of follows* clauses.
-		\param input the known variable in the clause
-		\param argumentPosition the position of the input in the clause
-		\return the vector<string> of the statement numbers.
+		Call this function for selection of Follows* clauses.
+		\param statementNumber The known statement in the clause
+		\param argumentPosition If 1, look for the statements that this statement is indirectly followed by (ie. Follows*(s, _))
+								If 2, look for the statements that this statement is indirectly following (ie. Follows*(_, s))
+		\return The vector<string> of the statement numbers, or ["none"] if empty.
 	*/
-	std::vector<std::string> PQLFollowsStar(int input, int argumentPosition);
+	std::vector<std::string> PQLFollowsStar(int statementNumber, int argumentPosition);
 
-	//! Returns a list of items that fit the conditions of the specified item for the PQL parser.
+	//! Returns a list of items that fit Parent(x, y) conditions for the PQL parser.
 	/*!
 		One of the API functions that allows the PQL parser to extract information from the PKB.
-		Call this function for selection of parent clauses.
-		\param input the known variable in the clause
-		\param argumentPosition the position of the input in the clause
-		\return the vector<string> of the statement numbers.
+		Call this function for selection of Parent clauses.
+		\param statementNumber The known statement in the clause
+		\param argumentPosition If 1, look for the statements that this statement is a parent of (ie. Parent(s, _))
+								If 2, look for the statements that this statement has as a parent (ie. Parent(_, s))
+		\return The vector<string> of the statement numbers, or ["none"] if empty.
 	*/
 	std::vector<std::string> PQLParent(int statementNumber, int argumentPosition);
 
@@ -213,7 +221,7 @@ public:
 		Call this function for selection of parent* clauses.
 		\param input the known variable in the clause
 		\param argumentPosition the position of the input in the clause
-		\return the vector<string> of the statement numbers.
+		\return the vector<string> of the statement numbers, or ["none"] if empty.
 	*/
 	std::vector<std::string> PQLParentStar(int statementNumber, int argumentPosition);
 
@@ -222,16 +230,12 @@ public:
 	/*!
 		One of the API functions that allows the PQL parser to extract information from the PKB.
 		Call this function for pattern clauses.
-		\param ??? STILL
-		\param ??? WORK
-		\param ??? IN 
-		\param ??? PROGRESS
-		\param ??? !!!
-		\param ??? LOL
-		\param ??? :D
+		\param type The type of statements that you are looking for (eg. "Statement", "Assign", "While", etc.)
+		\param left The first item in the parentheses of the pattern clause
+		\param right The second item in the parentheses of the pattern clause
 		\return the vector<int>* of the list of integers of statements.
 	*/
-	std::vector<int> PQLPattern(NAME leftVariable, std::string rightExpression, bool isUnderscored);
+	std::vector<std::string> PQLPattern(TNodeType type, Ref left, Ref right);
 
 	// ---------------------------------------------------------------------------------
 	// API FUNCTIONS FOR PQL PARSER ENDS HERE!!!

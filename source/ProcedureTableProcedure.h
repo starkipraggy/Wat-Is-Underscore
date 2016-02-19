@@ -14,9 +14,10 @@
 #include "TypeDef.h"
 #include "DataStructureObject.h"
 
-class ProcedureTableProcedure : public DataStructureObject {
+class ProcedureTableProcedure {
 private:
 	std::string name;										/**< The name of this procedure */
+	int index;												/**< Index number of this procedure */
 	std::vector<int>* statements;							/**< The index numbers of the statements that belongs to this procedure */
 
 	std::vector<int>* modifies;								/**< A list of the index numbers of variables that this procedure modifies */
@@ -45,6 +46,14 @@ public:
 		\return The name of the procedure that this object is representing has.
 	*/
 	std::string getName();
+
+	//! Getter function for the index number of the item.
+	/*!
+		Getter function for the index number of the item; use this function
+		to retrieve the index number of the item that this object is representing.
+		\return The index number of the variable that this item is representing has.
+	*/
+	int getIndex();
 
 	//! Getter function for members of the procedure calls vector.
 	/*!

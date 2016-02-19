@@ -30,3 +30,8 @@ string StringToUpper(string strToConvert) {
 string trim(string word) {
 	return std::regex_replace(word, std::regex("^ +| +$|( ) +"), "$1");
 }
+
+string removeSpace(string word) {
+	word.erase(std::remove(word.begin(), word.end(), ' '), word.end());
+	return word;
+}

@@ -76,9 +76,6 @@
     <ClCompile Include="..\source\Preprocessor\StringUlti.cpp">
       <Filter>Source\Preprocessor</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\DataStructureObject.cpp">
-      <Filter>Source\PKB</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\Preprocessor\QueryEvaluator.cpp">
       <Filter>Source\Preprocessor</Filter>
     </ClCompile>

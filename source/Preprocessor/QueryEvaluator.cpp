@@ -23,7 +23,7 @@ std::vector<std::string> QueryEvaluator::process() {
 			if (clause == "PATTERN") {
 				PatternClause* p = dynamic_cast<PatternClause*>(x);
 				Ref assignVar = p->getAssignedVariable();
-				//getPattern(var1, var2, assignVar.getType());
+				pkb->PQLPattern(Assign, var1, var2);
 			}
 			else {
 				if (regex_match(var1.getType(), designEntityRegex)) {
@@ -33,17 +33,17 @@ std::vector<std::string> QueryEvaluator::process() {
 					query(clause, var2, var1, 2);
 				}
 				else if (var1.getType() == "placeholder") {
-					//addResult(getClause(clause, var2, 1, select.getType()));
+					addResult(queryPKB(clause, var2.getName(), 1, select.getType()));
 				}
 				else if (var2.getType() == "placeholder") {
-					//addResult(getClause(clause, var1, 2, select.getType()));
+					addResult(queryPKB(clause, var1.getName(), 2, select.getType()));
 				}
 				else {
-					/*queryResult = getClause(clause, var2, 1, var1.getType());
-					if (find(queryResult.begin(), queryResult.end(), var1) == queryResult.end()) {
+					queryResult = queryPKB(clause, var2.getName(), 1, var1.getType());
+					if (find(queryResult.begin(), queryResult.end(), var1.getName()) == queryResult.end()) {
 						result = {};
 						break;
-					}*/
+					}
 				}
 			}
 		}
@@ -96,12 +96,12 @@ void QueryEvaluator::query(string clause, Ref source, Ref dest, int position) {
 	if (regex_match(dest.getType(), designEntityRegex)) {
 		queryResult = pkb->PQLSelect(toTNodeType(dest.getType()));
 		for (auto& x : queryResult) {
-			//accumulate(getClause(clause, x, position, source.getType()));
+			accumulate(queryPKB(clause, x, position, source.getType()));
 		}
 		addResult(getEachResult());
 	}
 	else {
-		//addResult(getClause(clause, dest, position, source.getType()));
+		addResult(queryPKB(clause, dest.getName(), position, source.getType()));
 	}
 }
 
@@ -110,7 +110,7 @@ TNodeType QueryEvaluator::toTNodeType(string type) {
 	TNodeType n = Undefined;
 
 	if (type == "STMT") {
-		return Stmt;
+		return Undefined; // Just Undefined will do, I will know that it's a statement. - Wei Liang
 	}
 	else if (type == "ASSIGN") {
 		return Assign;
@@ -118,18 +118,51 @@ TNodeType QueryEvaluator::toTNodeType(string type) {
 	else if (type == "WHILE") {
 		return While;
 	}
-	else if (type == "Variable") {
+	else if (type == "VARIABLE") {
 		return VariableName;
 	}
-	else if (type == "Constant") {
+	else if (type == "CONSTANT") {
 		return Const;
 	}
 	else if (type == "PROG_LINE") {
-		return Prog_line;
+		return Undefined;  // Just Undefined will do, I will know that it's a statement. - Wei Liang
 	}
 	else {
 		return Undefined;
 	}
 
 	return n;
+}
+
+vector<string> QueryEvaluator::queryPKB(string clause, string input, int argumentPosition, string outputType) {
+	pkb = PKB::getInstance();
+	vector<string> output;
+
+	clause = StringToUpper(clause);
+
+	if (clause == "USES") {
+		output = pkb->PQLUses(input, argumentPosition, outputType);
+	}
+	else if (clause == "MODIFIES") {
+		output = pkb->PQLModifies(input, argumentPosition, outputType);
+	}
+	else if (clause == "USES") {
+		output = pkb->PQLUses(input, argumentPosition, outputType);
+	}
+	else{
+		int value = atoi(input.c_str());
+		if (clause == "FOLLOWS") {
+			output = pkb->PQLFollows(value, argumentPosition);
+		}
+		else if (clause == "FOLLOWS*") {
+			output = pkb->PQLFollowsStar(value, argumentPosition);
+		}
+		else if (clause == "PARENT") {
+			output = pkb->PQLParent(value, argumentPosition);
+		}
+		else if (clause == "PARENT*") {
+			output = pkb->PQLParentStar(value, argumentPosition);
+		}
+	}
+	return output;
 }

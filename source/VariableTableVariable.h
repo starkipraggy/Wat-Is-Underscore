@@ -12,9 +12,10 @@
 #include "TypeDef.h"
 #include "DataStructureObject.h"
 
-class VariableTableVariable : public DataStructureObject {
+class VariableTableVariable {
 private:
 	NAME name;								/**< The name used to refer to the variable */
+	int index;								/**< The index number assigned to the item this object is representing */
 	
 	std::vector<int>* statementModifies;	/**< A list of the statement numbers of statements that modifies this variable */
 	std::vector<int>* statementUses;		/**< A list of the statement numbers of statements that uses this variable */
@@ -37,6 +38,14 @@ public:
 		\return The name of the variable that this object is representing has.
 	*/
 	NAME getName();
+
+	//! Getter function for the index number of the item.
+	/*!
+		Getter function for the index number of the item; use this function
+		to retrieve the index number of the item that this object is representing.
+		\return The index number of the variable that this item is representing has.
+	*/
+	int getIndex();
 	
 	//! Allows the adding of statements that modify this variable.
 	/*!

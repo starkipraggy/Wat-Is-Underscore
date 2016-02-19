@@ -38,7 +38,6 @@
     <ClCompile Include="..\source\VariableTable.cpp" />
     <ClCompile Include="..\source\VariableTableVariable.cpp" />
     <ClCompile Include="..\source\AST.cpp" />
-    <ClCompile Include="..\source\DataStructureObject.cpp" />
     <ClCompile Include="..\source\Preprocessor\PQLController.cpp" />
     <ClCompile Include="..\source\Preprocessor\Projector.cpp" />
   </ItemGroup>
