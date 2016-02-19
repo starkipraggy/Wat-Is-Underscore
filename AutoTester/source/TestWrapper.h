@@ -5,7 +5,6 @@
 
 // include your other headers here
 #include "AbstractWrapper.h"
-#include "stdafx.h"
 #include "SPA.h"
 
 class TestWrapper : public AbstractWrapper {	
