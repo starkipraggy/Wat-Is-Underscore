@@ -86,16 +86,16 @@ private:
 	void addPatternClause(string rawClause);
 
 //----------------MISC METHODS-----------------------------------------------
-	//! Find type of such that variable
+	//! Create a such that ref
 	/*!
-	return the type of variable according to such that clause
+	return a ref of such that with type derived from name
 	*/
-	string findSuchThatType(string raw);
-	//! Find type of pattern variable
+	Ref createSuchThatRef(string name);
+	//! Create a pattern ref
 	/*!
-	return the type of variable according to pattern clause
+	return a ref of pattern with type derived from name
 	*/
-	string findPatternType(string raw);
+	Ref createPatternRef(string name);
 	//! Check if type is stmtRef
 	/*!
 	return true if type is stmtRef
