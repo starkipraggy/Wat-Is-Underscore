@@ -25,6 +25,10 @@ StatementTableStatement::~StatementTableStatement() {
 	delete followsStar;
 }
 
+int StatementTableStatement::getIndex() {
+	return index;
+}
+
 bool StatementTableStatement::hasParent() {
 	return (parent > 0);
 }

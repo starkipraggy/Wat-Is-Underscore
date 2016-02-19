@@ -13,9 +13,10 @@
 #include "DataStructureObject.h"
 #include "TNode.h"
 
-class StatementTableStatement : public DataStructureObject {
+class StatementTableStatement {
 private:
 	int lineNumber;						/**< The line number of this statement */
+	int index;							/**< The index number assigned to the item this object is representing */
 	TNodeType type;						/**< The type of this statement */
 
 	StatementTableStatement* follows;	/**< The pointer to the statement that this statement follows
@@ -41,6 +42,14 @@ public:
 	StatementTableStatement(int lineNumber, int index);
 
 	~StatementTableStatement();
+
+	//! Getter function for the index number of the item.
+	/*!
+		Getter function for the index number of the item; use this function
+		to retrieve the index number of the item that this object is representing.
+		\return The index number of the variable that this item is representing has.
+	*/
+	int getIndex();
 
 	//! Checks if this is a statement assigned to be the parent of this statement.
 	/*!

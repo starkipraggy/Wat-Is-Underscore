@@ -155,25 +155,29 @@ public:
 	*/
 	std::vector<std::string> PQLSelect(TNodeType outputType);
 
-	//! Returns a list of items that fit the conditions of the specified item for the PQL parser.
+	//! Returns a list of items that fit Uses(x, y) conditions for the PQL parser.
 	/*!
 		One of the API functions that allows the PQL parser to extract information from the PKB.
-		Call this function for selection of uses clauses.
-		\param input the known variable in the clause
-		\param argumentPosition the position of the input in the clause
-		\param outputType the type of conditions to check for
-		\return the vector<string> of the statement numbers or variable names.
+		Call this function for selection of Uses clauses.
+		\param input The known variable/statement/procedure in the clause
+		\param argumentPosition If 1, look for statements and procedures that uses the variable named "input"
+								If 2, look for variables that the statement with statement type "input" or
+								      the procedure with procedure name "input" uses
+		\param outputType The type of conditions to check for (eg. "procedure", "statement", "assign", "while", "if", "call")
+		\return The vector<string> of the statement numbers or variable names, or ["none"] if empty.
 	*/
 	std::vector<std::string> PQLUses(std::string input, int argumentPosition, std::string outputType);
 
-	//! Returns a list of items that fit the conditions of the specified item for the PQL parser.
+	//! Returns a list of items that fit Modifies(x, y) conditions for the PQL parser.
 	/*!
 		One of the API functions that allows the PQL parser to extract information from the PKB.
-		Call this function for selection of modifies clauses.
-		\param input the known variable in the clause
-		\param argumentPosition the position of the input in the clause
-		\param outputType the type of conditions to check for
-		\return the vector<string> of the statement numbers or variable names.
+		Call this function for selection of Modifies clauses.
+		\param input The known variable/statement/procedure in the clause
+		\param argumentPosition If 1, look for statements and procedures that uses the variable named "input"
+								If 2, look for variables that the statement with statement type "input" or
+								      the procedure with procedure name "input" uses
+		\param outputType The type of conditions to check for (eg. "procedure", "statement", "assign", "while", "if", "call")
+		\return The vector<string> of the statement numbers or variable names, or ["none"] if empty.
 	*/
 	std::vector<std::string> PQLModifies(std::string input, int argumentPosition, std::string outputType);
 

@@ -29,6 +29,10 @@ std::string ProcedureTableProcedure::getName() {
 	return name;
 }
 
+int ProcedureTableProcedure::getIndex() {
+	return index;
+}
+
 ProcedureTableProcedure* ProcedureTableProcedure::getProcedureCall(int index) {
 	return procedureCalls->at(index);
 }
