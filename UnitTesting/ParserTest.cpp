@@ -14,7 +14,7 @@ public:
 	TEST_METHOD(TestTokenisationSimple) {
 		//Arrange
 		std::string simple = "procedure a{a=b+c+d;}";
-		std::vector<std::string> expected = { "procedure", "a","{","a","=","b","+","c","+","d",";" ,"{" };
+		std::vector<std::string> expected = { "procedure", "a","{","a","=","b","+","c","+","d",";" ,"}" };
 		sp = new SimpleParser();
 		//Act
 		std::vector<std::string> tokens;
@@ -22,8 +22,10 @@ public:
 		tokens = sp->setTokens(simple);
 
 		//Assert
-		Assert::AreEqual(expected, tokens);
-	}
+        for (int i = 0; i < expected.size(); i++) {
+            Assert::AreEqual(expected[i], tokens[i]);
+        }
+     }
 	
 	// Tokenizes While and Assignments
 	TEST_METHOD(TestTokenisationSimple2) {
@@ -37,7 +39,9 @@ public:
 		tokens = sp->setTokens(simple);
 
 		//Assert
-		Assert::AreEqual(expected, tokens);
+        for (int i = 0; i < expected.size(); i++) {
+            Assert::AreEqual(expected[i], tokens[i]);
+        }
 	}
 
 };

@@ -11,13 +11,13 @@ namespace UnitTesting
 	{
 	public:
 		
-		TEST_METHOD(TestMethod1)
-		{
-			TNode T;
-			// TODO: Your test code here
-			printf("LOL");
-			std::cin.get();
-		}
+		//TEST_METHOD(ASTTest1)
+		//{
+		//	TNode T;
+		//	// TODO: Your test code here
+		//	printf("LOL");
+		//	std::cin.get();
+		//}
 
 	};
 }

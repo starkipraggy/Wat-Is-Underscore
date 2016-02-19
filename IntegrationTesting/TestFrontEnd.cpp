@@ -9,10 +9,10 @@ namespace IntegrationTesting
 	{
 	public:
 		
-		TEST_METHOD(TestMethod1)
-		{
-			// TODO: Your test code here
-		}
+		//TEST_METHOD(TestMethod1)
+		//{
+		//	// TODO: Your test code here
+		//}
 
 	};
 }
