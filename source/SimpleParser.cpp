@@ -79,6 +79,18 @@ std::string SimpleParser::addSpaceToString(std::string input) {
 	return input;
 }
 
+/* This method is for unit test */
+std::vector<std::string> SimpleParser::setTokens(std::string line) {
+	std::string buf;
+	std::stringstream ss(line);
+
+	while (ss >> buf) {
+		// Tokens are by per line basis
+		tokens.push_back(buf);
+	}
+	return tokens;
+}
+
 void SimpleParser::processLine() {
 	// if procstate== 0; means there is invalid procedure.
 	// if procstate == 1; procedure is valid.

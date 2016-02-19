@@ -18,6 +18,7 @@ public:
 	int isCharAnOperator(std::string);
 	std::string SimpleParser::addSpaceToString(std::string);
 	int SimpleParser::checkAssign(unsigned int);
+	std::vector<std::string> setTokens(std::string);
 
 };
 
