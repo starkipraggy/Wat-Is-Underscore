@@ -69,5 +69,11 @@ private:
 	Convert a string type to its TNodeType to parse to PKB
 	*/
 	TNodeType toTNodeType(string type);
+
+	//! Query PKB
+	/*!
+	Query the individual PKB method by the clause type
+	*/
+	vector<string> queryPKB(string clause, string input, int argumentPosition, string outputType);
 };
 #endif
