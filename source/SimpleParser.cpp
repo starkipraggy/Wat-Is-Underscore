@@ -83,7 +83,8 @@ std::string SimpleParser::addSpaceToString(std::string input) {
 std::vector<std::string> SimpleParser::setTokens(std::string line) {
 	std::string buf;
 	std::stringstream ss(line);
-
+	tokens.clear();
+	
 	while (ss >> buf) {
 		// Tokens are by per line basis
 		tokens.push_back(buf);
