@@ -115,7 +115,7 @@ void SimpleParser::processLine() {
 				std::cout << "ProcName = " << tokens[i];
 				std::cout << std::endl;
 
-				PKB::getInstance()->ProcedureStart(tokens[i]);
+				//PKB::getInstance()->ProcedureStart(tokens[i]);
 				i++;
 				std::cout << "OpeningBrace = " << tokens[i];
 				std::cout << std::endl;
@@ -143,7 +143,7 @@ void SimpleParser::processLine() {
 				i++;
 				std::cout << "while var = " << tokens[i];
 				std::cout << std::endl;
-				PKB::getInstance()->WhileStart(tokens[i]);
+				//PKB::getInstance()->WhileStart(tokens[i]);
 				i++;
 				std::cout << "OpeningBrace = " << tokens[i];
 				std::cout << std::endl;
@@ -184,18 +184,18 @@ void SimpleParser::processLine() {
 						if (back.compare("while") == 0) {
 							stackParenthesis.pop_back();
 							currentContainer.pop_back();
-							PKB::getInstance()->WhileEnd();
+							//PKB::getInstance()->WhileEnd();
 							//std::cout << "LOLLOL " <<tokens[i];
 							//std::cout << std::endl;
 						} else if (back.compare("procedure") == 0) {
 							stackParenthesis.pop_back();
 							currentContainer.pop_back();
-							PKB::getInstance()->ProcedureEnd();
+							//PKB::getInstance()->ProcedureEnd();
 							//std::cout << "LOLLOL " << tokens[i];
 							//std::cout << std::endl;
 						}
 					}
-					catch (int e)
+					catch (std::exception& e)
 					{
 						std::cout << "Invalid Program " <<'\n';
 						isErrorDetected = true;
@@ -292,7 +292,7 @@ int SimpleParser::checkAssign(unsigned int position) {
 		case 5:
 			// token is ";"
 			if (isEquals == true && isOperator == false) {
-				PKB::getInstance()->AssignStatement(leftVar,rightVariables,types);
+				//PKB::getInstance()->AssignStatement(leftVar,rightVariables,types);
 			} else{
 				isErrorDetected = true;
 			}
