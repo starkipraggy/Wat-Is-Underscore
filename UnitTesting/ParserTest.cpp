@@ -26,7 +26,7 @@ public:
 	}
 	
 	// Tokenizes While and Assignments
-	TEST_METHOD(TestTokenisationSimple) {
+	TEST_METHOD(TestTokenisationSimple2) {
 		//Arrange
 		std::string simple = "procedure a{while x{a=b+c;}}";
 		std::vector<std::string> expected = { "procedure", "a","{","while","x","{","a","b","+","c",";" ,"{" };

@@ -25,19 +25,19 @@ int VariableTableVariable::getIndex() {
 }
 
 bool VariableTableVariable::addStatementModifies(int statementNumber) {
-	return addIntoVector(statementNumber, statementModifies);
+	return DataStructureObject::addIntoVector(statementNumber, statementModifies);
 }
 
 bool VariableTableVariable::addStatementUses(int statementNumber) {
-	return addIntoVector(statementNumber, statementUses);
+	return DataStructureObject::addIntoVector(statementNumber, statementUses);
 }
 
 bool VariableTableVariable::addProcedureModifies(int procedureNumber) {
-	return addIntoVector(procedureNumber, procedureModifies);
+	return DataStructureObject::addIntoVector(procedureNumber, procedureModifies);
 }
 
 bool VariableTableVariable::addProcedureUses(int procedureNumber) {
-	return addIntoVector(procedureNumber, procedureUses);
+	return DataStructureObject::addIntoVector(procedureNumber, procedureUses);
 }
 
 int VariableTableVariable::getProceduresUses(int index) {

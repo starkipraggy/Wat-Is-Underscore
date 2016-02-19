@@ -117,11 +117,11 @@ void StatementTableStatement::addChild(StatementTableStatement* child) {
 }
 
 bool StatementTableStatement::addModifies(int variableIndexNumber) {
-	return addIntoVector(variableIndexNumber, modifies);
+	return DataStructureObject::addIntoVector(variableIndexNumber, modifies);
 }
 
 bool StatementTableStatement::addUses(int variableIndexNumber) {
-	return addIntoVector(variableIndexNumber, uses);
+	return DataStructureObject::addIntoVector(variableIndexNumber, uses);
 }
 
 int StatementTableStatement::getFollows() {
