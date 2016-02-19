@@ -82,8 +82,15 @@
     <ClCompile Include="..\source\Preprocessor\Ref.cpp">
       <Filter>Source\Preprocessor</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\Preprocessor\PQLController.cpp" />
-    <ClCompile Include="..\source\Preprocessor\Projector.cpp" />
+    <ClCompile Include="UI.cpp">
+      <Filter>Source\Preprocessor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Preprocessor\PQLController.cpp">
+      <Filter>Source\Preprocessor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Preprocessor\Projector.cpp">
+      <Filter>Source\Preprocessor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\FileIO.h">
@@ -170,8 +177,12 @@
     <ClInclude Include="..\source\Preprocessor\Ref.h">
       <Filter>Header\Preprocessor</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\Preprocessor\PQLController.h" />
-    <ClInclude Include="..\source\Preprocessor\Projector.h" />
+    <ClInclude Include="..\source\Preprocessor\PQLController.h">
+      <Filter>Header\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Preprocessor\Projector.h">
+      <Filter>Header\Preprocessor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header">
