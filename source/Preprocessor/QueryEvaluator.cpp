@@ -118,10 +118,10 @@ TNodeType QueryEvaluator::toTNodeType(string type) {
 	else if (type == "WHILE") {
 		return While;
 	}
-	else if (type == "Variable") {
+	else if (type == "VARIABLE") {
 		return VariableName;
 	}
-	else if (type == "Constant") {
+	else if (type == "CONSTANT") {
 		return Const;
 	}
 	else if (type == "PROG_LINE") {
