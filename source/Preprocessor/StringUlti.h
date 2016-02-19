@@ -31,3 +31,9 @@ tokenized the string into a vector of string using the condition set by the rege
 input
 */
 std::vector<std::string> tokenize(string line, string regex);
+
+//! remove all space from the string
+/*!
+Remove all white space from the string
+*/
+string removeSpace(string word);
