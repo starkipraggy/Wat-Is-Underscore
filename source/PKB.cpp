@@ -318,7 +318,7 @@ std::vector<std::string> PKB::PQLSelect(TNodeType outputType) {
 	StatementTableStatement* statement;
 
 	// return all variables
-	if (outputType == Variable) {
+	if (outputType == VariableName) {
 		int variableTableSize = variableTable->getNumberOfVariables();
 		for (int i = 0; i < variableTableSize; i++) {
 			returnList.push_back(variableTable->getVariableUsingVectorIndexNumber(i)->getName());
