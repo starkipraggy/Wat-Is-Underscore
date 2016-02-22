@@ -27,6 +27,7 @@
     <ClCompile Include="..\source\PKB.cpp" />
     <ClCompile Include="..\source\SPA.cpp" />
     <ClCompile Include="..\source\Statement.cpp" />
+    <ClCompile Include="..\source\StubPKB.cpp" />
     <ClCompile Include="..\source\TNode.cpp" />
     <ClCompile Include="..\source\Procedure.cpp" />
     <ClCompile Include="..\source\StatementList.cpp" />
@@ -57,6 +58,7 @@
     <ClInclude Include="..\source\SPA.h" />
     <ClInclude Include="..\source\Statement.h" />
     <ClInclude Include="..\source\SimpleParser.h" />
+    <ClInclude Include="..\source\StubPKB.h" />
     <ClInclude Include="..\source\TNode.h" />
     <ClInclude Include="..\source\Procedure.h" />
     <ClInclude Include="..\source\TypeDef.h" />
