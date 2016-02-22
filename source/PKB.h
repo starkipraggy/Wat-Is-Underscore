@@ -41,17 +41,22 @@ private:
 	std::stack<int>* statementStackTrace;		/**< Used during SIMPLE parsing, this is a list of statement numbers of statements
 													 that belong to different nesting levels, used to keep track of Parent and Follow*/
 
-	PKB();
-	~PKB();
 
 	//! This function is used by the API for the SIMPLE parser when a new statement that has a statement number is inputted.
 	StatementTableStatement* newStatement();
 	//! These functions is used by the API for the SIMPLE parser to add a relationship between two items (variables, statements, procedures, etc.).
 	bool addRelationship(VariableTableVariable* variable, ProcedureTableProcedure* procedure, RelationshipType relationship);
 	bool addRelationship(VariableTableVariable* variable, StatementTableStatement* statement, RelationshipType relationship);
+protected:
+	PKB();
+	~PKB();
 public:
 	//! Allows access to the static reference to the lone singleton instance.
 	static PKB* getInstance();
+
+	//! Allows modification to the static reference to the lone singleton instance.
+	static void PKB::setInstance(PKB* newPkb);
+
 
 	// ---------------------------------------------------------------------------------
 	// API FUNCTIONS FOR SIMPLE PARSER STARTS HERE!!!
@@ -154,7 +159,7 @@ public:
 		\param outputType VariableName (for variables), Assign, If, While, Call, Undefined (for any statements)
 		\return the vector<string> of the statement numbers or names.
 	*/
-	std::vector<std::string> PQLSelect(TNodeType outputType);
+	virtual std::vector<std::string> PQLSelect(TNodeType outputType);
 
 	//! Returns a list of items that fit Uses(x, y) conditions for the PQL parser.
 	/*!
@@ -167,7 +172,7 @@ public:
 		\param outputType The type of conditions to check for (eg. "procedure", "statement", "assign", "while", "if", "call")
 		\return The vector<string> of the statement numbers or variable names, or ["none"] if empty.
 	*/
-	std::vector<std::string> PQLUses(std::string input, int argumentPosition, std::string outputType);
+	 virtual std::vector<std::string> PQLUses(std::string input, int argumentPosition, std::string outputType);
 
 	//! Returns a list of items that fit Modifies(x, y) conditions for the PQL parser.
 	/*!
@@ -180,7 +185,7 @@ public:
 		\param outputType The type of conditions to check for (eg. "procedure", "statement", "assign", "while", "if", "call")
 		\return The vector<string> of the statement numbers or variable names, or ["none"] if empty.
 	*/
-	std::vector<std::string> PQLModifies(std::string input, int argumentPosition, std::string outputType);
+	 virtual std::vector<std::string> PQLModifies(std::string input, int argumentPosition, std::string outputType);
 
 	//! Returns a list of items that fit Follows(x, y) conditions for the PQL parser.
 	/*!
@@ -191,7 +196,7 @@ public:
 								If 2, look for the statement that this statement is following (ie. Follows(_, s))
 		\return The vector<string> of the statement numbers, or ["none"] if empty.
 	*/
-	std::vector<std::string> PQLFollows(int input, int argumentPosition);
+	 virtual std::vector<std::string> PQLFollows(int input, int argumentPosition);
 
 	//! Returns a list of items that fit Follows*(x, y) conditions for the PQL parser.
 	/*!
@@ -202,7 +207,7 @@ public:
 								If 2, look for the statements that this statement is indirectly following (ie. Follows*(_, s))
 		\return The vector<string> of the statement numbers, or ["none"] if empty.
 	*/
-	std::vector<std::string> PQLFollowsStar(int statementNumber, int argumentPosition);
+	 virtual std::vector<std::string> PQLFollowsStar(int statementNumber, int argumentPosition);
 
 	//! Returns a list of items that fit Parent(x, y) conditions for the PQL parser.
 	/*!
@@ -213,7 +218,7 @@ public:
 								If 2, look for the statements that this statement has as a parent (ie. Parent(_, s))
 		\return The vector<string> of the statement numbers, or ["none"] if empty.
 	*/
-	std::vector<std::string> PQLParent(int statementNumber, int argumentPosition);
+	 virtual std::vector<std::string> PQLParent(int statementNumber, int argumentPosition);
 
 	//! Returns a list of items that fit the conditions of the specified item for the PQL parser.
 	/*!
@@ -223,7 +228,7 @@ public:
 		\param argumentPosition the position of the input in the clause
 		\return the vector<string> of the statement numbers, or ["none"] if empty.
 	*/
-	std::vector<std::string> PQLParentStar(int statementNumber, int argumentPosition);
+	 virtual std::vector<std::string> PQLParentStar(int statementNumber, int argumentPosition);
 
 
 	//! Returns a list of items that fit the specified pattern condition.
@@ -235,7 +240,7 @@ public:
 		\param right The second item in the parentheses of the pattern clause
 		\return the vector<int>* of the list of integers of statements.
 	*/
-	std::vector<std::string> PQLPattern(TNodeType type, Ref left, Ref right);
+	 virtual std::vector<std::string> PQLPattern(TNodeType type, Ref left, Ref right);
 
 	// ---------------------------------------------------------------------------------
 	// API FUNCTIONS FOR PQL PARSER ENDS HERE!!!
