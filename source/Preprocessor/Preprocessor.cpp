@@ -11,6 +11,8 @@ const regex expressionRegex("(^\"[[:alpha:]])([[:alnum:]]+|#+)*\"$");
 const regex partOfExpressionRegex("(^_\"[[:alpha:]])([[:alnum:]]+|#+)*\"_$");
 
 const regex designEntityRegex("^(STMT|ASSIGN|WHILE|VARIABLE|CONSTANT|PROG_LINE)$",icase);
+const regex stmtDesignEntityRegex("^(STMT|ASSIGN|WHILE|CONSTANT|PROG_LINE)$", icase);
+const regex entDesignEntityRegex("^(VARIABLE)$", icase);
 
 void Preprocessor::process(string statement) {
 	setMap(statement);
@@ -355,14 +357,14 @@ bool Preprocessor::isStmtRef(Ref v) {
 	string type = v.getType();
 	
 	return (type == "placeholder" || type == "integer" ||
-		regex_match(type, designEntityRegex));
+		regex_match(type, stmtDesignEntityRegex));
 }
 
 bool Preprocessor::isEntRef(Ref v) {
 	string type = v.getType();
 
 	return (type == "placeholder" || type == "expr" ||
-		regex_match(type, designEntityRegex));
+		regex_match(type, entDesignEntityRegex));
 }
 
 bool Preprocessor::isExprSpec(Ref v) {
