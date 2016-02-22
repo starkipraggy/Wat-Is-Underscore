@@ -49,9 +49,41 @@ namespace UnitTesting {
 		TEST_METHOD(SimpleEvaluation)
 		{
 			QueryTree::Instance()->setSelect(variableVar);
+			
 			vector<string> output = q.process();
-			string print = pkb->PQLSelect(VariableName).at(0);
-			Assert::IsTrue(output.at(0) == "v", (wchar_t*)print.c_str());
+			
+			Assert::IsTrue(output.at(0) == "AnswerForSelect", (wchar_t*)output.at(0).c_str());
+		}
+
+		TEST_METHOD(UsesEvaluation)
+		{
+			QueryTree::Instance()->setSelect(variableVar);
+			QueryTree::Instance()->addClause(usesClause);
+
+			vector<string> output = q.process();
+
+			Assert::IsTrue(output.at(1) == "AnswerForUses", (wchar_t*)output.at(0).c_str());
+		}
+
+		TEST_METHOD(PatternEvaluation)
+		{
+			QueryTree::Instance()->setSelect(variableVar);
+			QueryTree::Instance()->addClause(new PatternClause("PATTERN", placeholderVar, partOfExpressionVar, assignVar));
+
+			vector<string> output = q.process();
+
+			Assert::IsTrue(output.at(0) == "AnswerForPattern", (wchar_t*)output.at(0).c_str());
+		}
+
+		TEST_METHOD(MixEvaluation)
+		{
+			QueryTree::Instance()->setSelect(variableVar);
+			QueryTree::Instance()->addClause(usesClause);
+			QueryTree::Instance()->addClause(new PatternClause("PATTERN", placeholderVar, partOfExpressionVar, assignVar));
+
+			vector<string> output = q.process();
+
+			Assert::IsTrue(output.at(0) == "AnswerForMix", (wchar_t*)output.at(0).c_str());
 		}
 
 	};
