@@ -83,8 +83,7 @@ std::string SimpleParser::addSpaceToString(std::string input) {
 std::vector<std::string> SimpleParser::setTokens(std::string line) {
 	std::string buf;
 	std::stringstream ss(line);
-	tokens.clear();
-	
+
 	while (ss >> buf) {
 		// Tokens are by per line basis
 		tokens.push_back(buf);
@@ -144,7 +143,7 @@ void SimpleParser::processLine() {
 				i++;
 				std::cout << "while var = " << tokens[i];
 				std::cout << std::endl;
-				PKB::getInstance()->WhileStart(tokens[i]);
+				//PKB::getInstance()->WhileStart(tokens[i]);
 				i++;
 				std::cout << "OpeningBrace = " << tokens[i];
 				std::cout << std::endl;
@@ -185,7 +184,7 @@ void SimpleParser::processLine() {
 						if (back.compare("while") == 0) {
 							stackParenthesis.pop_back();
 							currentContainer.pop_back();
-							PKB::getInstance()->WhileEnd();
+							//PKB::getInstance()->WhileEnd();
 							//std::cout << "LOLLOL " <<tokens[i];
 							//std::cout << std::endl;
 						} else if (back.compare("procedure") == 0) {

@@ -1,8 +1,9 @@
 #include "QueryEvaluator.h"
+#include <windows.h>
 using namespace std;
 using namespace std::regex_constants;
 
-const regex designEntityRegex("^(STMT|ASSIGN|WHILE|VARIABLE|CONSTANT|PROG_LINE)$", icase);
+const regex designEntityRegex("^(STMT|ASSIGN|WHILE|VARIABLE|CONSTANT|PROG_LINE|EXPR|PLACEHOLDER|PART_OF_EXPR)$", icase);
 
 PKB* pkb;
 
@@ -92,9 +93,8 @@ void QueryEvaluator::addResult(vector<string> currResult) {
 
 void QueryEvaluator::query(string clause, Ref source, Ref dest, int position) {
 	vector<string> queryResult;
-
 	if (regex_match(dest.getType(), designEntityRegex)) {
-		queryResult = pkb->PQLSelect(toTNodeType(dest.getType()));
+		queryResult = pkb->PQLSelect(VariableName);
 		for (auto& x : queryResult) {
 			accumulate(queryPKB(clause, x, position, source.getType()));
 		}

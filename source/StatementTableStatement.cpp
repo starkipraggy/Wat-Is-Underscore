@@ -89,11 +89,11 @@ void StatementTableStatement::setFollows(StatementTableStatement* follows) {
 
 	followsStar->clear();
 	StatementTableStatement* stmt = this;
-	while (stmt->hasFollows()) {
+	/*while (stmt->hasFollows()) {
 		stmt = stmt->follows;
 		followsStar->push_back(stmt->getIndex());
 		stmt->followedByStarHasBeingModified();
-	}
+	}*/
 }
 
 void StatementTableStatement::setFollowedBy(StatementTableStatement* followedBy) {
