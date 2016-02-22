@@ -40,7 +40,7 @@ std::vector<std::string> QueryEvaluator::process() {
 					addResult(queryPKB(clause, var1.getName(), 2, select.getType()));
 				}
 				else {
-					queryResult = queryPKB(clause, var2.getName(), 1, var1.getType());
+					queryResult = queryPKB(clause, var2.getName(), 1, select.getType());
 					if (find(queryResult.begin(), queryResult.end(), var1.getName()) == queryResult.end()) {
 						result = {};
 						break;
@@ -94,7 +94,7 @@ void QueryEvaluator::addResult(vector<string> currResult) {
 void QueryEvaluator::query(string clause, Ref source, Ref dest, int position) {
 	vector<string> queryResult;
 	if (regex_match(dest.getType(), designEntityRegex)) {
-		queryResult = pkb->PQLSelect(toTNodeType(source.getType()));
+		queryResult = pkb->PQLSelect(toTNodeType(dest.getType()));
 		for (auto& x : queryResult) {
 			accumulate(queryPKB(clause, x, position, source.getType()));
 		}
