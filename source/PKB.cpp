@@ -366,25 +366,21 @@ std::vector<std::string> PKB::PQLUses(std::string input, int argumentPosition, s
 				returnList.push_back(procedureTable->getProcedure(variableToBeChecked->getProceduresUses(i))->getName());
 			}
 		}
-		else {
-			// Check which statements are to be returned
-
+		else { // Check which statements are to be returned
 			bool returnAllStatements = (outputType == "stmt");
-			TNodeType typeToReturn;
+			TNodeType typeToReturn = Undefined;
 			if (outputType == "assign") { typeToReturn = Assign; }
 			else if (outputType == "While") { typeToReturn = While; }
 			else if (outputType == "If") { typeToReturn = If; }
 			else if (outputType == "Call") { typeToReturn = Call; }
-			else { // outputType is unexpected
-				returnList.push_back("none");
-				return returnList;
-			}
 
-			size = variableToBeChecked->getStatementUsesSize();
-			for (int i = 0; i < size; i++) {
-				StatementTableStatement* statementToBeChecked = statementTable->getStatementUsingStatementNumber(variableToBeChecked->getStatementUses(i));
-				if ((returnAllStatements) || (statementToBeChecked->getType() == typeToReturn)) {
-					returnList.push_back(std::to_string(statementToBeChecked->getStatementNumber()));
+			if ((returnAllStatements) || (typeToReturn != Undefined)) {
+				size = variableToBeChecked->getStatementUsesSize();
+				for (int i = 0; i < size; i++) {
+					StatementTableStatement* statementToBeChecked = statementTable->getStatementUsingStatementNumber(variableToBeChecked->getStatementUses(i));
+					if ((returnAllStatements) || (statementToBeChecked->getType() == typeToReturn)) {
+						returnList.push_back(std::to_string(statementToBeChecked->getStatementNumber()));
+					}
 				}
 			}
 		}
