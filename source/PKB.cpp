@@ -133,21 +133,16 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 		}
 	}
 	int rightVariablesSize = rightVariables.size();
-	std::cout << "11111";
 	// Create a new statement for this assign statement, adding the statement number into current procedure
 	currentStatement = newStatement();
-	std::cout << "2222";
 	// Set the type of the statement to be an assignment
 	currentStatement->setType(Assign);
-	std::cout << "33333";
 	// Set expression of this statement
 	std::string rightHandSideExpression = "";
 	for (unsigned int i = 0; i < size; i++) {
 		rightHandSideExpression += tokens[i];
 	}
-	std::cout << "4444";
 	currentStatement->setRightHandSideExpression(rightHandSideExpression);
-	std::cout << "5555";
 	// Add variable on the left side into the current procedure AND statement as a Modifies(p, v) relationship
 	addRelationship(leftVariable, currentProcedure, Modifies);
 	addRelationship(leftVariable, currentStatement, Modifies);
