@@ -13,7 +13,7 @@ std::vector<std::string> namesVariables;
 std::vector<std::string> typesVariables;
 std::vector<std::string> stackParenthesis;
 //std::vector<std::string> nestingLevel;
-
+const regex integerRegex("[[:digit:]]+");
 // procedure / while / if / else
 std::vector<std::string> currentContainer;
 
@@ -55,7 +55,7 @@ std::vector<std::string> SimpleParser::tokenize(std::string contents) {
 /* This function adds a space infront and behind each special character 
 	as stated in the dictionary vector. */
 std::string SimpleParser::addSpaceToString(std::string input) {
-	std::vector<std::string> dictionary = { "{", "}", "=", "+", "-" , "*" ,";" };
+	std::vector<std::string> dictionary = { "{", "}", "=", "+", "-" , "*" ,";" , "(" ,")" };
 
 	for (unsigned int i = 0;i < dictionary.size(); i++) {
 		unsigned int pos = 0;
@@ -75,7 +75,6 @@ std::string SimpleParser::addSpaceToString(std::string input) {
 }
 
 int procState = 0;
-
 void SimpleParser::parseSimple(std::vector<std::string> tokens) {
 	// if procstate == 0; procedure is invalid.
 	// if procstate == 1; procedure is valid.
@@ -86,7 +85,6 @@ void SimpleParser::parseSimple(std::vector<std::string> tokens) {
 		isErrorDetected = true;
 	} else {
 		for (unsigned int i = 0; i < tokens.size(); i++) {
-			//std::cout << tokens[i] << " ";
 			switch (checkFirstWord(tokens[i])) {
 			case 1:
 				// first word is procedure
@@ -115,13 +113,13 @@ void SimpleParser::parseSimple(std::vector<std::string> tokens) {
 				break;
 			default:
 				// Invalid Program
-				std::cout << "Invalid program" << std::endl;
+				std::cout << "Invalid program! " << std::endl;
 				isErrorDetected = true;
 				break;
 			}
 
 			if (isErrorDetected == true) {
-				std::cout << "INVALID PROGRAM !" << std::endl;
+				std::cout << "Invalid program! " << std::endl;
 				break;
 			}
 		}
@@ -136,8 +134,10 @@ void SimpleParser::parseSimple(std::vector<std::string> tokens) {
 	Returns the next position of the token
 */
 int SimpleParser::checkProceure(unsigned int position, std::vector<std::string> tokens) {
+	// Prints procedure
 	std::cout << tokens[position] << " ";
 	position++;
+	// Prints procedure name
 	std::cout << tokens[position] << " " ;
 	if (isCharABrace(tokens[position]) || isCharAnOperator(tokens[position])) {
 		std::cout << "Invalid Program " << std::endl;
@@ -147,6 +147,7 @@ int SimpleParser::checkProceure(unsigned int position, std::vector<std::string> 
 	}
 
 	position++;
+	// Prints opening brace
 	std::cout << tokens[position] << std::endl;
 	try {
 		switch (isCharABrace(tokens[position])) {
@@ -178,21 +179,24 @@ int SimpleParser::checkProceure(unsigned int position, std::vector<std::string> 
 	Returns the next position of the token
 */
 int SimpleParser::checkWhile(unsigned int position, std::vector<std::string> tokens) {
+	// Prints while
 	std::cout << tokens[position] << " ";
 	if (procState == 0) {
 		isErrorDetected = true;
 		return position;
 	}
 	position++;
+	// Prints while variable
 	std::cout << tokens[position] << " ";
 	if (isCharABrace(tokens[position]) || isCharAnOperator(tokens[position])) {
-		std::cout << "Invalid Program " << std::endl;
+		std::cout << "Invalid Program! " << std::endl;
 		procState = 0;
 		isErrorDetected = true;
 		return position;
 	}
 
 	position++;
+	// Prints opening brace
 	std::cout << tokens[position] << " ";
 
 	try {
@@ -282,7 +286,7 @@ int SimpleParser::checkAssign(unsigned int position, std::vector<std::string> to
 			}
 		}
 		catch (std::exception& e) {
-			std::cout << "Invalid Program " << std::endl;
+			std::cout << "Invalid Program! " << std::endl;
 			isErrorDetected = true;
 			return position;
 		}
@@ -304,6 +308,7 @@ int SimpleParser::checkAssign(unsigned int position, std::vector<std::string> to
 
 
 		for (position;position < tokens.size();position++) {
+			// Prints the token
 			std::cout << tokens[position] << " ";
 			switch (isCharAnOperator(tokens[position])) {
 			case 0:
@@ -314,6 +319,7 @@ int SimpleParser::checkAssign(unsigned int position, std::vector<std::string> to
 				if (isEquals == false && isOperator == false) {
 					// First variable in statement
 					if (isCharAnInteger(tokens[position])) {
+						// Assignment statement cannot start with integer
 						isErrorDetected = true;
 						return position;
 					} else {
@@ -402,7 +408,7 @@ int SimpleParser::checkFirstWord(std::string word) {
 }
 
 int SimpleParser::isCharAnInteger(std::string s) {
-	return isdigit(atoi(s.c_str()));
+	return regex_match(s, integerRegex);
 }
 
 int SimpleParser::isCharABrace(std::string cChar) {

@@ -55,7 +55,6 @@ public:
 	int SimpleParser::checkWhile(unsigned int position, std::vector<std::string>);
 	int SimpleParser::checkAssign(unsigned int, std::vector<std::string>);
 
-
 	/* Not implemented yet */
 	int SimpleParser::checkIf(unsigned int);
 	/* Not implemented yet */
