@@ -365,9 +365,9 @@ std::vector<std::string> PKB::PQLUses(std::string input, int argumentPosition, s
 			bool returnAllStatements = (outputType == "stmt");
 			TNodeType typeToReturn = Undefined;
 			if (outputType == "assign") { typeToReturn = Assign; }
-			else if (outputType == "While") { typeToReturn = While; }
-			else if (outputType == "If") { typeToReturn = If; }
-			else if (outputType == "Call") { typeToReturn = Call; }
+			else if (outputType == "while") { typeToReturn = While; }
+			else if (outputType == "if") { typeToReturn = If; }
+			else if (outputType == "call") { typeToReturn = Call; }
 
 			if ((returnAllStatements) || (typeToReturn != Undefined)) {
 				size = variableToBeChecked->getStatementUsesSize();
@@ -427,7 +427,7 @@ std::vector<std::string> PKB::PQLModifies(std::string input, int argumentPositio
 		}
 		else {
 			// Check which statements are to be returned
-			bool returnAllStatements = (outputType == "statement");
+			bool returnAllStatements = (outputType == "stmt");
 			TNodeType typeToReturn = Undefined;
 			if (outputType == "assign") { typeToReturn = Assign; }
 			else if (outputType == "while") { typeToReturn = While; }
