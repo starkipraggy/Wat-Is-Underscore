@@ -27,5 +27,5 @@ private:
 public:
 	SPA();
 	void processSimple(std::string);
-	std::string evaluate(std::string);
+	std::vector<std::string> evaluate(std::string);
 };

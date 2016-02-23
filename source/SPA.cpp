@@ -13,6 +13,6 @@ void SPA::processSimple(std::string filename) {
 	sp->parseSimple(tokens);
 }
 
-string SPA::evaluate(std::string query) {
+std::vector<std::string> SPA::evaluate(std::string query) {
 	return pql.process(query);
 }

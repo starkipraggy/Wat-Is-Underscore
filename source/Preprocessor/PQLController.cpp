@@ -1,23 +1,20 @@
 #include "PQLController.h"
 using namespace std;
 
-const string COMMA = ",";
-
 Preprocessor preprocessor;
 QueryEvaluator evaluator;
 Projector projector;
 
-string PQLController::process(string input) {
-	string output = "";
+std::vector<std::string> PQLController::process(std::string input) {
 	vector<string> result;
 
 	try {
 		preprocessor.process(input);
 		result = evaluator.process();
-		output = projector.process(result);
+		result = projector.process(result);
 	}
-	catch (const char* msg) {
-		output = "";
+	catch (...) {
+		result = {};
 	}
-	return output;
+	return result;
 }

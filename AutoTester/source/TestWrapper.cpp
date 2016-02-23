@@ -29,5 +29,11 @@ void TestWrapper::parse(std::string filename) {
 void TestWrapper::evaluate(std::string query, std::list<std::string>& results){
 	// store the answers to the query in the results list (it is initially empty)
 	// each result must be a string.
-	results.push_back(spa->evaluate(query));
+	std::vector<std::string> output;
+
+	output = spa->evaluate(query);
+	for (auto& x : output) {
+		results.push_back(x);
+	}
+
 }

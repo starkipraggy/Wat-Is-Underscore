@@ -19,6 +19,6 @@ public:
 	/*!
 	Main method to Process query and return result
 	*/
-	string PQLController::process(string input);
+	std::vector<std::string> PQLController::process(std::string input);
 };
 #endif
