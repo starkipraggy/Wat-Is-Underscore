@@ -1,0 +1,120 @@
+1. statement
+stmt s;
+select s
+1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20
+5000
+2. uses - assign
+assign a;
+select a such that Uses(a,"a")
+3
+5000
+3. uses - stmt
+stmt s;
+select s such that Uses(s,"a")
+3,4
+5000
+4. uses - while
+while w;
+select w such that Uses(w,"a")
+4
+5000
+5. uses - while 2
+while w;
+select w such that Uses(w,"Romeo")
+4,5,9,11,12
+5000
+6. uses - at right side
+variable v;
+select v such that Uses(12,v)
+right,Romeo,delta,width,c,x
+5000
+7. uses - at right side 2
+variable v;
+select v such that Uses(4,v)
+right,Romeo,delta,width,c,x
+5000
+8. modifies - at left side
+assign a;
+select a such that Modifies(a,"c")
+3,15,17
+5000
+9. modifies - at left side
+stmt s;
+select s such that Modifies(s,"c")
+1245345
+5000
+10. modifies - at right side
+variable v;
+select v such that Modifies(3,v)
+c
+5000
+11. modifies - at right side
+variable v;
+select v such that Modifies(20,v)
+w
+5000
+12. follows - left side
+stmt s;
+select s such that Follows(s,3)
+2
+5000
+13. follows - right side
+stmt s;
+select s such that Follows(2,s)
+3
+5000
+14. follows - left side
+stmt s;
+select s such that Follows(s,19)
+9
+5000
+15 parent - left side
+stmt s;
+select s such that parent(s,8)
+7
+5000
+16 parent - right side
+stmt s;
+select s such that parent(7,s)
+8
+5000
+17 parent - right side
+stmt s;
+select s such that parent (5,s)
+6,7,9,19
+5000
+18 follows* - left side 1
+stmt s;
+select s such that follows*(s,15)
+13,14
+5000
+19. follows* - left side 2
+stmt s;
+select s such that Follows*(s,19)
+9,7,6
+5000
+20. follows* - right side
+stmt s;
+select s such that Follows*(2,s)
+3,4
+5000
+21 parent* right side
+stmt s;
+select s such that parent*(9,s)
+10,11,12,13,14,15,16,17,18
+5000
+22 parent* right side 2
+stmt s;
+select s such that parent*(7,s)
+8
+5000
+23 parent* left side 1
+stmt s;
+select s such that parent*(s,8)
+4,5,7
+5000
+24 parent* left side 2
+stmt s;
+select s such that parent*(s,15)
+12,11,9,5,4
+5000
