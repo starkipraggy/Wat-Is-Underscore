@@ -62,4 +62,17 @@ public:
 		}
 	}
 
+    TEST_METHOD(TestAddSpacesToString) {
+        //Arrange
+        std::string sample = "{a=b+x-c;}";
+        std::string expected = "{ a = b + x - c ; }";
+
+        //Act
+        std::string result = sp->addSpaceToString(sample);
+
+        //Assert
+        Assert::AreEqual(expected, result);
+    }
+
+
 };

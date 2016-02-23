@@ -45,13 +45,13 @@ public:
 	/*!
 	Checks the first token to be either procedure/while/if/else/call
 	\param string token
-	/return 1 = procedure, 2=while, 3 = if, 4= call, 5= anything else
+	\return 1 = procedure, 2=while, 3 = if, 4= call, 5= anything else
 	*/
 	int SimpleParser::checkFirstWord(std::string);
 	int SimpleParser::isCharABrace(std::string);
 	int SimpleParser::isCharAnOperator(std::string);
 	int SimpleParser::isCharAnInteger(std::string);
-	int SimpleParser::checkProceure(unsigned int position, std::vector<std::string>);
+	int SimpleParser::checkProcedure(unsigned int position, std::vector<std::string>);
 	int SimpleParser::checkWhile(unsigned int position, std::vector<std::string>);
 	int SimpleParser::checkAssign(unsigned int, std::vector<std::string>);
 

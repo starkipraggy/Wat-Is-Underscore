@@ -11,7 +11,7 @@ namespace UnitTesting {
 	public:
 		Preprocessor p;
 
-		//temp
+		//setup
 		Ref select;
 		vector<Clause*> clauses;
 

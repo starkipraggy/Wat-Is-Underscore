@@ -37,18 +37,8 @@ std::vector<std::string> SimpleParser::tokenize(std::string contents) {
 		/* Splits string into tokens */
 		while (ss >> buffer) {
 			tokens.push_back(buffer);
-			//std::cout << buffer << ' ';
 		}
-		//std::cout << std::endl;
 	}
-
-	/* Debug Printouts
-	for (unsigned int i = 0; i < tokens.size(); ++i) {
-		std::cout << tokens[i] << ' ';
-	}
-	std::cout << std::endl;
-	*/
-	std::cout << "Tokens Size = " << tokens.size() << std::endl;
 	return tokens;
 }
 
@@ -89,7 +79,7 @@ void SimpleParser::parseSimple(std::vector<std::string> tokens) {
 			case 1:
 				// first word is procedure
 				// eats tokens until first opening brace
-				i = checkProceure(i,tokens);
+				i = checkProcedure(i,tokens);
 				break;
 			case 2:
 				// first word is while
@@ -133,7 +123,7 @@ void SimpleParser::parseSimple(std::vector<std::string> tokens) {
 
 	Returns the next position of the token
 */
-int SimpleParser::checkProceure(unsigned int position, std::vector<std::string> tokens) {
+int SimpleParser::checkProcedure(unsigned int position, std::vector<std::string> tokens) {
 	// Prints procedure
 	std::cout << tokens[position] << " ";
 	position++;
