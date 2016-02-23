@@ -480,13 +480,13 @@ std::vector<std::string> PKB::PQLFollows(int statementNumber, int argumentPositi
 	StatementTableStatement* statement = statementTable->getStatementUsingStatementNumber(statementNumber);
 	if (statement != NULL) { // In case a non-existing statement number was given
 		if (argumentPosition == 1) { //check followed by
-			if (statement->hasFollowedBy()) {
-				returnList.push_back(std::to_string(statement->getFollowedBy()));
+			if (statement->hasFollows()) {
+				returnList.push_back(std::to_string(statement->getFollows()));
 			}
 		}
 		else if (argumentPosition == 2) { //check follows
-			if (statement->hasFollows()) {
-				returnList.push_back(std::to_string(statement->getFollows()));
+			if (statement->hasFollowedBy()) {
+				returnList.push_back(std::to_string(statement->getFollowedBy()));
 			}
 		}
 	}
@@ -503,15 +503,15 @@ std::vector<std::string> PKB::PQLFollowsStar(int statementNumber, int argumentPo
 	if (statement != NULL) {
 		int size;
 		if (argumentPosition == 1) { //check followedBy*
-			size = statement->getFollowedByStarSize();
-			for (int i = 0; i < size; i++) {
-				returnList.push_back(std::to_string(statement->getFollowedByStar(i)));
-			}
-		}
-		else if (argumentPosition == 2) { //check follows*
 			size = statement->getFollowsStarSize();
 			for (int i = 0; i < size; i++) {
 				returnList.push_back(std::to_string(statement->getFollowsStar(i)));
+			}
+		}
+		else if (argumentPosition == 2) { //check follows*
+			size = statement->getFollowedByStarSize();
+			for (int i = 0; i < size; i++) {
+				returnList.push_back(std::to_string(statement->getFollowedByStar(i)));
 			}
 		}
 	}
