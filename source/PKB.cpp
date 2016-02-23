@@ -368,12 +368,13 @@ std::vector<std::string> PKB::PQLUses(std::string input, int argumentPosition, s
 		}
 		else {
 			// Check which statements are to be returned
-			bool returnAllStatements = (outputType == "statement");
+
+			bool returnAllStatements = (outputType == "stmt");
 			TNodeType typeToReturn;
 			if (outputType == "assign") { typeToReturn = Assign; }
-			else if (outputType == "while") { typeToReturn = While; }
-			else if (outputType == "if") { typeToReturn = If; }
-			else if (outputType == "call") { typeToReturn = Call; }
+			else if (outputType == "While") { typeToReturn = While; }
+			else if (outputType == "If") { typeToReturn = If; }
+			else if (outputType == "Call") { typeToReturn = Call; }
 			else { // outputType is unexpected
 				returnList.push_back("none");
 				return returnList;
