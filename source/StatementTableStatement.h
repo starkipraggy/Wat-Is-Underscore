@@ -15,7 +15,7 @@
 
 class StatementTableStatement {
 private:
-	int lineNumber;										/**< The line number of this statement */
+	int statementNumber;								/**< The statement number of this statement */
 	int index;											/**< The index number assigned to the item this object is representing */
 	TNodeType type;										/**< The type of this statement */
 	std::string rightHandSideExpression;				/**< Right hand side expression, specifically for assign statements, for pattern clauses */
@@ -62,6 +62,14 @@ public:
 	StatementTableStatement(int lineNumber, int index);
 
 	~StatementTableStatement();
+
+	//! Getter function for the statement number of the statement.
+	/*!
+		Getter function for the statement number of the statement; use this function
+		to retrieve the statement number of the statement that this object is representing.
+		\return The statement number of the statement that this item is representing has.
+	*/
+	int getStatementNumber();
 
 	//! Getter function for the index number of the item.
 	/*!

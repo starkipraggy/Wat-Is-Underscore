@@ -1,3 +1,4 @@
+#include <iostream>
 #include <stack>
 #include "StatementTableStatement.h"
 
@@ -9,8 +10,8 @@ void StatementTableStatement::followedByStarHasBeingModified() {
 	hasItsFollowedByStarChanged = true;
 }
 
-StatementTableStatement::StatementTableStatement(int lineNumber, int index) {
-	this->lineNumber = lineNumber;
+StatementTableStatement::StatementTableStatement(int statementNumber, int index) {
+	this->statementNumber = statementNumber;
 	this->index = index;
 	type = Undefined;
 	rightHandSideExpression = "";
@@ -42,6 +43,10 @@ StatementTableStatement::~StatementTableStatement() {
 	delete followsStar;
 	delete childrenStar;
 	delete followedByStar;
+}
+
+int StatementTableStatement::getStatementNumber() {
+	return statementNumber;
 }
 
 int StatementTableStatement::getIndex() {
@@ -89,11 +94,11 @@ void StatementTableStatement::setFollows(StatementTableStatement* follows) {
 
 	followsStar->clear();
 	StatementTableStatement* stmt = this;
-	/*while (stmt->hasFollows()) {
+	while (stmt->hasFollows()) {
 		stmt = stmt->follows;
 		followsStar->push_back(stmt->getIndex());
 		stmt->followedByStarHasBeingModified();
-	}*/
+	}
 }
 
 void StatementTableStatement::setFollowedBy(StatementTableStatement* followedBy) {

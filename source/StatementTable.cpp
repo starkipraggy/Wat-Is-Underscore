@@ -1,3 +1,4 @@
+#include <iostream>
 #include "StatementTable.h"
 
 StatementTable::StatementTable() {
@@ -18,11 +19,12 @@ int StatementTable::getNumberOfStatements() {
 }
 
 StatementTableStatement* StatementTable::getStatementUsingStatementNumber(int statementNumber) {
+
 	int size = getNumberOfStatements();
 	StatementTableStatement* statement;
 	for (int i = 0; i < size; i++) {
 		statement = statements->at(i);
-		if (statement->getIndex() == statementNumber) {
+		if (statement->getStatementNumber() == statementNumber) {
 			return statement;
 		}
 	}
