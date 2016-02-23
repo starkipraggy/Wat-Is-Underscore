@@ -151,11 +151,11 @@ int StatementTableStatement::getUsesSize() {
 }
 
 int StatementTableStatement::getModifies(int index) {
-	return uses->at(index);
+	return modifies->at(index);
 }
 
 int StatementTableStatement::getModifiesSize() {
-	return uses->size();
+	return modifies->size();
 }
 
 int StatementTableStatement::getFollowsStar(int index) {
