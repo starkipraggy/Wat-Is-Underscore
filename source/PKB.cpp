@@ -433,21 +433,19 @@ std::vector<std::string> PKB::PQLModifies(std::string input, int argumentPositio
 		else {
 			// Check which statements are to be returned
 			bool returnAllStatements = (outputType == "statement");
-			TNodeType typeToReturn;
+			TNodeType typeToReturn = Undefined;
 			if (outputType == "assign") { typeToReturn = Assign; }
 			else if (outputType == "while") { typeToReturn = While; }
 			else if (outputType == "if") { typeToReturn = If; }
 			else if (outputType == "call") { typeToReturn = Call; }
-			else { // outputType is unexpected
-				returnList.push_back("none");
-				return returnList;
-			}
 
-			size = variableToBeChecked->getStatementModifiesSize();
-			for (int i = 0; i < size; i++) {
-				StatementTableStatement* statementToBeChecked = statementTable->getStatementUsingStatementNumber(variableToBeChecked->getStatementModifies(i));
-				if ((returnAllStatements) || (statementToBeChecked->getType() == typeToReturn)) {
-					returnList.push_back(std::to_string(statementToBeChecked->getStatementNumber()));
+			if ((returnAllStatements) || (typeToReturn != Undefined)) {
+				size = variableToBeChecked->getStatementModifiesSize();
+				for (int i = 0; i < size; i++) {
+					StatementTableStatement* statementToBeChecked = statementTable->getStatementUsingStatementNumber(variableToBeChecked->getStatementModifies(i));
+					if ((returnAllStatements) || (statementToBeChecked->getType() == typeToReturn)) {
+						returnList.push_back(std::to_string(statementToBeChecked->getStatementNumber()));
+					}
 				}
 			}
 		}
