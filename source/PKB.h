@@ -192,8 +192,8 @@ public:
 		One of the API functions that allows the PQL parser to extract information from the PKB.
 		Call this function for selection of Follows clauses.
 		\param input The known statement in the clause
-		\param argumentPosition If 1, look for the statement s that this statement is followed by (ie. Follows(s, this))
-								If 2, look for the statement s that this statement is following (ie. Follows(this, s))
+		\param argumentPosition If 1, look for the statement s that this statement is following (ie. Follows(s, this))
+								If 2, look for the statement s that this statement is followed by (ie. Follows(this, s))
 		\return The vector<string> of the statement numbers, or ["none"] if empty.
 	*/
 	 virtual std::vector<std::string> PQLFollows(int input, int argumentPosition);
