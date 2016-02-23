@@ -111,9 +111,9 @@ int ProcedureTableProcedure::getUsesSize() {
 }
 
 int ProcedureTableProcedure::getModifies(int index) {
-	return uses->at(index);
+	return modifies->at(index);
 }
 
 int ProcedureTableProcedure::getModifiesSize() {
-	return uses->size();
+	return modifies->size();
 }
