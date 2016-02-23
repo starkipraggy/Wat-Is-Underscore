@@ -246,6 +246,7 @@ void StatementTableStatement::fetchNewCopyOfChildrenStar() {
 	StatementTableStatement* child;
 	while (!stackForProcessingChildren.empty()) {
 		child = stackForProcessingChildren.top();
+		stackForProcessingChildren.pop();
 
 		if (childrenStar->count(child->getStatementNumber()) == 0) { // Not already in the list, need to add its children into stack for processing
 			childrenStar->insert(child->getStatementNumber());
@@ -255,7 +256,5 @@ void StatementTableStatement::fetchNewCopyOfChildrenStar() {
 				stackForProcessingChildren.push(child->children->at(x));
 			}
 		}
-
-		stackForProcessingChildren.pop();
 	}
 }
