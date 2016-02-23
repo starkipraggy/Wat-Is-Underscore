@@ -42,7 +42,7 @@ StatementTableStatement* StatementTable::getStatementUsingVectorIndexNumber(int 
 }
 
 StatementTableStatement* StatementTable::addStatement(int lineNumber) {
-	StatementTableStatement* newStatement = new StatementTableStatement(lineNumber, getNumberOfStatements());
+	StatementTableStatement* newStatement = new StatementTableStatement(lineNumber);
 	statements->push_back(newStatement);
 	return newStatement;
 }

@@ -75,7 +75,7 @@ bool PKB::addRelationship(VariableTableVariable* variable, ProcedureTableProcedu
 
 bool PKB::addRelationship(VariableTableVariable* variable, StatementTableStatement* statement, RelationshipType relationship) {
 	int variableIndex = variable->getIndex();
-	int statementIndex = statement->getIndex();
+	int statementIndex = statement->getStatementNumber();
 
 	switch (relationship) {
 	case Modifies:
@@ -205,7 +205,7 @@ void PKB::CallStatement(std::string procedure) {
 
 	// Add the procedure you're calling into the Calls relationship of the procedure that this statement belongs to
 	ProcedureTableProcedure* procedureBeingCalled = procedureTable->getProcedure(procedure);
-	procedureBeingCalled->addStatementsCalls(currentStatement->getIndex());
+	procedureBeingCalled->addStatementsCalls(currentStatement->getStatementNumber());
 	procedureBeingCalled->addProcedureCalls(currentProcedure);
 }
 
@@ -345,7 +345,7 @@ std::vector<std::string> PKB::PQLSelect(TNodeType outputType) {
 	for (int i = 0; i < statementTableSize; i++) {
 		statement = statementTable->getStatementUsingVectorIndexNumber(i);
 		if ((returnAllStatements) || (statement->getType() == outputType)) {
-			returnList.push_back(std::to_string(statement->getIndex()));
+			returnList.push_back(std::to_string(statement->getStatementNumber()));
 		}
 	}
 	return returnList;
@@ -383,7 +383,7 @@ std::vector<std::string> PKB::PQLUses(std::string input, int argumentPosition, s
 			for (int i = 0; i < size; i++) {
 				StatementTableStatement* statementToBeChecked = statementTable->getStatementUsingStatementNumber(variableToBeChecked->getStatementUses(i));
 				if ((returnAllStatements) || (statementToBeChecked->getType() == typeToReturn)) {
-					returnList.push_back(std::to_string(statementToBeChecked->getIndex()));
+					returnList.push_back(std::to_string(statementToBeChecked->getStatementNumber()));
 				}
 			}
 		}
@@ -450,7 +450,7 @@ std::vector<std::string> PKB::PQLModifies(std::string input, int argumentPositio
 			for (int i = 0; i < size; i++) {
 				StatementTableStatement* statementToBeChecked = statementTable->getStatementUsingStatementNumber(variableToBeChecked->getStatementModifies(i));
 				if ((returnAllStatements) || (statementToBeChecked->getType() == typeToReturn)) {
-					returnList.push_back(std::to_string(statementToBeChecked->getIndex()));
+					returnList.push_back(std::to_string(statementToBeChecked->getStatementNumber()));
 				}
 			}
 		}
@@ -593,7 +593,7 @@ std::vector<std::string> PKB::PQLPattern(TNodeType type, Ref left, Ref right) {
 				((right.getType() == "expr") && (right.getName() == statement->getRightHandSideExpression())))))) ||
 				(((type == While) || (type == If)) &&
 				((left.getType() == "placeholder") || (statement->getControlVariable() == left.getName()))))) {
-			returnList.push_back(std::to_string(statement->getIndex()));
+			returnList.push_back(std::to_string(statement->getStatementNumber()));
 		}
 	}
 
