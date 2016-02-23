@@ -191,8 +191,8 @@ void StatementTableStatement::fetchNewCopyOfFollowedByStar() {
 
 	StatementTableStatement* statementFollowing = this;
 	while (statementFollowing->hasFollowedBy()) {
-		followedByStar->push_back(followedBy->getStatementNumber());
 		statementFollowing = statementFollowing->followedBy;
+		followedByStar->push_back(statementFollowing->getStatementNumber());
 	}
 }
 
