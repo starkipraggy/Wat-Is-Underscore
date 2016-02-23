@@ -20,7 +20,9 @@ namespace UnitTesting {
 		Ref placeholderVar, partOfExpressionVar, exprVar, integerVar,
 			stmtVar, assignVar, whileVar, variableVar, constantVar, progLineVar,
 			invalidVar;
-		Clause* usesClause, patternClause;
+		Clause* usesClause;
+		Clause* followsClause;
+		Clause* patternClause;
 		vector<Clause*> oneClauses;
 
 		TEST_METHOD_INITIALIZE(build) {
@@ -36,7 +38,8 @@ namespace UnitTesting {
 			progLineVar = Ref("p", "prog_line");
 
 			usesClause = new Clause("USES", assignVar, constantVar);
-			patternClause = PatternClause("PATTERN", placeholderVar, partOfExpressionVar, assignVar);
+			followsClause = new Clause("FOLLOWS", integerVar, stmtVar);
+			patternClause = new PatternClause("PATTERN", placeholderVar, partOfExpressionVar, assignVar);
 
 			oneClauses.push_back(usesClause);
 
@@ -63,6 +66,16 @@ namespace UnitTesting {
 			vector<string> output = q.process();
 
 			Assert::IsTrue(output.at(1) == "AnswerForUses", (wchar_t*)output.at(0).c_str());
+		}
+
+		TEST_METHOD(secondArgVariable_Follows)
+		{
+			QueryTree::Instance()->setSelect(variableVar);
+			QueryTree::Instance()->addClause(followsClause);
+
+			vector<string> output = q.process();
+
+			Assert::IsTrue(output.at(1) == "AnswerForFollows", (wchar_t*)output.at(0).c_str());
 		}
 
 		TEST_METHOD(PatternEvaluation)

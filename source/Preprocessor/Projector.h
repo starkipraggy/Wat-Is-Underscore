@@ -16,7 +16,7 @@ public:
 	/*!
 	Main method to Process raw result and generate string of output
 	*/
-	std::string process(std::vector<std::string> result);
+	std::vector<std::string> process(std::vector<std::string> result);
 
 private:
 };

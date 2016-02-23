@@ -1,3 +1,4 @@
+#include <iostream>
 #include <stack>
 #include "StatementTableStatement.h"
 
@@ -9,9 +10,8 @@ void StatementTableStatement::followedByStarHasBeingModified() {
 	hasItsFollowedByStarChanged = true;
 }
 
-StatementTableStatement::StatementTableStatement(int lineNumber, int index) {
-	this->lineNumber = lineNumber;
-	this->index = index;
+StatementTableStatement::StatementTableStatement(int statementNumber) {
+	this->statementNumber = statementNumber;
 	type = Undefined;
 	rightHandSideExpression = "";
 	controlVariable = "";
@@ -44,9 +44,15 @@ StatementTableStatement::~StatementTableStatement() {
 	delete followedByStar;
 }
 
+int StatementTableStatement::getStatementNumber() {
+	return statementNumber;
+}
+
+/*
 int StatementTableStatement::getIndex() {
 	return index;
 }
+*/
 
 std::string StatementTableStatement::getRightHandSideExpression() {
 	return rightHandSideExpression;
@@ -61,7 +67,7 @@ bool StatementTableStatement::hasParent() {
 }
 
 int StatementTableStatement::getParent() {
-	return parent->getIndex();
+	return parent->getStatementNumber();
 }
 
 bool StatementTableStatement::hasFollows() {
@@ -89,11 +95,11 @@ void StatementTableStatement::setFollows(StatementTableStatement* follows) {
 
 	followsStar->clear();
 	StatementTableStatement* stmt = this;
-	/*while (stmt->hasFollows()) {
+	while (stmt->hasFollows()) {
 		stmt = stmt->follows;
-		followsStar->push_back(stmt->getIndex());
+		followsStar->push_back(stmt->getStatementNumber());
 		stmt->followedByStarHasBeingModified();
-	}*/
+	}
 }
 
 void StatementTableStatement::setFollowedBy(StatementTableStatement* followedBy) {
@@ -107,7 +113,7 @@ void StatementTableStatement::setParent(StatementTableStatement* parent) {
 	StatementTableStatement* stmt = this;
 	while (stmt->hasParent()) {
 		stmt = stmt->parent;
-		parentStar->push_back(stmt->getIndex());
+		parentStar->push_back(stmt->getStatementNumber());
 		stmt->childrenStarHasBeingModified();
 	}
 }
@@ -125,11 +131,11 @@ bool StatementTableStatement::addUses(int variableIndexNumber) {
 }
 
 int StatementTableStatement::getFollows() {
-	return follows->getIndex();
+	return follows->getStatementNumber();
 }
 
 int StatementTableStatement::getFollowedBy() {
-	return followedBy->getIndex();
+	return followedBy->getStatementNumber();
 }
 
 TNodeType StatementTableStatement::getType() {
@@ -145,11 +151,11 @@ int StatementTableStatement::getUsesSize() {
 }
 
 int StatementTableStatement::getModifies(int index) {
-	return uses->at(index);
+	return modifies->at(index);
 }
 
 int StatementTableStatement::getModifiesSize() {
-	return uses->size();
+	return modifies->size();
 }
 
 int StatementTableStatement::getFollowsStar(int index) {
@@ -185,13 +191,13 @@ void StatementTableStatement::fetchNewCopyOfFollowedByStar() {
 
 	StatementTableStatement* statementFollowing = this;
 	while (statementFollowing->hasFollowedBy()) {
-		followedByStar->push_back(followedBy->getIndex());
 		statementFollowing = statementFollowing->followedBy;
+		followedByStar->push_back(statementFollowing->getStatementNumber());
 	}
 }
 
 int StatementTableStatement::getChildren(int index) {
-	return children->at(index)->getIndex();
+	return children->at(index)->getStatementNumber();
 }
 
 int StatementTableStatement::getChildrenSize() {
@@ -240,16 +246,15 @@ void StatementTableStatement::fetchNewCopyOfChildrenStar() {
 	StatementTableStatement* child;
 	while (!stackForProcessingChildren.empty()) {
 		child = stackForProcessingChildren.top();
+		stackForProcessingChildren.pop();
 
-		if (childrenStar->count(child->getIndex()) == 0) { // Not already in the list, need to add its children into stack for processing
-			childrenStar->insert(child->getIndex());
+		if (childrenStar->count(child->getStatementNumber()) == 0) { // Not already in the list, need to add its children into stack for processing
+			childrenStar->insert(child->getStatementNumber());
 
 			childrenSize = child->getChildrenSize();
 			for (int x = 0; x < childrenSize; x++) {
 				stackForProcessingChildren.push(child->children->at(x));
 			}
 		}
-
-		stackForProcessingChildren.pop();
 	}
 }

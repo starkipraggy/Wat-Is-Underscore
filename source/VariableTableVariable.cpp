@@ -49,11 +49,11 @@ int VariableTableVariable::getProceduresUsesSize() {
 }
 
 int VariableTableVariable::getProceduresModifies(int index) {
-	return procedureUses->at(index);
+	return procedureModifies->at(index);
 }
 
 int VariableTableVariable::getProceduresModifiesSize() {
-	return procedureUses->size();
+	return procedureModifies->size();
 }
 
 int VariableTableVariable::getStatementUses(int index) {
@@ -65,9 +65,9 @@ int VariableTableVariable::getStatementUsesSize() {
 }
 
 int VariableTableVariable::getStatementModifies(int index) {
-	return statementUses->at(index);
+	return statementModifies->at(index);
 }
 
 int VariableTableVariable::getStatementModifiesSize() {
-	return statementUses->size();
+	return statementModifies->size();
 }

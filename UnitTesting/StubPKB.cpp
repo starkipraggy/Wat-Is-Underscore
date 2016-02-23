@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "StubPKB.h"
 
 StubPKB::StubPKB() {}
@@ -21,6 +22,15 @@ std::vector<std::string> StubPKB::PQLSelect(TNodeType outputType) {
 std::vector<std::string> StubPKB::PQLUses(std::string input, int argumentPosition, 
 	std::string outputType) {
 	string var = "AnswerForUses";
+	string varMix = "AnswerForMix";
+	vector<string> output;
+	output.push_back(var);
+	output.push_back(varMix);
+	return output;
+}
+
+std::vector<std::string> StubPKB::PQLFollows(int input, int argumentPosition) {
+	string var = "AnswerForFollows";
 	string varMix = "AnswerForMix";
 	vector<string> output;
 	output.push_back(var);

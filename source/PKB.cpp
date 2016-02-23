@@ -36,9 +36,11 @@ StatementTableStatement* PKB::newStatement() {
 	StatementTableStatement* currentStatement = statementTable->addStatement(numberOfStatements);
 
 	// Sets this statement's Follows relationship using the statement stack trace
-	StatementTableStatement* beingFollowed = statementTable->getStatementUsingStatementNumber(statementStackTrace->top());
-	currentStatement->setFollows(beingFollowed);
-	beingFollowed->setFollowedBy(currentStatement);
+	if (statementStackTrace->top() != 0) {
+		StatementTableStatement* beingFollowed = statementTable->getStatementUsingStatementNumber(statementStackTrace->top());
+		currentStatement->setFollows(beingFollowed);
+		beingFollowed->setFollowedBy(currentStatement);
+	}
 	// Sets this statement's Parent relationship using the statement stack trace
 	statementStackTrace->pop();
 	if (statementStackTrace->size() > 0) {
@@ -73,7 +75,7 @@ bool PKB::addRelationship(VariableTableVariable* variable, ProcedureTableProcedu
 
 bool PKB::addRelationship(VariableTableVariable* variable, StatementTableStatement* statement, RelationshipType relationship) {
 	int variableIndex = variable->getIndex();
-	int statementIndex = statement->getIndex();
+	int statementIndex = statement->getStatementNumber();
 
 	switch (relationship) {
 	case Modifies:
@@ -131,21 +133,16 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 		}
 	}
 	int rightVariablesSize = rightVariables.size();
-	std::cout << "11111";
 	// Create a new statement for this assign statement, adding the statement number into current procedure
 	currentStatement = newStatement();
-	std::cout << "2222";
 	// Set the type of the statement to be an assignment
 	currentStatement->setType(Assign);
-	std::cout << "33333";
 	// Set expression of this statement
 	std::string rightHandSideExpression = "";
 	for (unsigned int i = 0; i < size; i++) {
 		rightHandSideExpression += tokens[i];
 	}
-	std::cout << "4444";
 	currentStatement->setRightHandSideExpression(rightHandSideExpression);
-	std::cout << "5555";
 	// Add variable on the left side into the current procedure AND statement as a Modifies(p, v) relationship
 	addRelationship(leftVariable, currentProcedure, Modifies);
 	addRelationship(leftVariable, currentStatement, Modifies);
@@ -203,7 +200,7 @@ void PKB::CallStatement(std::string procedure) {
 
 	// Add the procedure you're calling into the Calls relationship of the procedure that this statement belongs to
 	ProcedureTableProcedure* procedureBeingCalled = procedureTable->getProcedure(procedure);
-	procedureBeingCalled->addStatementsCalls(currentStatement->getIndex());
+	procedureBeingCalled->addStatementsCalls(currentStatement->getStatementNumber());
 	procedureBeingCalled->addProcedureCalls(currentProcedure);
 }
 
@@ -343,7 +340,7 @@ std::vector<std::string> PKB::PQLSelect(TNodeType outputType) {
 	for (int i = 0; i < statementTableSize; i++) {
 		statement = statementTable->getStatementUsingVectorIndexNumber(i);
 		if ((returnAllStatements) || (statement->getType() == outputType)) {
-			returnList.push_back(std::to_string(statement->getIndex()));
+			returnList.push_back(std::to_string(statement->getStatementNumber()));
 		}
 	}
 	return returnList;
@@ -364,24 +361,21 @@ std::vector<std::string> PKB::PQLUses(std::string input, int argumentPosition, s
 				returnList.push_back(procedureTable->getProcedure(variableToBeChecked->getProceduresUses(i))->getName());
 			}
 		}
-		else {
-			// Check which statements are to be returned
-			bool returnAllStatements = (outputType == "statement");
-			TNodeType typeToReturn;
+		else { // Check which statements are to be returned
+			bool returnAllStatements = (outputType == "stmt");
+			TNodeType typeToReturn = Undefined;
 			if (outputType == "assign") { typeToReturn = Assign; }
 			else if (outputType == "while") { typeToReturn = While; }
 			else if (outputType == "if") { typeToReturn = If; }
 			else if (outputType == "call") { typeToReturn = Call; }
-			else { // outputType is unexpected
-				returnList.push_back("none");
-				return returnList;
-			}
 
-			size = variableToBeChecked->getStatementUsesSize();
-			for (int i = 0; i < size; i++) {
-				StatementTableStatement* statementToBeChecked = statementTable->getStatementUsingStatementNumber(variableToBeChecked->getStatementUses(i));
-				if ((returnAllStatements) || (statementToBeChecked->getType() == typeToReturn)) {
-					returnList.push_back(std::to_string(statementToBeChecked->getIndex()));
+			if ((returnAllStatements) || (typeToReturn != Undefined)) {
+				size = variableToBeChecked->getStatementUsesSize();
+				for (int i = 0; i < size; i++) {
+					StatementTableStatement* statementToBeChecked = statementTable->getStatementUsingStatementNumber(variableToBeChecked->getStatementUses(i));
+					if ((returnAllStatements) || (statementToBeChecked->getType() == typeToReturn)) {
+						returnList.push_back(std::to_string(statementToBeChecked->getStatementNumber()));
+					}
 				}
 			}
 		}
@@ -433,22 +427,20 @@ std::vector<std::string> PKB::PQLModifies(std::string input, int argumentPositio
 		}
 		else {
 			// Check which statements are to be returned
-			bool returnAllStatements = (outputType == "statement");
-			TNodeType typeToReturn;
+			bool returnAllStatements = (outputType == "stmt");
+			TNodeType typeToReturn = Undefined;
 			if (outputType == "assign") { typeToReturn = Assign; }
 			else if (outputType == "while") { typeToReturn = While; }
 			else if (outputType == "if") { typeToReturn = If; }
 			else if (outputType == "call") { typeToReturn = Call; }
-			else { // outputType is unexpected
-				returnList.push_back("none");
-				return returnList;
-			}
 
-			size = variableToBeChecked->getStatementModifiesSize();
-			for (int i = 0; i < size; i++) {
-				StatementTableStatement* statementToBeChecked = statementTable->getStatementUsingStatementNumber(variableToBeChecked->getStatementModifies(i));
-				if ((returnAllStatements) || (statementToBeChecked->getType() == typeToReturn)) {
-					returnList.push_back(std::to_string(statementToBeChecked->getIndex()));
+			if ((returnAllStatements) || (typeToReturn != Undefined)) {
+				size = variableToBeChecked->getStatementModifiesSize();
+				for (int i = 0; i < size; i++) {
+					StatementTableStatement* statementToBeChecked = statementTable->getStatementUsingStatementNumber(variableToBeChecked->getStatementModifies(i));
+					if ((returnAllStatements) || (statementToBeChecked->getType() == typeToReturn)) {
+						returnList.push_back(std::to_string(statementToBeChecked->getStatementNumber()));
+					}
 				}
 			}
 		}
@@ -487,14 +479,14 @@ std::vector<std::string> PKB::PQLFollows(int statementNumber, int argumentPositi
 	std::vector<std::string> returnList;
 	StatementTableStatement* statement = statementTable->getStatementUsingStatementNumber(statementNumber);
 	if (statement != NULL) { // In case a non-existing statement number was given
-		if (argumentPosition == 1) { //check followed by
-			if (statement->hasFollowedBy()) {
-				returnList.push_back(std::to_string(statement->getFollowedBy()));
-			}
-		}
-		else if (argumentPosition == 2) { //check follows
+		if (argumentPosition == 1) { //check follows
 			if (statement->hasFollows()) {
 				returnList.push_back(std::to_string(statement->getFollows()));
+			}
+		}
+		else if (argumentPosition == 2) { //check followed by
+			if (statement->hasFollowedBy()) {
+				returnList.push_back(std::to_string(statement->getFollowedBy()));
 			}
 		}
 	}
@@ -510,16 +502,16 @@ std::vector<std::string> PKB::PQLFollowsStar(int statementNumber, int argumentPo
 	StatementTableStatement* statement = statementTable->getStatementUsingStatementNumber(statementNumber);
 	if (statement != NULL) {
 		int size;
-		if (argumentPosition == 1) { //check followedBy*
-			size = statement->getFollowedByStarSize();
-			for (int i = 0; i < size; i++) {
-				returnList.push_back(std::to_string(statement->getFollowedByStar(i)));
-			}
-		}
-		else if (argumentPosition == 2) { //check follows*
+		if (argumentPosition == 1) { //check follows*
 			size = statement->getFollowsStarSize();
 			for (int i = 0; i < size; i++) {
 				returnList.push_back(std::to_string(statement->getFollowsStar(i)));
+			}
+		}
+		else if (argumentPosition == 2) { //check followedBy*
+			size = statement->getFollowedByStarSize();
+			for (int i = 0; i < size; i++) {
+				returnList.push_back(std::to_string(statement->getFollowedByStar(i)));
 			}
 		}
 	}
@@ -591,7 +583,7 @@ std::vector<std::string> PKB::PQLPattern(TNodeType type, Ref left, Ref right) {
 				((right.getType() == "expr") && (right.getName() == statement->getRightHandSideExpression())))))) ||
 				(((type == While) || (type == If)) &&
 				((left.getType() == "placeholder") || (statement->getControlVariable() == left.getName()))))) {
-			returnList.push_back(std::to_string(statement->getIndex()));
+			returnList.push_back(std::to_string(statement->getStatementNumber()));
 		}
 	}
 
