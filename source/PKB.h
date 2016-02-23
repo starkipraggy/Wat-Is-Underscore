@@ -192,8 +192,8 @@ public:
 		One of the API functions that allows the PQL parser to extract information from the PKB.
 		Call this function for selection of Follows clauses.
 		\param input The known statement in the clause
-		\param argumentPosition If 1, look for the statement that this statement is followed by (ie. Follows(s, _))
-								If 2, look for the statement that this statement is following (ie. Follows(_, s))
+		\param argumentPosition If 1, look for the statement s that this statement is followed by (ie. Follows(this, s))
+								If 2, look for the statement s that this statement is following (ie. Follows(s, this))
 		\return The vector<string> of the statement numbers, or ["none"] if empty.
 	*/
 	 virtual std::vector<std::string> PQLFollows(int input, int argumentPosition);
@@ -203,8 +203,8 @@ public:
 		One of the API functions that allows the PQL parser to extract information from the PKB.
 		Call this function for selection of Follows* clauses.
 		\param statementNumber The known statement in the clause
-		\param argumentPosition If 1, look for the statements that this statement is indirectly followed by (ie. Follows*(s, _))
-								If 2, look for the statements that this statement is indirectly following (ie. Follows*(_, s))
+		\param argumentPosition If 1, look for the statements s that this statement is indirectly followed by (ie. Follows*(this, s))
+								If 2, look for the statements s that this statement is indirectly following (ie. Follows*(s, this))
 		\return The vector<string> of the statement numbers, or ["none"] if empty.
 	*/
 	 virtual std::vector<std::string> PQLFollowsStar(int statementNumber, int argumentPosition);
