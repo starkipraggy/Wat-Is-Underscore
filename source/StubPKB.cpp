@@ -28,6 +28,15 @@ std::vector<std::string> StubPKB::PQLUses(std::string input, int argumentPositio
 	return output;
 }
 
+std::vector<std::string> StubPKB::PQLFollows(int input, int argumentPosition) {
+	string var = "AnswerForFollows";
+	string varMix = "AnswerForMix";
+	vector<string> output;
+	output.push_back(var);
+	output.push_back(varMix);
+	return output;
+}
+
 std::vector<std::string> StubPKB::PQLPattern(TNodeType type, Ref left, Ref right) {
 	string var = "AnswerForPattern";
 	string varMix = "AnswerForMix";
