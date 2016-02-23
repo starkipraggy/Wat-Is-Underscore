@@ -24,6 +24,9 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="StubPKB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -39,6 +42,9 @@
       <Filter>Source Files\Preprocessor</Filter>
     </ClCompile>
     <ClCompile Include="TestEvaluator.cpp">
+      <Filter>Source Files\Preprocessor</Filter>
+    </ClCompile>
+    <ClCompile Include="StubPKB.cpp">
       <Filter>Source Files\Preprocessor</Filter>
     </ClCompile>
   </ItemGroup>
