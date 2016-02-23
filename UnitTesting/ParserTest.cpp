@@ -9,7 +9,7 @@ TEST_CLASS(TestAST)
 {
 public:
 	SimpleParser* sp;
-
+	/*
 	// Tokenizes Assignments
 	TEST_METHOD(TestTokenisationSimple) {
 		//Arrange
@@ -45,6 +45,6 @@ public:
 		for (unsigned int i = 0; i < expected2.size();i++) {
 			Assert::AreEqual(expected2[i], tokens2[i]);
 		}
-	}
+	}*/
 
 };
