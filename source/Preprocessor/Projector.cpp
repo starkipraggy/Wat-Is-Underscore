@@ -11,7 +11,7 @@ string Projector::process(vector<string> result) {
 		}
 		else {
 			for (auto& x : result) {
-				output = x + COMMA;
+				output = output + x + COMMA;
 			}
 			output.substr(0, output.length() - 1);
 

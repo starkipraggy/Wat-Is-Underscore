@@ -82,14 +82,14 @@
     <ClCompile Include="..\source\Preprocessor\Ref.cpp">
       <Filter>Source\Preprocessor</Filter>
     </ClCompile>
-    <ClCompile Include="UI.cpp">
-      <Filter>Source\Preprocessor</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\Preprocessor\PQLController.cpp">
       <Filter>Source\Preprocessor</Filter>
     </ClCompile>
     <ClCompile Include="..\source\Preprocessor\Projector.cpp">
       <Filter>Source\Preprocessor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\StubPKB.cpp">
+      <Filter>Source\PKB</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -182,6 +182,9 @@
     </ClInclude>
     <ClInclude Include="..\source\Preprocessor\Projector.h">
       <Filter>Header\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\StubPKB.h">
+      <Filter>Header\PKB</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

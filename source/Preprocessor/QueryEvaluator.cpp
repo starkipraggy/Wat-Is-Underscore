@@ -1,4 +1,5 @@
 #include "QueryEvaluator.h"
+#include <windows.h>
 using namespace std;
 using namespace std::regex_constants;
 
@@ -20,10 +21,10 @@ std::vector<std::string> QueryEvaluator::process() {
 			string clause = x->getClause();
 			Ref var1 = x->getRefOne();
 			Ref var2 = x->getRefTwo();
-			if (clause == "PATTERN") {
+			if (StringToUpper(clause) == "PATTERN") {
 				PatternClause* p = dynamic_cast<PatternClause*>(x);
 				Ref assignVar = p->getAssignedVariable();
-				pkb->PQLPattern(Assign, var1, var2);
+				addResult(pkb->PQLPattern(Assign, var1, var2));
 			}
 			else {
 				if (regex_match(var1.getType(), designEntityRegex)) {
@@ -39,7 +40,7 @@ std::vector<std::string> QueryEvaluator::process() {
 					addResult(queryPKB(clause, var1.getName(), 2, select.getType()));
 				}
 				else {
-					queryResult = queryPKB(clause, var2.getName(), 1, var1.getType());
+					queryResult = queryPKB(clause, var2.getName(), 1, select.getType());
 					if (find(queryResult.begin(), queryResult.end(), var1.getName()) == queryResult.end()) {
 						result = {};
 						break;
@@ -60,7 +61,7 @@ void QueryEvaluator::accumulate(vector<string> currResult) {
 vector<string> QueryEvaluator::getResult() {
 	vector<string> newVec;
 	std::copy(result.begin(), result.end(), std::back_inserter(newVec));
-	eachResult = {};
+	result = {};
 	return newVec;
 }
 
@@ -85,14 +86,13 @@ void QueryEvaluator::addResult(vector<string> currResult) {
 				newSet.insert(*got);
 			}
 		}
-
+		result = {};
 		std::copy(newSet.begin(), newSet.end(), std::inserter(result, result.begin()));
 	}
 }
 
 void QueryEvaluator::query(string clause, Ref source, Ref dest, int position) {
 	vector<string> queryResult;
-
 	if (regex_match(dest.getType(), designEntityRegex)) {
 		queryResult = pkb->PQLSelect(toTNodeType(dest.getType()));
 		for (auto& x : queryResult) {
@@ -146,9 +146,7 @@ vector<string> QueryEvaluator::queryPKB(string clause, string input, int argumen
 	else if (clause == "MODIFIES") {
 		output = pkb->PQLModifies(input, argumentPosition, outputType);
 	}
-	else if (clause == "USES") {
-		output = pkb->PQLUses(input, argumentPosition, outputType);
-	}
+
 	else{
 		int value = atoi(input.c_str());
 		if (clause == "FOLLOWS") {

@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include "PKB.h"
+#include <iostream>
 
 PKB* PKB::instance = NULL;
 
@@ -38,7 +39,6 @@ StatementTableStatement* PKB::newStatement() {
 	StatementTableStatement* beingFollowed = statementTable->getStatementUsingStatementNumber(statementStackTrace->top());
 	currentStatement->setFollows(beingFollowed);
 	beingFollowed->setFollowedBy(currentStatement);
-
 	// Sets this statement's Parent relationship using the statement stack trace
 	statementStackTrace->pop();
 	if (statementStackTrace->size() > 0) {
@@ -96,6 +96,10 @@ PKB* PKB::getInstance() {
 	return instance;
 }
 
+void PKB::setInstance(PKB* newPkb) {
+	instance = newPkb;
+}
+
 void PKB::ProcedureStart(std::string nameOfProcedure) {
 	/* Create an entry for this new procedure in the procedure table, and keep a pointer to it in currentProcedure, 
 	   so that statements being inputted can have their statement numbers added under it */
@@ -127,20 +131,21 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 		}
 	}
 	int rightVariablesSize = rightVariables.size();
-
+	std::cout << "11111";
 	// Create a new statement for this assign statement, adding the statement number into current procedure
 	currentStatement = newStatement();
-
+	std::cout << "2222";
 	// Set the type of the statement to be an assignment
 	currentStatement->setType(Assign);
-
+	std::cout << "33333";
 	// Set expression of this statement
 	std::string rightHandSideExpression = "";
 	for (unsigned int i = 0; i < size; i++) {
 		rightHandSideExpression += tokens[i];
 	}
+	std::cout << "4444";
 	currentStatement->setRightHandSideExpression(rightHandSideExpression);
-
+	std::cout << "5555";
 	// Add variable on the left side into the current procedure AND statement as a Modifies(p, v) relationship
 	addRelationship(leftVariable, currentProcedure, Modifies);
 	addRelationship(leftVariable, currentStatement, Modifies);
@@ -318,11 +323,13 @@ std::vector<std::string> PKB::PQLSelect(TNodeType outputType) {
 	StatementTableStatement* statement;
 
 	// return all variables
-	if (outputType == Variable) {
+	if (outputType == VariableName) {
 		int variableTableSize = variableTable->getNumberOfVariables();
 		for (int i = 0; i < variableTableSize; i++) {
 			returnList.push_back(variableTable->getVariableUsingVectorIndexNumber(i)->getName());
 		}
+		return returnList;
+
 	}
 
 	// If outputType is not Assign, If, While, or Call, return all statements
