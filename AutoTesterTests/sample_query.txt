@@ -188,3 +188,8 @@ assign a; stmt s;
 select s such that uses(s,"a") pattern a("c",_)
 3
 5000
+39 select pattern uses pattern expr
+assign a;
+select a pattern a(_,"1 + beta+tmp")
+6
+5000
