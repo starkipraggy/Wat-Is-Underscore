@@ -7,9 +7,9 @@ string conditions[] = { "Follows","Follows*","Parent","Parent*","Modifies","Uses
 const regex identRegex("(^[[:alpha:]])([[:alnum:]]+|#+)*$");
 const regex integerRegex("[[:digit:]]+");
 const regex placeholderRegex("^_$");
-const regex expressionRegex("(^\"[[:alpha:]])([[:alnum:]]+|#+)*\"$");
-const regex patternExpressionRegex("(^[[:alpha:]]([[:alnum:]]|#)*)([[:space:]]*\\+[[:space:]]*[[:alpha:]]([[:alnum:]]|#)*)*");
-const regex partOfExpressionRegex("^_\"([[:alpha:]]([[:alnum:]]|#)*)([[:space:]]*\\+[[:space:]]*[[:alpha:]]([[:alnum:]]|#)*)*\"_$");
+const regex expressionRegex("(^\"[[:alpha:]])([[:alnum:]]*|#*)*\"$");
+const regex patternExpressionRegex("(^\")[[:space:]]*([[:alpha:]]([[:alnum:]]|#)*|[[:digit:]]+)[[:space:]]*(\\+[[:space:]]*([[:alpha:]]([[:alnum:]]|#)*|[[:digit:]]+))*[[:space:]]*(\"$)");
+const regex partOfExpressionRegex("(^_\")[[:space:]]*([[:alpha:]]([[:alnum:]]|#)*|[[:digit:]]+)[[:space:]]*(\\+[[:space:]]*([[:alpha:]]([[:alnum:]]|#)*|[[:digit:]]+))*[[:space:]]*(\"_$)");
 
 
 const regex designEntityRegex("^(STMT|ASSIGN|WHILE|VARIABLE|CONSTANT|PROG_LINE)$",icase);
