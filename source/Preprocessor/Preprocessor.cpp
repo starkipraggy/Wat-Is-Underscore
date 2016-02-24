@@ -370,5 +370,5 @@ bool Preprocessor::isEntRef(Ref v) {
 bool Preprocessor::isExprSpec(Ref v) {
 	string type = v.getType();
 
-	return (type == "placeholder" || type == "part_of_expr");
+	return (type == "placeholder" || type == "part_of_expr" || type == "expr");
 }

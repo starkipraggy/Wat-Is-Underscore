@@ -24,8 +24,8 @@ namespace UnitTesting {
 
 		const string simpleQuery = "assign a; select a",
 			usesQuery = "variable v; constant c; select v such that uses(c, v)",
-			patternQuery = "assign a; select a pattern a(_,_\"abc\"_)",
-			combinedQuery = "variable v; constant c; assign a; select a such that uses(c, v) pattern a(_,_\"abc\"_)";
+			patternQuery = "assign a; select a pattern a(_,\"abc\")",
+			combinedQuery = "variable v; constant c; assign a; select a such that uses(c, v) pattern a(_,\"abc\")";
 	
 
 		TEST_METHOD_INITIALIZE(build) {
@@ -41,7 +41,7 @@ namespace UnitTesting {
 			progLineVar = Ref("p", "prog_line");
 
 			usesClause = new Clause("USES", constantVar, variableVar);
-			patternClause = PatternClause("PATTERN", placeholderVar, partOfExpressionVar, assignVar);
+			patternClause = PatternClause("PATTERN", placeholderVar, exprVar, assignVar);
 			
 			oneClauses.push_back(usesClause);
 
