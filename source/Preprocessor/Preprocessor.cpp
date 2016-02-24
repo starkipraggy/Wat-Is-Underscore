@@ -8,7 +8,8 @@ const regex identRegex("(^[[:alpha:]])([[:alnum:]]+|#+)*$");
 const regex integerRegex("[[:digit:]]+");
 const regex placeholderRegex("^_$");
 const regex expressionRegex("(^\"[[:alpha:]])([[:alnum:]]+|#+)*\"$");
-const regex partOfExpressionRegex("(^_\"[[:alpha:]])([[:alnum:]]+|#+)*\"_$");
+const regex patternExpressionRegex("(^[[:alpha:]]([[:alnum:]]|#)*)([[:space:]]*\+[[:space:]]*[[:alpha:]]([[:alnum:]]|#)*)*");
+const regex partOfExpressionRegex("^_\"([[:alpha:]]([[:alnum:]]|#)*)([[:space:]]*\+[[:space:]]*[[:alpha:]]([[:alnum:]]|#)*)*\"_$");
 
 const regex designEntityRegex("^(STMT|ASSIGN|WHILE|VARIABLE|CONSTANT|PROG_LINE)$",icase);
 const regex stmtDesignEntityRegex("^(STMT|ASSIGN|WHILE|CONSTANT|PROG_LINE)$", icase);
@@ -335,6 +336,9 @@ Ref Preprocessor::createPatternRef(string name) {
 	}
 	else if (regex_match(name, partOfExpressionRegex)) {
 		ref = Ref(name.substr(2, name.length() - 4), "part_of_expr");
+	}
+	else if (regex_match(name, patternExpressionRegex)) {
+		ref = Ref(name.substr(1, name.length() - 2), "pattern_expr");
 	}
 	else if (regex_match(name, expressionRegex)) {
 		ref = Ref(name.substr(1, name.length() - 2), "expr");
