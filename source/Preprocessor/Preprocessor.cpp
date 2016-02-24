@@ -338,7 +338,7 @@ Ref Preprocessor::createPatternRef(string name) {
 		ref = Ref(name.substr(2, name.length() - 4), "part_of_expr");
 	}
 	else if (regex_match(name, patternExpressionRegex)) {
-		ref = Ref(name.substr(1, name.length() - 2), "pattern_expr");
+		ref = Ref(name.substr(1, name.length() - 2), "expr");
 	}
 	else if (regex_match(name, expressionRegex)) {
 		ref = Ref(name.substr(1, name.length() - 2), "expr");
@@ -374,5 +374,5 @@ bool Preprocessor::isEntRef(Ref v) {
 bool Preprocessor::isExprSpec(Ref v) {
 	string type = v.getType();
 
-	return (type == "placeholder" || type == "part_of_expr" || type == "expr");
+	return (type == "placeholder" || type == "part_of_expr" ||type == "pattern_expr" || type == "expr");
 }
