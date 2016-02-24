@@ -290,6 +290,10 @@ int SimpleParser::checkAssign(unsigned int position, std::vector<std::string> to
 		// If the next token is another operator,
 		// Invalid program.
 		bool isOperator = false;
+		// If variable/constant is found, = true
+		// If the next token is another variable/constant,
+		// Invalid program.
+		bool isVariable = false;
 
 		// Left side of assignment statement
 		std::string leftVar;
@@ -315,15 +319,19 @@ int SimpleParser::checkAssign(unsigned int position, std::vector<std::string> to
 					} else {
 						leftVar = tokens[position];
 					}
-				} else if (isEquals == true && isOperator == false) {
+				}
+				else if (isEquals == true && isOperator == false && isVariable == false) {
 					// Subsequent variables after the equals operator and before an actual operator
 					if (isCharAnInteger(tokens[position])) {
 						rightVariables.push_back(tokens[position]);
 						types.push_back(Constant);
+						isVariable = true;
 					} else {
 						rightVariables.push_back(tokens[position]);
 						types.push_back(Variable);
+						isVariable = true;
 					}
+					
 				} else {
 					isErrorDetected = true;
 					break;
@@ -332,7 +340,13 @@ int SimpleParser::checkAssign(unsigned int position, std::vector<std::string> to
 			case 1:
 				// token is "=";
 				// First "=" in statement
-				isEquals = true;
+				if (isEquals == true) {
+					isErrorDetected = true;
+					break;
+				}
+				else {
+					isEquals = true;
+				}
 				break;
 			case 2:
 				// token is "+";
@@ -345,6 +359,7 @@ int SimpleParser::checkAssign(unsigned int position, std::vector<std::string> to
 					break;
 				}
 				isOperator = true;
+				isVariable = false;
 				rightVariables.push_back(tokens[position]);
 				types.push_back(Operator);
 				break;

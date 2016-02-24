@@ -10,7 +10,19 @@ TEST_CLASS(TestAST)
 public:
 	SimpleParser* sp;
 
-	TEST_METHOD(TestTokenisation_General) {
+	TEST_METHOD(SimpleParserTest_AddSpacesToString) {
+		//Arrange
+		std::string sample = "{a=b+x-c;}";
+		std::string expected = "  {  a  =  b  +  x  -  c  ;    }  ";
+
+		//Act
+		std::string result = sp->addSpaceToString(sample);
+
+		//Assert
+		Assert::AreEqual(expected, result);
+	}
+
+	TEST_METHOD(SimpleParserTest_Tokenisation_General) {
 		//Arrange
 		std::string simple = "ab}a{;+9g-n";
 		std::vector<std::string> expected = { "ab", "}","a","{",";","+","9g","-","n" };
@@ -27,7 +39,7 @@ public:
 	}
 
 	// Tokenizes Assignments
-	TEST_METHOD(TestTokenisation_Simple_1) {
+	TEST_METHOD(SimpleParserTest_Tokenisation_Simple_1) {
 		//Arrange
 		std::string simple = "procedure a{a=b+c+d;}";
 		std::vector<std::string> expected = { "procedure", "a","{","a","=","b","+","c","+","d",";" ,"}" };
@@ -44,10 +56,8 @@ public:
 	}
 	
 	// Tokenizes While and Assignments
-	TEST_METHOD(TestTokenisation_Simple_2) {
+	TEST_METHOD(SimpleParserTest_Tokenisation_Simple_2) {
 		//Arrange
-		//std::string simple2 = "procedure b{ b=x+y; c=w+h+j;}";
-		//std::vector<std::string> expected2 = { "procedure", "b","{","b","=","x","+","y",";","c","=","w","+", "h","j",";","}" };
 		std::string simple = "procedure xs{while b{x+4+z;}";
 		std::vector<std::string> expected = { "procedure", "xs","{","while","b","{","x","+","4","+","z",";" ,"}" };
 		std::vector<std::string> results;
@@ -62,17 +72,39 @@ public:
 		}
 	}
 
-    TEST_METHOD(TestAddSpacesToString) {
-        //Arrange
-        std::string sample = "{a=b+x-c;}";
-        std::string expected = "{ a = b + x - c ; }";
+	TEST_METHOD(SimpleParserTest_Tokenisation_Simple_3) {
+		//Arrange
+		std::string simple = "procedure re{while b{ if c then {a = 1;} else {r=z+2;} }}";
+		std::vector<std::string> expected = { "procedure", "re","{","while","b","{","if","c","then","{","a","=","1",";","}","else","{","r","=","z","+","2" ,";","}","}","}" };
+		std::vector<std::string> results;
+		sp = new SimpleParser();
+		//Act
+		std::vector<std::string> tokens2;
+		results = sp->tokenize(simple);
 
-        //Act
-        std::string result = sp->addSpaceToString(sample);
+		//Assert
+		for (unsigned int i = 0; i < expected.size();i++) {
+			Assert::AreEqual(expected[i], results[i]);
+		}
+	}
 
-        //Assert
-        Assert::AreEqual(expected, result);
-    }
+	TEST_METHOD(SimpleParserTest_Tokenisation_Simple_4) {
+		//Arrange
+		std::string simple = "procedure re{while b{ if c then {call saul;} else {r=z+2;} }} procedure saul {l=o+l;}";
+		std::vector<std::string> expected = { "procedure", "re","{","while","b","{","if","c","then","{","call","saul",";","}","else","{","r","=","z","+","2" ,";","}","}","}","procedure","saul","{" ,"l","=","o","+","l",";" };
+		std::vector<std::string> results;
+		sp = new SimpleParser();
+		//Act
+		std::vector<std::string> tokens2;
+		results = sp->tokenize(simple);
+
+		//Assert
+		for (unsigned int i = 0; i < expected.size();i++) {
+			Assert::AreEqual(expected[i], results[i]);
+		}
+	}
+
+   
 
 
 };
