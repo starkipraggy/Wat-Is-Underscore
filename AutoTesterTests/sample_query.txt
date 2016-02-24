@@ -153,3 +153,38 @@ stmt s;
 select s such that follows*(12,s)
 16,18
 5000
+32 select pattern both known
+assign a; 
+select a pattern a("c", "a")
+3
+5000
+33 select pattern with placeholder left
+assign a;
+select a pattern a(_,"a")
+3
+5000
+34 select pattern placeholder right
+assign a;
+select a pattern a("a", _)
+19
+5000
+35 select pattern follows*
+assign a; stmt s;
+select s such that follows*(1,s) pattern a("c", "a")
+3
+5000
+36 select pattern parent*
+assign a; stmt s;
+select s such that parent*(4,s) pattern a("x", _)
+10,18
+5000
+37 select pattern modifies
+assign a; stmt s;
+select s such that modifies(s,"c") pattern a(_,"a")
+3
+5000
+38 select pattern uses
+assign a; stmt s;
+select s such that uses(s,"a") pattern a("c",_)
+3
+5000
