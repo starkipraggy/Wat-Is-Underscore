@@ -193,3 +193,13 @@ assign a;
 select a pattern a(_,"1 + beta+tmp")
 6
 5000
+40 select pattern uses pattern part expr
+assign a;
+select a pattern a(_,_"delta+l"_)
+15
+5000
+41 select pattern uses pattern expr missing
+assign a;
+select a pattern a(_,"delta+l")
+none
+5000

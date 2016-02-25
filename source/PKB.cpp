@@ -404,9 +404,9 @@ std::vector<std::string> PKB::PQLUses(std::string input, int argumentPosition, s
 		break;
 	}
 
-	if (returnList.empty()) {
+	/*if (returnList.empty()) {
 		returnList.push_back("none");
-	}
+	}*/
 	return returnList;
 }
 
@@ -469,9 +469,9 @@ std::vector<std::string> PKB::PQLModifies(std::string input, int argumentPositio
 		break;
 	}
 
-	if (returnList.empty()) {
+	/*if (returnList.empty()) {
 		returnList.push_back("none");
-	}
+	}*/
 	return returnList;
 }
 
@@ -491,9 +491,9 @@ std::vector<std::string> PKB::PQLFollows(int statementNumber, int argumentPositi
 		}
 	}
 
-	if (returnList.empty()) {
+	/*if (returnList.empty()) {
 		returnList.push_back("none");
-	}
+	}*/
 	return returnList;
 }
 
@@ -516,9 +516,9 @@ std::vector<std::string> PKB::PQLFollowsStar(int statementNumber, int argumentPo
 		}
 	}
 
-	if (returnList.empty()) {
+	/*if (returnList.empty()) {
 		returnList.push_back("none");
-	}
+	}*/
 	return returnList;
 }
 
@@ -537,9 +537,9 @@ std::vector<std::string> PKB::PQLParent(int statementNumber, int argumentPositio
 		}
 	}
 
-	if (returnList.empty()) {
+	/*if (returnList.empty()) {
 		returnList.push_back("none");
-	}
+	}*/
 	return returnList;
 }
 
@@ -560,9 +560,9 @@ std::vector<std::string> PKB::PQLParentStar(int statementNumber, int argumentPos
 		}
 	}
 
-	if (returnList.empty()) {
+	/*if (returnList.empty()) {
 		returnList.push_back("none");
-	}
+	}*/
 	return returnList;
 }
 
@@ -587,8 +587,8 @@ std::vector<std::string> PKB::PQLPattern(TNodeType type, Ref left, Ref right) {
 		}
 	}
 
-	if (returnList.empty()) {
+	/*if (returnList.empty()) {
 		returnList.push_back("none");
-	}
+	}*/
 	return returnList;
 }
