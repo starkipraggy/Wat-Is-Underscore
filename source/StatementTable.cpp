@@ -28,7 +28,7 @@ StatementTableStatement* StatementTable::getStatementUsingStatementNumber(int st
 			return statement;
 		}
 	}
-	return NULL;
+	return addStatement(statementNumber);
 }
 
 StatementTableStatement* StatementTable::getStatementUsingVectorIndexNumber(int vectorIndexNumber) {

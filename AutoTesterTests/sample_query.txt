@@ -203,3 +203,18 @@ assign a;
 select a pattern a(_,"delta+l")
 none
 5000
+42 select uses none
+stmt s;
+select s such that uses(s,"blah")
+none
+5000
+43 select statement does not exist
+stmt s;
+select s such that follows(s,21)
+none
+5000
+44 select statement does not exist
+stmt s;
+select s such that follows(21,s)
+none
+5000
