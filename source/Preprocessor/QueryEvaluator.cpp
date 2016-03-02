@@ -100,6 +100,9 @@ void QueryEvaluator::query(string clause, Ref source, Ref dest, int position) {
 		}
 		addResult(getEachResult());
 	}
+	else if (dest.getType() == "placeholder") {
+		addResult(pkb->PQLSelect(toTNodeType(source.getType())));
+	}
 	else {
 		addResult(queryPKB(clause, dest.getName(), position, source.getType()));
 	}
