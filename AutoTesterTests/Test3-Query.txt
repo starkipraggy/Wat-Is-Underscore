@@ -153,3 +153,28 @@ variable v; stmt s,s1;
 Select v such that Modifies(s, v) and Follows(s1, s) pattern s1(v, _)
 a
 5000
+32 - To be fixed 1
+assign a;
+select a such that Follows(a,a)
+
+5000
+33 - To be fixed 2
+assign a, a1;
+select a such that Follows(a,a1)
+4,5,6
+5000
+34 - To be fixed 3
+assign a, a1;
+select a such that Follows(a1,a)
+5,6,7
+5000
+35 - To be fixed 4
+while w;
+select w pattern w(_, _a_)
+3,8,10
+5000
+36 - To be fixed 5
+assign a;
+select a such that Follows*(_, a) pattern a(v, "_d_")
+6,12
+5000
