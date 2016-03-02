@@ -74,5 +74,4 @@ public:
         Assert::AreEqual(expected, result);
     }
 
-
 };

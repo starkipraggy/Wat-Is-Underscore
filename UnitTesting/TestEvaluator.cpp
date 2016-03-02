@@ -25,7 +25,7 @@ namespace UnitTesting {
 		Clause* patternClause;
 		vector<Clause*> oneClauses;
 
-		TEST_METHOD_INITIALIZE(build) {
+		TEST_METHOD_INITIALIZE(STARTUP) {
 			placeholderVar = Ref("_", "placeholder");
 			partOfExpressionVar = Ref("abc", "part_of_expr"); //only pattern
 			exprVar = Ref("abc", "expr");
