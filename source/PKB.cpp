@@ -613,17 +613,7 @@ std::vector<std::string> PKB::PQLPattern(TNodeType type, Ref left, Ref right) {
 							//  so check right side with expr
 							if (right.getType() == "expr") {
 								if (right.getName().find("+" || "-" || "*")) {
-									if (right.getName() == statement->getRightHandSideExpression().substr(0, right.getName().length())) {
-										returnList.push_back(std::to_string(statement->getStatementNumber()));
-										break;
-									}
-								}
-								std::string rightVariables = statement->getRightHandSideExpression();
-								SimpleParser* tempSP = new SimpleParser();
-								rightVariables = tempSP->addSpaceToString(rightVariables);
-								std::vector<std::string> rightVector = tempSP->tokenize(rightVariables);
-								for (int i = 0; i < rightVector.size(); i++) {
-									if (right.getName() == rightVector[i]) {
+									if (right.getName() == statement->getRightHandSideExpression()) {
 										returnList.push_back(std::to_string(statement->getStatementNumber()));
 										break;
 									}
