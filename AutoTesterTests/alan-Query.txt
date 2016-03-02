@@ -218,3 +218,28 @@ stmt s;
 select s such that follows(21,s)
 none
 5000
+45 - To be fixed 1
+assign a;
+select a such that Follows(a,a)
+
+5000
+46 - To be fixed 2
+assign a, a1;
+select a such that Follows(a,a1)
+14,1,2,13
+5000
+47 - To be fixed 3
+assign a, a1;
+select a such that Follows(a1,a)
+2,3,14,15
+5000
+48 - To be fixed 4
+while w;
+select w pattern w(_, _a_)
+3,8,10
+5000
+49 - To be fixed 5
+assign a;
+select a such that Follows*(_, a) pattern a(c, _"Romeo"_)
+15
+5000
