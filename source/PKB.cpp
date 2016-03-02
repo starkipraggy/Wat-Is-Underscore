@@ -593,10 +593,10 @@ static inline std::string &trim(std::string &s) {
 
 std::vector<std::string> PKB::PQLPattern(TNodeType type, Ref left, Ref right) {
 	std::vector<std::string> returnList;
-	std::cout << "LOLL" << std::endl;
-	std::cout << type << std::endl;
-	std::cout << left.toString() << std::endl;
-	std::cout << right.toString() << std::endl;
+	//std::cout << "LOLL" << std::endl;
+	//std::cout << type << std::endl;
+	//std::cout << left.toString() << std::endl;
+	//std::cout << right.toString() << std::endl;
 	
 	// @todo Supposedly to use AST to check this, but since AST is not up yet, let's go with the lazy method
 	// @todo I'm really sorry for this. Will make sure this is no longer done like this by iteration 2./
@@ -612,6 +612,12 @@ std::vector<std::string> PKB::PQLPattern(TNodeType type, Ref left, Ref right) {
 							// left side is anything
 							//  so check right side with expr
 							if (right.getType() == "expr") {
+								if (right.getName().find("+"||"-"||"*")) {
+									if (right.getName() == statement->getRightHandSideExpression().substr(0, right.getName().length())) {
+										returnList.push_back(std::to_string(statement->getStatementNumber()));
+										break;
+									}
+								}
 								std::string rightVariables = statement->getRightHandSideExpression();
 								SimpleParser* tempSP = new SimpleParser();
 								rightVariables = tempSP->addSpaceToString(rightVariables);
@@ -631,6 +637,12 @@ std::vector<std::string> PKB::PQLPattern(TNodeType type, Ref left, Ref right) {
 							// get assignment with left var
 							// then check right side with expr
 							if (right.getType() == "expr") {
+								if (right.getName().find("+" || "-" || "*")) {
+									if (right.getName() == statement->getRightHandSideExpression().substr(0, right.getName().length())) {
+										returnList.push_back(std::to_string(statement->getStatementNumber()));
+										break;
+									}
+								}
 								std::string rightVariables = statement->getRightHandSideExpression();
 								SimpleParser* tempSP = new SimpleParser();
 								rightVariables = tempSP->addSpaceToString(rightVariables);
@@ -660,6 +672,20 @@ std::vector<std::string> PKB::PQLPattern(TNodeType type, Ref left, Ref right) {
 					break;
 				}
 			}
+
+
+			/*
+			if ((statement->getType() == type) &&
+				(((type == Assign) &&
+				(((left.getType() == "placeholder") || (variableTable->getVariableUsingVariableIndexNumber(statement->getModifies(0))->getName() == left.getName())) &&
+				((right.getType() == "placeholder") ||
+				((right.getType() == "part_of_expr") && (right.getName() == statement->getRightHandSideExpression().substr(0, right.getName().length())) ||
+				((right.getType() == "expr") && (right.getName() == statement->getRightHandSideExpression())))))) ||
+				(((type == While) || (type == If)) &&
+				((left.getType() == "placeholder") || (statement->getControlVariable() == left.getName()))))) {
+			returnList.push_back(std::to_string(statement->getStatementNumber()));
+			
+			*/
 		}
 	}
 
