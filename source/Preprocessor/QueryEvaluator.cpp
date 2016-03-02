@@ -27,7 +27,10 @@ std::vector<std::string> QueryEvaluator::process() {
 				addResult(pkb->PQLPattern(Assign, var1, var2));
 			}
 			else {
-				if (regex_match(var1.getType(), designEntityRegex)) {
+				if (select.equals(var2)) {
+					query(clause, var2, var1, 2);
+				}
+				else if (regex_match(var1.getType(), designEntityRegex)) {
 					query(clause, var1, var2, 1);
 				}
 				else if (regex_match(var2.getType(), designEntityRegex)) {
