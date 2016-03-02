@@ -165,5 +165,23 @@ vector<string> QueryEvaluator::queryPKB(string clause, string input, int argumen
 			output = pkb->PQLParentStar(value, argumentPosition);
 		}
 	}
+
+	if (toTNodeType(outputType) != Undefined) {
+		vector<string> selects = pkb->PQLSelect(toTNodeType(outputType));
+
+		vector<string> tempOutput;
+		std::copy(output.begin(), output.end(), std::inserter(tempOutput, tempOutput.begin()));
+		output = {};
+
+		for (int i = 0; i < tempOutput.size(); i++) {
+			for (int j = 0; j < selects.size(); j++) {
+				if (tempOutput.at(i) == selects.at(j)) {
+					output.push_back(tempOutput.at(i));
+				}
+			}
+		}
+	}
+
+
 	return output;
 }
