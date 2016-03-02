@@ -19,7 +19,7 @@ Select s such that Modifies(s, "c")
 5
 5000
 5 - Modifies 2
-variable v;
+variable v; stmt s;
 Select v such that Modifies(s, v)
 a, b, c, d, i, j
 5000
@@ -34,12 +34,12 @@ Select a such that Follows(2, a)
 11
 5000
 8 - Follows 2
-stmt s;
+stmt s; assign a;
 Select s such that Follows(1, a)
 none
 5000
 9 - Follows 3
-stmt s;
+stmt s; assign a;
 Select s such that Follows(7, a)
 8
 5000
@@ -79,7 +79,7 @@ Select w such that Parent*(w, 11)
 none
 5000
 17 - Parent* 2
-while w;
+while w; assign a;
 Select w such that Parent*(w, a)
 2, 7, 9
 5000
@@ -99,7 +99,7 @@ Select a pattern a(_, _"b + c + d"_)
 1
 5000
 21 - Correct Pattern Tree
-assign a;
+assign a; stmt s;
 Select s pattern a(_, "d * a")
 11
 5000
@@ -124,8 +124,8 @@ Select s such that Uses(s, v) and Modifies(s, v) pattern s(_, _"d"_)
 11
 5000
 26 - 3 patterns
-stmt s;
-Select BOOLEAN such that Uses(7, "j") and Parent(s, 7) pattern a(_,"a")
+stmt s; assign a;
+Select s such that Uses(7, "j") and Parent(s, 7) pattern a(_,"a")
 true
 5000
 27 - test Boolean
@@ -152,4 +152,5 @@ Select a such that Modifies(a, "b") pattern s("a", _)
 variable v; stmt s,s1;
 Select v such that Modifies(s, v) and Follows(s1, s) pattern s1(v, _)
 a
+
 5000

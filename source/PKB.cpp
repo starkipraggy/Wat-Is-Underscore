@@ -1,6 +1,12 @@
 #include <cstdlib>
 #include "PKB.h"
 #include <iostream>
+#include <algorithm> 
+#include <functional> 
+#include <cctype>
+#include <locale>	
+#include "SimpleParser.h"
+
 
 PKB* PKB::instance = NULL;
 
@@ -566,8 +572,31 @@ std::vector<std::string> PKB::PQLParentStar(int statementNumber, int argumentPos
 	return returnList;
 }
 
+
+// trim from start
+static inline std::string &ltrim(std::string &s) {
+	s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
+	return s;
+}
+
+// trim from end
+static inline std::string &rtrim(std::string &s) {
+	s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+	return s;
+}
+
+// trim from both ends
+static inline std::string &trim(std::string &s) {
+	return ltrim(rtrim(s));
+}
+
+
 std::vector<std::string> PKB::PQLPattern(TNodeType type, Ref left, Ref right) {
 	std::vector<std::string> returnList;
+	//std::cout << "LOLL" << std::endl;
+	//std::cout << type << std::endl;
+	//std::cout << left.toString() << std::endl;
+	//std::cout << right.toString() << std::endl;
 	
 	// @todo Supposedly to use AST to check this, but since AST is not up yet, let's go with the lazy method
 	// @todo I'm really sorry for this. Will make sure this is no longer done like this by iteration 2./
@@ -575,7 +604,78 @@ std::vector<std::string> PKB::PQLPattern(TNodeType type, Ref left, Ref right) {
 	int size = statementTable->getNumberOfStatements();
 	for (int i = 0; i < size; i++) {
 		StatementTableStatement* statement = statementTable->getStatementUsingVectorIndexNumber(i);
-		if ((statement->getType() == type) &&
+		if (statement->getType() == type) {
+			switch (type) {
+				case Assign: {
+					if (left.getType() == "placeholder") {
+						if (trim(left.getName())=="_") {
+							// left side is anything
+							//  so check right side with expr
+							if (right.getType() == "expr") {
+								if (right.getName().find("+"||"-"||"*")) {
+									if (right.getName() == statement->getRightHandSideExpression().substr(0, right.getName().length())) {
+										returnList.push_back(std::to_string(statement->getStatementNumber()));
+										break;
+									}
+								}
+								std::string rightVariables = statement->getRightHandSideExpression();
+								SimpleParser* tempSP = new SimpleParser();
+								rightVariables = tempSP->addSpaceToString(rightVariables);
+								std::vector<std::string> rightVector = tempSP->tokenize(rightVariables);
+								for (int i = 0;i < rightVector.size();i++) {
+									if (right.getName() == rightVector[i]) {
+										returnList.push_back(std::to_string(statement->getStatementNumber()));
+										break;
+									}
+								}
+							} else if (right.getType() == "part_of_expr") {
+								//std::cout << "LOOL" << std::endl;
+							}
+						}
+						else if (variableTable->getVariableUsingVariableIndexNumber(statement->getModifies(0))->getName() == left.getName()) {
+							// left side is specific
+							// get assignment with left var
+							// then check right side with expr
+							if (right.getType() == "expr") {
+								if (right.getName().find("+" || "-" || "*")) {
+									if (right.getName() == statement->getRightHandSideExpression().substr(0, right.getName().length())) {
+										returnList.push_back(std::to_string(statement->getStatementNumber()));
+										break;
+									}
+								}
+								std::string rightVariables = statement->getRightHandSideExpression();
+								SimpleParser* tempSP = new SimpleParser();
+								rightVariables = tempSP->addSpaceToString(rightVariables);
+								std::vector<std::string> rightVector = tempSP->tokenize(rightVariables);
+								for (int i = 0;i < rightVector.size();i++) {
+									if (right.getName() == rightVector[i]) {
+										returnList.push_back(std::to_string(statement->getStatementNumber()));
+										break;
+									}
+								}
+							}
+							else if (right.getType() == "part_of_expr") {
+
+							}
+						}
+					}
+					break;
+				}
+				case While:
+				case If: {
+					if (statement->getControlVariable() == left.getName()) {
+						returnList.push_back(std::to_string(statement->getStatementNumber()));
+					}
+					break;
+				}
+				default: {
+					break;
+				}
+			}
+
+
+			/*
+			if ((statement->getType() == type) &&
 				(((type == Assign) &&
 				(((left.getType() == "placeholder") || (variableTable->getVariableUsingVariableIndexNumber(statement->getModifies(0))->getName() == left.getName())) &&
 				((right.getType() == "placeholder") ||
@@ -584,6 +684,8 @@ std::vector<std::string> PKB::PQLPattern(TNodeType type, Ref left, Ref right) {
 				(((type == While) || (type == If)) &&
 				((left.getType() == "placeholder") || (statement->getControlVariable() == left.getName()))))) {
 			returnList.push_back(std::to_string(statement->getStatementNumber()));
+			
+			*/
 		}
 	}
 
