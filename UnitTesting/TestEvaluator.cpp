@@ -92,7 +92,7 @@ namespace UnitTesting {
 		{
 			QueryTree::Instance()->setSelect(variableVar);
 			QueryTree::Instance()->addClause(usesClause);
-			QueryTree::Instance()->addClause(new PatternClause("PATTERN", placeholderVar, partOfExpressionVar, assignVar));
+			QueryTree::Instance()->addClause(new PatternClause("PATTERN", placeholderVar, exprVar, assignVar));
 
 			vector<string> output = q.process();
 

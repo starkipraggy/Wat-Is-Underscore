@@ -7,8 +7,10 @@ string conditions[] = { "Follows","Follows*","Parent","Parent*","Modifies","Uses
 const regex identRegex("(^[[:alpha:]])([[:alnum:]]+|#+)*$");
 const regex integerRegex("[[:digit:]]+");
 const regex placeholderRegex("^_$");
-const regex expressionRegex("(^\"[[:alpha:]])([[:alnum:]]+|#+)*\"$");
-const regex partOfExpressionRegex("(^_\"[[:alpha:]])([[:alnum:]]+|#+)*\"_$");
+const regex expressionRegex("(^\"[[:alpha:]])([[:alnum:]]*|#*)*\"$");
+const regex patternExpressionRegex("(^\")[[:space:]]*([[:alpha:]]([[:alnum:]]|#)*|[[:digit:]]+)[[:space:]]*(\\+[[:space:]]*([[:alpha:]]([[:alnum:]]|#)*|[[:digit:]]+))*[[:space:]]*(\"$)");
+const regex partOfExpressionRegex("(^_\")[[:space:]]*([[:alpha:]]([[:alnum:]]|#)*|[[:digit:]]+)[[:space:]]*(\\+[[:space:]]*([[:alpha:]]([[:alnum:]]|#)*|[[:digit:]]+))*[[:space:]]*(\"_$)");
+
 
 const regex designEntityRegex("^(STMT|ASSIGN|WHILE|VARIABLE|CONSTANT|PROG_LINE)$",icase);
 const regex stmtDesignEntityRegex("^(STMT|ASSIGN|WHILE|CONSTANT|PROG_LINE)$", icase);
@@ -339,6 +341,9 @@ Ref Preprocessor::createPatternRef(string name) {
 	else if (regex_match(name, expressionRegex)) {
 		ref = Ref(name.substr(1, name.length() - 2), "expr");
 	}
+	else if (regex_match(name, patternExpressionRegex)) {
+		ref = Ref(name.substr(1, name.length() - 2), "expr");
+	}
 	else if (regex_match(name, identRegex)) {
 		try {
 			ref = Ref(name, declarationMap.find(name)->second);
@@ -370,5 +375,5 @@ bool Preprocessor::isEntRef(Ref v) {
 bool Preprocessor::isExprSpec(Ref v) {
 	string type = v.getType();
 
-	return (type == "placeholder" || type == "part_of_expr");
+	return (type == "placeholder" || type == "part_of_expr" || type == "expr");
 }
