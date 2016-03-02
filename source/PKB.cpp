@@ -627,43 +627,47 @@ std::vector<std::string> PKB::PQLPattern(TNodeType type, Ref left, Ref right) {
 									}
 								}
 							}
-						}
-					}
-						else if (variableTable->getVariableUsingVariableIndexNumber(statement->getModifies(0))->getName() == left.getName()) {
-							// left side is specific
-							// get assignment with left var
-							// then check right side with expr
-							if (right.getType() == "expr") {
-								if (right.getName().find("+" || "-" || "*")) {
-									if (right.getName() == statement->getRightHandSideExpression().substr(0, right.getName().length())) {
-										returnList.push_back(std::to_string(statement->getStatementNumber()));
-										break;
-									}
-								}
-								std::string rightVariables = statement->getRightHandSideExpression();
-								SimpleParser* tempSP = new SimpleParser();
-								rightVariables = tempSP->addSpaceToString(rightVariables);
-								std::vector<std::string> rightVector = tempSP->tokenize(rightVariables);
-								for (int i = 0;i < rightVector.size();i++) {
-									if (right.getName() == rightVector[i]) {
-										returnList.push_back(std::to_string(statement->getStatementNumber()));
-										break;
-									}
-								}
-							}
-							else if (right.getType() == "part_of_expr") {
-								if (right.getName().find("+" || "-" || "*")) {
-									if (right.getName() == statement->getRightHandSideExpression().substr(0, right.getName().length())) {
-										returnList.push_back(std::to_string(statement->getStatementNumber()));
-										break;
-									}
-								}
-							}
 							else if (right.getType() == "placeholder") {
 								returnList.push_back(std::to_string(statement->getStatementNumber()));
 								break;
 							}
 						}
+					}
+					else if (variableTable->getVariableUsingVariableIndexNumber(statement->getModifies(0))->getName() == left.getName()) {
+						// left side is specific
+						// get assignment with left var
+						// then check right side with expr
+						if (right.getType() == "expr") {
+							if (right.getName().find("+" || "-" || "*")) {
+								if (right.getName() == statement->getRightHandSideExpression().substr(0, right.getName().length())) {
+									returnList.push_back(std::to_string(statement->getStatementNumber()));
+									break;
+								}
+							}
+							std::string rightVariables = statement->getRightHandSideExpression();
+							SimpleParser* tempSP = new SimpleParser();
+							rightVariables = tempSP->addSpaceToString(rightVariables);
+							std::vector<std::string> rightVector = tempSP->tokenize(rightVariables);
+							for (int i = 0;i < rightVector.size();i++) {
+								if (right.getName() == rightVector[i]) {
+									returnList.push_back(std::to_string(statement->getStatementNumber()));
+									break;
+								}
+							}
+						}
+						else if (right.getType() == "part_of_expr") {
+							if (right.getName().find("+" || "-" || "*")) {
+								if (right.getName() == statement->getRightHandSideExpression().substr(0, right.getName().length())) {
+									returnList.push_back(std::to_string(statement->getStatementNumber()));
+									break;
+								}
+							}
+						}
+						else if (right.getType() == "placeholder") {
+							returnList.push_back(std::to_string(statement->getStatementNumber()));
+							break;
+						}
+					}
 					
 					break;
 				}
