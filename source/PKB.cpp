@@ -669,6 +669,10 @@ std::vector<std::string> PKB::PQLPattern(TNodeType type, Ref left, Ref right) {
 									}
 								}
 							}
+							else if (right.getType() == "placeholder") {
+								returnList.push_back(std::to_string(statement->getStatementNumber()));
+								break;
+							}
 						}
 					
 					break;
