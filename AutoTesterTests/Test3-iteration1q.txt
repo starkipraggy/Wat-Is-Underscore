@@ -25,7 +25,7 @@ select a such that Follows(a1,a)
 5000
 6 - To be fixed 4
 while w;
-select w pattern w(_, _a_)
+select w pattern w(_, _)
 2,7,9
 5000
 7 - To be fixed 5
