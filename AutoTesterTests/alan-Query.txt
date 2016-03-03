@@ -268,3 +268,8 @@ while w1,w2;
 select w2 such that Parent(w1,w2)
 5,7,9,11,12,16
 5000
+55 - more underscore
+assign a;
+select a such that pattern a("oSCar", _)
+6,8
+5000
