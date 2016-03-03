@@ -234,7 +234,7 @@ select a such that Follows(a1,a)
 2,3,14,15
 5000
 48 - To be fixed 4
-while w; assign a;
+while w;
 select w pattern w(_, _)
 4,5,7,9,11,12,16
 5000
@@ -270,6 +270,6 @@ select w2 such that Parent(w1,w2)
 5000
 55 - more underscore
 assign a;
-select a such that pattern a("oSCar", _)
+select a pattern a("oSCar", _)
 6,8
 5000

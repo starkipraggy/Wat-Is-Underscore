@@ -651,7 +651,6 @@ std::vector<std::string> PKB::PQLPattern(TNodeType type, Ref left, Ref right) {
 							}
 						}
 						else if (right.getType() == "part_of_expr") {
-							//if (right.getName().find('+') || (right.getName().find('-') || (right.getName().find('*')))) {
                             if (right.getName().find("+" || "-" || "*") != std::string::npos) {
 								if (right.getName() == statement->getRightHandSideExpression().substr(0, right.getName().length())) {
 									returnList.push_back(std::to_string(statement->getStatementNumber()));
@@ -667,8 +666,7 @@ std::vector<std::string> PKB::PQLPattern(TNodeType type, Ref left, Ref right) {
 							returnList.push_back(std::to_string(statement->getStatementNumber()));
 							break;
 						}
-					}
-					
+                    }
 					break;
 				}
 				case While:
