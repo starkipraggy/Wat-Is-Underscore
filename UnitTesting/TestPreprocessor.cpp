@@ -18,11 +18,12 @@ namespace UnitTesting {
 
 		Ref placeholderVar, partOfExpressionVar, exprVar, integerVar,
 			stmtVar, assignVar, whileVar, variableVar, constantVar, progLineVar, 
-			invalidVar;
+			invalidVar, boolVar;
 		Clause* usesClause, patternClause;
 		vector<Clause*> oneClauses;
 
 		const string simpleQuery = "assign a; select a",
+			simpleBoolQuery = "assign a; select BOOLEAN",
 			usesQuery = "variable v; constant c; select v such that uses(c, v)",
 			patternQuery = "assign a; select a pattern a(_,\"abc\")",
 			combinedQuery = "variable v; constant c; assign a; select a such that uses(c, v) pattern a(_,\"abc\")";
@@ -39,6 +40,7 @@ namespace UnitTesting {
 			variableVar = Ref("v", "variable");
 			constantVar = Ref("c", "constant");
 			progLineVar = Ref("p", "prog_line");
+			boolVar = Ref("", "boolean");
 
 			usesClause = new Clause("USES", constantVar, variableVar);
 			patternClause = PatternClause("PATTERN", placeholderVar, exprVar, assignVar);
@@ -55,6 +57,16 @@ namespace UnitTesting {
 			clauses = QueryTree::Instance()->getClauses();
 
 			Assert::IsTrue(select.equals(assignVar));
+			Assert::IsTrue(clauses.empty());
+		}
+
+		TEST_METHOD(SimpleBoolQuery)
+		{
+			p.process(simpleBoolQuery);
+			select = QueryTree::Instance()->getSelect();
+			clauses = QueryTree::Instance()->getClauses();
+
+			Assert::IsTrue(select.equals(boolVar));
 			Assert::IsTrue(clauses.empty());
 		}
 

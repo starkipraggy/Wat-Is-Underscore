@@ -16,6 +16,8 @@ const regex designEntityRegex("^(STMT|ASSIGN|WHILE|VARIABLE|CONSTANT|PROG_LINE)$
 const regex stmtDesignEntityRegex("^(STMT|ASSIGN|WHILE|CONSTANT|PROG_LINE)$", icase);
 const regex entDesignEntityRegex("^(VARIABLE)$", icase);
 
+const regex booleanRegex("^(BOOLEAN)$", icase);
+
 void Preprocessor::process(string statement) {
 	initialize(statement);
 	setMap();
@@ -114,8 +116,17 @@ void Preprocessor::setDeclaration(string line) {
 }
 
 void Preprocessor::setSelect() {
-	string name = selectPart;
-	string type = declarationMap.find(name)->second;
+	string name, type;
+
+	if (regex_match(selectPart, booleanRegex)) {
+		name = "";
+		type = "boolean";
+	}
+	else {
+		name = selectPart;
+		type = declarationMap.find(name)->second;
+	}
+
 	QueryTree::Instance()->setSelect(Ref(name, type));
 }
 
