@@ -16,6 +16,7 @@ const regex designEntityRegex("^(STMT|ASSIGN|WHILE|VARIABLE|CONSTANT|PROG_LINE)$
 const regex stmtDesignEntityRegex("^(STMT|ASSIGN|WHILE|CONSTANT|PROG_LINE)$", icase);
 const regex entDesignEntityRegex("^(VARIABLE)$", icase);
 
+const regex clauseRegex("such that+|pattern+|with+|and+", icase);
 const regex booleanRegex("^(BOOLEAN)$", icase);
 
 void Preprocessor::process(string statement) {
@@ -24,7 +25,7 @@ void Preprocessor::process(string statement) {
 	setSelect();
 	setQueryTree();
 
-	QueryTree::Instance()->v1Validation();
+	//QueryTree::Instance()->v1Validation();
 
 }
 
@@ -140,53 +141,41 @@ void Preprocessor::setQueryTree() {
 
 void Preprocessor::processClauses(string declarationQueries) {
 
-	std::vector<std::string> tokenizedQueries = tokenize(declarationQueries);
+	string eachToken, clause;
+	int submatches[] = { -1, 0 };
+	std::regex_token_iterator<std::string::iterator> rit(declarationQueries.begin(), declarationQueries.end(), clauseRegex, submatches);
+	std::regex_token_iterator<std::string::iterator> rend;
 
-	string prevClause = "";
-	string prevQuery = "";
-
-	try {
-		for (unsigned int i = 0; i < tokenizedQueries.size(); i++) {
-			if (StringToUpper(tokenizedQueries[i]) == "SUCH" && i + 1 < tokenizedQueries.size()) {
-				if (StringToUpper(tokenizedQueries[i + 1]) == "THAT") {
-					if (prevClause != "") {
-						addClause(prevQuery, prevClause);
-						prevQuery = "";
-					}
-					prevClause = "SUCH THAT";
-				}
-				else {
-					throw "the such that clause have to be use together";
-				}
-				i++;
-			}
-			else if (StringToUpper(tokenizedQueries[i]) == "PATTERN") {
-				if (prevClause != "") {
-					addClause(prevQuery, prevClause);
-					prevQuery = "";
-				}
-				prevClause = "PATTERN";
-
-			}
-			else {
-				prevQuery += tokenizedQueries[i];
+	int i = -1;
+	while (rit != rend) {
+		eachToken = trim(rit->str());
+		if (i == -1) {
+			if (eachToken != "") {
+				throw "should not have condition before clause";
 			}
 		}
-		if (StringToUpper(tokenizedQueries[tokenizedQueries.size() - 1]) != "PATTERN") {
-			addClause(prevQuery, prevClause);
+		else{
+			if (i % 2 == 0) { //clause
+				if (StringToUpper(eachToken) != "and") {
+					clause = eachToken;
+				}
+			}
+			else { //condition
+				addClause(eachToken, clause);
+			}
 		}
-		else {
-			throw "Cannot end query with clause";
-		}
+		++rit;
+		i++;
 	}
-	catch (const char* msg) {
-		throw msg;
+
+	if (i % 2 != 0) {
+		throw "query cannot end with clause";
 	}
 }
 
 void Preprocessor::addClause(string rawClause, string condition) {
 	try {
-		if (condition == "PATTERN") {
+		if (StringToUpper(condition) == "PATTERN") {
 			addPatternClause(rawClause);
 		}
 		else {
