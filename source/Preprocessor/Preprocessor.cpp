@@ -17,17 +17,62 @@ const regex stmtDesignEntityRegex("^(STMT|ASSIGN|WHILE|CONSTANT|PROG_LINE)$", ic
 const regex entDesignEntityRegex("^(VARIABLE)$", icase);
 
 void Preprocessor::process(string statement) {
-	setMap(statement);
-	
-	setQueryTree(statement);
+	initialize(statement);
+	setMap();
+	setSelect();
+	setQueryTree();
+
+	QueryTree::Instance()->v1Validation();
 
 }
 
-void Preprocessor::setMap(string statement) {
+void Preprocessor::initialize(string statement) {
+
+	statement = trim(statement);
+	QueryTree::Instance()->newTree();
+
+	if (statement == "") {
+		throw "Query is empty";
+	}
+
+	//set declarationPart
+	if (statement.find_last_of(';') != string::npos) {
+		int position = statement.find_last_of(';');
+		declarationPart = statement.substr(0, position);
+		statement = trim(statement.substr(position + 1));
+	}
+	else {
+		declarationPart = "";
+	}
+
+	//validate select
+	if (statement.find(' ') != string::npos) {
+		int position = statement.find(' ');
+		if (StringToUpper(statement.substr(0, position)) != "SELECT") {
+			throw "Query must start with Select";
+		}
+		statement = trim(statement.substr(position + 1));
+	}
+	else {
+		throw "Query cannot be one word";
+	}
+
+	//set selectPart
+	if (statement.find(' ') != string::npos) {
+		int position = statement.find(' ');
+		selectPart = statement.substr(0, position);
+		clausesPart = trim(statement.substr(position + 1));
+	}
+	else {
+		selectPart = statement;
+		clausesPart = "";
+	}
+}
+
+void Preprocessor::setMap() {
 	declarationMap = {};
 
-	vector<string> declarations = tokenize(statement, ";");
-	declarations.pop_back();
+	vector<string> declarations = tokenize(declarationPart, ";");
 
 	for (auto& x : declarations) {
 		try {
@@ -38,8 +83,6 @@ void Preprocessor::setMap(string statement) {
 		}
 	}
 }
-
-//private
 
 //declaration:<entity> <synoymn> - user input
 //pair:<synoymn> <entity> - for the purpose of map
@@ -70,65 +113,18 @@ void Preprocessor::setDeclaration(string line) {
 	}
 }
 
-void Preprocessor::setQueryTree(string statement) {
-	QueryTree::Instance()->newTree();
-	string query = getQuery(statement);
-	std::pair<std::string, std::string> selectPair = getSelect(query);
-	string name = selectPair.first;
+void Preprocessor::setSelect() {
+	string name = selectPart;
 	string type = declarationMap.find(name)->second;
 	QueryTree::Instance()->setSelect(Ref(name, type));
-
-	string declarationQueries = selectPair.second;
-	if (declarationQueries != "") {
-		processClauses(declarationQueries);
-
-		//QueryTree::Instance()->buildTree();
-		QueryTree::Instance()->v1Validation();
-	}
 }
 
-string Preprocessor::getQuery(string statement) {
-	if (statement == "") {
-		throw "Query is empty";
+void Preprocessor::setQueryTree() {
+
+	if (clausesPart != "") {
+		processClauses(clausesPart);
+
 	}
-	else if (statement.find_last_of(";") != string::npos) {
-		statement = statement.substr(statement.find_last_of(";") + 1, string::npos);
-	}
-	//else statement does not have declaration
-
-	return statement;
-}
-
-//pair<querySynonym, declarationQueries>
-std::pair<std::string, std::string> Preprocessor::getSelect(string query) {
-	string querySynonym, declarationQueries;
-
-	query = trim(query);
-
-	if (query.find(' ') != string::npos) {
-		int position = query.find(' ');
-		if (StringToUpper(query.substr(0, position)) != "SELECT") {
-			throw "Query must start with Select";
-		}
-		query = trim(query.substr(position + 1, query.length()));
-	}
-	else {
-		throw "Query cannot be one word";
-	}
-
-	if (query.find(' ') != string::npos) {
-		int position = query.find(' ');
-		querySynonym = query.substr(0, position);
-
-		declarationQueries = trim(query.substr(position + 1, query.length()));
-	}
-	else {//no clause
-		querySynonym = query;
-		declarationQueries = "";
-	}
-
-	std::pair<std::string, std::string> myPair(querySynonym, declarationQueries);
-	return myPair;
 }
 
 void Preprocessor::processClauses(string declarationQueries) {

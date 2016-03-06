@@ -27,39 +27,44 @@ public:
 	void process(string statement);
 private:
 	std::unordered_map<std::string, std::string> declarationMap;   /**< map to store declaration */
+	
+	string declarationPart; /**< declaration part of query */
+	string selectPart; /**< select part of query */
+	string clausesPart; /**< clauses part of query */
+
+	//! Main method to initialize query
+	/*!
+	split query into three parts: declaration, select and clauses
+	*/
+	void initialize(string statement);
 
 //----------------DECLARATION---------------------------------------------
 	//! Main method to set input statement to declarationMap
 	/*!
 	tokenize input using ; and call setDeclaration to set map
 	*/
-	void setMap(string statement);
+	void setMap();
 
 	//! setMap method to set each line of declaration to map
 	/*!
 	for each declaration, check the the design entity and synonymn is correct and add to
 	map. Split into multiple add if , exist in the declaration
 	*/
-	void setDeclaration(string line);
-	
+	void setDeclaration(string query);
+
+//----------------SELECT---------------------------------------------------
+	//! Main method to set select statement to Select Clause
+	/*!
+	Parse and initiatize select into select Clause
+	*/
+	void setSelect();
+
 //----------------CLAUSES---------------------------------------------------
 	//! Main method to set input statement to QueryTree
 	/*!
 	Parse and initiatize query into QueryTree
 	*/
-	void setQueryTree(string statement);
-
-	//! Get the select query from the statement 
-	/*!
-	Return select statement without declaration
-	*/
-	string getQuery(string statement);
-
-	//! Split select synonym and clause from the statement 
-	/*!
-	Return pair with select synonymn in first and clauses in second
-	*/
-	std::pair<std::string, std::string> getSelect(string query);
+	void setQueryTree();
 
 	//! Add string of clauses into QueryTree
 	/*!
