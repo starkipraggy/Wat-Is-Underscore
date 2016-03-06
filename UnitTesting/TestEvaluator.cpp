@@ -37,7 +37,7 @@ namespace UnitTesting {
 			constantVar = Ref("c", "constant");
 			progLineVar = Ref("p", "prog_line");
 
-			usesClause = new Clause("USES", assignVar, constantVar);
+			usesClause = new Clause("USES", integerVar, stmtVar);
 			followsClause = new Clause("FOLLOWS", integerVar, stmtVar);
 			patternClause = new PatternClause("PATTERN", placeholderVar, partOfExpressionVar, assignVar);
 
@@ -65,7 +65,7 @@ namespace UnitTesting {
 
 			vector<string> output = q.process();
 
-			Assert::IsTrue(output.at(1) == "AnswerForUses", (wchar_t*)output.at(0).c_str());
+			Assert::IsTrue(output.at(0) == "AnswerForUses", (wchar_t*)output.at(0).c_str());
 		}
 
 		TEST_METHOD(secondArgVariable_Follows)
