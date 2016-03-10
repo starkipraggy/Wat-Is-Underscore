@@ -13,7 +13,7 @@ public:
 	TEST_METHOD(SimpleParserTest_AddSpacesToString) {
 		//Arrange
 		std::string sample = "{a=b+x-c;}";
-		std::string expected = "  {  a  =  b  +  x  -  c  ;    }  ";
+		std::string expected = " { a = b + x - c ;  } ";
 
 		//Act
 		std::string result = sp->addSpaceToString(sample);
@@ -90,7 +90,7 @@ public:
 
 	TEST_METHOD(SimpleParserTest_Tokenisation_Simple_4) {
 		//Arrange
-		std::string simple = "procedure re{while b{ if c then {call saul;} else {r=z+2;} }} procedure saul {l=o+l;}";
+		std::string simple = "procedure re{while b{ if c then {call saul;} else {r=z+2;} }}procedure saul {l=o+l;}";
 		std::vector<std::string> expected = { "procedure", "re","{","while","b","{","if","c","then","{","call","saul",";","}","else","{","r","=","z","+","2" ,";","}","}","}","procedure","saul","{" ,"l","=","o","+","l",";" };
 		std::vector<std::string> results;
 		sp = new SimpleParser();

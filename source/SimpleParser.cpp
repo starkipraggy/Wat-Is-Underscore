@@ -1,20 +1,15 @@
 #pragma once
 
-//#include <streambuf>
-//#include <algorithm>
-//#include <vector>
-
 #include "SimpleParser.h"
 #include "PKB.h"
-#include "TNode.h"
 #include <ctype.h>
+
 std::vector<std::string> namesProcedure;
 std::vector<std::string> namesVariables;
 std::vector<std::string> typesVariables;
 std::vector<std::string> stackParenthesis;
-//std::vector<std::string> nestingLevel;
 const regex integerRegex("[[:digit:]]+");
-// procedure / while / if / else
+// currentcontainers contains =  procedure / while / if / else
 std::vector<std::string> currentContainer;
 
 SimpleParser::SimpleParser() {
@@ -46,26 +41,25 @@ std::vector<std::string> SimpleParser::tokenize(std::string contents) {
 	as stated in the dictionary vector. */
 std::string SimpleParser::addSpaceToString(std::string input) {
 	std::vector<std::string> dictionary = { "{", "}", "=", "+", "-" , "*" ,";" , "(" ,")" };
-
+	unsigned int resultPos = 0;
 	for (unsigned int i = 0;i < dictionary.size(); i++) {
 		unsigned int pos = 0;
-		int counter = 0;
+		pos = input.find(dictionary[i], pos);
 		do {
-			pos = input.find(dictionary[i], pos + counter);
 			if (pos != std::string::npos) {
-				input.replace(pos, 1, " " + dictionary[i] + " ");
+				input.replace(pos+resultPos, 1, " " + dictionary[i] + " ");
 			}
 			else {
 				break;
 			}
-			counter++;
-		} while (pos < input.size());
+			pos = input.find(dictionary[i], pos + 2);
+		} while (pos <= input.size());
 	}
 	return input;
 }
 
 int procState = 0;
-void SimpleParser::parseSimple(std::vector<std::string> tokens) {
+bool SimpleParser::parseSimple(std::vector<std::string> tokens) {
 	// if procstate == 0; procedure is invalid.
 	// if procstate == 1; procedure is valid.
 
@@ -89,14 +83,14 @@ void SimpleParser::parseSimple(std::vector<std::string> tokens) {
 			case 3:
 				// first word is if
 				// eats tokens until opening brace
-				checkIf(i);
+				i = checkIf(i, tokens);
 				break;
-			case 4:
+			case 6:
 				// first word is call
 				// eats tokens until semi colon
 				checkCall(i);
 				break;
-			case 5:
+			case 7:
 				// first word is not the rest
 				// eats tokens until semi colon
 					i = checkAssign(i, tokens);
@@ -114,6 +108,8 @@ void SimpleParser::parseSimple(std::vector<std::string> tokens) {
 			}
 		}
 	}
+
+	return isErrorDetected;
 }
 
 /* 
@@ -218,12 +214,102 @@ valid, it will call PKB->IfStart();
 
 Returns the next position of the token
 */
-int SimpleParser::checkIf(unsigned int position) {
+int SimpleParser::checkIf(unsigned int position, std::vector<std::string> tokens) {
+	// Prints if
+	std::cout << tokens[position] << " ";
 	if (procState == 0) {
+		isErrorDetected = true;
+		return position;
+	}
+
+	position++;
+	// Prints if variable
+	std::cout << tokens[position] << " ";
+	if (isCharABrace(tokens[position]) || isCharAnOperator(tokens[position])) {
+		std::cout << "Invalid Program! " << std::endl;
+		procState = 0;
+		isErrorDetected = true;
+		return position;
+	}
+
+	position++;
+	// Prints Then
+	std::cout << tokens[position] << " ";
+	if (checkFirstWord(tokens[position]) != 4) {
+		std::cout << "Invalid Program! " << std::endl;
+		procState = 0;
+		isErrorDetected = true;
+		return position;
+	}
+
+	position++;
+	// Prints opening brace
+	std::cout << tokens[position] << " ";
+
+	try {
+		switch (isCharABrace(tokens[position])) {
+		case 1: // "{"
+			stackParenthesis.push_back(tokens[position]);
+			currentContainer.push_back("if");
+			PKB::getInstance()->IfStart(tokens[position - 2]);
+			break;
+		case 2: // "}" invalid program
+			stackParenthesis.pop_back();
+		default:
+			procState = 0;
+			isErrorDetected = true;
+			break;
+		}
+	}
+	catch (std::exception& e) {
+		std::cout << "Invalid Program " << std::endl;
 		isErrorDetected = true;
 	}
 
-	return -1;
+	return position;
+}
+
+
+int SimpleParser::checkElse(unsigned int position, std::vector<std::string> tokens) {
+	if (checkFirstWord(tokens[position]) != 5) {
+		std::cout << "Invalid Program " << std::endl;
+		isErrorDetected = true;
+		return position;
+	}
+	else {
+		std::cout << tokens[position] << " ";
+		position++;
+		try {
+			switch (isCharABrace(tokens[position])) {
+			case 1: // "{"
+				if (currentContainer.back().compare("if") == 0) {
+					std::cout << tokens[position] << " ";
+					stackParenthesis.pop_back();
+					currentContainer.pop_back();
+					stackParenthesis.push_back(tokens[position]);
+					currentContainer.push_back("else");
+					PKB::getInstance()->ElseStart();
+				}
+				else {
+					procState = 0;
+					isErrorDetected = true;
+					break;
+				}
+				break;
+			case 2: // "}" invalid program
+				stackParenthesis.pop_back();
+			default:
+				procState = 0;
+				isErrorDetected = true;
+				break;
+			}
+		}
+		catch (std::exception& e) {
+			std::cout << "Invalid Program " << std::endl;
+			isErrorDetected = true;
+		}
+	}
+	return position;
 }
 
 /*
@@ -260,19 +346,28 @@ int SimpleParser::checkAssign(unsigned int position, std::vector<std::string> to
 	}
 	else if (isCharABrace(tokens[position]) == 2) {
 		// Closing brace 
+		std::cout << tokens[position] << std::endl;
 		try {
 			std::string back = currentContainer.back();
 			if (back.compare("while") == 0) {
-				std::cout <<  tokens[position] << std::endl;
 				stackParenthesis.pop_back();
 				currentContainer.pop_back();
 				PKB::getInstance()->WhileEnd();
 			}
 			else if (back.compare("procedure") == 0) {
-				std::cout << tokens[position] << std::endl;
 				stackParenthesis.pop_back();
 				currentContainer.pop_back();
 				PKB::getInstance()->ProcedureEnd();
+			}
+			else if (back.compare("if") == 0) {
+				// if closing brace of if block found, then next word must be else, anything else is invalid
+				position = checkElse(position+1, tokens);
+				return position;
+			}
+			else if (back.compare("else") == 0) {
+				stackParenthesis.pop_back();
+				currentContainer.pop_back();
+				PKB::getInstance()->IfElseEnd();
 			}
 		}
 		catch (std::exception& e) {
@@ -404,11 +499,17 @@ int SimpleParser::checkFirstWord(std::string word) {
 	else if (word.compare("IF") == 0) {
 		return 3;
 	}
-	else if (word.compare("CALL") == 0) {
+	else if (word.compare("THEN") == 0) {
 		return 4;
 	}
-	else {
+	else if (word.compare("ELSE") == 0) {
 		return 5;
+	}
+	else if (word.compare("CALL") == 0) {
+		return 6;
+	}
+	else {
+		return 7;
 	}
 }
 
