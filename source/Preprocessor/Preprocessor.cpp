@@ -11,8 +11,8 @@ const regex expressionRegex("(^\"[[:alpha:]])([[:alnum:]]*|#*)*\"$");
 const regex patternExpressionRegex("(^\")[[:space:]]*([[:alpha:]]([[:alnum:]]|#)*|[[:digit:]]+)[[:space:]]*(\\+[[:space:]]*([[:alpha:]]([[:alnum:]]|#)*|[[:digit:]]+))*[[:space:]]*(\"$)");
 const regex partOfExpressionRegex("(^_\")[[:space:]]*([[:alpha:]]([[:alnum:]]|#)*|[[:digit:]]+)[[:space:]]*(\\+[[:space:]]*([[:alpha:]]([[:alnum:]]|#)*|[[:digit:]]+))*[[:space:]]*(\"_$)");
 
-
 const regex designEntityRegex("^(STMT|ASSIGN|WHILE|VARIABLE|CONSTANT|PROG_LINE)$",icase);
+const regex attrNameRegex("^(PROCNAME|VARNAME|VALUE|STMT#)$", icase);
 const regex stmtDesignEntityRegex("^(STMT|ASSIGN|WHILE|CONSTANT|PROG_LINE)$", icase);
 const regex entDesignEntityRegex("^(VARIABLE)$", icase);
 
@@ -156,7 +156,7 @@ void Preprocessor::processClauses(string declarationQueries) {
 		}
 		else{
 			if (i % 2 == 0) { //clause
-				if (StringToUpper(eachToken) != "and") {
+				if (StringToUpper(eachToken) != "AND") {
 					clause = eachToken;
 				}
 			}
@@ -174,11 +174,15 @@ void Preprocessor::processClauses(string declarationQueries) {
 }
 
 void Preprocessor::addClause(string rawClause, string condition) {
+	rawClause = trim(rawClause);
 	try {
 		if (StringToUpper(condition) == "PATTERN") {
 			addPatternClause(rawClause);
 		}
-		else {
+		else if (StringToUpper(condition) == "WITH") {
+			addWithClause(rawClause);
+		}
+		else{
 			addSuchThatClause(rawClause);
 		}
 	}
@@ -190,7 +194,6 @@ void Preprocessor::addClause(string rawClause, string condition) {
 void Preprocessor::addSuchThatClause(string rawClause) {
 
 	try {
-		rawClause = trim(rawClause);
 		int openBracket = rawClause.find("(");
 		if (openBracket == string::npos) {
 			throw "clause have no open bracket";
@@ -263,7 +266,6 @@ void Preprocessor::addSuchThatClause(string rawClause) {
 }
 
 void Preprocessor::addPatternClause(string rawClause) {
-	rawClause = trim(rawClause);
 	int openBracket = rawClause.find("(");
 	if (openBracket == string::npos) {
 		throw "clause have no open bracket";
@@ -302,6 +304,20 @@ void Preprocessor::addPatternClause(string rawClause) {
 	else {
 		throw "pattern has wrong arguement ref or expr";
 	}
+}
+
+void Preprocessor::addWithClause(string rawClause) {
+	int equalPos = rawClause.find("=");
+	if (equalPos == string::npos) {
+		throw "attrCompare does not have '='";
+	}
+
+	string firstRef = rawClause.substr(0, equalPos);
+	string secondRef = rawClause.substr(equalPos + 1);
+
+	Ref var1 = createWithRef(trim(firstRef));
+	Ref var2 = createWithRef(trim(secondRef));
+	QueryTree::Instance()->addClause(new Clause("WITH", var1, var2));
 }
 
 Ref Preprocessor::createSuchThatRef(string name) {
@@ -355,6 +371,58 @@ Ref Preprocessor::createPatternRef(string name) {
 	else {
 		throw "invalid pattern";
 	}
+	return ref;
+}
+
+Ref Preprocessor::createWithRef(string name) {
+	Ref ref;
+	
+	if (name.find(".") != string::npos) {
+		string type;
+
+		int position = name.find(".");
+		string synonym = trim(name.substr(0, position));
+		string attrName = trim(name.substr(position + 1));
+		try {
+			type = declarationMap.find(synonym)->second;
+		}
+		catch (const char* msg) {
+			throw msg;
+		}
+
+		if (!regex_match(name, attrNameRegex)) {
+			throw "wrong attrName";
+		}
+
+		type = type + "-" + attrName;
+		ref = Ref(synonym, type);
+	}
+	else if (regex_match(name, identRegex)) {
+		try {
+			string type = declarationMap.find(name)->second;
+			if (type == "prog_line") {
+				ref = Ref(name, type);
+			}
+			else {
+				throw "with ref need to be prog_line";
+			}
+		}
+		catch (const char* msg) {
+			throw msg;
+		}
+	}
+	else if (regex_match(name = removeSpace(name), expressionRegex)) {
+		ref = Ref(name.substr(1, name.length() - 2), "expr");
+	}
+	else if (regex_match(name, integerRegex)) {
+		ref = Ref(name, "integer");
+	}
+	else {
+		throw "invalid with ref";
+	}
+
+	//check if same type
+
 	return ref;
 }
 

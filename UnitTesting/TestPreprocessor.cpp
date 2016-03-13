@@ -18,14 +18,15 @@ namespace UnitTesting {
 
 		Ref placeholderVar, partOfExpressionVar, exprVar, integerVar,
 			stmtVar, assignVar, whileVar, variableVar, constantVar, progLineVar, 
-			invalidVar, boolVar;
-		Clause* usesClause, patternClause;
+			invalidVar, boolVar, withVar;
+		Clause* usesClause, patternClause, withClause;
 		vector<Clause*> oneClauses;
 
 		const string simpleQuery = "assign a; select a",
 			simpleBoolQuery = "assign a; select BOOLEAN",
 			usesQuery = "variable v; constant c; select v such that uses(c, v)",
 			patternQuery = "assign a; select a pattern a(_,\"abc\")",
+			withQuery = "assign a; select a with a.stmt# = 123",
 			combinedQuery = "variable v; constant c; assign a; select a such that uses(c, v) pattern a(_,\"abc\")";
 	
 
@@ -41,9 +42,11 @@ namespace UnitTesting {
 			constantVar = Ref("c", "constant");
 			progLineVar = Ref("p", "prog_line");
 			boolVar = Ref("", "boolean");
+			withVar = Ref("a", "assign-stmt#");
 
 			usesClause = new Clause("USES", constantVar, variableVar);
 			patternClause = PatternClause("PATTERN", placeholderVar, exprVar, assignVar);
+			withClause = Clause("WITH", withVar, integerVar);
 			
 			oneClauses.push_back(usesClause);
 
@@ -88,6 +91,16 @@ namespace UnitTesting {
 
 			Assert::IsTrue(select.equals(assignVar));
 			Assert::IsTrue(patternClause.equals(clauses.at(0)));
+		}
+
+		TEST_METHOD(WithQuery)
+		{
+			p.process(withQuery);
+			select = QueryTree::Instance()->getSelect();
+			clauses = QueryTree::Instance()->getClauses();
+
+			Assert::IsTrue(select.equals(assignVar));
+			Assert::IsTrue(withClause.equals(clauses.at(0)));
 		}
 
 		TEST_METHOD(CombinedQuery)
