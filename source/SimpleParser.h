@@ -24,7 +24,7 @@ public:
 	\param contents of the Simple Program
 	\return Vector of string tokens
 	*/
-	std::vector<std::string> SimpleParser::tokenize(std::string);
+	static std::vector<std::string> SimpleParser::tokenize(std::string);
 
 	//! Adds space before and after special characters (=,+,-,*,;,{,})
 	/*!
@@ -32,7 +32,7 @@ public:
 	\param contents of the Simple Program
 	\return String input with spaces
 	*/
-	std::string SimpleParser::addSpaceToString(std::string);
+	static std::string SimpleParser::addSpaceToString(std::string);
 
 	//! The main function where the simple program actually starts parsing
 	/*!

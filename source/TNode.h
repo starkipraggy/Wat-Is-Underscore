@@ -12,6 +12,7 @@
 
 enum TNodeType {
 	Undefined,
+    ProcedureName,
 	Assign,
 	StmtLst,
 	If,
@@ -19,6 +20,10 @@ enum TNodeType {
 	VariableName,
 	IntegerValue,
 	OperatorPlus,
+    OperatorMinus,
+    OperatorTimes,
+    LeftParenthesis,
+    RightParenthesis,
 	Call, // For statements that call a procedure
 	//Stmt, // Guys, why is Stmt here? If, While, Assign and Call can be a Stmt
 	Const,
@@ -29,11 +34,8 @@ class TNode
 {
 private:
 	TNodeType type;  /**< Type of node: assign, stmtLst, if, while */
-	int value;  /**< value of the node if integer*/
-	char varName;  /**< name of the node if variable*/
-	
-	//std::string nodeType;	/**< Type of node: assign, stmtLst, if, while */
-	int lineNumber;	/**< line number of the statement this node is representing */
+    std::string value;  /**< value of the node. It should make sense with respect to the type of the node.*/
+    int lineNumber;	/**< line number of the statement this node is representing */
 	TNode* parentNode;	/**< the parent node of this node */
 	std::vector<TNode* > childNodes;	/**< List of children of the node */
 public:
@@ -47,24 +49,23 @@ public:
 	\param lineNumber The line number of the statement that this TNode object is representing.
 	*/
 	TNode(TNodeType type, int lineNumber);
+    TNode(TNodeType type, std::string value);
 
 	void setLineNumber(int lineNumber);	/**< setter for line number of node */
 	int getLineNumber();	/**< getter for line number of node */
 	void setNodeType(TNodeType type);	/**< setter for the type of the node */
 	TNodeType getNodeType();	/**< getter for the type of the node */
-	void setValue(int value);  /**< setter for the value of the node if integer */
-	int getValue();  /**< getter for the value of the node if integer*/
-	void setVariable(char varName);  /**< setter for the name of the node if variable */
-	char getVariable();  /**< getter for the name of the node if variable*/
+    void setValue(std::string value);  /**< setter for the value of the node */
+	std::string getValue();  /**< getter for the value of the node*/
 	void setParent(TNode* parent);	/**< setter for setting parent node of the TNode object */
 	TNode* getParent();	/**< getter for getting parent node of the TNode object */
 	
 	//! Adding child node into the list of children for the node
 	/*!
-	This is used to add a child TNode object into the list of children of a node for determing parent and follows relationship.
+	This is used to add a child TNode object into the list of children of a node for determining parent and follows relationship.
 	\param child The node that represents the child node.
 	*/
 	void addChild(TNode* child);
 
-	std::vector<TNode* > getChildNodes();	/**< getter for getting child nodes list of the TNode object */
+	std::vector<TNode*> getChildNodes();	/**< getter for getting child nodes list of the TNode object */
 };

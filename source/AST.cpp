@@ -1,17 +1,16 @@
-#include <vector>
-#include <string>
 #include "AST.h"
-#include "Tnode.h"
 
+AST::AST(){
+    TNode* rootNode = new TNode();
+    tree.push_back(rootNode);
+}
 
+AST::AST(std::string name){
 
-AST::AST()
-{
 }
 
 
-AST::~AST()
-{
+AST::~AST(){
 }
 
 std::vector<TNode*> AST::getTree() {
@@ -27,26 +26,27 @@ TNode* AST::findNode(TNode* node) {
 	return new TNode();
 }
 
+int AST::getNodeIndex(TNode* node) {
+    for (int i = 0; i < tree.size(); i++) {
+        if (tree[i] == node) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 void AST::addToTree(TNode* node) {
 	tree.push_back(node);
 }
 
 void AST::makeChild(TNode* parent, TNode* child) {
-	for (unsigned i = 0; i < tree.size(); i++) {
-		if (parent == tree[i]) {
-			tree[i]->addChild(child);
-			child->setParent(tree[i]);
-		}
-	}
+	parent->addChild(child);
+	child->setParent(parent);
 }
 
 void AST::makeParent(TNode* child, TNode* parent) {
-	for (unsigned i = 0; i < tree.size(); i++) {
-		if (child == tree[i]) {
-			tree[i]->setParent(parent);
-			parent->addChild(tree[i]);
-		}
-	}
+	child->setParent(parent);
+	parent->addChild(child);
 }
 
 std::vector<TNode* > AST::getChildren(TNode* node) {
@@ -57,4 +57,145 @@ std::vector<TNode* > AST::getChildren(TNode* node) {
 TNode* AST::getParent(TNode* node) {
 	TNode* childNode = findNode(node);
 	return node->getParent();
+}
+
+TNode* AST::constructExpressionTree(std::string expression) {
+    std::vector<std::string> tokens = SimpleParser::tokenize(expression);
+    return AST::constructExpressionTree(tokens);
+}
+
+
+TNode* AST::constructExpressionTree(std::vector<std::string> &tokens){
+    std::stack<TNode*> operatorstk;
+    std::stack<TNode*> operandstk;
+
+    for (int i = 0; i < tokens.size(); i++) {
+        TNode* node = new TNode();
+        
+        //If token is + or -, check if there are any * operators on the top of the 
+        //stack and resolve them
+        if (tokens[i] == "+") {
+            node->setNodeType(OperatorPlus);
+            while (!operatorstk.empty() && operatorstk.top()->getNodeType() == OperatorTimes){
+                TNode* opr = operatorstk.top();
+                operatorstk.pop();
+                TNode* op2 = operandstk.top();
+                operandstk.pop();
+                TNode* op1 = operandstk.top();
+                operandstk.pop();
+                opr->addChild(op1);
+                opr->addChild(op2);
+                operandstk.push(opr);
+            }
+            operatorstk.push(node);
+        }
+        else if (tokens[i] == "-") {
+            node->setNodeType(OperatorMinus);
+            while (!operatorstk.empty() && operatorstk.top()->getNodeType() == OperatorTimes) {
+                TNode* opr = operatorstk.top();
+                operatorstk.pop();
+                TNode* op2 = operandstk.top();
+                operandstk.pop();
+                TNode* op1 = operandstk.top();
+                operandstk.pop();
+                opr->addChild(op1);
+                opr->addChild(op2);
+                operandstk.push(opr);
+            }
+            operatorstk.push(node);
+        }
+        //otherwise if operator, just push onto stack
+        else if (tokens[i] == "*") {
+            node->setNodeType(OperatorTimes);
+            operatorstk.push(node);
+        }
+        else if (tokens[i] == "(") {
+            node->setNodeType(LeftParenthesis);
+            operatorstk.push(node);
+        }
+        //except for ). Resolve all operators until you meet a LeftParenthesis
+        else if (tokens[i] == ")") {
+            node->setNodeType(RightParenthesis);
+            while (!operatorstk.empty() && operatorstk.top()->getNodeType() != LeftParenthesis) {
+                TNode* opr = operatorstk.top();
+                operatorstk.pop();
+                TNode* op2 = operandstk.top();
+                operandstk.pop();
+                TNode* op1 = operandstk.top();
+                operandstk.pop();
+                opr->addChild(op1);
+                opr->addChild(op2);
+                operandstk.push(opr);
+            }
+            //get rid of the left parenthesis
+            operatorstk.pop();
+        }
+        //otherwise push onto operand stack
+        else {
+            node->setNodeType(VariableName);
+            node->setValue(tokens[i]);
+            operandstk.push(node);
+        }
+    }
+    
+    //resolve all remaining operators on the stack
+    while (!operatorstk.empty()) {
+        TNode* opr = operatorstk.top();
+        operatorstk.pop();
+        TNode* op2 = operandstk.top();
+        operandstk.pop();
+        TNode* op1 = operandstk.top();
+        operandstk.pop();
+        opr->addChild(op1);
+        opr->addChild(op2);
+        operandstk.push(opr);
+    }
+
+    //returns root of expression tree
+    return operandstk.top();
+}
+
+void AST::convertExpressionToTNodes(std::string expression, std::vector<TNode*> &resVector) {
+    std::vector<std::string> tokens = SimpleParser::tokenize(expression);
+    for (int i = 0; i < tokens.size(); i++) {
+        TNode* node = new TNode();
+        if (tokens[i] == "+") {
+            node->setNodeType(OperatorPlus);
+        }
+        else if (tokens[i] == "-") {
+            node->setNodeType(OperatorMinus);
+        }
+        else if (tokens[i] == "*") {
+            node->setNodeType(OperatorTimes);
+        }
+        else if (tokens[i] == "(") {
+            node->setNodeType(LeftParenthesis);
+        }
+        else if (tokens[i] == ")") {
+            node->setNodeType(RightParenthesis);
+        }
+        else {
+            node->setNodeType(VariableName);
+            node->setValue(tokens[i]);
+        }
+
+        resVector.push_back(node);
+    }
+}
+
+bool AST::compareTrees(TNode * tree1, TNode * tree2){
+    if (tree1->getValue() != tree2->getValue()) {
+        return false;
+    } else if ((tree1->getChildNodes()).size() != (tree2->getChildNodes()).size()) {
+        return false;
+    } else if (tree1->getNodeType() != tree2->getNodeType()) {
+        return false;
+    } else {
+        for (int i = 0; i < tree1->getChildNodes().size(); i++){
+            if (!AST::compareTrees(tree1->getChildNodes()[i], tree2->getChildNodes()[i])) {
+                return false;
+            }
+        }
+    }
+    return true;
 }

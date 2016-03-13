@@ -1,3 +1,5 @@
+#include "TNode.h"
+#include "TNode.h"
 #include <vector>
 #include <string>
 #include "TNode.h"
@@ -6,8 +8,7 @@
 TNode::TNode() {
 	type = Undefined;
 	lineNumber = NULL;
-	value = NULL;
-	varName = NULL;
+	value = "";
 	parentNode = NULL;
 	childNodes.clear();
 }
@@ -20,6 +21,11 @@ TNode::TNode(TNodeType type, int lineNumber) {
 	node -> type = type;
 	node -> lineNumber = lineNumber;
 	//parentNode = new TNode();
+}
+
+TNode::TNode(TNodeType type, std::string value){
+    TNode::type = type;
+    TNode::value = value;
 }
 
 void TNode::setLineNumber(int lineNumber) {
@@ -38,20 +44,12 @@ TNodeType TNode::getNodeType() {
 	return type;
 }
 
-void TNode::setValue(int value) {
+void TNode::setValue(std::string value) {
 	TNode::value = value;
 }
 
-int TNode::getValue() {
+std::string TNode::getValue() {
 	return value;
-}
-
-void TNode::setVariable(char varName) {
-	TNode::varName = varName;
-}
-
-char TNode::getVariable() {
-	return varName;
 }
 
 void TNode::setParent(TNode* parentNode) {
