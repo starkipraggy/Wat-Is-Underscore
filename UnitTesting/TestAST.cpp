@@ -13,18 +13,17 @@ namespace UnitTesting
         TNode* basicTree = new TNode();
         
         TEST_METHOD_INITIALIZE(InitialiseBasicTree) {
-            
+            basicTree->setNodeType(OperatorPlus);
+            basicTree->addChild(new TNode(VariableName, "a"));
+            basicTree->addChild(new TNode(OperatorMinus, ""));
+            basicTree->getChildNodes()[1]->addChild(new TNode(OperatorPlus, ""));
+            basicTree->getChildNodes()[1]->addChild(new TNode(VariableName, "d"));
+            basicTree->getChildNodes()[1]->getChildNodes()[0]->addChild(new TNode(VariableName, "b"));
+            basicTree->getChildNodes()[1]->getChildNodes()[0]->addChild(new TNode(VariableName, "c"));
         }
 
         TEST_METHOD(CompareTrees) {
             //Arrange
-            basicTree->setNodeType(OperatorPlus);
-            basicTree->addChild(&TNode(VariableName, "a"));
-            basicTree->addChild(&TNode(OperatorMinus, ""));
-            basicTree->getChildNodes()[1]->addChild(&TNode(OperatorPlus, ""));
-            basicTree->getChildNodes()[1]->addChild(&TNode(VariableName, "d"));
-            basicTree->getChildNodes()[1]->getChildNodes()[0]->addChild(&TNode(VariableName, "b"));
-            basicTree->getChildNodes()[1]->getChildNodes()[0]->addChild(&TNode(VariableName, "c"));
 
             //Act
             bool success = AST::compareTrees(basicTree, basicTree);
@@ -35,14 +34,6 @@ namespace UnitTesting
 		
 		TEST_METHOD(ExpressionTreeTest1){
             //Arrange
-            basicTree->setNodeType(OperatorPlus);
-            basicTree->addChild(&TNode(VariableName, "a"));
-            basicTree->addChild(&TNode(OperatorMinus, ""));
-            basicTree->getChildNodes()[1]->addChild(&TNode(OperatorPlus, ""));
-            basicTree->getChildNodes()[1]->addChild(&TNode(VariableName, "d"));
-            basicTree->getChildNodes()[1]->getChildNodes()[0]->addChild(&TNode(VariableName, "b"));
-            basicTree->getChildNodes()[1]->getChildNodes()[0]->addChild(&TNode(VariableName, "c"));
-
             std::vector<std::string> tokens;
             tokens.push_back("a");
             tokens.push_back("+");
@@ -63,13 +54,6 @@ namespace UnitTesting
 
         TEST_METHOD(ExpressionTreeTest2) {
             //Arrange
-            basicTree->setNodeType(OperatorPlus);
-            basicTree->addChild(&TNode(VariableName, "a"));
-            basicTree->addChild(&TNode(OperatorMinus, ""));
-            basicTree->getChildNodes()[1]->addChild(&TNode(OperatorPlus, ""));
-            basicTree->getChildNodes()[1]->addChild(&TNode(VariableName, "d"));
-            basicTree->getChildNodes()[1]->getChildNodes()[0]->addChild(&TNode(VariableName, "b"));
-            basicTree->getChildNodes()[1]->getChildNodes()[0]->addChild(&TNode(VariableName, "c"));
             std::string expression = "a+(b+c)-d";
 
             //Act

@@ -23,9 +23,9 @@ TNode::TNode(TNodeType type, int lineNumber) {
 	//parentNode = new TNode();
 }
 
-TNode::TNode(TNodeType type, std::string value){
-    TNode::type = type;
-    TNode::value = value;
+TNode::TNode(TNodeType initType, std::string initValue){
+    type = initType;
+    value = initValue;
 }
 
 void TNode::setLineNumber(int lineNumber) {
@@ -62,6 +62,7 @@ TNode* TNode::getParent() {
 
 void TNode::addChild(TNode* childNode) {
 	childNodes.push_back(childNode);
+    childNode->setParent(this);
 }
 
 std::vector<TNode* > TNode::getChildNodes() {

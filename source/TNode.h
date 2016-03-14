@@ -49,7 +49,7 @@ public:
 	\param lineNumber The line number of the statement that this TNode object is representing.
 	*/
 	TNode(TNodeType type, int lineNumber);
-    TNode(TNodeType type, std::string value);
+    TNode(TNodeType initType, std::string initValue);
 
 	void setLineNumber(int lineNumber);	/**< setter for line number of node */
 	int getLineNumber();	/**< getter for line number of node */
