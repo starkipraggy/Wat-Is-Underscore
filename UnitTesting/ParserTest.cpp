@@ -104,6 +104,40 @@ public:
 		}
 	}
 
-   
+	// Valid Procedure
+	TEST_METHOD(SimpleParserTest_ValidProgram_Procedure) {
+		//Arrange
+		bool invalid;
+		std::string simple = "procedure a{}";
+		std::vector<std::string> results;
+		sp = new SimpleParser();
+
+		//Act
+		std::vector<std::string> tokens;
+		results = sp->tokenize(simple);
+		invalid = sp->parseSimple(results);
+
+		//Assert
+		// If invalid is true, then simple program is wrong.
+		Assert::AreEqual(invalid, false);
+	}
+
+	// Valid Procedure with Assignment
+	TEST_METHOD(SimpleParserTest_ValidProgram_Procedure_w_Assignment) {
+		//Arrange
+		bool invalid;
+		std::string simple = "procedure a{x=b+c;}";
+		std::vector<std::string> results;
+		sp = new SimpleParser();
+
+		//Act
+		std::vector<std::string> tokens;
+		results = sp->tokenize(simple);
+		invalid = sp->parseSimple(results);
+
+		//Assert
+		// If invalid is true, then simple program is wrong.
+		Assert::AreEqual(invalid, false);
+	}
 
 };
