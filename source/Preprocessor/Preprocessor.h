@@ -75,7 +75,7 @@ private:
 
 	//! Add each clause to QueryTree
 	/*!
-	call addSuchThatClause or addPatternClause depending on condition
+	call addSuchThatClause, addPatternClause or addWithClause depending on condition
 	*/
 	void addClause(string rawClause, string condition);
 
@@ -90,6 +90,12 @@ private:
 	*/
 	void addPatternClause(string rawClause);
 
+	//! specific method to add with clause to QueryTree
+	/*!
+	tokenized according to with clause parameter and add in QueryTree
+	*/
+	void addWithClause(string rawClause);
+
 //----------------MISC METHODS-----------------------------------------------
 	//! Create a such that ref
 	/*!
@@ -101,6 +107,11 @@ private:
 	return a ref of pattern with type derived from name
 	*/
 	Ref createPatternRef(string name);
+	//! Create a with ref
+	/*!
+	return a ref of with with type derived from name
+	*/
+	Ref createWithRef(string name);
 	//! Check if type is stmtRef
 	/*!
 	return true if type is stmtRef
