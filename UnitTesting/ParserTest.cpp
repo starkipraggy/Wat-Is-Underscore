@@ -10,18 +10,18 @@ TEST_CLASS(TestAST)
 public:
 	SimpleParser* sp;
 
-	TEST_METHOD(SimpleParserTest_AddSpacesToString) {
-		//Arrange
-		std::string sample = "{a=b+x-c;}";
-		std::string expected = " { a = b + x - c ;  } ";
+    TEST_METHOD(SimpleParserTest_AddSpacesToString) {
+        //Arrange
+        std::string sample = "{a=b+x-c;}";
+        std::string expected = " { a = b + x - c ;  } ";
 
-		//Act
-		std::string result = sp->addSpaceToString(sample);
+        //Act
+        std::string result = sp->addSpaceToString(sample);
 
-		//Assert
-		Assert::AreEqual(expected, result);
-	}
-
+        //Assert
+        Assert::AreEqual(expected, result);
+    }
+    
 	TEST_METHOD(SimpleParserTest_Tokenisation_General) {
 		//Arrange
 		std::string simple = "ab}a{;+9g-n";
@@ -121,8 +121,33 @@ public:
         }
     }
 
+    // Tokenizes uneven spacing
+    TEST_METHOD(SimpleParserTest_Tokenisation_Simple_6) {
+        //Arrange
+        std::string sample = "{laXadasiCal =LaZy+ carEleSs -enThuSiasm + typo ;}";
+        std::string expected = " { laXadasiCal = LaZy + carEleSs - enThuSiasm + typo ;  } ";
 
-	// Valid Procedure
+        //Act
+        std::string result = sp->addSpaceToString(sample);
+
+        //Assert
+        Assert::AreEqual(expected, result);
+    }
+
+    // Tokenizes uneven spacing 2
+    TEST_METHOD(SimpleParserTest_Tokenisation_Simple_7) {
+        //Arrange
+        std::string sample = "{a     =       b     *            x         -c+d;}";
+        std::string expected = " { a = b * x - c + d ;  } ";
+
+        //Act
+        std::string result = sp->addSpaceToString(sample);
+
+        //Assert
+        Assert::AreEqual(expected, result);
+    }
+
+    // Valid Procedure
 	TEST_METHOD(SimpleParserTest_ValidProgram_Procedure) {
 		//Arrange
 		bool invalid;
