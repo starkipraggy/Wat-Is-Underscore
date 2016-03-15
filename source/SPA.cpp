@@ -6,11 +6,17 @@ SPA::SPA() {
 	fio = new FileIO();
 }
 
+bool isProgramInvalid = false;
+
 /*Functions*/
 void SPA::processSimple(std::string filename) {
 	contents = fio->FileIO::get_file_contents(filename);
 	tokens = sp->tokenize(contents);
-	sp->parseSimple(tokens);
+	isProgramInvalid = sp->parseSimple(tokens);
+
+	if (isProgramInvalid == true) {
+		std::cout << "Program is Invalid! " << std::endl;
+	}
 }
 
 std::vector<std::string> SPA::evaluate(std::string query) {

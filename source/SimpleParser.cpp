@@ -59,9 +59,12 @@ std::string SimpleParser::addSpaceToString(std::string input) {
 }
 
 int procState = 0;
+bool isStatementDetected = false;
+
 bool SimpleParser::parseSimple(std::vector<std::string> tokens) {
 	// if procstate == 0; procedure is invalid.
 	// if procstate == 1; procedure is valid.
+	
 
 	if (tokens.size() < 4) {
 		// invalid program
@@ -78,37 +81,46 @@ bool SimpleParser::parseSimple(std::vector<std::string> tokens) {
 			case 2:
 				// first word is while
 				// eats tokens until opening brace
+				
 				i = checkWhile(i, tokens);
 				break;
 			case 3:
 				// first word is if
 				// eats tokens until opening brace
+				
 				i = checkIf(i, tokens);
 				break;
 			case 6:
 				// first word is call
 				// eats tokens until semi colon
+				
 				checkCall(i);
 				break;
 			case 7:
 				// first word is not the rest
 				// eats tokens until semi colon
+				
 					i = checkAssign(i, tokens);
 				break;
 			default:
 				// Invalid Program
-				std::cout << "Invalid program! " << std::endl;
 				isErrorDetected = true;
 				break;
 			}
 
 			if (isErrorDetected == true) {
-				std::cout << "Invalid program! " << std::endl;
 				break;
 			}
 		}
 	}
-
+	if (isStatementDetected == false) {
+		std::cout << "Procedure must contain statements! " << std::endl;
+		isErrorDetected = true;
+	} 
+	if (stackParenthesis.empty() == false) {
+		std::cout << "Program ended abruptly! " << std::endl;
+		isErrorDetected = true;
+	}
 	return isErrorDetected;
 }
 
@@ -125,13 +137,16 @@ int SimpleParser::checkProcedure(unsigned int position, std::vector<std::string>
 	position++;
 	// Prints procedure name
 	std::cout << tokens[position] << " " ;
-	if (isCharABrace(tokens[position]) || isCharAnOperator(tokens[position])) {
-		std::cout << "Invalid Program " << std::endl;
+	std::string procName = tokens[position];
+	char first_char = procName[0];
+	std::string first_charS = procName.substr(0,0);
+
+	if (isCharABrace(tokens[position]) || isCharAnOperator(tokens[position]) || first_char == '_' || isCharAnInteger(first_charS)) {
+		std::cout << std::endl <<"Procedure name is invalid! " << std::endl;
 		procState = 0;
 		isErrorDetected = true;
 		return position;
 	}
-
 	position++;
 	// Prints opening brace
 	std::cout << tokens[position] << std::endl;
@@ -141,6 +156,7 @@ int SimpleParser::checkProcedure(unsigned int position, std::vector<std::string>
 			procState = 1;
 			stackParenthesis.push_back(tokens[position]);
 			currentContainer.push_back("procedure");
+			isStatementDetected = false; // Reset variable for new procedures
 			PKB::getInstance()->ProcedureStart(tokens[position-1]);
 			break;
 		case 2: // "}" invalid program
@@ -151,7 +167,7 @@ int SimpleParser::checkProcedure(unsigned int position, std::vector<std::string>
 			break;
 		}
 	} catch (std::exception& e) {
-		std::cout << "Invalid Program " << std::endl;
+		std::cout << "Error in parsing Procedure! " << std::endl;
 		isErrorDetected = true;
 	}
 	return position;
@@ -175,7 +191,7 @@ int SimpleParser::checkWhile(unsigned int position, std::vector<std::string> tok
 	// Prints while variable
 	std::cout << tokens[position] << " ";
 	if (isCharABrace(tokens[position]) || isCharAnOperator(tokens[position])) {
-		std::cout << "Invalid Program! " << std::endl;
+		std::cout << "While control variable is invalid! " << std::endl;
 		procState = 0;
 		isErrorDetected = true;
 		return position;
@@ -201,7 +217,7 @@ int SimpleParser::checkWhile(unsigned int position, std::vector<std::string> tok
 		}
 	}
 	catch (std::exception& e) {
-		std::cout << "Invalid Program " << std::endl;
+		std::cout << "Error in parsing WHILE! " << std::endl;
 		isErrorDetected = true;
 	}
 	return position;
@@ -226,7 +242,7 @@ int SimpleParser::checkIf(unsigned int position, std::vector<std::string> tokens
 	// Prints if variable
 	std::cout << tokens[position] << " ";
 	if (isCharABrace(tokens[position]) || isCharAnOperator(tokens[position])) {
-		std::cout << "Invalid Program! " << std::endl;
+		std::cout << "IF control variable is invalid! " << std::endl;
 		procState = 0;
 		isErrorDetected = true;
 		return position;
@@ -236,7 +252,7 @@ int SimpleParser::checkIf(unsigned int position, std::vector<std::string> tokens
 	// Prints Then
 	std::cout << tokens[position] << " ";
 	if (checkFirstWord(tokens[position]) != 4) {
-		std::cout << "Invalid Program! " << std::endl;
+		std::cout << "Where is the, THEN, keyword? " << std::endl;
 		procState = 0;
 		isErrorDetected = true;
 		return position;
@@ -257,12 +273,13 @@ int SimpleParser::checkIf(unsigned int position, std::vector<std::string> tokens
 			stackParenthesis.pop_back();
 		default:
 			procState = 0;
+			std::cout << "Error in parsing IF! " << std::endl;
 			isErrorDetected = true;
 			break;
 		}
 	}
 	catch (std::exception& e) {
-		std::cout << "Invalid Program " << std::endl;
+		std::cout << "Error in parsing IF! " << std::endl;
 		isErrorDetected = true;
 	}
 
@@ -272,7 +289,7 @@ int SimpleParser::checkIf(unsigned int position, std::vector<std::string> tokens
 
 int SimpleParser::checkElse(unsigned int position, std::vector<std::string> tokens) {
 	if (checkFirstWord(tokens[position]) != 5) {
-		std::cout << "Invalid Program " << std::endl;
+		std::cout << "Start with IF first instead of ELSE " << std::endl;
 		isErrorDetected = true;
 		return position;
 	}
@@ -300,12 +317,13 @@ int SimpleParser::checkElse(unsigned int position, std::vector<std::string> toke
 				stackParenthesis.pop_back();
 			default:
 				procState = 0;
+				std::cout << "Error in parsing ELSE! " << std::endl;
 				isErrorDetected = true;
 				break;
 			}
 		}
 		catch (std::exception& e) {
-			std::cout << "Invalid Program " << std::endl;
+			std::cout << "Error in parsing ELSE! " << std::endl;
 			isErrorDetected = true;
 		}
 	}
@@ -332,6 +350,7 @@ int SimpleParser::checkCall(unsigned int position) {
 int SimpleParser::checkAssign(unsigned int position, std::vector<std::string> tokens) {
 	if (procState == 0) {
 		isErrorDetected = true;
+		std::cout << "Where is the PROCEDURE?? " << std::endl;
 		return position;
 	}
 
@@ -342,6 +361,7 @@ int SimpleParser::checkAssign(unsigned int position, std::vector<std::string> to
 		// Another opening brace
 		// Invallid program
 		isErrorDetected = true;
+		std::cout << "Why is there an opening brace here? " << std::endl;
 		return position;
 	}
 	else if (isCharABrace(tokens[position]) == 2) {
@@ -352,6 +372,7 @@ int SimpleParser::checkAssign(unsigned int position, std::vector<std::string> to
 			if (back.compare("while") == 0) {
 				stackParenthesis.pop_back();
 				currentContainer.pop_back();
+				isStatementDetected = true;
 				PKB::getInstance()->WhileEnd();
 			}
 			else if (back.compare("procedure") == 0) {
@@ -367,11 +388,12 @@ int SimpleParser::checkAssign(unsigned int position, std::vector<std::string> to
 			else if (back.compare("else") == 0) {
 				stackParenthesis.pop_back();
 				currentContainer.pop_back();
+				isStatementDetected = true;
 				PKB::getInstance()->IfElseEnd();
 			}
 		}
 		catch (std::exception& e) {
-			std::cout << "Invalid Program! " << std::endl;
+			std::cout << "Error parsing the closing brace! " << std::endl;
 			isErrorDetected = true;
 			return position;
 		}
@@ -461,6 +483,7 @@ int SimpleParser::checkAssign(unsigned int position, std::vector<std::string> to
 			case 5:
 				// token is ";"
 				if (isEquals == true && isOperator == false) {
+					isStatementDetected = true;
 					PKB::getInstance()->AssignStatement(leftVar, rightVariables, types);
 				} else {
 					isErrorDetected = true;
