@@ -22,7 +22,7 @@ namespace UnitTesting
             basicTree->getChildNodes()[1]->getChildNodes()[0]->addChild(new TNode(VariableName, "c"));
         }
 
-        TEST_METHOD(CompareTrees) {
+        TEST_METHOD(TestAST_CompareTrees) {
             //Arrange
 
             //Act
@@ -32,7 +32,7 @@ namespace UnitTesting
             Assert::IsTrue(success);
         }
 		
-		TEST_METHOD(ExpressionTreeTest1){
+		TEST_METHOD(TestAST_ExpressionTreeTest1){
             //Arrange
             std::vector<std::string> tokens;
             tokens.push_back("a");
@@ -52,7 +52,7 @@ namespace UnitTesting
             Assert::IsTrue(AST::compareTrees(basicTree, answer));
 		}
 
-        TEST_METHOD(ExpressionTreeTest2) {
+        TEST_METHOD(TestAST_ExpressionTreeTest2) {
             //Arrange
             std::string expression = "a+(b+c)-d";
 

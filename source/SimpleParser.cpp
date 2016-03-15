@@ -64,7 +64,14 @@ bool isStatementDetected = false;
 bool SimpleParser::parseSimple(std::vector<std::string> tokens) {
 	// if procstate == 0; procedure is invalid.
 	// if procstate == 1; procedure is valid.
-	
+	procState = 0;
+	isStatementDetected = false;
+	isErrorDetected = false;
+	namesProcedure.clear();
+	namesVariables.clear();
+	typesVariables.clear();
+	stackParenthesis.clear();
+	currentContainer.clear();
 
 	if (tokens.size() < 4) {
 		// invalid program

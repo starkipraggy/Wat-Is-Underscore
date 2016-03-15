@@ -101,7 +101,7 @@ public:
 	}
 
     // Tokenizes empty While
-    TEST_METHOD(SimpleParserTest_Tokenization_Simple_5) {
+    TEST_METHOD(SimpleParserTest_Tokenization_Simple_7) {
         //Arrange
         std::string simple = "procedure ew{while zzz{}}";
         std::vector<std::string> expected = { "procedure", "ew", "{", "while", "zzz", "{", "}", "}" };
@@ -117,10 +117,10 @@ public:
     }
 
     // Tokenizes uneven spacing
-    TEST_METHOD(SimpleParserTest_Tokenisation_Simple_6) {
+    TEST_METHOD(SimpleParserTest_Tokenisation_Simple_5) {
         //Arrange
         std::string sample = "{laXadasiCal =LaZy+ carEleSs -enThuSiasm + typo ;}";
-        std::string expected = " { laXadasiCal  = LaZy +  carEleSs  - enThuSiasm  +  typo ;  } ";
+        std::string expected = " { laXadasiCal  = LaZy +  carEleSs  - enThuSiasm  +  typo  ;  } ";
 
         //Act
         std::string result = sp->addSpaceToString(sample);
@@ -130,7 +130,7 @@ public:
     }
 
     // Tokenizes uneven spacing 2
-    TEST_METHOD(SimpleParserTest_Tokenisation_Simple_7) {
+    TEST_METHOD(SimpleParserTest_Tokenisation_Simple_6) {
         //Arrange
         std::string sample = "{a     =       b     *            x         -c+d;}";
         std::string expected = " { a      =        b      *             x          - c + d ;  } ";
