@@ -255,4 +255,166 @@ public:
         Assert::AreEqual(invalid, true);
     }
 
+    // Invalid Procedure (capital P)
+    TEST_METHOD(SimpleParserTest_InvalidProgram_Procedure_5) {
+        //Arrange
+        bool invalid;
+        std::string simple = "Procedure p{x=b+c;}";
+        std::vector<std::string> results;
+        sp = new SimpleParser();
+
+        //Act
+        std::vector<std::string> tokens;
+        results = sp->tokenize(simple);
+        invalid = sp->parseSimple(results);
+
+        //Assert
+        // If invalid is true, then simple program is wrong.
+        Assert::AreEqual(invalid, true);
+    }
+
+    // Valid While
+    TEST_METHOD(SimpleParserTest_ValidWhile) {
+        //Arrange
+        bool invalid;
+        std::string simple = "while i{x=a+b;}";
+        std::vector<std::string> results;
+        sp = new SimpleParser();
+
+        //Act
+        std::vector<std::string> tokens;
+        results = sp->tokenize(simple);
+        invalid = sp->parseSimple(results);
+
+        //Assert
+        // If invalid is true, then simple program is wrong.
+        Assert::AreEqual(invalid, false);
+    }
+
+    // Invalid While (empty)
+    TEST_METHOD(SimpleParserTest_InvalidWhile) {
+        //Arrange
+        bool invalid;
+        std::string simple = "while i{}";
+        std::vector<std::string> results;
+        sp = new SimpleParser();
+
+        //Act
+        std::vector<std::string> tokens;
+        results = sp->tokenize(simple);
+        invalid = sp->parseSimple(results);
+
+        //Assert
+        // If invalid is true, then simple program is wrong.
+        Assert::AreEqual(invalid, true);
+    }
+
+    // Invalid While (missing opening braces)
+    TEST_METHOD(SimpleParserTest_InvalidWhile_2) {
+        //Arrange
+        bool invalid;
+        std::string simple = "while i}";
+        std::vector<std::string> results;
+        sp = new SimpleParser();
+
+        //Act
+        std::vector<std::string> tokens;
+        results = sp->tokenize(simple);
+        invalid = sp->parseSimple(results);
+
+        //Assert
+        // If invalid is true, then simple program is wrong.
+        Assert::AreEqual(invalid, true);
+    }
+
+    // Invalid While (missing ending braces)
+    TEST_METHOD(SimpleParserTest_InvalidWhile_3) {
+        //Arrange
+        bool invalid;
+        std::string simple = "while i{";
+        std::vector<std::string> results;
+        sp = new SimpleParser();
+
+        //Act
+        std::vector<std::string> tokens;
+        results = sp->tokenize(simple);
+        invalid = sp->parseSimple(results);
+
+        //Assert
+        // If invalid is true, then simple program is wrong.
+        Assert::AreEqual(invalid, true);
+    }
+
+    // Invalid While (Capital W)
+    TEST_METHOD(SimpleParserTest_InvalidWhile_4) {
+        //Arrange
+        bool invalid;
+        std::string simple = "While i{x=b+c;}";
+        std::vector<std::string> results;
+        sp = new SimpleParser();
+
+        //Act
+        std::vector<std::string> tokens;
+        results = sp->tokenize(simple);
+        invalid = sp->parseSimple(results);
+
+        //Assert
+        // If invalid is true, then simple program is wrong.
+        Assert::AreEqual(invalid, true);
+    }
+
+    // Valid If
+    TEST_METHOD(SimpleParserTest_ValidIf) {
+        //Arrange
+        bool invalid;
+        std::string simple = "if i then {";
+        std::vector<std::string> results;
+        sp = new SimpleParser();
+
+        //Act
+        std::vector<std::string> tokens;
+        results = sp->tokenize(simple);
+        invalid = sp->parseSimple(results);
+
+        //Assert
+        // If invalid is true, then simple program is wrong.
+        Assert::AreEqual(invalid, false);
+    }
+
+    // Invalid If (empty)
+    TEST_METHOD(SimpleParserTest_InvalidIf) {
+        //Arrange
+        bool invalid;
+        std::string simple = "if i then {}";
+        std::vector<std::string> results;
+        sp = new SimpleParser();
+
+        //Act
+        std::vector<std::string> tokens;
+        results = sp->tokenize(simple);
+        invalid = sp->parseSimple(results);
+
+        //Assert
+        // If invalid is true, then simple program is wrong.
+        Assert::AreEqual(invalid, true);
+    }
+
+    // Invalid If (missing opening brace)
+    TEST_METHOD(SimpleParserTest_InvalidIf_2) {
+        //Arrange
+        bool invalid;
+        std::string simple = "if i then";
+        std::vector<std::string> results;
+        sp = new SimpleParser();
+
+        //Act
+        std::vector<std::string> tokens;
+        results = sp->tokenize(simple);
+        invalid = sp->parseSimple(results);
+
+        //Assert
+        // If invalid is true, then simple program is wrong.
+        Assert::AreEqual(invalid, true);
+    }
+
 };
