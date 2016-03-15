@@ -58,8 +58,8 @@ public:
 	// Tokenizes While and Assignments
 	TEST_METHOD(SimpleParserTest_Tokenisation_Simple_2) {
 		//Arrange
-		std::string simple = "procedure xs{while b{x+4+z;}";
-		std::vector<std::string> expected = { "procedure", "xs","{","while","b","{","x","+","4","+","z",";" ,"}" };
+		std::string simple = "procedure xs{while b{x+4+z;}}";
+		std::vector<std::string> expected = { "procedure", "xs","{","while","b","{","x","+","4","+","z",";" ,"}","}" };
 		std::vector<std::string> results;
 		sp = new SimpleParser();
 		//Act
@@ -103,6 +103,24 @@ public:
 			Assert::AreEqual(expected[i], results[i]);
 		}
 	}
+
+    // Tokenizes empty While
+    TEST_METHOD(SimpleParserTest_Tokenization_Simple_5) {
+        //Arrange
+        std::string simple = "procedure ew{while zzz{}}";
+        std::vector<std::string> expected = { "procedure", "ew", "{", "while", "zzz", "{", "}", "}" };
+        std::vector<std::string> results;
+        sp = new SimpleParser();
+        //Act
+        std::vector<std::string> tokens2;
+        results = sp->tokenize(simple);
+
+        //Assert
+        for (unsigned int i = 0; i < expected.size(); i++) {
+            Assert::AreEqual(expected[i], results[i]);
+        }
+    }
+
 
 	// Valid Procedure
 	TEST_METHOD(SimpleParserTest_ValidProgram_Procedure) {
