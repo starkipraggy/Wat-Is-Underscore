@@ -395,59 +395,7 @@ public:
         Assert::AreEqual(invalid, false);
     }
 
-    // Valid Procedure with Empty While    ***To be checked
-    TEST_METHOD(SimpleParserTest_ValidProgram_Procedure_7) {
-        //Arrange
-        bool invalid = false;
-        std::string simple = "procedure b{while i{}}";
-        std::vector<std::string> results;
-        sp = new SimpleParser();
-
-        //Act
-        std::vector<std::string> tokens;
-        results = sp->tokenize(simple);
-        invalid = sp->parseSimple(results);
-
-        //Assert
-        // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, false);
-    }
-
-    // Valid Procedure with Empty If    ***To be checked
-    TEST_METHOD(SimpleParserTest_ValidProgram_Procedure_8) {
-        //Arrange
-        bool invalid = false;
-        std::string simple = "procedure q{if j then {}else {a=1;}}";
-        std::vector<std::string> results;
-        sp = new SimpleParser();
-
-        //Act
-        std::vector<std::string> tokens;
-        results = sp->tokenize(simple);
-        invalid = sp->parseSimple(results);
-
-        //Assert
-        // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, false);
-    }
-
-    // Valid Procedure with Empty Else    ***To be checked
-    TEST_METHOD(SimpleParserTest_ValidProgram_Procedure_9) {
-        //Arrange
-        bool invalid = false;
-        std::string simple = "procedure q{if j then {a=b;}else {}}";
-        std::vector<std::string> results;
-        sp = new SimpleParser();
-
-        //Act
-        std::vector<std::string> tokens;
-        results = sp->tokenize(simple);
-        invalid = sp->parseSimple(results);
-
-        //Assert
-        // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, false);
-    }
+   
 
     // Invalid Procedure with Double Equality in Assignment
     TEST_METHOD(SimpleParserTest_InvalidProgram_1) {
@@ -579,7 +527,7 @@ public:
     TEST_METHOD(SimpleParserTest_InvalidProgram_8) {
         //Arrange
         bool invalid = false;
-        std::string simple = "procedure p(if i then {me=win;}}";
+        std::string simple = "procedure p{if i then {me=win;}}";
         std::vector<std::string> results;
         sp = new SimpleParser();
 
@@ -597,7 +545,7 @@ public:
     TEST_METHOD(SimpleParserTest_InvalidProgram_9) {
         //Arrange
         bool invalid = false;
-        std::string simple = "procedure p(else{me=win;}}";
+        std::string simple = "procedure p{else{me=win;}}";
         std::vector<std::string> results;
         sp = new SimpleParser();
 
@@ -611,4 +559,111 @@ public:
         Assert::AreEqual(invalid, true);
     }
 
+    //Invalid Procedure with Invalid Procedure Name starting with Digit
+    TEST_METHOD(SimpleParserTest_InvalidProgram_10) {
+        //Arrange
+        bool invalid = false;
+        std::string simple = "procedure 1337procname{a=b}";
+        std::vector<std::string> results;
+        sp = new SimpleParser();
+
+        //Act
+        std::vector<std::string> tokens;
+        results = sp->tokenize(simple);
+        invalid = sp->parseSimple(results);
+
+        //Assert
+        // If invalid is true, then simple program is wrong.
+        Assert::AreEqual(invalid, true);
+    }
+
+    // Invalid Procedure with Empty While
+    TEST_METHOD(SimpleParserTest_InvalidProgram_11) {
+        //Arrange
+        bool invalid = false;
+        std::string simple = "procedure b{while i{}}";
+        std::vector<std::string> results;
+        sp = new SimpleParser();
+
+        //Act
+        std::vector<std::string> tokens;
+        results = sp->tokenize(simple);
+        invalid = sp->parseSimple(results);
+
+        //Assert
+        // If invalid is true, then simple program is wrong.
+        Assert::AreEqual(invalid, true);
+    }
+
+    // Invalid Procedure with Empty If
+    TEST_METHOD(SimpleParserTest_InvalidProgram_12) {
+        //Arrange
+        bool invalid = false;
+        std::string simple = "procedure q{if j then {}else {a=1;}}";
+        std::vector<std::string> results;
+        sp = new SimpleParser();
+
+        //Act
+        std::vector<std::string> tokens;
+        results = sp->tokenize(simple);
+        invalid = sp->parseSimple(results);
+
+        //Assert
+        // If invalid is true, then simple program is wrong.
+        Assert::AreEqual(invalid, true);
+    }
+
+    // Invalid Procedure with Empty Else
+    TEST_METHOD(SimpleParserTest_InvalidProgram_13) {
+        //Arrange
+        bool invalid = false;
+        std::string simple = "procedure q{if j then {a=b;}else {}}";
+        std::vector<std::string> results;
+        sp = new SimpleParser();
+
+        //Act
+        std::vector<std::string> tokens;
+        results = sp->tokenize(simple);
+        invalid = sp->parseSimple(results);
+
+        //Assert
+        // If invalid is true, then simple program is wrong.
+        Assert::AreEqual(invalid, true);
+    }
+
+    // Valid Procedure with one Valid Nested While with Assignment in If 
+    TEST_METHOD(SimpleParserTest_ValidProgram_1) {
+        //Arrange
+        bool invalid = false;
+        std::string simple = "procedure p{if validVarHere then {while validVarAgain{a=a+1;}} else{a=a-1;}}";
+        std::vector<std::string> results;
+        sp = new SimpleParser();
+
+        //Act
+        std::vector<std::string> tokens;
+        results = sp->tokenize(simple);
+        invalid = sp->parseSimple(results);
+
+        //Assert
+        // If invalid is true, then simple program is wrong.
+        Assert::AreEqual(invalid, false);
+    }
+
+    // Valid Procedure with one Valid Nested If with Assignment in While 
+    TEST_METHOD(SimpleParserTest_ValidProgram_2) {
+        //Arrange
+        bool invalid = false;
+        std::string simple = "procedure p{while validVarHere{if j then {a=b;}else {a=c;}}}";
+        std::vector<std::string> results;
+        sp = new SimpleParser();
+
+        //Act
+        std::vector<std::string> tokens;
+        results = sp->tokenize(simple);
+        invalid = sp->parseSimple(results);
+
+        //Assert
+        // If invalid is true, then simple program is wrong.
+        Assert::AreEqual(invalid, false);
+    }
 };
