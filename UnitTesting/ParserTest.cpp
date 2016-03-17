@@ -398,7 +398,7 @@ public:
    
 
     // Invalid Procedure with Double Equality in Assignment
-    TEST_METHOD(SimpleParserTest_InvalidProgram_1) {
+    TEST_METHOD(SimpleParserTest_InvalidProgram_01) {
         //Arrange
         bool invalid = false;
         std::string simple = "procedure q{a==b;}";
@@ -416,7 +416,7 @@ public:
     }
 
     // Invalid Procedure with Double + Operators in Assignment
-    TEST_METHOD(SimpleParserTest_InvalidProgram_2) {
+    TEST_METHOD(SimpleParserTest_InvalidProgram_02) {
         //Arrange
         bool invalid = false;
         std::string simple = "procedure p{j=a++8;}";
@@ -434,7 +434,7 @@ public:
     }
 
     // Invalid Procedure with Double - Operators in Assignment
-    TEST_METHOD(SimpleParserTest_InvalidProgram_3) {
+    TEST_METHOD(SimpleParserTest_InvalidProgram_03) {
         //Arrange
         bool invalid = false;
         std::string simple = "procedure z{p=k--2;}";
@@ -452,7 +452,7 @@ public:
     }
 
     //Invalid Procedure with Double * Operators in Assignment
-    TEST_METHOD(SimpleParserTest_InvalidProgram_4) {
+    TEST_METHOD(SimpleParserTest_InvalidProgram_04) {
         //Arrange
         bool invalid = false;
         std::string simple = "procedure k{m=y**8;}";
@@ -470,7 +470,7 @@ public:
     }
 
     //Invalid Procedure with Double ;
-    TEST_METHOD(SimpleParserTest_InvalidProgram_5) {
+    TEST_METHOD(SimpleParserTest_InvalidProgram_05) {
         //Arrange
         bool invalid = false;
         std::string simple = "procedure k{m=y+8;;}";
@@ -488,7 +488,7 @@ public:
     }
 
     //Invalid Procedure with Spacing in Variable Name
-    TEST_METHOD(SimpleParserTest_InvalidProgram_6) {
+    TEST_METHOD(SimpleParserTest_InvalidProgram_06) {
         //Arrange
         bool invalid = false;
         std::string simple = "procedure juliet{rom eo=handsome+lovely;}";
@@ -506,7 +506,7 @@ public:
     }
 
     //Invalid Procedure with Spacing in Procedure Name
-    TEST_METHOD(SimpleParserTest_InvalidProgram_7) {
+    TEST_METHOD(SimpleParserTest_InvalidProgram_07) {
         //Arrange
         bool invalid = false;
         std::string simple = "procedure jul iet{romeo=handsome+lovely;}";
@@ -524,7 +524,7 @@ public:
     }
 
     //Invalid Procedure with If statement without Else
-    TEST_METHOD(SimpleParserTest_InvalidProgram_8) {
+    TEST_METHOD(SimpleParserTest_InvalidProgram_08) {
         //Arrange
         bool invalid = false;
         std::string simple = "procedure p{if i then {me=win;}}";
@@ -542,7 +542,7 @@ public:
     }
     
     //Invalid Procedure with If statement without If
-    TEST_METHOD(SimpleParserTest_InvalidProgram_9) {
+    TEST_METHOD(SimpleParserTest_InvalidProgram_09) {
         //Arrange
         bool invalid = false;
         std::string simple = "procedure p{else{me=win;}}";

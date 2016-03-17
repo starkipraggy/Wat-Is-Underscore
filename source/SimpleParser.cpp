@@ -59,13 +59,13 @@ std::string SimpleParser::addSpaceToString(std::string input) {
 }
 
 int procState = 0;
-bool isStatementDetected = false;
+bool isStatementDetectedProcedure = false;
 
 bool SimpleParser::parseSimple(std::vector<std::string> tokens) {
 	// if procstate == 0; procedure is invalid.
 	// if procstate == 1; procedure is valid.
 	procState = 0;
-	isStatementDetected = false;
+	isStatementDetectedProcedure = false;
 	isErrorDetected = false;
 	namesProcedure.clear();
 	namesVariables.clear();
@@ -120,7 +120,7 @@ bool SimpleParser::parseSimple(std::vector<std::string> tokens) {
 			}
 		}
 	}
-	if (isStatementDetected == false) {
+	if (isStatementDetectedProcedure == false) {
 		std::cout << "Procedure must contain statements! " << std::endl;
 		isErrorDetected = true;
 	} 
@@ -163,7 +163,7 @@ int SimpleParser::checkProcedure(unsigned int position, std::vector<std::string>
 			procState = 1;
 			stackParenthesis.push_back(tokens[position]);
 			currentContainer.push_back("procedure");
-			isStatementDetected = false; // Reset variable for new procedures
+			isStatementDetectedProcedure = false; // Reset variable for new procedures
 			PKB::getInstance()->ProcedureStart(tokens[position-1]);
 			break;
 		case 2: // "}" invalid program
@@ -197,7 +197,11 @@ int SimpleParser::checkWhile(unsigned int position, std::vector<std::string> tok
 	position++;
 	// Prints while variable
 	std::cout << tokens[position] << " ";
-	if (isCharABrace(tokens[position]) || isCharAnOperator(tokens[position])) {
+	std::string procName = tokens[position];
+	char first_char = procName[0];
+	std::string first_charS = procName.substr(0, 0);
+
+	if (isCharABrace(tokens[position]) || isCharAnOperator(tokens[position]) || first_char == '_' || isCharAnInteger(first_charS)) {
 		std::cout << "While control variable is invalid! " << std::endl;
 		procState = 0;
 		isErrorDetected = true;
@@ -207,12 +211,16 @@ int SimpleParser::checkWhile(unsigned int position, std::vector<std::string> tok
 	position++;
 	// Prints opening brace
 	std::cout << tokens[position] << " ";
-
+	std::string back = currentContainer.back();
 	try {
 		switch (isCharABrace(tokens[position])) {
 		case 1: // "{"
 			stackParenthesis.push_back(tokens[position]);
 			currentContainer.push_back("while");
+			//enterWhileFlag = 1;
+			//if (back.compare("if") == 0) {
+			//	enterIfFlag = 0;
+			//}
 			PKB::getInstance()->WhileStart(tokens[position-1]);
 			break;
 		case 2: // "}" invalid program
@@ -225,6 +233,20 @@ int SimpleParser::checkWhile(unsigned int position, std::vector<std::string> tok
 	}
 	catch (std::exception& e) {
 		std::cout << "Error in parsing WHILE! " << std::endl;
+		isErrorDetected = true;
+	}
+
+	try {
+		switch (isCharABrace(tokens[position+1])) {
+		case 2: // "}" invalid program
+			stackParenthesis.pop_back();
+			procState = 0;
+			isErrorDetected = true;
+			break;
+		}
+	}
+	catch (std::exception& e) {
+		std::cout << "WHILE must contain a statement" << std::endl;
 		isErrorDetected = true;
 	}
 	return position;
@@ -248,7 +270,11 @@ int SimpleParser::checkIf(unsigned int position, std::vector<std::string> tokens
 	position++;
 	// Prints if variable
 	std::cout << tokens[position] << " ";
-	if (isCharABrace(tokens[position]) || isCharAnOperator(tokens[position])) {
+	std::string procName = tokens[position];
+	char first_char = procName[0];
+	std::string first_charS = procName.substr(0, 0);
+
+	if (isCharABrace(tokens[position]) || isCharAnOperator(tokens[position]) || first_char == '_' || isCharAnInteger(first_charS)) {
 		std::cout << "IF control variable is invalid! " << std::endl;
 		procState = 0;
 		isErrorDetected = true;
@@ -268,7 +294,7 @@ int SimpleParser::checkIf(unsigned int position, std::vector<std::string> tokens
 	position++;
 	// Prints opening brace
 	std::cout << tokens[position] << " ";
-
+	std::string back = currentContainer.back();
 	try {
 		switch (isCharABrace(tokens[position])) {
 		case 1: // "{"
@@ -289,6 +315,21 @@ int SimpleParser::checkIf(unsigned int position, std::vector<std::string> tokens
 		std::cout << "Error in parsing IF! " << std::endl;
 		isErrorDetected = true;
 	}
+
+	try {
+		switch (isCharABrace(tokens[position + 1])) {
+		case 2: // "}" invalid program
+			stackParenthesis.pop_back();
+			procState = 0;
+			isErrorDetected = true;
+			break;
+		}
+	}
+	catch (std::exception& e) {
+		std::cout << "IF block must contain a statement" << std::endl;
+		isErrorDetected = true;
+	}
+
 
 	return position;
 }
@@ -334,6 +375,21 @@ int SimpleParser::checkElse(unsigned int position, std::vector<std::string> toke
 			isErrorDetected = true;
 		}
 	}
+
+	try {
+		switch (isCharABrace(tokens[position + 1])) {
+		case 2: // "}" invalid program
+			stackParenthesis.pop_back();
+			procState = 0;
+			isErrorDetected = true;
+			break;
+		}
+	}
+	catch (std::exception& e) {
+		std::cout << "ELSE must contain a statement" << std::endl;
+		isErrorDetected = true;
+	}
+
 	return position;
 }
 
@@ -379,7 +435,7 @@ int SimpleParser::checkAssign(unsigned int position, std::vector<std::string> to
 			if (back.compare("while") == 0) {
 				stackParenthesis.pop_back();
 				currentContainer.pop_back();
-				isStatementDetected = true;
+				isStatementDetectedProcedure = true;
 				PKB::getInstance()->WhileEnd();
 			}
 			else if (back.compare("procedure") == 0) {
@@ -395,7 +451,7 @@ int SimpleParser::checkAssign(unsigned int position, std::vector<std::string> to
 			else if (back.compare("else") == 0) {
 				stackParenthesis.pop_back();
 				currentContainer.pop_back();
-				isStatementDetected = true;
+				isStatementDetectedProcedure = true;
 				PKB::getInstance()->IfElseEnd();
 			}
 		}
@@ -423,7 +479,8 @@ int SimpleParser::checkAssign(unsigned int position, std::vector<std::string> to
 		std::string leftVar;
 		// Right side of assignment statement
 		std::vector<std::string> rightVariables;
-
+		// to check for subsequent variables, which is an invalid program
+		bool isSubsequent = false;
 
 		for (position;position < tokens.size();position++) {
 			// Prints the token
@@ -440,8 +497,15 @@ int SimpleParser::checkAssign(unsigned int position, std::vector<std::string> to
 						// Assignment statement cannot start with integer
 						isErrorDetected = true;
 						return position;
-					} else {
-						leftVar = tokens[position];
+					} else { 
+						if (isSubsequent == true) {
+							isErrorDetected = true;
+							return position;
+						}
+						else {
+							isSubsequent = true;
+							leftVar = tokens[position];
+						}
 					}
 				}
 				else if (isEquals == true && isOperator == false && isVariable == false) {
@@ -470,6 +534,7 @@ int SimpleParser::checkAssign(unsigned int position, std::vector<std::string> to
 				}
 				else {
 					isEquals = true;
+					isSubsequent = false;
 				}
 				break;
 			case 2:
@@ -484,13 +549,16 @@ int SimpleParser::checkAssign(unsigned int position, std::vector<std::string> to
 				}
 				isOperator = true;
 				isVariable = false;
+				isSubsequent = false;
 				rightVariables.push_back(tokens[position]);
 				types.push_back(Operator);
 				break;
 			case 5:
 				// token is ";"
 				if (isEquals == true && isOperator == false) {
-					isStatementDetected = true;
+					isStatementDetectedProcedure = true;
+					isSubsequent = false;
+					std::string back = currentContainer.back();
 					PKB::getInstance()->AssignStatement(leftVar, rightVariables, types);
 				} else {
 					isErrorDetected = true;
