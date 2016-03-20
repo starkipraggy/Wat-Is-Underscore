@@ -740,7 +740,7 @@ public:
 	TEST_METHOD(SimpleParserTest_ValidProgram_11) {
 		//Arrange
 		bool invalid = false;
-		std::string simple = "procedure p{a=b;} procedure q{}";
+		std::string simple = "procedure p{a=b;} procedure q{k=i;}";
 		std::vector<std::string> results;
 		sp = new SimpleParser();
 
@@ -750,6 +750,23 @@ public:
 
 		//Assert
 		// If invalid is true, then simple program is wrong.
-		Assert::AreEqual(invalid, true);
+		Assert::AreEqual(invalid, false);
+	}
+
+	// Valid Procedure with comments
+	TEST_METHOD(SimpleParserTest_ValidProgram_12) {
+		//Arrange
+		bool invalid = false;
+		std::string simple = "procedure p{a=b;} //happy";
+		std::vector<std::string> results;
+		sp = new SimpleParser();
+
+		//Act
+		results = sp->tokenize(simple);
+		invalid = sp->parseSimple(results);
+
+		//Assert
+		// If invalid is true, then simple program is wrong.
+		Assert::AreEqual(invalid, false);
 	}
 };

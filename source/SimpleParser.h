@@ -74,6 +74,14 @@ public:
 	*/
 	int SimpleParser::isCharAnInteger(std::string);
 
+	//! Checks whether the string is a forward or backward slash
+	/*!
+	Checks whether the string is a forward or backward slash
+	\param string token
+	\return integer value, 1 for \, 2 for /, 0 for everything else
+	*/
+	int SimpleParser::isCharASlash(std::string);
+
 	//! Checks the current occurrence of the procedure statement
 	/*!
 	Checks the current occurrence of the procedure statement

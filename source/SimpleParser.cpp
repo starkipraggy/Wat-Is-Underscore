@@ -7,8 +7,6 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <Graph.h>
-
-#include <iostream>
 #include <conio.h>
 #include <windows.h>
 #include <dos.h>
@@ -40,7 +38,7 @@ std::vector<std::string> SimpleParser::tokenize(std::string contents) {
 	std::vector<std::string> tokens;
 	std::string line, buffer;
 	std::istringstream f(contents);
-	
+	SimpleParser* sp = new SimpleParser();
 	while (std::getline(f, line)) {
 		/* Adds space to the special characters */
 		std::string spacedLine = addSpaceToString(line);
@@ -48,13 +46,22 @@ std::vector<std::string> SimpleParser::tokenize(std::string contents) {
 
 		/* Splits string into tokens */
 		while (ss >> buffer) {
+			if (buffer.size() >= 2) {
+				char first_char = buffer[0];
+				std::string first_charS = buffer.substr(0, 0);
+				char second_char = buffer[1];
+				std::string second_charS = buffer.substr(1, 1);
+
+				if ((first_char == '/' || sp->isCharASlash(first_charS)== 1)&& (second_char == '/' || sp->isCharASlash(second_charS) == 1)) {
+					break;
+				}
+			}
+			
 			tokens.push_back(buffer);
 		}
 	}
 	return tokens;
 }
-
-
 
 /* This function adds a space infront and behind each special character 
 	as stated in the dictionary vector. */
@@ -112,7 +119,7 @@ bool SimpleParser::parseSimple(std::vector<std::string> tokens) {
 			for (h; h<= j; h++) {
 				std::cout << b;
 			}
-			
+
 			switch (checkFirstWord(tokens[i])) {
 			case 1:
 				// first word is procedure
@@ -800,6 +807,15 @@ int SimpleParser::isCharAnOperator(std::string cChar) {
 	}
 	else if (cChar.compare(";") == 0) {
 		return 5;
+	}
+	else {
+		return 0;
+	}
+}
+
+int SimpleParser::isCharASlash(std::string cChar) {
+	if (cChar.compare("/") == 0) {
+		return 1;
 	}
 	else {
 		return 0;
