@@ -18,9 +18,9 @@ private:
 public:
 	SimpleParser();
 
-	//! Tokenizes the Simple program
+	//! Tokenizes the Simple program separated by spaces
 	/*!
-	Tokenizes the Simple program
+	Tokenizes the Simple program separated by spaces
 	\param contents of the Simple Program
 	\return Vector of string tokens
 	*/
@@ -103,10 +103,32 @@ public:
 	*/
 	int SimpleParser::checkAssign(unsigned int, std::vector<std::string>);
 
-	/* Not implemented yet */
+	//! Checks the current occurrence of the IF statement
+	/*!
+	Checks the current occurrence of the IF statement
+	\param int position, string token
+	\return next available position for the token if the procedure is correct, else it will still
+	return the position of the token but set the isInvalidProgram boolean to true;
+	*/
 	int SimpleParser::checkIf(unsigned int, std::vector<std::string>);
+
+	//! Checks the current occurrence of the ELSE statement
+	/*!
+	Checks the current occurrence of the ELSE statement
+	\param int position, string token
+	\return next available position for the token if the procedure is correct, else it will still
+	return the position of the token but set the isInvalidProgram boolean to true;
+	*/
 	int SimpleParser::checkElse(unsigned int, std::vector<std::string>);
-	/* Not implemented yet */
-	int SimpleParser::checkCall(unsigned int);
+
+
+	//! Checks the current occurrence of the CALL statement
+	/*!
+	Checks the current occurrence of the CALL statement
+	\param int position, string token
+	\return next available position for the token if the procedure is correct, else it will still
+	return the position of the token but set the isInvalidProgram boolean to true;
+	*/
+	int SimpleParser::checkCall(unsigned int, std::vector<std::string>);
 };
 
