@@ -8,6 +8,12 @@
 #include <unordered_set>
 #include <Graph.h>
 
+#include <iostream>
+#include <conio.h>
+#include <windows.h>
+#include <dos.h>
+
+
 std::vector<std::string> namesVariables;
 std::vector<std::string> typesVariables;
 std::vector<std::string> stackParenthesis;
@@ -88,10 +94,25 @@ bool SimpleParser::parseSimple(std::vector<std::string> tokens) {
 
 	if (tokens.size() < 4) {
 		// invalid program
-		
 		isErrorDetected = true;
 	} else {
+		// Progress Bar Background
+		std::cout << "Parsing Simple Program " << std::endl << std::endl;
+		std::cout << "\t";
+		char a = 177, b = 219;
+		for (unsigned int k = 0;k < 80;k++)
+			std::cout << a;
+		std::cout << "\r";
+		std::cout << "\t";
+		int h = 0;
+
 		for (unsigned int i = 0; i < tokens.size(); i++) {
+			// Progress Bar Foreground
+			int  j = (double)i / (double)tokens.size()*80.0;
+			for (h; h<= j; h++) {
+				std::cout << b;
+			}
+			
 			switch (checkFirstWord(tokens[i])) {
 			case 1:
 				// first word is procedure
@@ -101,46 +122,48 @@ bool SimpleParser::parseSimple(std::vector<std::string> tokens) {
 			case 2:
 				// first word is while
 				// eats tokens until opening brace
-				
 				i = checkWhile(i, tokens);
 				break;
 			case 3:
 				// first word is if
 				// eats tokens until opening brace
-				
 				i = checkIf(i, tokens);
 				break;
 			case 6:
 				// first word is call
 				// eats tokens until semi colon
-				
 				i = checkCall(i,tokens);
 				break;
 			case 7:
 				// first word is not the rest
 				// eats tokens until semi colon
-				
-					i = checkAssign(i, tokens);
+				i = checkAssign(i, tokens);
 				break;
 			default:
 				// Invalid Program
 				isErrorDetected = true;
 				break;
 			}
+			
 
 			if (isErrorDetected == true) {
 				break;
 			}
 		}
 	}
+
+	std::cout << std::endl;
+	std::cout << std::endl;
+
 	if (stackParenthesis.empty() == false) {
 		std::cout << "Program ended abruptly! " << std::endl;
 		isErrorDetected = true;
+		return isErrorDetected;
 	}
 
 	// check the call list whether the proc exist
 	std::unordered_set<std::string>::const_iterator got;
-	std::cout << "Checking call statements. " << std::endl;
+	std::cout << "Check Calls. " << std::endl;
 	if (callList.empty() == false) {
 		for (auto x : callList) {
 			got = procedureList.find(x);
@@ -148,12 +171,12 @@ bool SimpleParser::parseSimple(std::vector<std::string> tokens) {
 				// procedure not found
 				std::cout << "Procedure " << x << " does not exist! "<< std::endl;
 				isErrorDetected = true;
-				break;
+				return isErrorDetected;
 			}
 		}
 	}
 
-	std::cout << "Checking cycles. " << std::endl;
+	std::cout << "Check Cycles." << std::endl;
 	// check cyclic
 	
 	if (edges.empty() == false) {
@@ -165,12 +188,9 @@ bool SimpleParser::parseSimple(std::vector<std::string> tokens) {
 		if (g.isCyclic()) {
 			std::cout << "Graph contains cycle. Invalid program! ";
 			isErrorDetected = true;
+			return isErrorDetected;
 		}
 	}
-
-	
-
-	std::cout << "Call statement check complete! " << std::endl;
 
 	return isErrorDetected;
 }
@@ -184,10 +204,10 @@ bool SimpleParser::parseSimple(std::vector<std::string> tokens) {
 */
 int SimpleParser::checkProcedure(unsigned int position, std::vector<std::string> tokens) {
 	// Prints procedure
-	std::cout << tokens[position] << " ";
+	//std::cout << tokens[position] << " ";
 	position++;
 	// Prints procedure name
-	std::cout << tokens[position] << " " ;
+	//std::cout << tokens[position] << " " ;
 	std::string procName = tokens[position];
 	char first_char = procName[0];
 	std::string first_charS = procName.substr(0,0);
@@ -200,7 +220,7 @@ int SimpleParser::checkProcedure(unsigned int position, std::vector<std::string>
 	}
 	position++;
 	// Prints opening brace
-	std::cout << tokens[position] << std::endl;
+	//std::cout << tokens[position] << std::endl;
 
 	std::unordered_set<std::string>::const_iterator got;
 	try {
@@ -262,14 +282,14 @@ int SimpleParser::checkProcedure(unsigned int position, std::vector<std::string>
 */
 int SimpleParser::checkWhile(unsigned int position, std::vector<std::string> tokens) {
 	// Prints while
-	std::cout << tokens[position] << " ";
+	//std::cout << tokens[position] << " ";
 	if (procState == 0) {
 		isErrorDetected = true;
 		return position;
 	}
 	position++;
 	// Prints while variable
-	std::cout << tokens[position] << " ";
+	//std::cout << tokens[position] << " ";
 	std::string procName = tokens[position];
 	char first_char = procName[0];
 	std::string first_charS = procName.substr(0, 0);
@@ -283,7 +303,7 @@ int SimpleParser::checkWhile(unsigned int position, std::vector<std::string> tok
 
 	position++;
 	// Prints opening brace
-	std::cout << tokens[position] << " ";
+	//std::cout << tokens[position] << " ";
 	std::string back = currentContainer.back();
 	try {
 		switch (isCharABrace(tokens[position])) {
@@ -330,7 +350,7 @@ Returns the next position of the token
 */
 int SimpleParser::checkIf(unsigned int position, std::vector<std::string> tokens) {
 	// Prints if
-	std::cout << tokens[position] << " ";
+	//std::cout << tokens[position] << " ";
 	if (procState == 0) {
 		isErrorDetected = true;
 		return position;
@@ -338,7 +358,7 @@ int SimpleParser::checkIf(unsigned int position, std::vector<std::string> tokens
 
 	position++;
 	// Prints if variable
-	std::cout << tokens[position] << " ";
+	//std::cout << tokens[position] << " ";
 	std::string procName = tokens[position];
 	char first_char = procName[0];
 	std::string first_charS = procName.substr(0, 0);
@@ -352,7 +372,7 @@ int SimpleParser::checkIf(unsigned int position, std::vector<std::string> tokens
 
 	position++;
 	// Prints Then
-	std::cout << tokens[position] << " ";
+	//std::cout << tokens[position] << " ";
 	if (checkFirstWord(tokens[position]) != 4) {
 		std::cout << "Where is the, THEN, keyword? " << std::endl;
 		procState = 0;
@@ -362,7 +382,7 @@ int SimpleParser::checkIf(unsigned int position, std::vector<std::string> tokens
 
 	position++;
 	// Prints opening brace
-	std::cout << tokens[position] << " ";
+	//std::cout << tokens[position] << " ";
 	std::string back = currentContainer.back();
 	try {
 		switch (isCharABrace(tokens[position])) {
@@ -411,13 +431,15 @@ int SimpleParser::checkElse(unsigned int position, std::vector<std::string> toke
 		return position;
 	}
 	else {
-		std::cout << tokens[position] << " ";
+		// Prints ELSE
+		//std::cout << tokens[position] << " ";
 		position++;
 		try {
 			switch (isCharABrace(tokens[position])) {
 			case 1: // "{"
 				if (currentContainer.back().compare("if") == 0) {
-					std::cout << tokens[position] << " ";
+					// Prints Opening Brace
+					//std::cout << tokens[position] << " ";
 					stackParenthesis.pop_back();
 					currentContainer.pop_back();
 					stackParenthesis.push_back(tokens[position]);
@@ -471,7 +493,7 @@ Returns the next position of the token
 */
 int SimpleParser::checkCall(unsigned int position, std::vector<std::string> tokens) {
 	// Prints call
-	std::cout << tokens[position] << " ";
+	//std::cout << tokens[position] << " ";
 
 	if (procState == 0) {
 		isErrorDetected = true;
@@ -480,7 +502,7 @@ int SimpleParser::checkCall(unsigned int position, std::vector<std::string> toke
 
 	position++;
 	// Prints call name
-	std::cout << tokens[position] << " ";
+	//std::cout << tokens[position] << " ";
 	std::string callName = tokens[position];
 	char first_char = callName[0];
 	std::string first_charS = callName.substr(0, 0);
@@ -500,7 +522,7 @@ int SimpleParser::checkCall(unsigned int position, std::vector<std::string> toke
 
 	position++;
 	// Prints semi colon
-	std::cout << tokens[position] << " ";
+	//std::cout << tokens[position] << " ";
 
 	std::unordered_map<std::string,int>::const_iterator got;
 	std::unordered_map<std::string, int>::const_iterator got2;
@@ -558,19 +580,17 @@ int SimpleParser::checkAssign(unsigned int position, std::vector<std::string> to
 		return position;
 	}
 
-	//std::cout << tokens[position] << " ";
-
 	// Check closing brace first
 	if (isCharABrace(tokens[position]) == 1) {
 		// Another opening brace
-		// Invallid program
+		// Invalid program
 		isErrorDetected = true;
-		std::cout << "Why is there an opening brace here? " << std::endl;
+		std::cout << "Extra opening brace here detected. " << std::endl;
 		return position;
 	}
 	else if (isCharABrace(tokens[position]) == 2) {
-		// Closing brace 
-		std::cout << tokens[position] << std::endl;
+		// Prints Closing brace 
+		//std::cout << tokens[position] << std::endl;
 		try {
 			std::string back = currentContainer.back();
 			if (back.compare("while") == 0) {
@@ -623,7 +643,7 @@ int SimpleParser::checkAssign(unsigned int position, std::vector<std::string> to
 
 		for (position;position < tokens.size();position++) {
 			// Prints the token
-			std::cout << tokens[position] << " ";
+			//std::cout << tokens[position] << " ";
 			switch (isCharAnOperator(tokens[position])) {
 			case 0:
 				// Current token is possibly a variable/constant or anything else thats not the operators
