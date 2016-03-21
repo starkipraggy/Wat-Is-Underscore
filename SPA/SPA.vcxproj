@@ -46,6 +46,7 @@
     <ClInclude Include="..\source\Expression.h" />
     <ClInclude Include="..\source\Factor.h" />
     <ClInclude Include="..\source\FileIO.h" />
+    <ClInclude Include="..\source\Graph.h" />
     <ClInclude Include="..\source\PKB.h" />
     <ClInclude Include="..\source\Preprocessor\Clause.h" />
     <ClInclude Include="..\source\Preprocessor\PatternClause.h" />

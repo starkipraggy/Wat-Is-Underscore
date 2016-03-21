@@ -53,7 +53,7 @@ namespace UnitTesting {
 			QueryTree::Instance()->newTree();
 		}
 
-		TEST_METHOD(SimpleQuery)
+		TEST_METHOD(TestPreprocessor_SimpleQuery)
 		{
 			p.process(simpleQuery);
 			select = QueryTree::Instance()->getSelect();
@@ -63,7 +63,7 @@ namespace UnitTesting {
 			Assert::IsTrue(clauses.empty());
 		}
 
-		TEST_METHOD(SimpleBoolQuery)
+		TEST_METHOD(TestPreprocessor_SimpleBoolQuery)
 		{
 			p.process(simpleBoolQuery);
 			select = QueryTree::Instance()->getSelect();
@@ -73,7 +73,7 @@ namespace UnitTesting {
 			Assert::IsTrue(clauses.empty());
 		}
 
-		TEST_METHOD(UsesQuery)
+		TEST_METHOD(TestPreprocessor_UsesQuery)
 		{
 			p.process(usesQuery);
 			select = QueryTree::Instance()->getSelect();
@@ -83,7 +83,7 @@ namespace UnitTesting {
 			Assert::IsTrue(clauses.at(0)->equals(usesClause));
 		}
 
-		TEST_METHOD(PatternQuery)
+		TEST_METHOD(TestPreprocessor_PatternQuery)
 		{
 			p.process(patternQuery);
 			select = QueryTree::Instance()->getSelect();
@@ -93,7 +93,7 @@ namespace UnitTesting {
 			Assert::IsTrue(patternClause.equals(clauses.at(0)));
 		}
 
-		TEST_METHOD(WithQuery)
+		TEST_METHOD(TestPreprocessor_WithQuery)
 		{
 			p.process(withQuery);
 			select = QueryTree::Instance()->getSelect();
@@ -103,7 +103,7 @@ namespace UnitTesting {
 			Assert::IsTrue(withClause.equals(clauses.at(0)));
 		}
 
-		TEST_METHOD(CombinedQuery)
+		TEST_METHOD(TestPreprocessor_CombinedQuery)
 		{
 			p.process(combinedQuery);
 			select = QueryTree::Instance()->getSelect();

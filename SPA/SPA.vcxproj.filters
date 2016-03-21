@@ -180,6 +180,9 @@
     <ClInclude Include="..\source\Preprocessor\Projector.h">
       <Filter>Header\Preprocessor</Filter>
     </ClInclude>
+    <ClInclude Include="..\source\Graph.h">
+      <Filter>Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header">

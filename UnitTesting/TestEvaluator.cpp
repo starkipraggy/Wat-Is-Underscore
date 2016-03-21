@@ -49,7 +49,7 @@ namespace UnitTesting {
 			QueryTree::Instance()->newTree();
 		}
 
-		TEST_METHOD(SimpleEvaluation)
+		TEST_METHOD(TestEvaluator_SimpleEvaluation)
 		{
 			QueryTree::Instance()->setSelect(variableVar);
 			
@@ -58,7 +58,7 @@ namespace UnitTesting {
 			Assert::IsTrue(output.at(0) == "AnswerForSelect", (wchar_t*)output.at(0).c_str());
 		}
 
-		TEST_METHOD(UsesEvaluation)
+		TEST_METHOD(TestEvaluator_UsesEvaluation)
 		{
 			QueryTree::Instance()->setSelect(variableVar);
 			QueryTree::Instance()->addClause(usesClause);
@@ -68,7 +68,7 @@ namespace UnitTesting {
 			Assert::IsTrue(output.at(0) == "AnswerForUses", (wchar_t*)output.at(0).c_str());
 		}
 
-		TEST_METHOD(secondArgVariable_Follows)
+		TEST_METHOD(TestEvaluator_secondArgVariable_Follows)
 		{
 			QueryTree::Instance()->setSelect(variableVar);
 			QueryTree::Instance()->addClause(followsClause);
@@ -78,7 +78,7 @@ namespace UnitTesting {
 			Assert::IsTrue(output.at(1) == "AnswerForFollows", (wchar_t*)output.at(0).c_str());
 		}
 
-		TEST_METHOD(PatternEvaluation)
+		TEST_METHOD(TestEvaluator_PatternEvaluation)
 		{
 			QueryTree::Instance()->setSelect(variableVar);
 			QueryTree::Instance()->addClause(new PatternClause("PATTERN", placeholderVar, partOfExpressionVar, assignVar));
@@ -88,7 +88,7 @@ namespace UnitTesting {
 			Assert::IsTrue(output.at(0) == "AnswerForPattern", (wchar_t*)output.at(0).c_str());
 		}
 
-		TEST_METHOD(MixEvaluation)
+		TEST_METHOD(TestEvaluator_MixEvaluation)
 		{
 			QueryTree::Instance()->setSelect(variableVar);
 			QueryTree::Instance()->addClause(usesClause);
