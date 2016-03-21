@@ -22,6 +22,7 @@ enum TNodeType {
 	OperatorPlus,
     OperatorMinus,
     OperatorTimes,
+    OperatorEquals,
     LeftParenthesis,
     RightParenthesis,
 	Call, // For statements that call a procedure
@@ -42,14 +43,13 @@ public:
 	TNode();	/**< Constructor for empty TNode */
 	~TNode(); 
 	
-	//! Constructor for the TNode
+	//! Constructor for the TNode with type, value and line number
 	/*!
 	This is the constructor used to create a TNode object meant to be inserted into the AST.
-	\param nodeType The type of statement that this TNode object is representing has.
+	\param type The type of statement that this TNode object is representing has.
 	\param lineNumber The line number of the statement that this TNode object is representing.
 	*/
-	TNode(TNodeType type, int lineNumber);
-    TNode(TNodeType initType, std::string initValue);
+	TNode(TNodeType type, std::string initValue="", int lineNumber=0);
 
 	void setLineNumber(int lineNumber);	/**< setter for line number of node */
 	int getLineNumber();	/**< getter for line number of node */
@@ -68,4 +68,18 @@ public:
 	void addChild(TNode* child);
 
 	std::vector<TNode*> getChildNodes();	/**< getter for getting child nodes list of the TNode object */
+
+    /** Checks if a node is a container statement
+     * Given a TNode, checks if the node is a container statement and returns the appropriate boolean
+     * \param node The node to be checked
+     * \return true if the node is a container statement and false if not.
+     */
+    static bool isContainerStmt(TNode & node);
+    
+    /** Checks if a node is a statement
+    * Given a TNode, checks if the node is a statement and returns the appropriate boolean
+    * \param node The node to be checked
+    * \return true if the node is a statement and false if not.
+    */
+    static bool isStmtNode(TNode & node);
 };

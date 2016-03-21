@@ -1,5 +1,7 @@
 #include "TNode.h"
 #include "TNode.h"
+#include "TNode.h"
+#include "TNode.h"
 #include <vector>
 #include <string>
 #include "TNode.h"
@@ -16,16 +18,11 @@ TNode::TNode() {
 TNode::~TNode() {
 }
 
-TNode::TNode(TNodeType type, int lineNumber) {
+TNode::TNode(TNodeType type, std::string initValue, int lineNumber) {
 	TNode* node = new TNode;
-	node -> type = type;
-	node -> lineNumber = lineNumber;
-	//parentNode = new TNode();
-}
-
-TNode::TNode(TNodeType initType, std::string initValue){
-    type = initType;
-    value = initValue;
+	node->type = type;
+    node->value = initValue;
+	node->lineNumber = lineNumber;
 }
 
 void TNode::setLineNumber(int lineNumber) {
@@ -67,4 +64,18 @@ void TNode::addChild(TNode* childNode) {
 
 std::vector<TNode* > TNode::getChildNodes() {
 	return childNodes;
+}
+
+bool TNode::isContainerStmt(TNode& node) {
+    return (node.getNodeType() == StmtLst || 
+        node.getNodeType() == While || 
+        node.getNodeType() == If || 
+        node.getNodeType() == ProcedureName);
+}
+
+bool TNode::isStmtNode(TNode& node) {
+    return (node.getNodeType() == While ||
+        node.getNodeType() == If ||
+        node.getNodeType() == Assign ||
+        node.getNodeType() == Call);
 }

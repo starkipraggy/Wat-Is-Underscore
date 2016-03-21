@@ -1,14 +1,16 @@
 #include "AST.h"
 
 AST::AST(){
-    TNode* rootNode = new TNode();
+    TNode* rootNode = new TNode(ProcedureName, "");
+    rootNode->addChild(new TNode(StmtLst, ""));
     tree.push_back(rootNode);
 }
 
 AST::AST(std::string name){
-
+    TNode* rootNode = new TNode(ProcedureName, name);
+    rootNode->addChild(new TNode(StmtLst, ""));
+    tree.push_back(rootNode);
 }
-
 
 AST::~AST(){
 }
@@ -40,23 +42,58 @@ void AST::addToTree(TNode* node) {
 }
 
 void AST::makeChild(TNode* parent, TNode* child) {
-	parent->addChild(child);
-	child->setParent(parent);
+    parent->getChildNodes().back()->addChild(child);
 }
 
 void AST::makeParent(TNode* child, TNode* parent) {
-	child->setParent(parent);
-	parent->addChild(child);
+    parent->getChildNodes().back()->addChild(child);
 }
 
-std::vector<TNode* > AST::getChildren(TNode* node) {
-	TNode* parentNode = findNode(node);
-	return node->getChildNodes();
+TNode* AST::appendNewStmtNode(int stmtNum, TNodeType type, std::string value) {
+    TNode* newNode = new TNode(type,value,stmtNum);
+
+    if (TNode::isContainerStmt(*tree.back())) {
+        AST::makeChild(tree.back(), newNode);
+    } else {
+        AST::makeChild(AST::getParent(tree.back()), newNode);
+    }
+
+    tree.push_back(newNode);
+    return newNode;
+}
+
+TNode* AST::getLastAddedNode() {
+    return tree.back();
+}
+
+std::vector<TNode*> AST::getChildren(TNode* node) {
+    std::vector<TNode*> result;
+    
+    if (node->getChildNodes().size() == 2) {
+        return node->getChildNodes()[1]->getChildNodes();
+    } else if (node->getChildNodes().size() == 3) {
+        result = node->getChildNodes()[1]->getChildNodes();
+        result.insert(result.end(), node->getChildNodes()[2]->getChildNodes().begin(), 
+            node->getChildNodes()[2]->getChildNodes().end());
+    }
+
+    return result;
 }
 
 TNode* AST::getParent(TNode* node) {
-	TNode* childNode = findNode(node);
-	return node->getParent();
+	return node->getParent()->getParent();
+}
+
+TNode* AST::processAssignmentStmt(std::vector<std::string> &tokens) {
+    std::vector<std::string> RHS = std::vector<std::string>(tokens.begin()+2, tokens.end());
+    TNode* equals = new TNode(OperatorEquals, "");
+    TNode* leftSub = new TNode(VariableName, tokens[0]);
+    TNode* rightSub = AST::constructExpressionTree(RHS);
+
+    this->makeChild(equals, leftSub);
+    this->makeChild(equals, rightSub);
+
+    return equals;
 }
 
 TNode* AST::constructExpressionTree(std::string expression) {
@@ -88,8 +125,7 @@ TNode* AST::constructExpressionTree(std::vector<std::string> &tokens){
                 operandstk.push(opr);
             }
             operatorstk.push(node);
-        }
-        else if (tokens[i] == "-") {
+        } else if (tokens[i] == "-") {
             node->setNodeType(OperatorMinus);
             while (!operatorstk.empty() && operatorstk.top()->getNodeType() == OperatorTimes) {
                 TNode* opr = operatorstk.top();
@@ -103,9 +139,8 @@ TNode* AST::constructExpressionTree(std::vector<std::string> &tokens){
                 operandstk.push(opr);
             }
             operatorstk.push(node);
-        }
         //otherwise if operator, just push onto stack
-        else if (tokens[i] == "*") {
+        } else if (tokens[i] == "*") {
             node->setNodeType(OperatorTimes);
             operatorstk.push(node);
         }
@@ -129,7 +164,10 @@ TNode* AST::constructExpressionTree(std::vector<std::string> &tokens){
             }
             //get rid of the left parenthesis
             operatorstk.pop();
-        }
+        // ignore underscores while constructing
+        } else if (tokens[i] == "_"){
+            
+        } 
         //otherwise push onto operand stack
         else {
             node->setNodeType(VariableName);

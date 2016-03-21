@@ -112,12 +112,13 @@ void PKB::ProcedureStart(std::string nameOfProcedure) {
 	/* Create an entry for this new procedure in the procedure table, and keep a pointer to it in currentProcedure, 
 	   so that statements being inputted can have their statement numbers added under it */
 	currentProcedure = procedureTable->getProcedure(nameOfProcedure);
-    //procedureAST[nameOfProcedure] = new AST();
+    procedureAST[nameOfProcedure] = new AST(nameOfProcedure);
 }
 
 void PKB::ProcedureEnd() {
 	// Remove the pointer to currentProcedure
 	currentProcedure = NULL;
+    currentProcedureAST = NULL;
 }
 
 bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::vector<ExpressionTokenType> types) {
@@ -195,6 +196,11 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 			}
 		}
 	}
+    
+    //AST
+    currentProcedureAST->appendNewStmtNode(Assign);
+    currentProcedureAST->getLastAddedNode()->addChild(currentProcedureAST->processAssignmentStmt(tokens));
+    currentProcedureAST->getLastAddedNode()->setLineNumber(currentStatement->getStatementNumber());
 
 	return true;
 }
@@ -209,6 +215,9 @@ void PKB::CallStatement(std::string procedure) {
 	ProcedureTableProcedure* procedureBeingCalled = procedureTable->getProcedure(procedure);
 	procedureBeingCalled->addStatementsCalls(currentStatement->getStatementNumber());
 	procedureBeingCalled->addProcedureCalls(currentProcedure);
+
+    //AST
+    currentProcedureAST->appendNewStmtNode(currentStatement->getStatementNumber(), Call, procedure);
 }
 
 void PKB::WhileStart(NAME variable) {
@@ -248,6 +257,11 @@ void PKB::WhileStart(NAME variable) {
 			addRelationship(currentVariable, statementForAddingRelationship, Uses);
 		}
 	}
+
+    //AST
+    currentProcedureAST->appendNewStmtNode(currentStatement->getStatementNumber(), While);
+    currentProcedureAST->getLastAddedNode()->addChild(new TNode(VariableName, variable));
+    currentProcedureAST->getLastAddedNode()->addChild(new TNode(StmtLst));
 }
 
 bool PKB::WhileEnd() {
@@ -298,6 +312,11 @@ void PKB::IfStart(NAME variable) {
 			addRelationship(currentVariable, statementForAddingRelationship, Uses);
 		}
 	}
+
+    //AST
+    currentProcedureAST->appendNewStmtNode(If);
+    currentProcedureAST->getLastAddedNode()->addChild(new TNode(VariableName, variable));
+    currentProcedureAST->getLastAddedNode()->addChild(new TNode(StmtLst));
 }
 
 bool PKB::ElseStart() {
@@ -307,6 +326,9 @@ bool PKB::ElseStart() {
 
 	statementStackTrace->pop();
 	statementStackTrace->push(0);
+
+    //AST
+    currentProcedureAST->getLastAddedNode()->addChild(new TNode(StmtLst));
 
 	return true;
 }
