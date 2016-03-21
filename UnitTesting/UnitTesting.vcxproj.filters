@@ -47,5 +47,8 @@
     <ClCompile Include="StubPKB.cpp">
       <Filter>Source Files\Preprocessor</Filter>
     </ClCompile>
+    <ClCompile Include="TestPKB.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
