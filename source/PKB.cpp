@@ -112,6 +112,7 @@ void PKB::ProcedureStart(std::string nameOfProcedure) {
 	/* Create an entry for this new procedure in the procedure table, and keep a pointer to it in currentProcedure, 
 	   so that statements being inputted can have their statement numbers added under it */
 	currentProcedure = procedureTable->getProcedure(nameOfProcedure);
+    //procedureAST[nameOfProcedure] = new AST();
 }
 
 void PKB::ProcedureEnd() {

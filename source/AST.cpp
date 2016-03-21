@@ -186,9 +186,9 @@ void AST::convertExpressionToTNodes(std::string expression, std::vector<TNode*> 
 bool AST::compareTrees(TNode * tree1, TNode * tree2){
     if (tree1->getValue() != tree2->getValue()) {
         return false;
-    } else if ((tree1->getChildNodes()).size() != (tree2->getChildNodes()).size()) {
-        return false;
     } else if (tree1->getNodeType() != tree2->getNodeType()) {
+        return false;
+    } else if ((tree1->getChildNodes()).size() != (tree2->getChildNodes()).size()) {
         return false;
     } else {
         for (int i = 0; i < tree1->getChildNodes().size(); i++){

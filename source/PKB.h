@@ -10,6 +10,8 @@
 
 #include <string>
 #include <stack>
+#include <unordered_map>
+#include "AST.h"
 #include "ProcedureTable.h"
 #include "StatementTable.h"
 #include "VariableTable.h"
@@ -35,12 +37,13 @@ private:
 	ProcedureTable* procedureTable;
 	StatementTable* statementTable;
 	VariableTable* variableTable;
+    std::unordered_map<int, AST*> procedureAST;
 
 	ProcedureTableProcedure* currentProcedure;	/**< Used during SIMPLE parsing, this pointer points to the current procedure
 													 that statements that are currently being inputted belongs to */
 	std::stack<int>* statementStackTrace;		/**< Used during SIMPLE parsing, this is a list of statement numbers of statements
 													 that belong to different nesting levels, used to keep track of Parent and Follow*/
-
+    
 
 	//! This function is used by the API for the SIMPLE parser when a new statement that has a statement number is inputted.
 	StatementTableStatement* newStatement();
