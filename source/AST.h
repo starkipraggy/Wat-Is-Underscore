@@ -185,4 +185,48 @@ public:
      * \return true if the subtree is found, false otherwise.
      */
     static bool findSubtreeInTree(TNode* subtree, TNode* tree);
+
+	//! Adds an assign statement into the AST.
+	/**
+	* This function adds the given assignment statement into the AST.
+	* \param tokens A vector of tokens representing the assignment statement.
+	* \param statementNumber The statement number of the statement to be added into the AST.
+	*/
+	void addAssignAST(std::vector<std::string> tokens, int statementNumber);
+
+	//! Adds an call statement into the AST.
+	/**
+	* This function adds the call statement into the AST.
+	* \param callNode A TNodeType representing the TNodeType Call.
+	* \param procName The name of the procedure being called.
+	* \param statementNumber The statement number of the statement to be added into the AST.
+	*/
+	void addCallAST(TNodeType callNode, std::string procName, int statementNumber);
+
+	//! Adds an while statement into the AST.
+	/**
+	* This function adds the while statement into the AST.
+	* \param variableNameNode A TNodeType representing the TNodeType VariableName.
+	* \param variable The name of the control variable of the loop.
+	* \param stmtLstNode A TNodeType representing the TNodeType StmtLst.
+	* \param statementNumber The statement number of the statement to be added into the AST.
+	*/
+	void addWhileAST(TNodeType variableNameNode, NAME variable, TNodeType stmtLstNode, int statementNumber);
+
+	//! Adds an if statement into the AST.
+	/**
+	* This function adds the if statement into the AST.
+	* \param variableNameNode A TNodeType representing the TNodeType VariableName.
+	* \param variable The name of the control variable of the if statement.
+	* \param stmtLstNode A TNodeType representing the TNodeType StmtLst.
+	*/
+	void addIfAST(TNodeType variableNameNode, NAME variable, TNodeType stmtLstNode);
+
+	//! Adds an else statement into the AST.
+	/**
+	* This function adds the else statement into the AST.
+	* This function only requires a stmtLst Node as it is bounded by the if statement.
+	* \param stmtLstNode A TNodeType representing the TNodeType StmtLst.
+	*/
+	void addElseAST(TNodeType stmtLstNode);
 };

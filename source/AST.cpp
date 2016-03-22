@@ -269,3 +269,29 @@ bool AST::findSubtreeInTree(TNode * subtree, TNode * tree){
 
     return false;
 }
+
+void AST::addAssignAST(std::vector<std::string> tokens, int statementNumber) {
+	this->appendNewStmtNode(Assign);
+	this->getLastAddedNode()->addChild(this->processAssignmentStmt(tokens));
+	this->getLastAddedNode()->setLineNumber(statementNumber);
+}
+
+void AST::addCallAST(TNodeType callNode, std::string procName, int statementNumber) {
+	this->appendNewStmtNode(callNode, procName, statementNumber);
+}
+
+void AST::addWhileAST(TNodeType variableNameNode, NAME variable, TNodeType stmtLstNode, int statementNumber) {
+	this->appendNewStmtNode(While, "", statementNumber);
+	this->getLastAddedNode()->addChild(new TNode(variableNameNode, variable));
+	this->getLastAddedNode()->addChild(new TNode(stmtLstNode));
+}
+
+void AST::addIfAST(TNodeType variableNameNode, NAME variable, TNodeType stmtLstNode) {
+	this->appendNewStmtNode(If);
+	this->getLastAddedNode()->addChild(new TNode(variableNameNode, variable));
+	this->getLastAddedNode()->addChild(new TNode(stmtLstNode));
+}
+
+void AST::addElseAST(TNodeType stmtLstNode) {
+	this->getLastAddedNode()->addChild(new TNode(stmtLstNode));
+}

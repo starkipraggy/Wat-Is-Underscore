@@ -199,9 +199,10 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 	}
     
     //AST
-    currentProcedureAST->appendNewStmtNode(Assign);
+	currentProcedureAST->addAssignAST(tokens, currentStatement->getStatementNumber());
+    /*currentProcedureAST->appendNewStmtNode(Assign);
     currentProcedureAST->getLastAddedNode()->addChild(currentProcedureAST->processAssignmentStmt(tokens));
-    currentProcedureAST->getLastAddedNode()->setLineNumber(currentStatement->getStatementNumber());
+    currentProcedureAST->getLastAddedNode()->setLineNumber(currentStatement->getStatementNumber());*/
 
 	return true;
 }
@@ -218,7 +219,8 @@ void PKB::CallStatement(std::string procedure) {
 	procedureBeingCalled->addProcedureCalls(currentProcedure);
 
     //AST
-    currentProcedureAST->appendNewStmtNode(Call, procedure, currentStatement->getStatementNumber());
+	currentProcedureAST->addCallAST(Call, procedure, currentStatement->getStatementNumber());
+    //currentProcedureAST->appendNewStmtNode(Call, procedure, currentStatement->getStatementNumber());
 }
 
 void PKB::WhileStart(NAME variable) {
@@ -260,9 +262,10 @@ void PKB::WhileStart(NAME variable) {
 	}
 
     //AST
-    currentProcedureAST->appendNewStmtNode(While, "", currentStatement->getStatementNumber());
+	currentProcedureAST->addWhileAST(VariableName, variable, StmtLst, currentStatement->getStatementNumber());
+    /*currentProcedureAST->appendNewStmtNode(While, "", currentStatement->getStatementNumber());
     currentProcedureAST->getLastAddedNode()->addChild(new TNode(VariableName, variable));
-    currentProcedureAST->getLastAddedNode()->addChild(new TNode(StmtLst));
+    currentProcedureAST->getLastAddedNode()->addChild(new TNode(StmtLst));*/
 }
 
 bool PKB::WhileEnd() {
@@ -315,9 +318,10 @@ void PKB::IfStart(NAME variable) {
 	}
 
     //AST
-    currentProcedureAST->appendNewStmtNode(If);
+	currentProcedureAST->addIfAST(VariableName, variable, StmtLst);
+    /*currentProcedureAST->appendNewStmtNode(If);
     currentProcedureAST->getLastAddedNode()->addChild(new TNode(VariableName, variable));
-    currentProcedureAST->getLastAddedNode()->addChild(new TNode(StmtLst));
+    currentProcedureAST->getLastAddedNode()->addChild(new TNode(StmtLst));*/
 }
 
 bool PKB::ElseStart() {
@@ -329,7 +333,8 @@ bool PKB::ElseStart() {
 	statementStackTrace->push(0);
 
     //AST
-    currentProcedureAST->getLastAddedNode()->addChild(new TNode(StmtLst));
+	currentProcedureAST->addElseAST(StmtLst);
+    //currentProcedureAST->getLastAddedNode()->addChild(new TNode(StmtLst));
 
 	return true;
 }
