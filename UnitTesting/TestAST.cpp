@@ -256,6 +256,8 @@ namespace UnitTesting
 			//Act
 			result->addWhileTNode("x", 0);
 			result->addAssignTNode("y", tokens, 0);
+			result->addEndOfContainerRelation();
+			result->addCallTNode("test", 0);
 
 			//Assert
 			Assert::IsTrue(AST::compareTrees(expected->getTree()[0], result->getTree()[0]));
