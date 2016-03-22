@@ -18,6 +18,7 @@ class AST
 {
 private:
 	std::vector<TNode*> tree;	/**< List of TNodes that make up the AST */
+	bool endOfContainerStmt;    /**< Used to determine the end of a container statement */
 
     //! Function to add a TNode in the tree
     /*!
@@ -232,4 +233,7 @@ public:
     * all container statements and there is no validation, so exercise caution.
 	*/
 	void addElseRelation();
+
+
+	void addEndOfContainerRelation();
 };
