@@ -121,7 +121,7 @@ public:
      * \params tokens The vector containing the token representation of the statement.
      * \return A TNode pointer representing the TNode of the assignment statement.
      */
-    TNode * processAssignmentStmt(std::vector<std::string>& tokens);
+    TNode * processAssignmentStmt(NAME variable, std::vector<std::string>& tokens);
 
     //! Function that attempts to find expression subtree in AST
     /** 
@@ -186,47 +186,50 @@ public:
      */
     static bool findSubtreeInTree(TNode* subtree, TNode* tree);
 
-	//! Adds an assign statement into the AST.
+	//! Adds an assign statement TNode into the AST.
 	/**
-	* This function adds the given assignment statement into the AST.
+	* This function adds the given assignment statement TNode into the AST.
 	* \param tokens A vector of tokens representing the assignment statement.
 	* \param statementNumber The statement number of the statement to be added into the AST.
+    * \return A pointer to the generated TNode.
 	*/
-	void addAssignAST(std::vector<std::string> tokens, int statementNumber);
+	TNode* addAssignTNode(NAME variable, std::vector<std::string> tokens, int statementNumber);
 
-	//! Adds an call statement into the AST.
+	//! Adds an call statement TNode into the AST.
 	/**
 	* This function adds the call statement into the AST.
 	* \param callNode A TNodeType representing the TNodeType Call.
 	* \param procName The name of the procedure being called.
-	* \param statementNumber The statement number of the statement to be added into the AST.
+	* \param statementNumber The statement number of the statement to be added into the AST.    
+    * \return A pointer to the generated TNode.
 	*/
-	void addCallAST(TNodeType callNode, std::string procName, int statementNumber);
+	TNode* addCallTNode(std::string procName, int statementNumber);
 
-	//! Adds an while statement into the AST.
+	//! Adds an while statement TNode into the AST.
 	/**
-	* This function adds the while statement into the AST.
+	* This function adds the while statement TNode into the AST.
 	* \param variableNameNode A TNodeType representing the TNodeType VariableName.
 	* \param variable The name of the control variable of the loop.
-	* \param stmtLstNode A TNodeType representing the TNodeType StmtLst.
-	* \param statementNumber The statement number of the statement to be added into the AST.
+	* \param statementNumber The statement number of the statement to be added into the AST.    
+    * \return A pointer to the generated TNode.
 	*/
-	void addWhileAST(TNodeType variableNameNode, NAME variable, TNodeType stmtLstNode, int statementNumber);
+	TNode* addWhileTNode(NAME variable, int statementNumber);
 
-	//! Adds an if statement into the AST.
+	//! Adds an if statement TNode into the AST.
 	/**
-	* This function adds the if statement into the AST.
+	* This function adds the if statement TNode into the AST.
 	* \param variableNameNode A TNodeType representing the TNodeType VariableName.
 	* \param variable The name of the control variable of the if statement.
 	* \param stmtLstNode A TNodeType representing the TNodeType StmtLst.
+    * \return A pointer to the generated TNode.
 	*/
-	void addIfAST(TNodeType variableNameNode, NAME variable, TNodeType stmtLstNode);
+	TNode* addIfTNode(NAME variable, int statementNumber);
 
-	//! Adds an else statement into the AST.
+	//! Creates an Else relation on the last container statement TNode.
 	/**
-	* This function adds the else statement into the AST.
-	* This function only requires a stmtLst Node as it is bounded by the if statement.
-	* \param stmtLstNode A TNodeType representing the TNodeType StmtLst.
+	* This function will prep the parent statement TNode of the last statement TNode created
+    * for entering statements on the else StmtLst. As the description states, this works on
+    * all container statements and there is no validation, so exercise caution.
 	*/
-	void addElseAST(TNodeType stmtLstNode);
+	void addElseRelation();
 };

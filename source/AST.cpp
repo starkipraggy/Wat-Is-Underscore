@@ -84,7 +84,7 @@ TNode* AST::getParent(TNode* node) {
 	return node->getParent()->getParent();
 }
 
-TNode* AST::processAssignmentStmt(std::vector<std::string> &tokens) {
+TNode* AST::processAssignmentStmt(NAME variable, std::vector<std::string> &tokens) {
     std::vector<std::string> RHS;
     if (tokens.size() > 2 && tokens[1] == "=") {
         RHS = std::vector<std::string>(tokens.begin() + 2, tokens.end());
@@ -92,7 +92,7 @@ TNode* AST::processAssignmentStmt(std::vector<std::string> &tokens) {
         RHS = std::vector<std::string>(tokens.begin(), tokens.end());
     }
     TNode* equals = new TNode(OperatorEquals, "");
-    TNode* leftSub = new TNode(VariableName, tokens[0]);
+    TNode* leftSub = new TNode(VariableName, variable);
     TNode* rightSub = AST::constructExpressionTree(RHS);
 
     equals->addChild(leftSub);
@@ -113,9 +113,9 @@ TNode* AST::constructExpressionTree(std::vector<std::string> &tokens){
 
     for (unsigned int i = 0; i < tokens.size(); i++) {
         //ignore underscores
-        //if (tokens[i] == "_") {
-       //     continue;
-       // }
+        if (tokens[i] == "_") {
+            continue;
+        }
 
         TNode* node = new TNode();
         
@@ -270,28 +270,31 @@ bool AST::findSubtreeInTree(TNode * subtree, TNode * tree){
     return false;
 }
 
-void AST::addAssignAST(std::vector<std::string> tokens, int statementNumber) {
-	this->appendNewStmtNode(Assign);
-	this->getLastAddedNode()->addChild(this->processAssignmentStmt(tokens));
-	this->getLastAddedNode()->setLineNumber(statementNumber);
+TNode* AST::addAssignTNode(NAME variable, std::vector<std::string> tokens, int statementNumber) {
+	TNode* newNode = this->appendNewStmtNode(Assign, "", statementNumber);
+	this->getLastAddedNode()->addChild(this->processAssignmentStmt(variable, tokens));
+    return newNode;
 }
 
-void AST::addCallAST(TNodeType callNode, std::string procName, int statementNumber) {
-	this->appendNewStmtNode(callNode, procName, statementNumber);
+TNode* AST::addCallTNode(std::string procName, int statementNumber) {
+    TNode* newNode = this->appendNewStmtNode(Call, procName, statementNumber);
+    return newNode;
 }
 
-void AST::addWhileAST(TNodeType variableNameNode, NAME variable, TNodeType stmtLstNode, int statementNumber) {
-	this->appendNewStmtNode(While, "", statementNumber);
-	this->getLastAddedNode()->addChild(new TNode(variableNameNode, variable));
-	this->getLastAddedNode()->addChild(new TNode(stmtLstNode));
+TNode* AST::addWhileTNode(NAME variable, int statementNumber) {
+    TNode* newNode = this->appendNewStmtNode(While, "", statementNumber);
+	this->getLastAddedNode()->addChild(new TNode(VariableName, variable));
+	this->getLastAddedNode()->addChild(new TNode(StmtLst));
+    return newNode;
 }
 
-void AST::addIfAST(TNodeType variableNameNode, NAME variable, TNodeType stmtLstNode) {
-	this->appendNewStmtNode(If);
-	this->getLastAddedNode()->addChild(new TNode(variableNameNode, variable));
-	this->getLastAddedNode()->addChild(new TNode(stmtLstNode));
+TNode* AST::addIfTNode(NAME variable, int statementNumber) {
+	TNode* newNode = this->appendNewStmtNode(If);
+	this->getLastAddedNode()->addChild(new TNode(VariableName, variable));
+	this->getLastAddedNode()->addChild(new TNode(StmtLst));
+    return newNode;
 }
 
-void AST::addElseAST(TNodeType stmtLstNode) {
-	this->getLastAddedNode()->addChild(new TNode(stmtLstNode));
+void AST::addElseRelation() {
+	this->getLastAddedNode()->addChild(new TNode(StmtLst));
 }

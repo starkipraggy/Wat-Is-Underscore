@@ -96,5 +96,48 @@ namespace UnitTesting
             //Assert
             Assert::IsTrue(AST::compareTrees(advancedTree, answer));
         }
+
+        TEST_METHOD(ExpressionWithUnderscore) {
+            //Arrange
+            std::vector<std::string> tokens;
+            tokens.push_back("_");
+            tokens.push_back("a");
+            tokens.push_back("+");
+            tokens.push_back("(");
+            tokens.push_back("b");
+            tokens.push_back("+");
+            tokens.push_back("c");
+            tokens.push_back(")");
+            tokens.push_back("-");
+            tokens.push_back("d");
+            tokens.push_back("_");
+
+            //Act
+            TNode* answer = AST::constructExpressionTree(tokens);
+
+            //Assert
+            Assert::IsTrue(AST::compareTrees(basicTree, answer));
+        }
+
+        TEST_METHOD(AddAssignTNode) {
+            //Arrange
+            AST* expected = new AST("TestProcedure");
+            TNode* assign = new TNode(Assign);
+            assign->addChild(new TNode(OperatorEquals));
+            assign->getChildNodes()[0]->addChild(new TNode(VariableName, "y"));
+            assign->getChildNodes()[0]->addChild(advancedTree);
+            expected->makeChild(expected->getTree()[0], assign);
+
+            std::string expression = "hewlett-(a+(b+c)*d)+euler";
+            std::vector<std::string> tokens = SimpleParser::tokenize(expression);
+            AST* result = new AST("TestProcedure");
+
+            //Act
+            result->addAssignTNode("y", tokens, 0);
+
+            //Assert
+            Assert::IsTrue(AST::compareTrees(assign, result->getLastAddedNode()));
+            Assert::IsTrue(AST::compareTrees(expected->getTree()[0], result->getTree()[0]));
+        }
 	};
 }
