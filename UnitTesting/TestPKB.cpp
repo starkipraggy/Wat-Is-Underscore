@@ -99,14 +99,35 @@ namespace UnitTesting
             tokens = { "apple", "=", "(", "(", "1", "+", "2", ")", "*", "baNaNa", ")" };
             types = { Variable, Operator, Operator, Operator, Constant, Operator, Constant, Operator, Operator, Variable, Operator, };
             PKB::getInstance()->AssignStatement(varName, tokens, types);
+
             PKB::getInstance()->ElseStart();
+            varName = "apple";
+            tokens = { "apple", "=", "(", "(", "3", "+", "2", ")", "*", "baNaNa", ")" };
+            types = { Variable, Operator, Operator, Operator, Constant, Operator, Constant, Operator, Operator, Variable, Operator, };
+            PKB::getInstance()->AssignStatement(varName, tokens, types);
+
             Assert::IsTrue(PKB::getInstance()->IfElseEnd());
 
             PKB::getInstance()->ProcedureEnd();
         }
 
-        // Missing Else Block
+        // Empty Else
         TEST_METHOD(TestPKB_Invalid_IfElse_01) {
+            PKB::getInstance()->ProcedureStart("validProcIfElse");
+
+            PKB::getInstance()->IfStart("apple");
+            varName = "apple";
+            tokens = { "apple", "=", "(", "(", "1", "+", "2", ")", "*", "baNaNa", ")" };
+            types = { Variable, Operator, Operator, Operator, Constant, Operator, Constant, Operator, Operator, Variable, Operator, };
+            PKB::getInstance()->AssignStatement(varName, tokens, types);
+            PKB::getInstance()->ElseStart();
+            Assert::IsFalse(PKB::getInstance()->IfElseEnd());
+
+            PKB::getInstance()->ProcedureEnd();
+        }
+
+        // Missing Else Block
+        TEST_METHOD(TestPKB_Invalid_IfElse_02) {
             PKB::getInstance()->ProcedureStart("invalidProcIfElse");
 
             PKB::getInstance()->IfStart("apple");
@@ -122,7 +143,7 @@ namespace UnitTesting
         // This test works fine alone
         // but assert fails when running with Valid_ElseStart
         // Missing If Block
-        TEST_METHOD(TestPKB_Invalid_IfElse_02) {
+        TEST_METHOD(TestPKB_Invalid_IfElse_03) {
             PKB::getInstance()->ProcedureStart("invalidProcIfElseAgain");
 
             varName = "apple";
