@@ -110,6 +110,17 @@ public:
      */
     TNode * processAssignmentStmt(std::vector<std::string>& tokens);
 
+    //! Function that attempts to find expression subtree in AST
+    /** 
+     * This function will attempt to check for a given expression subtree inside the main tree
+     * by recursing over every single relevant statement node as provided in the type parameter.
+     * Refer to the method findSubtreeInTree for more details.
+     * \param type The type of statement node to be matched.
+     * \param subtree A pointer to the root node of the subtree to be found.
+     * \return true if the subtree is found, false otherwise.
+     */
+    bool findSubtreeInAST(TNodeType type, TNode* subtree);
+
     //! Constructs a mini-AST given a tokenised representation of a right-hand side expression.
     /** 
      * This function constructs an expression tree given a tokenised expression in a vector.
@@ -144,11 +155,20 @@ public:
     //! Compares two trees given the root node.
     /** 
      * This function compares two trees by brute force recursion. It checks the value and type of
-     * every node recursively. As soon as there is a non-match, false is returned.
+     * every node recursively. As soon as there is a non-match, false is returned (fail-fast behaviour).
      * \param root node of first tree to be compared.
      * \param root node of second tree to be compared.
      * \return true if all the nodes match, false otherwise.
      */
     static bool compareTrees(TNode* tree1, TNode* tree2);
-};
 
+    //! Checks if a subtree exists inside a given tree
+    /**
+     * This function will attempt to find if a subtree exists in a given tree by recursing over
+     * every single node and checking if the node has a structure identical to the subtree.
+     * \param subtree A TNode pointer to the root node of the subtree to be found.
+     * \param tree A TNode pointer to the root node of the tree to be searched.
+     * \return true if the subtree is found, false otherwise.
+     */
+    static bool findSubtreeInTree(TNode* subtree, TNode* tree);
+};

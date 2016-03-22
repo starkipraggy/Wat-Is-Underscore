@@ -244,3 +244,28 @@ bool AST::compareTrees(TNode * tree1, TNode * tree2){
     }
     return true;
 }
+
+bool AST::findSubtreeInAST(TNodeType type, TNode * subtree){
+    for (unsigned i = 0; i < tree.size(); i++) {
+        if (type == tree[i]->getNodeType()) {
+            if (AST::findSubtreeInTree(subtree, tree[i])) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool AST::findSubtreeInTree(TNode * subtree, TNode * tree){
+    if (compareTrees(subtree, tree)) {
+        return true;
+    } else {
+        for (unsigned int i = 0; i < tree->getChildNodes.size(); i++) {
+            if (compareTrees(subtree, tree->getChildNodes[i])) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
