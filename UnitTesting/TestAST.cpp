@@ -231,7 +231,7 @@ namespace UnitTesting
 			Assert::IsTrue(AST::compareTrees(expected->getTree()[0], result->getTree()[0]));
 		}
 
-		TEST_METHOD(AddWhileTNodeWithAssignAndCallOutsideWhileLoop) {
+		TEST_METHOD(AddWhileTNodeWithAssignInsideLoopAndCallOutsideWhileLoop) {
 			//Arrange
 			AST* expected = new AST("TestProcedure");
 			TNode* whileNode = new TNode(While);
@@ -256,6 +256,40 @@ namespace UnitTesting
 			result->addAssignTNode("y", tokens, 0);
 			result->addEndOfContainerRelation();
 			result->addCallTNode("test", 0);
+
+			//Assert
+			Assert::IsTrue(AST::compareTrees(expected->getTree()[0], result->getTree()[0]));
+		}
+
+		TEST_METHOD(AddWhileTNodeWithOneAssignInsideLoopAndOneAssignOutsideWhileLoop) {
+			//Arrange
+			AST* expected = new AST("TestProcedure");
+			TNode* whileNode = new TNode(While);
+			whileNode->addChild(new TNode(VariableName, "x"));
+			whileNode->addChild(new TNode(StmtLst));
+			TNode* assign = new TNode(Assign);
+			assign->addChild(new TNode(OperatorEquals));
+			assign->getChildNodes()[0]->addChild(new TNode(VariableName, "y"));
+			assign->getChildNodes()[0]->addChild(advancedTree);
+			whileNode->getChildNodes()[1]->addChild(assign);
+			TNode* assign2 = new TNode(Assign);
+			assign2->addChild(new TNode(OperatorEquals));
+			assign2->getChildNodes()[0]->addChild(new TNode(VariableName, "z"));
+			assign2->getChildNodes()[0]->addChild(basicTree);
+			expected->makeChild(expected->getTree()[0], whileNode);
+			expected->makeChild(expected->getTree()[0], assign2);
+
+			std::string expression1 = "hewlett-(a+(b+c)*d)+euler";
+			std::vector<std::string> tokens1 = SimpleParser::tokenize(expression1);
+			std::string expression2 = "a + (b + c) - d";
+			std::vector<std::string> tokens2 = SimpleParser::tokenize(expression2);
+			AST* result = new AST("TestProcedure");
+
+			//Act
+			result->addWhileTNode("x", 0);
+			result->addAssignTNode("y", tokens1, 0);
+			result->addEndOfContainerRelation();
+			result->addAssignTNode("z", tokens2, 0);
 
 			//Assert
 			Assert::IsTrue(AST::compareTrees(expected->getTree()[0], result->getTree()[0]));
