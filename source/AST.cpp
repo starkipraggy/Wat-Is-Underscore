@@ -301,7 +301,11 @@ TNode* AST::addIfTNode(NAME variable, int statementNumber) {
 }
 
 void AST::addElseRelation() {
-	this->getLastAddedNode()->addChild(new TNode(StmtLst));
+	TNode* lastNode = this->getLastAddedNode();
+	while (lastNode->getNodeType() != If) {
+		lastNode = lastNode->getParent();
+	}
+	lastNode->addChild(new TNode(StmtLst));
 }
 
 void AST::addEndOfContainerRelation() {

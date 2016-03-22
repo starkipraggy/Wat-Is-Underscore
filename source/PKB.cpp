@@ -267,8 +267,9 @@ bool PKB::WhileEnd() {
 		return false;
 	}
 
-	statementStackTrace->pop();
 	currentProcedureAST->addEndOfContainerRelation();
+	statementStackTrace->pop();
+		
 	return true;
 }
 
@@ -334,8 +335,8 @@ bool PKB::IfElseEnd() {
 		return false;
 	}
 
-	statementStackTrace->pop();
 	currentProcedureAST->addEndOfContainerRelation();
+	statementStackTrace->pop();
 
 	return true;
 

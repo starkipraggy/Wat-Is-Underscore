@@ -164,8 +164,6 @@ namespace UnitTesting
 			whileNode->addChild(new TNode(StmtLst));
 			expected->makeChild(expected->getTree()[0], whileNode);
 
-			std::string expression = "while x {";
-			std::vector<std::string> tokens = SimpleParser::tokenize(expression);
 			AST* result = new AST("TestProcedure");
 
 			//Act
@@ -263,6 +261,120 @@ namespace UnitTesting
 			Assert::IsTrue(AST::compareTrees(expected->getTree()[0], result->getTree()[0]));
 		}
 
+		TEST_METHOD(AddIfTNode) {
+			//Arrange
+			AST* expected = new AST("TestProcedure");
+			TNode* ifNode = new TNode(If);
+			ifNode->addChild(new TNode(VariableName, "x"));
+			ifNode->addChild(new TNode(StmtLst));
+			expected->makeChild(expected->getTree()[0], ifNode);
 
+			AST* result = new AST("TestProcedure");
+
+			//Act
+			result->addIfTNode("x", 0);
+
+			//Assert
+			Assert::IsTrue(AST::compareTrees(expected->getTree()[0], result->getTree()[0]));
+		}
+
+		TEST_METHOD(AddIfAndElseTNode) {
+			//Arrange
+			AST* expected = new AST("TestProcedure");
+			TNode* ifNode = new TNode(If);
+			ifNode->addChild(new TNode(VariableName, "x"));
+			ifNode->addChild(new TNode(StmtLst));
+			ifNode->addChild(new TNode(StmtLst));
+			expected->makeChild(expected->getTree()[0], ifNode);
+
+			AST* result = new AST("TestProcedure");
+
+			//Act
+			result->addIfTNode("x", 0);
+			result->addElseRelation();
+
+			//Assert
+			Assert::IsTrue(AST::compareTrees(expected->getTree()[0], result->getTree()[0]));
+		}
+
+		TEST_METHOD(AddIfAndElseTNodeWithAssignsInEachStmtLst) {
+			//Arrange
+			AST* expected = new AST("TestProcedure");
+			TNode* ifNode = new TNode(If);
+			ifNode->addChild(new TNode(VariableName, "x"));
+			ifNode->addChild(new TNode(StmtLst));
+			ifNode->addChild(new TNode(StmtLst));
+			TNode* assign1 = new TNode(Assign);
+			assign1->addChild(new TNode(OperatorEquals));
+			assign1->getChildNodes()[0]->addChild(new TNode(VariableName, "y"));
+			assign1->getChildNodes()[0]->addChild(advancedTree);
+			ifNode->getChildNodes()[1]->addChild(assign1);
+			TNode* assign2 = new TNode(Assign);
+			assign2->addChild(new TNode(OperatorEquals));
+			assign2->getChildNodes()[0]->addChild(new TNode(VariableName, "z"));
+			assign2->getChildNodes()[0]->addChild(basicTree);
+			ifNode->getChildNodes()[2]->addChild(assign2);
+			expected->makeChild(expected->getTree()[0], ifNode);
+
+			std::string expression1 = "hewlett-(a+(b+c)*d)+euler";
+			std::vector<std::string> tokens1 = SimpleParser::tokenize(expression1);
+			std::string expression2 = "a + (b + c) - d";
+			std::vector<std::string> tokens2 = SimpleParser::tokenize(expression2);
+			AST* result = new AST("TestProcedure");
+
+			//Act
+			result->addIfTNode("x", 0);
+			result->addAssignTNode("y", tokens1, 0);
+			result->addElseRelation();
+			result->addAssignTNode("z", tokens2, 0);
+
+			//Assert
+			Assert::IsTrue(AST::compareTrees(expected->getTree()[0], result->getTree()[0]));
+		}
+
+		TEST_METHOD(AddIfAndElseTNodeWithNestedWhileAndAssignsInEachStmtLst) {
+			AST* expected = new AST("TestProcedure");
+			TNode* ifNode = new TNode(If);
+			ifNode->addChild(new TNode(VariableName, "x"));
+			ifNode->addChild(new TNode(StmtLst));
+			ifNode->addChild(new TNode(StmtLst));
+			TNode* whileNode1 = new TNode(While);
+			whileNode1->addChild(new TNode(VariableName, "xx"));
+			whileNode1->addChild(new TNode(StmtLst));
+			TNode* assign1 = new TNode(Assign);
+			assign1->addChild(new TNode(OperatorEquals));
+			assign1->getChildNodes()[0]->addChild(new TNode(VariableName, "y"));
+			assign1->getChildNodes()[0]->addChild(advancedTree);
+			whileNode1->getChildNodes()[1]->addChild(assign1);
+			ifNode->getChildNodes()[1]->addChild(whileNode1);
+			TNode* whileNode2 = new TNode(While);
+			whileNode2->addChild(new TNode(VariableName, "yy"));
+			whileNode2->addChild(new TNode(StmtLst));
+			TNode* assign2 = new TNode(Assign);
+			assign2->addChild(new TNode(OperatorEquals));
+			assign2->getChildNodes()[0]->addChild(new TNode(VariableName, "z"));
+			assign2->getChildNodes()[0]->addChild(basicTree);
+			whileNode2->getChildNodes()[1]->addChild(assign2);
+			ifNode->getChildNodes()[2]->addChild(whileNode2);
+			expected->makeChild(expected->getTree()[0], ifNode);
+
+			std::string expression1 = "hewlett-(a+(b+c)*d)+euler";
+			std::vector<std::string> tokens1 = SimpleParser::tokenize(expression1);
+			std::string expression2 = "a + (b + c) - d";
+			std::vector<std::string> tokens2 = SimpleParser::tokenize(expression2);
+			AST* result = new AST("TestProcedure");
+
+			//Act
+			result->addIfTNode("x", 0);
+			result->addWhileTNode("xx", 0);
+			result->addAssignTNode("y", tokens1, 0);
+			result->addEndOfContainerRelation();
+			result->addElseRelation();
+			result->addWhileTNode("yy", 0);
+			result->addAssignTNode("z", tokens2, 0);
+
+			//Assert
+			Assert::IsTrue(AST::compareTrees(expected->getTree()[0], result->getTree()[0]));
+		}
 	};
 }

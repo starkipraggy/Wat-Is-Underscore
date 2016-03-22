@@ -18,7 +18,7 @@ class AST
 {
 private:
 	std::vector<TNode*> tree;	/**< List of TNodes that make up the AST */
-	bool endOfContainerStmt;    /**< Used to determine the end of a container statement */
+	bool endOfContainerStmt = false;    /**< Used to determine the end of a container statement */
 
     //! Function to add a TNode in the tree
     /*!
@@ -234,6 +234,10 @@ public:
 	*/
 	void addElseRelation();
 
-
+	//! Setter for determining the end of a container statement.
+	/**
+	* This function will set the endOfContainerStmt bool to true so that the end of a
+	* container statement can be determined
+	*/
 	void addEndOfContainerRelation();
 };
