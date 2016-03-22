@@ -1,7 +1,7 @@
 # SPA-Program-Assesssment
 A piece of software designed to evaluate a program written in a fictional language SIMPLE and return queries based on the structure of the program
 
-## Setup
+# Setup
 
     # Clone Repository
     git clone https://github.com/starkipraggy/SPA-Program-Assesssment.git
@@ -16,8 +16,7 @@ This includes:
 - libyaml-cppmdd.lib
 - libboost_date_time-vc140-mt-gd-1_59.lib
 
-
-## Branch Naming:
+# Branch Naming:
 
     # Specific Feature or Functionality
     feature/<feature-label>
@@ -28,6 +27,10 @@ This includes:
     # Bug, Error Fix, Etc...
     fix/<fix-label>
     
-## External libraries
-    # Doxygen (documentation, install to run only)
+# External libraries
+    ## Doxygen (documentation, install to run only)
     http://www.stack.nl/~dimitri/doxygen/index.html
+    
+    ## How to use Doxygen
+    Simply run doxygen from the command line in the root of the project. 
+    The documentation will be found in the SPAdocs folder in same folder as the project folder.
