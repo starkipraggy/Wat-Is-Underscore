@@ -112,7 +112,8 @@ void PKB::ProcedureStart(std::string nameOfProcedure) {
 	/* Create an entry for this new procedure in the procedure table, and keep a pointer to it in currentProcedure, 
 	   so that statements being inputted can have their statement numbers added under it */
 	currentProcedure = procedureTable->getProcedure(nameOfProcedure);
-    procedureAST[nameOfProcedure] = new AST(nameOfProcedure);
+    currentProcedureAST = new AST(nameOfProcedure);
+    procedureAST[nameOfProcedure] = currentProcedureAST;
 }
 
 void PKB::ProcedureEnd() {
@@ -217,7 +218,7 @@ void PKB::CallStatement(std::string procedure) {
 	procedureBeingCalled->addProcedureCalls(currentProcedure);
 
     //AST
-    currentProcedureAST->appendNewStmtNode(currentStatement->getStatementNumber(), Call, procedure);
+    currentProcedureAST->appendNewStmtNode(Call, procedure, currentStatement->getStatementNumber());
 }
 
 void PKB::WhileStart(NAME variable) {
@@ -259,7 +260,7 @@ void PKB::WhileStart(NAME variable) {
 	}
 
     //AST
-    currentProcedureAST->appendNewStmtNode(currentStatement->getStatementNumber(), While);
+    currentProcedureAST->appendNewStmtNode(While, "", currentStatement->getStatementNumber());
     currentProcedureAST->getLastAddedNode()->addChild(new TNode(VariableName, variable));
     currentProcedureAST->getLastAddedNode()->addChild(new TNode(StmtLst));
 }

@@ -97,7 +97,7 @@ public:
     * add the new node to. It then returns a pointer to the node added to the tree.
     * \return pointer to the node representing the new statement.
     */
-    TNode * appendNewStmtNode(int = 0, TNodeType = Undefined, std::string = "");
+    TNode * appendNewStmtNode(TNodeType = Undefined, std::string = "", int = 0);
 
     
     //! Function that processes a vector representation of an assignment statement into a TNode.

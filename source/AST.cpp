@@ -29,7 +29,7 @@ TNode* AST::findNode(TNode* node) {
 }
 
 int AST::getNodeIndex(TNode* node) {
-    for (int i = 0; i < tree.size(); i++) {
+    for (unsigned int i = 0; i < tree.size(); i++) {
         if (tree[i] == node) {
             return i;
         }
@@ -49,10 +49,10 @@ void AST::makeParent(TNode* child, TNode* parent) {
     parent->getChildNodes().back()->addChild(child);
 }
 
-TNode* AST::appendNewStmtNode(int stmtNum, TNodeType type, std::string value) {
+TNode* AST::appendNewStmtNode(TNodeType type, std::string value, int stmtNum) {
     TNode* newNode = new TNode(type,value,stmtNum);
 
-    if (TNode::isContainerStmt(*tree.back())) {
+    if (tree.back()->isContainerStmt()) {
         AST::makeChild(tree.back(), newNode);
     } else {
         AST::makeChild(AST::getParent(tree.back()), newNode);
@@ -85,13 +85,18 @@ TNode* AST::getParent(TNode* node) {
 }
 
 TNode* AST::processAssignmentStmt(std::vector<std::string> &tokens) {
-    std::vector<std::string> RHS = std::vector<std::string>(tokens.begin()+2, tokens.end());
+    std::vector<std::string> RHS;
+    if (tokens.size() > 2 && tokens[1] == "=") {
+        RHS = std::vector<std::string>(tokens.begin() + 2, tokens.end());
+    } else {
+        RHS = std::vector<std::string>(tokens.begin(), tokens.end());
+    }
     TNode* equals = new TNode(OperatorEquals, "");
     TNode* leftSub = new TNode(VariableName, tokens[0]);
     TNode* rightSub = AST::constructExpressionTree(RHS);
 
-    this->makeChild(equals, leftSub);
-    this->makeChild(equals, rightSub);
+    equals->addChild(leftSub);
+    equals->addChild(rightSub);
 
     return equals;
 }
@@ -106,7 +111,12 @@ TNode* AST::constructExpressionTree(std::vector<std::string> &tokens){
     std::stack<TNode*> operatorstk;
     std::stack<TNode*> operandstk;
 
-    for (int i = 0; i < tokens.size(); i++) {
+    for (unsigned int i = 0; i < tokens.size(); i++) {
+        //ignore underscores
+        //if (tokens[i] == "_") {
+       //     continue;
+       // }
+
         TNode* node = new TNode();
         
         //If token is + or -, check if there are any * operators on the top of the 
@@ -164,10 +174,7 @@ TNode* AST::constructExpressionTree(std::vector<std::string> &tokens){
             }
             //get rid of the left parenthesis
             operatorstk.pop();
-        // ignore underscores while constructing
-        } else if (tokens[i] == "_"){
-            
-        } 
+        }
         //otherwise push onto operand stack
         else {
             node->setNodeType(VariableName);

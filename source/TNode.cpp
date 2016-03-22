@@ -18,11 +18,10 @@ TNode::TNode() {
 TNode::~TNode() {
 }
 
-TNode::TNode(TNodeType type, std::string initValue, int lineNumber) {
-	TNode* node = new TNode;
-	node->type = type;
-    node->value = initValue;
-	node->lineNumber = lineNumber;
+TNode::TNode(TNodeType initType, std::string initValue, int lineNum) {
+	type = initType;
+    value = initValue;
+	lineNumber = lineNum;
 }
 
 void TNode::setLineNumber(int lineNumber) {
@@ -66,16 +65,16 @@ std::vector<TNode* > TNode::getChildNodes() {
 	return childNodes;
 }
 
-bool TNode::isContainerStmt(TNode& node) {
-    return (node.getNodeType() == StmtLst || 
-        node.getNodeType() == While || 
-        node.getNodeType() == If || 
-        node.getNodeType() == ProcedureName);
+bool TNode::isContainerStmt() {
+    return (TNode::getNodeType() == StmtLst ||
+        TNode::getNodeType() == While ||
+        TNode::getNodeType() == If ||
+        TNode::getNodeType() == ProcedureName);
 }
 
-bool TNode::isStmtNode(TNode& node) {
-    return (node.getNodeType() == While ||
-        node.getNodeType() == If ||
-        node.getNodeType() == Assign ||
-        node.getNodeType() == Call);
+bool TNode::isStmtNode() {
+    return (TNode::getNodeType() == While ||
+        TNode::getNodeType() == If ||
+        TNode::getNodeType() == Assign ||
+        TNode::getNodeType() == Call);
 }

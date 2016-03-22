@@ -74,12 +74,12 @@ public:
      * \param node The node to be checked
      * \return true if the node is a container statement and false if not.
      */
-    static bool isContainerStmt(TNode & node);
+    bool isContainerStmt();
     
     /** Checks if a node is a statement
     * Given a TNode, checks if the node is a statement and returns the appropriate boolean
     * \param node The node to be checked
     * \return true if the node is a statement and false if not.
     */
-    static bool isStmtNode(TNode & node);
+    bool isStmtNode();
 };
