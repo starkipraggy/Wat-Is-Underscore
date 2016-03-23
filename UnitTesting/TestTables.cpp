@@ -47,7 +47,6 @@ namespace UnitTesting
 
             Assert::AreEqual(1, newProcedureTable.getNumberOfProcedures());
             Assert::AreEqual(testProcName, newProcedureTable.getProcedure(testProcName)->getName());
-            Assert::AreNotEqual(testProcName, newProcedureTable.getProcedure("testProcName2")->getName());
             //Assert::AreEqual(1, newProcedureTable.getProcedure(testProcName)->getIndex());
             Assert::AreEqual(0, newProcedureTable.getProcedure(testProcName)->getProcedureCallsSize());
             Assert::AreEqual(0, newProcedureTable.getProcedure(testProcName)->getStatementCallsSize());
@@ -131,6 +130,16 @@ namespace UnitTesting
             Assert::IsTrue(newVariableTable.getVariableUsingName(a)->addProcedureUses(1));
             Assert::IsTrue(newVariableTable.getVariableUsingName(a)->addStatementModifies(1));
             Assert::IsTrue(newVariableTable.getVariableUsingName(a)->addStatementUses(1));
+
+            Assert::AreEqual(1, newVariableTable.getNumberOfVariables());
+            Assert::AreEqual(1, newVariableTable.getVariableUsingName(a)->getProceduresUsesSize());
+            //Assert::AreEqual(1, newVariableTable.getVariableUsingName(a)->getProceduresUses(1));
+            Assert::AreEqual(1, newVariableTable.getVariableUsingName(a)->getProceduresModifiesSize());
+            //Assert::AreEqual(1, newVariableTable.getVariableUsingName(a)->getProceduresModifies(1));
+            Assert::AreEqual(1, newVariableTable.getVariableUsingName(a)->getStatementUsesSize());
+            //Assert::AreEqual(1, newVariableTable.getVariableUsingName(a)->getStatementUses(1));
+            Assert::AreEqual(1, newVariableTable.getVariableUsingName(a)->getStatementModifiesSize());
+            //Assert::AreEqual(1, newVariableTable.getVariableUsingName(a)->getStatementModifies(1));
 
         }
     };
