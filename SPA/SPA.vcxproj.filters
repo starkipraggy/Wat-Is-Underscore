@@ -88,6 +88,9 @@
     <ClCompile Include="..\source\Preprocessor\Projector.cpp">
       <Filter>Source\Preprocessor</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\CFG.cpp">
+      <Filter>Source\PKB</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\FileIO.h">
@@ -182,6 +185,9 @@
     </ClInclude>
     <ClInclude Include="..\source\Graph.h">
       <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\CFG.h">
+      <Filter>Header\PKB</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

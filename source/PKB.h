@@ -8,14 +8,22 @@
 
 #pragma once
 
-#include <string>
-#include <stack>
-#include <unordered_map>
+#include "SimpleParser.h"
 #include "AST.h"
+#include "CFG.h"
 #include "ProcedureTable.h"
 #include "StatementTable.h"
 #include "VariableTable.h"
 #include "Preprocessor/Ref.h"
+#include <string>
+#include <stack>
+#include <unordered_map>
+#include <iostream>
+#include <algorithm> 
+#include <functional> 
+#include <cctype>
+#include <locale>	
+#include <cstdlib>
 
 enum ExpressionTokenType {
 	Variable,
@@ -38,10 +46,12 @@ private:
 	StatementTable* statementTable;
 	VariableTable* variableTable;
     std::unordered_map<std::string, AST*> procedureAST;
+    std::unordered_map<std::string, CFG*> procedureCFG;
 
 	ProcedureTableProcedure* currentProcedure;	/**< Used during SIMPLE parsing, this pointer points to the current procedure
 													 that statements that are currently being inputted belongs to */
     AST* currentProcedureAST; /**< Used during SIMPLE parsing, this pointer points to the current AST Procedure tree that is being modified.*/
+    CFG* currentProcedureCFG;
 	std::stack<int>* statementStackTrace;		/**< Used during SIMPLE parsing, this is a list of statement numbers of statements
 													 that belong to different nesting levels, used to keep track of Parent and Follow*/
     
