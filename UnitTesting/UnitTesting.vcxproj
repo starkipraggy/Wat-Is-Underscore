@@ -175,6 +175,7 @@
     <ClCompile Include="TestEvaluator.cpp" />
     <ClCompile Include="TestPreprocessor.cpp" />
     <ClCompile Include="TestPKB.cpp" />
+    <ClCompile Include="TestTables.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
