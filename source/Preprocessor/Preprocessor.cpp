@@ -312,8 +312,8 @@ void Preprocessor::addWithClause(string rawClause) {
 		throw "attrCompare does not have '='";
 	}
 
-	string firstRef = rawClause.substr(0, equalPos);
-	string secondRef = rawClause.substr(equalPos + 1);
+	string firstRef = trim(rawClause.substr(0, equalPos));
+	string secondRef = trim(rawClause.substr(equalPos + 1));
 
 	Ref var1 = createWithRef(trim(firstRef));
 	Ref var2 = createWithRef(trim(secondRef));
@@ -390,7 +390,7 @@ Ref Preprocessor::createWithRef(string name) {
 			throw msg;
 		}
 
-		if (!regex_match(name, attrNameRegex)) {
+		if (!regex_match(attrName, attrNameRegex)) {
 			throw "wrong attrName";
 		}
 
