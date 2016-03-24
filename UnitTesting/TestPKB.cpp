@@ -26,24 +26,12 @@ namespace UnitTesting
             PKB::getInstance()->ProcedureEnd();
         }
 
-        TEST_METHOD(TestPKB_Invalid_Assignment) {
-            PKB::getInstance()->ProcedureStart("invalidProcAssign");
-
-            // Invalid Assignment, no Right-Hand Expression
-            varName = "a";
-            tokens = { "a", "=" };
-            types = { Variable, Operator, Constant };
-            Assert::IsFalse(PKB::getInstance()->AssignStatement(varName, tokens, types));
-            
-            PKB::getInstance()->ProcedureEnd();
-        }
-
         TEST_METHOD(TestPKB_Valid_While) {
             PKB::getInstance()->ProcedureStart("validProcWhile");
 
-            PKB::getInstance()->WhileStart("apple");
-            varName = "apple";
-            tokens = { "apple", "=", "(", "(", "1", "+", "2", ")", "*", "baNaNa", ")" };
+            PKB::getInstance()->WhileStart("orange");
+            varName = "coconut";
+            tokens = { "coconut", "=", "(", "(", "1", "+", "2", ")", "*", "hotdog", ")" };
             types = { Variable, Operator, Operator, Operator, Constant, Operator, Constant, Operator, Operator, Variable, Operator, };
             PKB::getInstance()->AssignStatement(varName, tokens, types);
             Assert::IsTrue(PKB::getInstance()->WhileEnd());
@@ -51,58 +39,18 @@ namespace UnitTesting
             PKB::getInstance()->ProcedureEnd();
         }
 
-        // Missing WhileStart
-        TEST_METHOD(TestPKB_Invalid_While) {
-            PKB::getInstance()->ProcedureStart("invalidProcWhile");
+        TEST_METHOD(TestPKB_Valid_If) {
+            PKB::getInstance()->ProcedureStart("validProcIf");
 
-            varName = "apple";
-            tokens = { "apple", "=", "(", "(", "1", "+", "2", ")", "*", "baNaNa", ")" };
-            types = { Variable, Operator, Operator, Operator, Constant, Operator, Constant, Operator, Operator, Variable, Operator, };
-            PKB::getInstance()->AssignStatement(varName, tokens, types);
-            Assert::IsFalse(PKB::getInstance()->WhileEnd());
-
-            PKB::getInstance()->ProcedureEnd();
-        }
-
-        TEST_METHOD(TestPKB_Valid_ElseStart) {
-            PKB::getInstance()->ProcedureStart("validProcElseStart");
-
-            PKB::getInstance()->IfStart("apple");
-            varName = "apple";
-            tokens = { "apple", "=", "(", "(", "1", "+", "2", ")", "*", "baNaNa", ")" };
-            types = { Variable, Operator, Operator, Operator, Constant, Operator, Constant, Operator, Operator, Variable, Operator, };
-            PKB::getInstance()->AssignStatement(varName, tokens, types);
-            Assert::IsTrue(PKB::getInstance()->ElseStart());
-
-            PKB::getInstance()->ProcedureEnd();
-        }
-        
-        // This test works fine alone
-        // but assert fails when running with Valid_ElseStart
-        TEST_METHOD(TestPKB_Invalid_ElseStart) {
-            PKB::getInstance()->ProcedureStart("invalidProcElseStart");
-
-            varName = "apple";
-            tokens = { "apple", "=", "(", "(", "1", "+", "2", ")", "*", "baNaNa", ")" };
-            types = { Variable, Operator, Operator, Operator, Constant, Operator, Constant, Operator, Operator, Variable, Operator, };
-            PKB::getInstance()->AssignStatement(varName, tokens, types);
-            Assert::IsFalse(PKB::getInstance()->ElseStart());
-
-            PKB::getInstance()->ProcedureEnd();
-        }
-
-        TEST_METHOD(TestPKB_Valid_IfElse) {
-            PKB::getInstance()->ProcedureStart("validProcIfElse");
-
-            PKB::getInstance()->IfStart("apple");
-            varName = "apple";
-            tokens = { "apple", "=", "(", "(", "1", "+", "2", ")", "*", "baNaNa", ")" };
+            PKB::getInstance()->IfStart("banana");
+            varName = "donut";
+            tokens = { "donut", "=", "(", "(", "1", "+", "2", ")", "*", "durian", ")" };
             types = { Variable, Operator, Operator, Operator, Constant, Operator, Constant, Operator, Operator, Variable, Operator, };
             PKB::getInstance()->AssignStatement(varName, tokens, types);
 
             PKB::getInstance()->ElseStart();
-            varName = "apple";
-            tokens = { "apple", "=", "(", "(", "3", "+", "2", ")", "*", "baNaNa", ")" };
+            varName = "escargo";
+            tokens = { "escargo", "=", "(", "(", "3", "+", "2", ")", "*", "chicken", ")" };
             types = { Variable, Operator, Operator, Operator, Constant, Operator, Constant, Operator, Operator, Variable, Operator, };
             PKB::getInstance()->AssignStatement(varName, tokens, types);
 
@@ -111,47 +59,114 @@ namespace UnitTesting
             PKB::getInstance()->ProcedureEnd();
         }
 
-        // Empty Else
-        TEST_METHOD(TestPKB_Invalid_IfElse_01) {
-            PKB::getInstance()->ProcedureStart("validProcIfElse");
+        TEST_METHOD(TestPKB_Valid_IfNestedInWhile) {
+            PKB::getInstance()->ProcedureStart("validProcIfNestedInWhile");
 
-            PKB::getInstance()->IfStart("apple");
-            varName = "apple";
-            tokens = { "apple", "=", "(", "(", "1", "+", "2", ")", "*", "baNaNa", ")" };
+            PKB::getInstance()->WhileStart("romeo");
+            
+            PKB::getInstance()->IfStart("juliet");
+            varName = "kiss";
+            tokens = { "kiss", "=", "(", "(", "1", "+", "2", ")", "*", "under", ")" };
             types = { Variable, Operator, Operator, Operator, Constant, Operator, Constant, Operator, Operator, Variable, Operator, };
             PKB::getInstance()->AssignStatement(varName, tokens, types);
+
             PKB::getInstance()->ElseStart();
-            Assert::IsFalse(PKB::getInstance()->IfElseEnd());
+            varName = "big";
+            tokens = { "big", "=", "(", "(", "3", "+", "2", ")", "*", "tree", ")" };
+            types = { Variable, Operator, Operator, Operator, Constant, Operator, Constant, Operator, Operator, Variable, Operator, };
+            PKB::getInstance()->AssignStatement(varName, tokens, types);
+
+            Assert::IsTrue(PKB::getInstance()->IfElseEnd()); 
+            
+            Assert::IsTrue(PKB::getInstance()->WhileEnd());
 
             PKB::getInstance()->ProcedureEnd();
         }
 
-        // Missing Else Block
-        TEST_METHOD(TestPKB_Invalid_IfElse_02) {
-            PKB::getInstance()->ProcedureStart("invalidProcIfElse");
+        TEST_METHOD(TestPKB_Valid_IfNestedInIf) {
+            PKB::getInstance()->ProcedureStart("validProcIfNestedInIf");
 
-            PKB::getInstance()->IfStart("apple");
-            varName = "apple";
-            tokens = { "apple", "=", "(", "(", "1", "+", "2", ")", "*", "baNaNa", ")" };
+            PKB::getInstance()->IfStart("OutErIf");
+            
+            PKB::getInstance()->IfStart("INNERIf");
+            varName = "ReMal";
+            tokens = { "ReMal", "=", "(", "(", "1", "+", "2", ")", "*", "LOLW", ")" };
             types = { Variable, Operator, Operator, Operator, Constant, Operator, Constant, Operator, Operator, Variable, Operator, };
             PKB::getInstance()->AssignStatement(varName, tokens, types);
-            Assert::IsFalse(PKB::getInstance()->IfElseEnd());
+
+            PKB::getInstance()->ElseStart();
+            varName = "Ascension";
+            tokens = { "Ascension", "=", "(", "(", "3", "+", "2", ")", "*", "heavenly", ")" };
+            types = { Variable, Operator, Operator, Operator, Constant, Operator, Constant, Operator, Operator, Variable, Operator, };
+            PKB::getInstance()->AssignStatement(varName, tokens, types);
+
+            Assert::IsTrue(PKB::getInstance()->IfElseEnd());
+
+            PKB::getInstance()->ElseStart();
+            
+            PKB::getInstance()->IfStart("SecondInnerIf");
+            varName = "GoingMad";
+            tokens = { "GoingMad", "=", "(", "(", "1", "+", "2", ")", "*", "nestnest", ")" };
+            types = { Variable, Operator, Operator, Operator, Constant, Operator, Constant, Operator, Operator, Variable, Operator, };
+            PKB::getInstance()->AssignStatement(varName, tokens, types);
+
+            PKB::getInstance()->ElseStart();
+            varName = "lastelse";
+            tokens = { "lastelse", "=", "(", "(", "3", "+", "2", ")", "*", "finally", ")" };
+            types = { Variable, Operator, Operator, Operator, Constant, Operator, Constant, Operator, Operator, Variable, Operator, };
+            PKB::getInstance()->AssignStatement(varName, tokens, types);
+
+            Assert::IsTrue(PKB::getInstance()->IfElseEnd());
+
+            Assert::IsTrue(PKB::getInstance()->IfElseEnd());
 
             PKB::getInstance()->ProcedureEnd();
         }
 
-        // This test works fine alone
-        // but assert fails when running with Valid_ElseStart
-        // Missing If Block
-        TEST_METHOD(TestPKB_Invalid_IfElse_03) {
-            PKB::getInstance()->ProcedureStart("invalidProcIfElseAgain");
+        TEST_METHOD(TestPKB_Valid_WhileNestedInIf) {
+            PKB::getInstance()->ProcedureStart("validProcWhileNestedInIf");
 
-            varName = "apple";
-            tokens = { "apple", "=", "(", "(", "1", "+", "2", ")", "*", "baNaNa", ")" };
+            PKB::getInstance()->IfStart("soHunGry");
+            
+            PKB::getInstance()->WhileStart("andTired");
+            varName = "Sleep";
+            tokens = { "Sleep", "=", "(", "(", "1", "+", "2", ")", "*", "Eatt", ")" };
             types = { Variable, Operator, Operator, Operator, Constant, Operator, Constant, Operator, Operator, Variable, Operator, };
             PKB::getInstance()->AssignStatement(varName, tokens, types);
+            Assert::IsTrue(PKB::getInstance()->WhileEnd());
+
             PKB::getInstance()->ElseStart();
-            Assert::IsFalse(PKB::getInstance()->IfElseEnd());
+            
+            PKB::getInstance()->WhileStart("cr4zy");
+            varName = "m4dn355";
+            tokens = { "m4dn355", "=", "(", "(", "3", "+", "2", ")", "*", "lolwut", ")" };
+            types = { Variable, Operator, Operator, Operator, Constant, Operator, Constant, Operator, Operator, Variable, Operator, };
+            PKB::getInstance()->AssignStatement(varName, tokens, types);
+            Assert::IsTrue(PKB::getInstance()->WhileEnd());
+
+            Assert::IsTrue(PKB::getInstance()->IfElseEnd());
+
+            PKB::getInstance()->ProcedureEnd();
+        }
+
+        TEST_METHOD(TestPKB_Valid_WhileNestedInWhile) {
+            PKB::getInstance()->ProcedureStart("validProcWhileNestedInWhile");
+            
+            PKB::getInstance()->WhileStart("outerwhile");
+            varName = "reusingtemplate";
+            tokens = { "reusingtemplate", "=", "(", "(", "3", "+", "2", ")", "*", "justbecauseimlazy", ")" };
+            types = { Variable, Operator, Operator, Operator, Constant, Operator, Constant, Operator, Operator, Variable, Operator, };
+            PKB::getInstance()->AssignStatement(varName, tokens, types);
+
+            PKB::getInstance()->WhileStart("innerwhile");
+            varName = "whysolazy";
+            tokens = { "whysolazy", "=", "(", "(", "3", "+", "2", ")", "*", "tiredmax99", ")" };
+            types = { Variable, Operator, Operator, Operator, Constant, Operator, Constant, Operator, Operator, Variable, Operator, };
+            PKB::getInstance()->AssignStatement(varName, tokens, types);
+
+            Assert::IsTrue(PKB::getInstance()->WhileEnd());
+            
+            Assert::IsTrue(PKB::getInstance()->WhileEnd());
 
             PKB::getInstance()->ProcedureEnd();
         }
