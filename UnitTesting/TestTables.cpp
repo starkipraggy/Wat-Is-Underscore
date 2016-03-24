@@ -15,7 +15,7 @@ namespace UnitTesting
         std::vector<std::string> tokens;
         std::vector<ExpressionTokenType> types;
 
-        TEST_METHOD(TestPKB_VarTable) {
+        TEST_METHOD(TestPKB_VarTable01) {
             ProcedureTable newProcedureTable;
             StatementTable newStatementTable;
             VariableTable newVariableTable;
@@ -46,16 +46,16 @@ namespace UnitTesting
 
             Assert::AreEqual(1, newVariableTable.getNumberOfVariables());
             Assert::AreEqual(1, newVariableTable.getVariableUsingName(a)->getProceduresUsesSize());
-            //Assert::AreEqual(1, newVariableTable.getVariableUsingName(a)->getProceduresUses(1));
+            Assert::AreEqual(1, newVariableTable.getVariableUsingName(a)->getProceduresUses(0));
             Assert::AreEqual(1, newVariableTable.getVariableUsingName(a)->getProceduresModifiesSize());
-            //Assert::AreEqual(1, newVariableTable.getVariableUsingName(a)->getProceduresModifies(1));
+            Assert::AreEqual(1, newVariableTable.getVariableUsingName(a)->getProceduresModifies(0));
             Assert::AreEqual(1, newVariableTable.getVariableUsingName(a)->getStatementUsesSize());
-            //Assert::AreEqual(1, newVariableTable.getVariableUsingName(a)->getStatementUses(1));
+            Assert::AreEqual(1, newVariableTable.getVariableUsingName(a)->getStatementUses(0));
             Assert::AreEqual(1, newVariableTable.getVariableUsingName(a)->getStatementModifiesSize());
-            //Assert::AreEqual(1, newVariableTable.getVariableUsingName(a)->getStatementModifies(1));
+            Assert::AreEqual(1, newVariableTable.getVariableUsingName(a)->getStatementModifies(0));
         }
         
-        TEST_METHOD(TestPKB_StmtTable) {
+        TEST_METHOD(TestPKB_StmtTable01) {
             ProcedureTable newProcedureTable;
             StatementTable newStatementTable;
             VariableTable newVariableTable;
@@ -89,9 +89,9 @@ namespace UnitTesting
             Assert::IsFalse(newStatementTable.getStatementUsingStatementNumber(1)->hasFollows());
             Assert::IsFalse(newStatementTable.getStatementUsingStatementNumber(1)->hasFollowedBy());
             Assert::IsFalse(newStatementTable.getStatementUsingStatementNumber(1)->hasParent());
-            //Assert::AreEqual(1, newStatementTable.getStatementUsingStatementNumber(1)->getUses(1));
+            Assert::AreEqual(1, newStatementTable.getStatementUsingStatementNumber(1)->getUses(0));
             Assert::AreEqual(1, newStatementTable.getStatementUsingStatementNumber(1)->getUsesSize());
-            //Assert::AreEqual(1, newStatementTable.getStatementUsingStatementNumber(1)->getModifies(1));
+            Assert::AreEqual(1, newStatementTable.getStatementUsingStatementNumber(1)->getModifies(0));
             Assert::AreEqual(1, newStatementTable.getStatementUsingStatementNumber(1)->getModifiesSize());
             Assert::AreEqual(0, newStatementTable.getStatementUsingStatementNumber(1)->getFollowsStarSize());
             Assert::AreEqual(0, newStatementTable.getStatementUsingStatementNumber(1)->getFollowedByStarSize());
@@ -99,7 +99,7 @@ namespace UnitTesting
             Assert::AreEqual(0, newStatementTable.getStatementUsingStatementNumber(1)->getParentStarSize());
         }
 
-        TEST_METHOD(TestPKB_ProcTable) {
+        TEST_METHOD(TestPKB_ProcTable01) {
             ProcedureTable newProcedureTable;
             StatementTable newStatementTable;
             VariableTable newVariableTable;
@@ -130,13 +130,13 @@ namespace UnitTesting
 
             Assert::AreEqual(1, newProcedureTable.getNumberOfProcedures());
             Assert::AreEqual(testProcName, newProcedureTable.getProcedure(testProcName)->getName());
-            //Assert::AreEqual(1, newProcedureTable.getProcedure(testProcName)->getIndex());
+            Assert::AreEqual(0, newProcedureTable.getProcedure(testProcName)->getIndex());
             Assert::AreEqual(0, newProcedureTable.getProcedure(testProcName)->getProcedureCallsSize());
             Assert::AreEqual(0, newProcedureTable.getProcedure(testProcName)->getStatementCallsSize());
             Assert::AreEqual(1, newProcedureTable.getProcedure(testProcName)->getUsesSize());
-            //Assert::AreEqual(1, newProcedureTable.getProcedure(testProcName)->getUses(1));
+            Assert::AreEqual(1, newProcedureTable.getProcedure(testProcName)->getUses(0));
             Assert::AreEqual(1, newProcedureTable.getProcedure(testProcName)->getModifiesSize());
-            //Assert::AreEqual(1, newProcedureTable.getProcedure(testProcName)->getModifies(1));
+            Assert::AreEqual(1, newProcedureTable.getProcedure(testProcName)->getModifies(0));
         }
 
     };
