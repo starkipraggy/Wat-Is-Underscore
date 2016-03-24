@@ -15,6 +15,8 @@
 std::vector<std::string> namesVariables;
 std::vector<std::string> typesVariables;
 std::vector<std::string> stackParenthesis;
+// track ( ) in assginment statements
+std::vector<std::string> stackAssignmentParenthesis;
 const regex integerRegex("[[:digit:]]+");
 // currentcontainers contains =  procedure / while / if / else
 std::vector<std::string> currentContainer;
@@ -66,7 +68,7 @@ std::vector<std::string> SimpleParser::tokenize(std::string contents) {
 /* This function adds a space infront and behind each special character 
 	as stated in the dictionary vector. */
 std::string SimpleParser::addSpaceToString(std::string input) {
-	std::vector<std::string> dictionary = { "{", "}", "=", "+", "-" , "*" ,";" , "(" ,")" };
+	std::vector<std::string> dictionary = { "{", "}", "=", "+", "-" , "*" ,";" , "(" ,")", ".","#" };
 	unsigned int resultPos = 0;
 	for (unsigned int i = 0;i < dictionary.size(); i++) {
 		unsigned int pos = 0;
@@ -94,6 +96,7 @@ bool SimpleParser::parseSimple(std::vector<std::string> tokens) {
 	stackParenthesis.clear();
 	currentContainer.clear();
 	procedureList.clear();
+	stackAssignmentParenthesis.clear();
 	callList.clear();
 	procedureMap.clear();
 	currentProcedure = "";
@@ -516,7 +519,6 @@ int SimpleParser::checkCall(unsigned int position, std::vector<std::string> toke
 
 	if (isCharABrace(tokens[position]) || isCharAnOperator(tokens[position]) || first_char == '_' || isCharAnInteger(first_charS)) {
 		std::cout << std::endl << "Call name is invalid! " << std::endl;
-		procState = 0;
 		isErrorDetected = true;
 		return position;
 	}
@@ -562,7 +564,6 @@ int SimpleParser::checkCall(unsigned int position, std::vector<std::string> toke
 			PKB::getInstance()->CallStatement(tokens[position - 1]);
 			break;
 		default:
-			procState = 0;
 			isErrorDetected = true;
 			break;
 		}
@@ -592,7 +593,7 @@ int SimpleParser::checkAssign(unsigned int position, std::vector<std::string> to
 		// Another opening brace
 		// Invalid program
 		isErrorDetected = true;
-		std::cout << "Extra opening brace here detected. " << std::endl;
+		std::cout << "Extra opening brace detected. " << std::endl;
 		return position;
 	}
 	else if (isCharABrace(tokens[position]) == 2) {
@@ -628,122 +629,179 @@ int SimpleParser::checkAssign(unsigned int position, std::vector<std::string> to
 		}
 	}
 	else {
+		// If its not a closing brace, then check for assignment statement.
 		std::vector<ExpressionTokenType> types;
-
-		// If an equal operator is found, = true
-		bool isEquals = false;
-		// If maths operator is found, = true
-		// If the next token is another operator,
-		// Invalid program.
-		bool isOperator = false;
-		// If variable/constant is found, = true
-		// If the next token is another variable/constant,
-		// Invalid program.
-		bool isVariable = false;
-
-		// Left side of assignment statement
+		// if checkLeftVar = false, means that leftVar has not parsed 
+		bool checkLeftVar = false;
+		// if checkRightVar = false, means that RightVar has not parsed 
+		bool checkRightVar = false;
+		// if checkOperator = false, means that operator has not parsed 
+		bool checkOperator = false;
+		// if checkEqualsOperatorr = false, means that EqualsOperator has not parsed 
+		bool checkEqualsOperator = false;
+		// Left side of assignment statement before =
 		std::string leftVar;
-		// Right side of assignment statement
+		// Right side of assignment statement after = 
 		std::vector<std::string> rightVariables;
-		// to check for subsequent variables, which is an invalid program
-		bool isSubsequent = false;
+
 
 		for (position;position < tokens.size();position++) {
 			// Prints the token
 			//std::cout << tokens[position] << " ";
 			switch (isCharAnOperator(tokens[position])) {
 			case 0:
-				// Current token is possibly a variable/constant or anything else thats not the operators
-				isOperator = false;
-
-				// Check if equals operator has parsed and it is not an operator
-				if (isEquals == false && isOperator == false) {
-					// First variable in statement
+				// Token is either variable, constant or unknown
+				if (checkEqualsOperator == false && checkLeftVar == false) {
+					// Token is left variable
 					if (isCharAnInteger(tokens[position])) {
 						// Assignment statement cannot start with integer
 						isErrorDetected = true;
 						return position;
-					} else { 
-						if (isSubsequent == true) {
-							isErrorDetected = true;
-							return position;
-						}
-						else {
-							isSubsequent = true;
-							leftVar = tokens[position];
-						}
+					}
+					else {
+						leftVar = tokens[position];
+						checkLeftVar = true;
 					}
 				}
-				else if (isEquals == true && isOperator == false && isVariable == false) {
-					// Subsequent variables after the equals operator and before an actual operator
+				else  if (checkEqualsOperator == true && checkLeftVar == true) {
+					// check right var
 					if (isCharAnInteger(tokens[position])) {
 						rightVariables.push_back(tokens[position]);
 						types.push_back(Constant);
-						isVariable = true;
-					} else {
+						checkRightVar = true;
+						checkOperator = false;
+					}
+					else {
 						rightVariables.push_back(tokens[position]);
 						types.push_back(Variable);
-						isVariable = true;
+						checkRightVar = true;
+						checkOperator = false;
 					}
-					
-				} else {
+				}
+				else {
 					isErrorDetected = true;
-					break;
+					return position;
 				}
 				break;
 			case 1:
-				// token is "=";
-				// First "=" in statement
-				if (isEquals == true) {
-					isErrorDetected = true;
-					break;
+				// Token is =
+				if (checkEqualsOperator == false && checkLeftVar == true) {
+					checkEqualsOperator = true;
 				}
 				else {
-					isEquals = true;
-					isSubsequent = false;
+					isErrorDetected = true;
+					return position;
 				}
 				break;
 			case 2:
-				// token is "+";
+				// Token is +
 			case 3:
-				// token is "*";
+				// Token is *
 			case 4:
-				// token is "-";
-				if (isOperator == true) {
+				// Token is -
+				if (checkLeftVar == false || checkEqualsOperator == false) {
+					// Assignment statement started with +/*/- or occurs before =, invalid program
 					isErrorDetected = true;
-					break;
+					return position;
 				}
-				isOperator = true;
-				isVariable = false;
-				isSubsequent = false;
-				rightVariables.push_back(tokens[position]);
-				types.push_back(Operator);
+				else if (checkLeftVar == true && checkEqualsOperator == true 
+					&& checkRightVar == true && checkOperator == false) {
+					checkOperator = true;
+					checkRightVar == false;
+					rightVariables.push_back(tokens[position]);
+					types.push_back(Operator);
+				}
+				else {
+					isErrorDetected = true;
+					return position;
+				}
 				break;
 			case 5:
-				// token is ";"
-				if (isEquals == true && isOperator == false) {
-					isSubsequent = false;
-					std::string back = currentContainer.back();
-					PKB::getInstance()->AssignStatement(leftVar, rightVariables, types);
-				} else {
+				// Token is ;
+				if (checkLeftVar == false || checkEqualsOperator == false) {
+					// Assignment statement started with ;, invalid program
 					isErrorDetected = true;
+					return position;
 				}
+				else if (checkLeftVar == true && checkEqualsOperator == true && checkRightVar == true && checkOperator == false) {
+					
+					if (stackAssignmentParenthesis.size() > 0) {
+						isErrorDetected = true;
+						return position;
+					}
+					
+					PKB::getInstance()->AssignStatement(leftVar, rightVariables, types);
 
-				/* Debug Print outs
-				for (unsigned int j = 0;j < rightVariables.size();j++) {
-					std::cout << rightVariables[j] << " ";
+					rightVariables.clear();
+					types.clear();
+					leftVar = "";
+					return position;
 				}
-				std::cout << std::endl;
-				*/
-
-				rightVariables.clear();
-				types.clear();
-				leftVar = "";
-				//std::cout << position;
-				//std::cout << std::endl;
-				return position;
-			default:
+				else {
+					isErrorDetected = true;
+					return position;
+				}
 				break;
+			case 6:
+				// Token is  (
+				if (checkLeftVar == false || checkEqualsOperator == false) {
+					// Token occurs before =, invalid program
+					isErrorDetected = true;
+					return position;
+				}
+				else {
+					// check var before ( and operator after (
+					// chec position -1 and position +1
+					if (isCharAnOperator(tokens[position - 1]) == 0 || (isCharAnOperator(tokens[position + 1]) == (2||3||4||5))) {
+						isErrorDetected = true;
+						return position;
+					}
+					else {
+						stackAssignmentParenthesis.push_back("(");
+						rightVariables.push_back(tokens[position]);
+						types.push_back(Parenthesis);
+					}
+				}
+				break;
+			case 7:
+				// Token is )
+				if (checkLeftVar == false || checkEqualsOperator == false) {
+					// Token occurs before =, invalid program
+					isErrorDetected = true;
+					return position;
+				}
+				else {
+					if (isCharAnOperator(tokens[position + 1]) == 0 || (isCharAnOperator(tokens[position - 1]) == (2 || 3 || 4 || 5))) {
+						isErrorDetected = true;
+						return position;
+					}
+					else {
+						if (stackAssignmentParenthesis.size() < 1) {
+							isErrorDetected = true;
+							return position;
+						}
+
+						try {
+							std::string back = stackAssignmentParenthesis.back();
+							if (back.compare("(") == 0) {
+								stackAssignmentParenthesis.pop_back();
+								rightVariables.push_back(tokens[position]);
+								types.push_back(Parenthesis);
+							}
+						}
+						catch (std::exception& e) {
+							std::cout << "Error parsing the assignment parenthesis! " << std::endl;
+							isErrorDetected = true;
+							return position;
+						}
+					}
+				}
+
+
+				break;
+			default:
+				isErrorDetected = true;
+				return position;
 			}
 		}
 	}
@@ -807,6 +865,12 @@ int SimpleParser::isCharAnOperator(std::string cChar) {
 	}
 	else if (cChar.compare(";") == 0) {
 		return 5;
+	}
+	else if (cChar.compare("(") == 0) {
+		return 6;
+	}
+	else if (cChar.compare(")") == 0) {
+		return 7;
 	}
 	else {
 		return 0;
