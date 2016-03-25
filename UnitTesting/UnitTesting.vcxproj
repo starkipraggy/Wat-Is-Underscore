@@ -173,6 +173,7 @@
     <ClCompile Include="StubPKB.cpp" />
     <ClCompile Include="TestAST.cpp" />
     <ClCompile Include="TestEvaluator.cpp" />
+    <ClCompile Include="TestParserPKB.cpp" />
     <ClCompile Include="TestPreprocessor.cpp" />
     <ClCompile Include="TestPKB.cpp" />
     <ClCompile Include="TestTables.cpp" />
