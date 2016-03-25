@@ -67,10 +67,12 @@ bool PKB::addRelationship(VariableTableVariable* variable, ProcedureTableProcedu
 	case Modifies:
 		procedure->addModifies(variableIndex);
 		variable->addProcedureModifies(procedureIndex);
+		cout << "DEBUG: Modifies(" << procedure->getName() << ", " << variable->getName() << ")" << endl;
 		break;
 	case Uses:
 		procedure->addUses(variableIndex);
 		variable->addProcedureUses(procedureIndex);
+		cout << "DEBUG: Uses(" << procedure->getName() << ", " << variable->getName() << ")" << endl;
 		break;
 	default:
 		return false;
@@ -87,10 +89,12 @@ bool PKB::addRelationship(VariableTableVariable* variable, StatementTableStateme
 	case Modifies:
 		statement->addModifies(variableIndex);
 		variable->addStatementModifies(statementIndex);
+		cout << "DEBUG: Modifies(" << statementIndex << ", " << variable->getName() << ")" << endl;
 		break;
 	case Uses:
 		statement->addUses(variableIndex);
 		variable->addStatementUses(statementIndex);
+		cout << "DEBUG: Uses(" << statementIndex << ", " << variable->getName() << ")" << endl;
 	default:
 		return false;
 	}
@@ -214,6 +218,65 @@ void PKB::CallStatement(std::string procedure) {
 	ProcedureTableProcedure* procedureBeingCalled = procedureTable->getProcedure(procedure);
 	procedureBeingCalled->addStatementsCalls(currentStatement->getStatementNumber());
 	procedureBeingCalled->addProcedureCalls(currentProcedure);
+
+	// Retrieve information about this statement's ancestor(s) in order to add relationships later
+	int numberOfAncestors = currentStatement->getParentStarSize();
+	vector<StatementTableStatement*> tempAncestors;
+	for (int i = 0; i < numberOfAncestors; i++) {
+		tempAncestors.push_back(statementTable->getStatementUsingStatementNumber(currentStatement->getParentStar(i)));
+	}
+
+	// Retrieve information about the procedures that call this current procedure
+	std::set<int>* tempIndirectProcedureCallsSet = currentProcedure->getIndirectProcedureCalls();
+	vector<ProcedureTableProcedure*> tempIndirectProcedureCalls;
+	std::set<int>::iterator end = tempIndirectProcedureCallsSet->end();
+	for (std::set<int>::iterator iter = tempIndirectProcedureCallsSet->begin(); iter != end; iter++) {
+		tempIndirectProcedureCalls.push_back(procedureTable->getProcedure(*iter));
+	}
+	int tempIndirectProcedureCallsSize = tempIndirectProcedureCalls.size();
+
+	// Retrieve information about the statements that call this current procedure
+	int tempStatementCallsSize = currentProcedure->getStatementCallsSize();
+	vector<StatementTableStatement*> tempStatementCalls;
+	for (int i = 0; i < tempStatementCallsSize; i++) {
+		tempStatementCalls.push_back(statementTable->getStatementUsingStatementNumber(currentProcedure->getStatementCall(i)));
+	}
+
+	// Add the relationships for the variables that are modified and used in the procedure being called into this
+	// statement, its ancestor(s), its procedure and whatever calls its procedures
+	VariableTableVariable* tempVariable;
+	int tempSize = procedureBeingCalled->getModifiesSize();
+	for (int i = 0; i < tempSize; i++) { // Add Modifies relationships
+		tempVariable = variableTable->getVariableUsingVariableIndexNumber(procedureBeingCalled->getModifies(i));
+
+		addRelationship(tempVariable, currentStatement, Modifies);
+		for (int j = 0; j < numberOfAncestors; j++) {
+			addRelationship(tempVariable, tempAncestors[j], Modifies);
+		}
+		addRelationship(tempVariable, currentProcedure, Modifies);
+		for (int j = 0; j < tempIndirectProcedureCallsSize; j++) {
+			addRelationship(tempVariable, tempIndirectProcedureCalls[j], Modifies);
+		}
+		for (int j = 0; j < tempStatementCallsSize; j++) {
+			addRelationship(tempVariable, tempStatementCalls[j], Modifies);
+		}
+	}
+	tempSize = procedureBeingCalled->getUsesSize();
+	for (int i = 0; i < tempSize; i++) { // Add Uses relationships
+		tempVariable = variableTable->getVariableUsingVariableIndexNumber(procedureBeingCalled->getUses(i));
+
+		addRelationship(tempVariable, currentStatement, Uses);
+		for (int j = 0; j < numberOfAncestors; j++) {
+			addRelationship(tempVariable, tempAncestors[j], Uses);
+		}
+		addRelationship(tempVariable, currentProcedure, Uses);
+		for (int j = 0; j < tempIndirectProcedureCallsSize; j++) {
+			addRelationship(tempVariable, tempIndirectProcedureCalls[j], Uses);
+		}
+		for (int j = 0; j < tempStatementCallsSize; j++) {
+			addRelationship(tempVariable, tempStatementCalls[j], Uses);
+		}
+	}
 
     //AST
 	currentProcedureAST->addCallTNode(procedure, currentStatement->getStatementNumber());
