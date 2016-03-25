@@ -11,7 +11,7 @@
 PKB* PKB::instance = NULL;
 
 // To enable the printing of debug lines
-const bool IS_DEBUGGING = false;
+const bool IS_DEBUGGING = true;
 
 PKB::PKB() {
 	numberOfStatements = 0;
@@ -163,6 +163,7 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 		}
 	}
 	int rightVariablesSize = rightVariables.size();
+
 	// Create a new statement for this assign statement, adding the statement number into current procedure
 	currentStatement = newStatement();
 	// Set the type of the statement to be an assignment
@@ -216,6 +217,17 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 			for (int y = 0; y < rightVariablesSize; y++) {
 				addRelationship(rightVariables[y], statementForAddingRelationship, Uses);
 			}
+		}
+	}
+
+	// Add the Modifies and Uses relationships into statements that call this current procedure
+	int tempStatementCallSize = currentProcedure->getStatementCallsSize();
+	StatementTableStatement* tempStatement;
+	for (int i = 0; i < tempStatementCallSize; i++) {
+		tempStatement = statementTable->getStatementUsingStatementNumber(currentProcedure->getStatementCall(i));
+		addRelationship(leftVariable, tempStatement, Modifies);
+		for (int j = 0; j < rightVariablesSize; j++) {
+			addRelationship(rightVariables[j], tempStatement, Uses);
 		}
 	}
     

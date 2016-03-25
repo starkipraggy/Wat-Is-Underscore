@@ -41,6 +41,8 @@ int ProcedureTableProcedure::getProcedureCallsSize() {
 	return procedureCalls->size();
 }
 
+#include <iostream>
+
 std::set<int>* ProcedureTableProcedure::getIndirectProcedureCalls() {
 	if (isIndirectProcedureCallsModified) {
 		std::set<int>* secondarySet;
@@ -94,8 +96,8 @@ bool ProcedureTableProcedure::addUses(int variableIndexNumber) {
 }
 
 bool ProcedureTableProcedure::addProcedureCalls(ProcedureTableProcedure* procedure) {
-	return DataStructureObject::addIntoVector(procedure, procedureCalls);
 	isIndirectProcedureCallsModified = true;
+	return DataStructureObject::addIntoVector(procedure, procedureCalls);
 }
 
 bool ProcedureTableProcedure::addStatementsCalls(int statementIndexNumber) {
