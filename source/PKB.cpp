@@ -10,6 +10,9 @@
 
 PKB* PKB::instance = NULL;
 
+// To enable the printing of debug lines
+const bool IS_DEBUGGING = false;
+
 PKB::PKB() {
 	numberOfStatements = 0;
 	procedureTable = new ProcedureTable();
@@ -67,12 +70,16 @@ bool PKB::addRelationship(VariableTableVariable* variable, ProcedureTableProcedu
 	case Modifies:
 		procedure->addModifies(variableIndex);
 		variable->addProcedureModifies(procedureIndex);
-		cout << "DEBUG: Modifies(" << procedure->getName() << ", " << variable->getName() << ")" << endl;
+		if (IS_DEBUGGING) {
+			cout << "DEBUG: Modifies(" << procedure->getName() << ", " << variable->getName() << ")" << endl;
+		}
 		break;
 	case Uses:
 		procedure->addUses(variableIndex);
 		variable->addProcedureUses(procedureIndex);
-		cout << "DEBUG: Uses(" << procedure->getName() << ", " << variable->getName() << ")" << endl;
+		if (IS_DEBUGGING) {
+			cout << "DEBUG: Uses(" << procedure->getName() << ", " << variable->getName() << ")" << endl;
+		}
 		break;
 	default:
 		return false;
@@ -89,12 +96,16 @@ bool PKB::addRelationship(VariableTableVariable* variable, StatementTableStateme
 	case Modifies:
 		statement->addModifies(variableIndex);
 		variable->addStatementModifies(statementIndex);
-		cout << "DEBUG: Modifies(" << statementIndex << ", " << variable->getName() << ")" << endl;
+		if (IS_DEBUGGING) {
+			cout << "DEBUG: Modifies(" << statementIndex << ", " << variable->getName() << ")" << endl;
+		}
 		break;
 	case Uses:
 		statement->addUses(variableIndex);
 		variable->addStatementUses(statementIndex);
-		cout << "DEBUG: Uses(" << statementIndex << ", " << variable->getName() << ")" << endl;
+		if (IS_DEBUGGING) {
+			cout << "DEBUG: Uses(" << statementIndex << ", " << variable->getName() << ")" << endl;
+		}
 	default:
 		return false;
 	}
@@ -118,6 +129,12 @@ void PKB::ProcedureStart(std::string nameOfProcedure) {
 	currentProcedure = procedureTable->getProcedure(nameOfProcedure);
     currentProcedureAST = new AST(nameOfProcedure);
     procedureAST[nameOfProcedure] = currentProcedureAST;
+
+	// Clear current stack trace
+	if (statementStackTrace->top() != 0) {
+		statementStackTrace->pop();
+		statementStackTrace->push(0);
+	}
 }
 
 void PKB::ProcedureEnd() {
