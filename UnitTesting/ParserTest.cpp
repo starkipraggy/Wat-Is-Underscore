@@ -176,7 +176,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, true);
+        Assert::AreEqual(true, invalid);
     }
 
     // Invalid Program with missing closing brace
@@ -193,7 +193,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, true);
+        Assert::AreEqual(true, invalid);
     }
 
     // Invalid Program with non-digit/letter for procedure name
@@ -210,7 +210,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, true);
+        Assert::AreEqual(true, invalid);
     }
 
     // Invalid Program with empty StmtLst
@@ -227,7 +227,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, true);
+        Assert::AreEqual(true, invalid);
     }
 
     // Invalid Program with only While loop
@@ -244,7 +244,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, true);
+        Assert::AreEqual(true, invalid);
     }
 
     // Invalid Program with only If block
@@ -261,7 +261,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, true);
+        Assert::AreEqual(true, invalid);
     }
 
     // Invalid Program with only Else block
@@ -278,7 +278,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, true);
+        Assert::AreEqual(true, invalid);
     }
 
     // Invalid Program with While missing ending braces
@@ -295,7 +295,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, true);
+        Assert::AreEqual(true, invalid);
     }
 
     // Invalid Program with Double Equality in Assignment
@@ -312,7 +312,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, true);
+        Assert::AreEqual(true, invalid);
     }
 
 	// Invalid Program with Double Equality in Assignment
@@ -329,8 +329,8 @@ public:
 
 		//Assert
 		// If invalid is true, then simple program is wrong.
-		Assert::AreEqual(invalid, true);
-	}
+        Assert::AreEqual(true, invalid);
+    }
 
     // Invalid Program with Double + Operators in Assignment
     TEST_METHOD(SimpleParserTest_InvalidProgram_11) {
@@ -346,7 +346,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, true);
+        Assert::AreEqual(true, invalid);
     }
 
     // Invalid Program with Double - Operators in Assignment
@@ -363,7 +363,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, true);
+        Assert::AreEqual(true, invalid);
     }
 
     //Invalid Program with Double * Operators in Assignment
@@ -380,7 +380,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, true);
+        Assert::AreEqual(true, invalid);
     }
 
     //Invalid Program with Double ;
@@ -397,7 +397,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, true);
+        Assert::AreEqual(true, invalid);
     }
 
     //Invalid Program with Spacing in Variable Name
@@ -414,7 +414,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, true);
+        Assert::AreEqual(true, invalid);
     }
 
     //Invalid Program with Spacing in Procedure Name
@@ -431,7 +431,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, true);
+        Assert::AreEqual(true, invalid);
     }
 
     //Invalid Program with Invalid Procedure Name starting with Digit
@@ -448,7 +448,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, true);
+        Assert::AreEqual(true, invalid);
     }
 
     //Invalid Program with If statement without Else
@@ -465,7 +465,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, true);
+        Assert::AreEqual(true, invalid);
     }
 
     //Invalid Program with If statement without If
@@ -482,7 +482,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, true);
+        Assert::AreEqual(true, invalid);
     }
 
     // Invalid Program with Empty While
@@ -499,7 +499,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, true);
+        Assert::AreEqual(true, invalid);
     }
 
     // Invalid Program with Empty If
@@ -516,7 +516,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, true);
+        Assert::AreEqual(true, invalid);
     }
 
     // Invalid Programe with Empty Else
@@ -533,7 +533,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, true);
+        Assert::AreEqual(true, invalid);
     }
 
     // Invalid Program with Duplicate Procedure Name
@@ -550,7 +550,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, true);
+        Assert::AreEqual(true, invalid);
     }
 
     // Invalid Program with Invalid Call Statement
@@ -567,7 +567,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, true);
+        Assert::AreEqual(true, invalid);
     }
 
     // Invalid Program with Cyclic Calls
@@ -584,7 +584,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, true);
+        Assert::AreEqual(true, invalid);
     }
 
     // Invalid Program with Cyclic Calls
@@ -601,7 +601,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, true);
+        Assert::AreEqual(true, invalid);
     }
 
     // Invalid Program with Self Call
@@ -618,7 +618,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, true);
+        Assert::AreEqual(true, invalid);
     }
 
     // Invalid Program with two Procedures, Second Procedure is empty
@@ -635,7 +635,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, true);
+        Assert::AreEqual(true, invalid);
     }
 
 	// Invalid Program with ( in assignment statement
@@ -652,8 +652,8 @@ public:
 
 		//Assert
 		// If invalid is true, then simple program is wrong.
-		Assert::AreEqual(invalid, true);
-	}
+        Assert::AreEqual(true, invalid);
+    }
 
 	// Invalid Program with a( in assignment statement
 	TEST_METHOD(SimpleParserTest_InvalidProgram_30) {
@@ -669,8 +669,8 @@ public:
 
 		//Assert
 		// If invalid is true, then simple program is wrong.
-		Assert::AreEqual(invalid, true);
-	}
+        Assert::AreEqual(true, invalid);
+    }
 
 	// Invalid Program with (c) in assignment statement
 	TEST_METHOD(SimpleParserTest_InvalidProgram_31) {
@@ -686,8 +686,8 @@ public:
 
 		//Assert
 		// If invalid is true, then simple program is wrong.
-		Assert::AreEqual(invalid, true);
-	}
+        Assert::AreEqual(true, invalid);
+    }
 
 	// Invalid Program with (c) in assignment statement
 	TEST_METHOD(SimpleParserTest_InvalidProgram_32) {
@@ -703,8 +703,8 @@ public:
 
 		//Assert
 		// If invalid is true, then simple program is wrong.
-		Assert::AreEqual(invalid, true);
-	}
+        Assert::AreEqual(true, invalid);
+    }
 
 	// Invalid Program without ) in assignment statement
 	TEST_METHOD(SimpleParserTest_InvalidProgram_33) {
@@ -720,8 +720,8 @@ public:
 
 		//Assert
 		// If invalid is true, then simple program is wrong.
-		Assert::AreEqual(invalid, true);
-	}
+        Assert::AreEqual(true, invalid);
+    }
 
 	// Invalid Program without ( in assignment statement
 	TEST_METHOD(SimpleParserTest_InvalidProgram_34) {
@@ -737,8 +737,8 @@ public:
 
 		//Assert
 		// If invalid is true, then simple program is wrong.
-		Assert::AreEqual(invalid, true);
-	}
+        Assert::AreEqual(true, invalid);
+    }
 
 	// Invalid Program without ( in assignment statement
 	TEST_METHOD(SimpleParserTest_InvalidProgram_35) {
@@ -754,8 +754,8 @@ public:
 
 		//Assert
 		// If invalid is true, then simple program is wrong.
-		Assert::AreEqual(invalid, true);
-	}
+        Assert::AreEqual(true, invalid);
+    }
 
     // Valid Program with one Valid Nested While with Assignment in If (both blocks)
     TEST_METHOD(SimpleParserTest_ValidProgram_01) {
@@ -771,7 +771,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, false);
+        Assert::AreEqual(false, invalid);
     }
 
     // Valid Program with one Valid Nested If with Assignment in While 
@@ -788,7 +788,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, false);
+        Assert::AreEqual(false, invalid);
     }
 
     // Valid Program with one Valid Nested While with Assignment in While
@@ -805,7 +805,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, false);
+        Assert::AreEqual(false, invalid);
     }
 
     // Valid Program with one Valid Nested If with Assignment in If (both blocks)
@@ -822,7 +822,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, false);
+        Assert::AreEqual(false, invalid);
     }
 
     // Valid Program with Assignment (small P)
@@ -839,7 +839,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, false);
+        Assert::AreEqual(false, invalid);
     }
 
     // Valid Program with Assignment (capital P)
@@ -856,7 +856,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, false);
+        Assert::AreEqual(false, invalid);
     }
 
     // Valid Program with While (Small W)
@@ -873,7 +873,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, false);
+        Assert::AreEqual(false, invalid);
     }
 
     // Valid Program with While (Capital W)
@@ -890,7 +890,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, false);
+        Assert::AreEqual(false, invalid);
     }
 
     // Valid Program with If (small I/T/E)
@@ -907,7 +907,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, false);
+        Assert::AreEqual(false, invalid);
     }
 
     // Valid Program with If (capital I/T/E)
@@ -924,7 +924,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, false);
+        Assert::AreEqual(false, invalid);
     }
 
     // Valid Program with two Procedures
@@ -941,7 +941,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, false);
+        Assert::AreEqual(false, invalid);
     }
 
     // Valid Program with Comments
@@ -958,7 +958,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, false);
+        Assert::AreEqual(false, invalid);
     }
 
     // Valid Program with One Valid Call Statement
@@ -975,7 +975,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, false);
+        Assert::AreEqual(false, invalid);
     }
 
     // Valid Program with Two Valid Call Statements
@@ -992,7 +992,7 @@ public:
 
         //Assert
         // If invalid is true, then simple program is wrong.
-        Assert::AreEqual(invalid, false);
+        Assert::AreEqual(false, invalid);
     }
 
 	// Valid Program with () in assignment statement
@@ -1009,8 +1009,8 @@ public:
 
 		//Assert
 		// If invalid is true, then simple program is wrong.
-		Assert::AreEqual(invalid, false);
-	}
+        Assert::AreEqual(false, invalid);
+    }
 
 	// Valid Program with () in assignment statement
 	TEST_METHOD(SimpleParserTest_ValidProgram_16) {
@@ -1026,8 +1026,8 @@ public:
 
 		//Assert
 		// If invalid is true, then simple program is wrong.
-		Assert::AreEqual(invalid, false);
-	}
+        Assert::AreEqual(false, invalid);
+    }
 
 	// Valid Program with () in assignment statement
 	TEST_METHOD(SimpleParserTest_ValidProgram_17) {
@@ -1043,6 +1043,6 @@ public:
 
 		//Assert
 		// If invalid is true, then simple program is wrong.
-		Assert::AreEqual(invalid, false);
-	}
+        Assert::AreEqual(false, invalid);
+    }
 };
