@@ -15,6 +15,7 @@ namespace UnitTesting
         std::vector<std::string> tokens;
         std::vector<ExpressionTokenType> types;
 
+        // Basic VarTable Functionality Test
         TEST_METHOD(TestPKB_VarTable01) {
             ProcedureTable newProcedureTable;
             StatementTable newStatementTable;
@@ -53,7 +54,8 @@ namespace UnitTesting
             Assert::AreEqual(1, newVariableTable.getVariableUsingName(a)->getStatementModifiesSize());
             Assert::AreEqual(1, newVariableTable.getVariableUsingName(a)->getStatementModifies(0));
         }
-        
+
+        // Basic StmtTable Functionality Test
         TEST_METHOD(TestPKB_StmtTable01) {
             ProcedureTable newProcedureTable;
             StatementTable newStatementTable;
@@ -97,6 +99,198 @@ namespace UnitTesting
             Assert::AreEqual(0, newStatementTable.getStatementUsingStatementNumber(1)->getParentStarSize());
         }
 
+        // Follows/Parent Test for Stmt Tables
+        TEST_METHOD(TestPKB_StmtTable02) {
+            /*
+            Program for this test
+
+            procedure testProc1{
+                while a{                        //1
+                    call testProc2;}}           //2
+            procedure testProc2{
+                if b then {                     //3
+                    c = d + e * f;              //4
+                    a = 29;                     //5
+                    g = 9 - a; } else{          //6
+                        while a{                //7
+                            a = a - 1;}}}       //8                
+            */
+
+            // Creating Tables
+            ProcedureTable newProcedureTable;
+            StatementTable newStatementTable;
+            VariableTable newVariableTable;
+
+            // Creating Procedures
+            std::string testProcName = "testProc1";
+            std::string testProcName2 = "testProc2";
+            ProcedureTableProcedure::ProcedureTableProcedure(testProcName, 1);
+            ProcedureTableProcedure::ProcedureTableProcedure(testProcName2, 2);
+            newProcedureTable.getProcedure(testProcName);
+            newProcedureTable.getProcedure(testProcName2);
+            Assert::AreEqual(2, newProcedureTable.getNumberOfProcedures());
+
+            // Creating Statements
+            StatementTableStatement::StatementTableStatement(1);
+            StatementTableStatement::StatementTableStatement(2);
+            StatementTableStatement::StatementTableStatement(3);
+            StatementTableStatement::StatementTableStatement(4);
+            StatementTableStatement::StatementTableStatement(5);
+            StatementTableStatement::StatementTableStatement(6);
+            StatementTableStatement::StatementTableStatement(7);
+            StatementTableStatement::StatementTableStatement(8);
+            newStatementTable.addStatement(1);
+            newStatementTable.addStatement(2);
+            newStatementTable.addStatement(3);
+            newStatementTable.addStatement(4);
+            newStatementTable.addStatement(5);
+            newStatementTable.addStatement(6);
+            newStatementTable.addStatement(7);
+            newStatementTable.addStatement(8);
+            newProcedureTable.getProcedure(testProcName)->addStatement(1);
+            newProcedureTable.getProcedure(testProcName)->addStatement(2);
+            newProcedureTable.getProcedure(testProcName2)->addStatement(3);
+            newProcedureTable.getProcedure(testProcName2)->addStatement(4);
+            newProcedureTable.getProcedure(testProcName2)->addStatement(5);
+            newProcedureTable.getProcedure(testProcName2)->addStatement(6);
+            newProcedureTable.getProcedure(testProcName2)->addStatement(7);
+            newProcedureTable.getProcedure(testProcName2)->addStatement(8);
+            Assert::AreEqual(8, newStatementTable.getNumberOfStatements());
+            Assert::AreEqual(1, newStatementTable.getStatementUsingStatementNumber(1)->getStatementNumber());
+            Assert::AreEqual(2, newStatementTable.getStatementUsingStatementNumber(2)->getStatementNumber());
+            Assert::AreEqual(3, newStatementTable.getStatementUsingStatementNumber(3)->getStatementNumber());
+            Assert::AreEqual(4, newStatementTable.getStatementUsingStatementNumber(4)->getStatementNumber());
+            Assert::AreEqual(5, newStatementTable.getStatementUsingStatementNumber(5)->getStatementNumber());
+            Assert::AreEqual(6, newStatementTable.getStatementUsingStatementNumber(6)->getStatementNumber());
+            Assert::AreEqual(7, newStatementTable.getStatementUsingStatementNumber(7)->getStatementNumber());
+            Assert::AreEqual(8, newStatementTable.getStatementUsingStatementNumber(8)->getStatementNumber());
+            
+            // Setting Stmt Types and Checking
+            TNodeType AssignStmt = Assign;
+            TNodeType CallStmt = Call;
+            TNodeType IfStmt = If;
+            TNodeType WhileStmt = While;
+            newStatementTable.getStatementUsingStatementNumber(1)->setType(WhileStmt);
+            newStatementTable.getStatementUsingStatementNumber(2)->setType(CallStmt);
+            newStatementTable.getStatementUsingStatementNumber(3)->setType(IfStmt);
+            newStatementTable.getStatementUsingStatementNumber(4)->setType(AssignStmt);
+            newStatementTable.getStatementUsingStatementNumber(5)->setType(AssignStmt);
+            newStatementTable.getStatementUsingStatementNumber(6)->setType(AssignStmt);
+            newStatementTable.getStatementUsingStatementNumber(7)->setType(WhileStmt);
+            newStatementTable.getStatementUsingStatementNumber(8)->setType(AssignStmt);
+            Assert::IsTrue(WhileStmt == newStatementTable.getStatementUsingStatementNumber(1)->getType());
+            Assert::IsTrue(CallStmt == newStatementTable.getStatementUsingStatementNumber(2)->getType());
+            Assert::IsTrue(IfStmt == newStatementTable.getStatementUsingStatementNumber(3)->getType());
+            Assert::IsTrue(AssignStmt == newStatementTable.getStatementUsingStatementNumber(4)->getType());
+            Assert::IsTrue(AssignStmt == newStatementTable.getStatementUsingStatementNumber(5)->getType());
+            Assert::IsTrue(AssignStmt == newStatementTable.getStatementUsingStatementNumber(6)->getType());
+            Assert::IsTrue(WhileStmt == newStatementTable.getStatementUsingStatementNumber(7)->getType());
+            Assert::IsTrue(AssignStmt == newStatementTable.getStatementUsingStatementNumber(8)->getType());
+
+            // Setting other Stmt portions
+            NAME controlVariableForWhile = "i";
+            NAME controlVariableForIf = "j";
+            std::string stmtFourExpression = "d+e*f";
+            std::string stmtFiveExpression = "29";
+            std::string stmtSixExpression = "9-a";
+            std::string stmtEightExpression = "a-1";
+            newStatementTable.getStatementUsingStatementNumber(1)->setControlVariable(controlVariableForWhile);
+            newStatementTable.getStatementUsingStatementNumber(3)->setControlVariable(controlVariableForIf);
+            newStatementTable.getStatementUsingStatementNumber(4)->setRightHandSideExpression(stmtFourExpression);
+            newStatementTable.getStatementUsingStatementNumber(5)->setRightHandSideExpression(stmtFiveExpression);
+            newStatementTable.getStatementUsingStatementNumber(6)->setRightHandSideExpression(stmtSixExpression);
+            newStatementTable.getStatementUsingStatementNumber(8)->setRightHandSideExpression(stmtEightExpression);
+            Assert::IsTrue(controlVariableForWhile == newStatementTable.getStatementUsingStatementNumber(1)->getControlVariable());
+            Assert::IsTrue(controlVariableForIf == newStatementTable.getStatementUsingStatementNumber(3)->getControlVariable());
+            Assert::IsTrue(stmtFourExpression == newStatementTable.getStatementUsingStatementNumber(4)->getRightHandSideExpression());
+            Assert::IsTrue(stmtFiveExpression == newStatementTable.getStatementUsingStatementNumber(5)->getRightHandSideExpression());
+            Assert::IsTrue(stmtSixExpression == newStatementTable.getStatementUsingStatementNumber(6)->getRightHandSideExpression());
+            Assert::IsTrue(stmtEightExpression == newStatementTable.getStatementUsingStatementNumber(8)->getRightHandSideExpression());
+
+            // Checking Parent/Child relations
+            newStatementTable.getStatementUsingStatementNumber(1)->addChild(newStatementTable.getStatementUsingStatementNumber(2));
+            newStatementTable.getStatementUsingStatementNumber(2)->setParent(newStatementTable.getStatementUsingStatementNumber(1));
+            newStatementTable.getStatementUsingStatementNumber(3)->addChild(newStatementTable.getStatementUsingStatementNumber(4));
+            newStatementTable.getStatementUsingStatementNumber(3)->addChild(newStatementTable.getStatementUsingStatementNumber(5));
+            newStatementTable.getStatementUsingStatementNumber(3)->addChild(newStatementTable.getStatementUsingStatementNumber(6));
+            newStatementTable.getStatementUsingStatementNumber(3)->addChild(newStatementTable.getStatementUsingStatementNumber(7));
+            newStatementTable.getStatementUsingStatementNumber(7)->addChild(newStatementTable.getStatementUsingStatementNumber(8));
+            newStatementTable.getStatementUsingStatementNumber(4)->setParent(newStatementTable.getStatementUsingStatementNumber(3));
+            newStatementTable.getStatementUsingStatementNumber(5)->setParent(newStatementTable.getStatementUsingStatementNumber(3));
+            newStatementTable.getStatementUsingStatementNumber(6)->setParent(newStatementTable.getStatementUsingStatementNumber(3));
+            newStatementTable.getStatementUsingStatementNumber(7)->setParent(newStatementTable.getStatementUsingStatementNumber(3));
+            newStatementTable.getStatementUsingStatementNumber(8)->setParent(newStatementTable.getStatementUsingStatementNumber(7));
+            Assert::IsTrue(newStatementTable.getStatementUsingStatementNumber(2)->hasParent());
+            Assert::IsTrue(newStatementTable.getStatementUsingStatementNumber(4)->hasParent());
+            Assert::IsTrue(newStatementTable.getStatementUsingStatementNumber(5)->hasParent());
+            Assert::IsTrue(newStatementTable.getStatementUsingStatementNumber(6)->hasParent());
+            Assert::IsTrue(newStatementTable.getStatementUsingStatementNumber(7)->hasParent());
+            Assert::IsTrue(newStatementTable.getStatementUsingStatementNumber(8)->hasParent());
+            Assert::AreEqual(1, newStatementTable.getStatementUsingStatementNumber(2)->getParent());
+            Assert::AreEqual(3, newStatementTable.getStatementUsingStatementNumber(4)->getParent());
+            Assert::AreEqual(3, newStatementTable.getStatementUsingStatementNumber(5)->getParent());
+            Assert::AreEqual(3, newStatementTable.getStatementUsingStatementNumber(6)->getParent());
+            Assert::AreEqual(3, newStatementTable.getStatementUsingStatementNumber(7)->getParent());
+            Assert::AreEqual(7, newStatementTable.getStatementUsingStatementNumber(8)->getParent());
+            Assert::AreEqual(1, newStatementTable.getStatementUsingStatementNumber(1)->getChildrenSize());
+            Assert::AreEqual(2, newStatementTable.getStatementUsingStatementNumber(1)->getChildren(0));
+            Assert::AreEqual(1, newStatementTable.getStatementUsingStatementNumber(1)->getChildrenStarSize());
+            Assert::AreEqual(2, newStatementTable.getStatementUsingStatementNumber(1)->getChildrenStar(0));
+            Assert::AreEqual(1, newStatementTable.getStatementUsingStatementNumber(2)->getParentStarSize());
+            Assert::AreEqual(1, newStatementTable.getStatementUsingStatementNumber(2)->getParentStar(0));
+            Assert::AreEqual(4, newStatementTable.getStatementUsingStatementNumber(3)->getChildrenSize());
+            Assert::AreEqual(4, newStatementTable.getStatementUsingStatementNumber(3)->getChildren(0));
+            Assert::AreEqual(5, newStatementTable.getStatementUsingStatementNumber(3)->getChildren(1));
+            Assert::AreEqual(6, newStatementTable.getStatementUsingStatementNumber(3)->getChildren(2));
+            Assert::AreEqual(7, newStatementTable.getStatementUsingStatementNumber(3)->getChildren(3));
+            Assert::AreEqual(5, newStatementTable.getStatementUsingStatementNumber(3)->getChildrenStarSize());
+            Assert::AreEqual(4, newStatementTable.getStatementUsingStatementNumber(3)->getChildrenStar(0));
+            Assert::AreEqual(5, newStatementTable.getStatementUsingStatementNumber(3)->getChildrenStar(1));
+            Assert::AreEqual(6, newStatementTable.getStatementUsingStatementNumber(3)->getChildrenStar(2));
+            Assert::AreEqual(7, newStatementTable.getStatementUsingStatementNumber(3)->getChildrenStar(3));
+            Assert::AreEqual(8, newStatementTable.getStatementUsingStatementNumber(3)->getChildrenStar(4));
+            Assert::AreEqual(1, newStatementTable.getStatementUsingStatementNumber(4)->getParentStarSize());
+            Assert::AreEqual(1, newStatementTable.getStatementUsingStatementNumber(5)->getParentStarSize());
+            Assert::AreEqual(1, newStatementTable.getStatementUsingStatementNumber(6)->getParentStarSize());
+            Assert::AreEqual(1, newStatementTable.getStatementUsingStatementNumber(7)->getParentStarSize());
+            Assert::AreEqual(2, newStatementTable.getStatementUsingStatementNumber(8)->getParentStarSize());
+            Assert::AreEqual(3, newStatementTable.getStatementUsingStatementNumber(4)->getParentStar(0));
+            Assert::AreEqual(3, newStatementTable.getStatementUsingStatementNumber(5)->getParentStar(0));
+            Assert::AreEqual(3, newStatementTable.getStatementUsingStatementNumber(6)->getParentStar(0));
+            Assert::AreEqual(3, newStatementTable.getStatementUsingStatementNumber(7)->getParentStar(0));
+            Assert::AreEqual(7, newStatementTable.getStatementUsingStatementNumber(8)->getParentStar(0));
+            Assert::AreEqual(3, newStatementTable.getStatementUsingStatementNumber(8)->getParentStar(1));
+            Assert::AreEqual(1, newStatementTable.getStatementUsingStatementNumber(7)->getChildrenSize());
+            Assert::AreEqual(8, newStatementTable.getStatementUsingStatementNumber(7)->getChildren(0));
+            Assert::AreEqual(1, newStatementTable.getStatementUsingStatementNumber(7)->getChildrenStarSize());
+            Assert::AreEqual(8, newStatementTable.getStatementUsingStatementNumber(7)->getChildrenStar(0));
+
+            // Checking Follows/FollowedBy relations
+            newStatementTable.getStatementUsingStatementNumber(4)->setFollowedBy(newStatementTable.getStatementUsingStatementNumber(5));
+            newStatementTable.getStatementUsingStatementNumber(5)->setFollowedBy(newStatementTable.getStatementUsingStatementNumber(6));
+            newStatementTable.getStatementUsingStatementNumber(5)->setFollows(newStatementTable.getStatementUsingStatementNumber(4));
+            newStatementTable.getStatementUsingStatementNumber(6)->setFollows(newStatementTable.getStatementUsingStatementNumber(5));
+            Assert::IsTrue(newStatementTable.getStatementUsingStatementNumber(5)->hasFollows());
+            Assert::IsTrue(newStatementTable.getStatementUsingStatementNumber(6)->hasFollows());
+            Assert::IsTrue(newStatementTable.getStatementUsingStatementNumber(4)->hasFollowedBy());
+            Assert::IsTrue(newStatementTable.getStatementUsingStatementNumber(5)->hasFollowedBy());
+            Assert::AreEqual(4, newStatementTable.getStatementUsingStatementNumber(5)->getFollows());
+            Assert::AreEqual(5, newStatementTable.getStatementUsingStatementNumber(6)->getFollows());
+            Assert::AreEqual(5, newStatementTable.getStatementUsingStatementNumber(4)->getFollowedBy());
+            Assert::AreEqual(6, newStatementTable.getStatementUsingStatementNumber(5)->getFollowedBy());
+            Assert::AreEqual(1, newStatementTable.getStatementUsingStatementNumber(5)->getFollowsStarSize());
+            Assert::AreEqual(2, newStatementTable.getStatementUsingStatementNumber(6)->getFollowsStarSize());
+            Assert::AreEqual(4, newStatementTable.getStatementUsingStatementNumber(5)->getFollowsStar(0));
+            Assert::AreEqual(5, newStatementTable.getStatementUsingStatementNumber(6)->getFollowsStar(0));
+            Assert::AreEqual(4, newStatementTable.getStatementUsingStatementNumber(6)->getFollowsStar(1));
+            Assert::AreEqual(2, newStatementTable.getStatementUsingStatementNumber(4)->getFollowedByStarSize());
+            Assert::AreEqual(1, newStatementTable.getStatementUsingStatementNumber(5)->getFollowedByStarSize());
+            Assert::AreEqual(5, newStatementTable.getStatementUsingStatementNumber(4)->getFollowedByStar(0));
+            Assert::AreEqual(6, newStatementTable.getStatementUsingStatementNumber(4)->getFollowedByStar(1));
+            Assert::AreEqual(6, newStatementTable.getStatementUsingStatementNumber(5)->getFollowedByStar(0));
+        }
+
+        // Basic ProcTable Functionality Test
         TEST_METHOD(TestPKB_ProcTable01) {
             ProcedureTable newProcedureTable;
             StatementTable newStatementTable;
@@ -136,18 +330,19 @@ namespace UnitTesting
             Assert::AreEqual(1, newProcedureTable.getProcedure(testProcName)->getModifies(0));
         }
 
+        // Modifies/Uses Test for Var/Stmt/Proc Tables
         TEST_METHOD(TestPKB_Tables01) {
             /*
             Program for this test
 
             procedure testProc1{
-            while a{                        //1
-            call testProc2;}}           //2
+                while a{                        //1
+                    call testProc2;}}           //2
             procedure testProc2{
-            if b then {                     //3
-            c = d + e * f;              //4
-            a = 29; } else{             //5
-            g = 9 - a;}}            //6
+                if b then {                     //3
+                    c = d + e * f;              //4
+                    a = 29; } else{             //5
+                    g = 9 - a;}}                //6
             */
 
             // Creating Tables
@@ -263,20 +458,34 @@ namespace UnitTesting
             Assert::AreEqual(2, newVariableTable.getVariableUsingName(f)->getProceduresUses(1));
 
             // Checks that the three different ways to retrieve Variables are equivalent       
-            Assert::IsTrue(newVariableTable.getVariableUsingName(a)->getProceduresUsesSize() == newVariableTable.getVariableUsingVariableIndexNumber(0)->getProceduresUsesSize());
-            Assert::IsTrue(newVariableTable.getVariableUsingVariableIndexNumber(0)->getProceduresUsesSize() == newVariableTable.getVariableUsingVectorIndexNumber(0)->getProceduresUsesSize());
-            Assert::IsTrue(newVariableTable.getVariableUsingName(b)->getProceduresUsesSize() == newVariableTable.getVariableUsingVariableIndexNumber(1)->getProceduresUsesSize());
-            Assert::IsTrue(newVariableTable.getVariableUsingVariableIndexNumber(1)->getProceduresUsesSize() == newVariableTable.getVariableUsingVectorIndexNumber(1)->getProceduresUsesSize());
-            Assert::IsTrue(newVariableTable.getVariableUsingName(c)->getProceduresUsesSize() == newVariableTable.getVariableUsingVariableIndexNumber(2)->getProceduresUsesSize());
-            Assert::IsTrue(newVariableTable.getVariableUsingVariableIndexNumber(2)->getProceduresUsesSize() == newVariableTable.getVariableUsingVectorIndexNumber(2)->getProceduresUsesSize());
-            Assert::IsTrue(newVariableTable.getVariableUsingName(d)->getProceduresUsesSize() == newVariableTable.getVariableUsingVariableIndexNumber(3)->getProceduresUsesSize());
-            Assert::IsTrue(newVariableTable.getVariableUsingVariableIndexNumber(3)->getProceduresUsesSize() == newVariableTable.getVariableUsingVectorIndexNumber(3)->getProceduresUsesSize());
-            Assert::IsTrue(newVariableTable.getVariableUsingName(e)->getProceduresUsesSize() == newVariableTable.getVariableUsingVariableIndexNumber(4)->getProceduresUsesSize());
-            Assert::IsTrue(newVariableTable.getVariableUsingVariableIndexNumber(4)->getProceduresUsesSize() == newVariableTable.getVariableUsingVectorIndexNumber(4)->getProceduresUsesSize());
-            Assert::IsTrue(newVariableTable.getVariableUsingName(f)->getProceduresUsesSize() == newVariableTable.getVariableUsingVariableIndexNumber(5)->getProceduresUsesSize());
-            Assert::IsTrue(newVariableTable.getVariableUsingVariableIndexNumber(5)->getProceduresUsesSize() == newVariableTable.getVariableUsingVectorIndexNumber(5)->getProceduresUsesSize());
-            Assert::IsTrue(newVariableTable.getVariableUsingName(g)->getProceduresUsesSize() == newVariableTable.getVariableUsingVariableIndexNumber(6)->getProceduresUsesSize());
-            Assert::IsTrue(newVariableTable.getVariableUsingVariableIndexNumber(6)->getProceduresUsesSize() == newVariableTable.getVariableUsingVectorIndexNumber(6)->getProceduresUsesSize());
+            Assert::IsTrue(newVariableTable.getVariableUsingName(a)->getProceduresUsesSize() == 
+                            newVariableTable.getVariableUsingVariableIndexNumber(0)->getProceduresUsesSize());
+            Assert::IsTrue(newVariableTable.getVariableUsingVariableIndexNumber(0)->getProceduresUsesSize() == 
+                            newVariableTable.getVariableUsingVectorIndexNumber(0)->getProceduresUsesSize());
+            Assert::IsTrue(newVariableTable.getVariableUsingName(b)->getProceduresUsesSize() == 
+                            newVariableTable.getVariableUsingVariableIndexNumber(1)->getProceduresUsesSize());
+            Assert::IsTrue(newVariableTable.getVariableUsingVariableIndexNumber(1)->getProceduresUsesSize() == 
+                            newVariableTable.getVariableUsingVectorIndexNumber(1)->getProceduresUsesSize());
+            Assert::IsTrue(newVariableTable.getVariableUsingName(c)->getProceduresUsesSize() == 
+                            newVariableTable.getVariableUsingVariableIndexNumber(2)->getProceduresUsesSize());
+            Assert::IsTrue(newVariableTable.getVariableUsingVariableIndexNumber(2)->getProceduresUsesSize() == 
+                            newVariableTable.getVariableUsingVectorIndexNumber(2)->getProceduresUsesSize());
+            Assert::IsTrue(newVariableTable.getVariableUsingName(d)->getProceduresUsesSize() == 
+                            newVariableTable.getVariableUsingVariableIndexNumber(3)->getProceduresUsesSize());
+            Assert::IsTrue(newVariableTable.getVariableUsingVariableIndexNumber(3)->getProceduresUsesSize() == 
+                            newVariableTable.getVariableUsingVectorIndexNumber(3)->getProceduresUsesSize());
+            Assert::IsTrue(newVariableTable.getVariableUsingName(e)->getProceduresUsesSize() == 
+                            newVariableTable.getVariableUsingVariableIndexNumber(4)->getProceduresUsesSize());
+            Assert::IsTrue(newVariableTable.getVariableUsingVariableIndexNumber(4)->getProceduresUsesSize() == 
+                            newVariableTable.getVariableUsingVectorIndexNumber(4)->getProceduresUsesSize());
+            Assert::IsTrue(newVariableTable.getVariableUsingName(f)->getProceduresUsesSize() == 
+                            newVariableTable.getVariableUsingVariableIndexNumber(5)->getProceduresUsesSize());
+            Assert::IsTrue(newVariableTable.getVariableUsingVariableIndexNumber(5)->getProceduresUsesSize() == 
+                            newVariableTable.getVariableUsingVectorIndexNumber(5)->getProceduresUsesSize());
+            Assert::IsTrue(newVariableTable.getVariableUsingName(g)->getProceduresUsesSize() == 
+                            newVariableTable.getVariableUsingVariableIndexNumber(6)->getProceduresUsesSize());
+            Assert::IsTrue(newVariableTable.getVariableUsingVariableIndexNumber(6)->getProceduresUsesSize() == 
+                            newVariableTable.getVariableUsingVectorIndexNumber(6)->getProceduresUsesSize());
 
             // Adding Uses/Modifies Relationships for Statements
             Assert::IsTrue(newStatementTable.getStatementUsingStatementNumber(1)->addModifies(1));
@@ -359,12 +568,18 @@ namespace UnitTesting
             Assert::AreEqual(1, newStatementTable.getStatementUsingStatementNumber(6)->getUses(0));
 
             // Checks that the two different ways to retrieve Statements are equivalent
-            Assert::IsTrue(newStatementTable.getStatementUsingStatementNumber(1)->getUsesSize() == newStatementTable.getStatementUsingVectorIndexNumber(0)->getUsesSize());
-            Assert::IsTrue(newStatementTable.getStatementUsingStatementNumber(2)->getUsesSize() == newStatementTable.getStatementUsingVectorIndexNumber(1)->getUsesSize());
-            Assert::IsTrue(newStatementTable.getStatementUsingStatementNumber(3)->getUsesSize() == newStatementTable.getStatementUsingVectorIndexNumber(2)->getUsesSize());
-            Assert::IsTrue(newStatementTable.getStatementUsingStatementNumber(4)->getUsesSize() == newStatementTable.getStatementUsingVectorIndexNumber(3)->getUsesSize());
-            Assert::IsTrue(newStatementTable.getStatementUsingStatementNumber(5)->getUsesSize() == newStatementTable.getStatementUsingVectorIndexNumber(4)->getUsesSize());
-            Assert::IsTrue(newStatementTable.getStatementUsingStatementNumber(6)->getUsesSize() == newStatementTable.getStatementUsingVectorIndexNumber(5)->getUsesSize());
+            Assert::IsTrue(newStatementTable.getStatementUsingStatementNumber(1)->getUsesSize() == 
+                            newStatementTable.getStatementUsingVectorIndexNumber(0)->getUsesSize());
+            Assert::IsTrue(newStatementTable.getStatementUsingStatementNumber(2)->getUsesSize() == 
+                            newStatementTable.getStatementUsingVectorIndexNumber(1)->getUsesSize());
+            Assert::IsTrue(newStatementTable.getStatementUsingStatementNumber(3)->getUsesSize() == 
+                            newStatementTable.getStatementUsingVectorIndexNumber(2)->getUsesSize());
+            Assert::IsTrue(newStatementTable.getStatementUsingStatementNumber(4)->getUsesSize() == 
+                            newStatementTable.getStatementUsingVectorIndexNumber(3)->getUsesSize());
+            Assert::IsTrue(newStatementTable.getStatementUsingStatementNumber(5)->getUsesSize() == 
+                            newStatementTable.getStatementUsingVectorIndexNumber(4)->getUsesSize());
+            Assert::IsTrue(newStatementTable.getStatementUsingStatementNumber(6)->getUsesSize() == 
+                            newStatementTable.getStatementUsingVectorIndexNumber(5)->getUsesSize());
 
             // Adding Uses/Modifies Relationships for Procedures
             Assert::IsTrue(newProcedureTable.getProcedure(testProcName)->addModifies(1));
@@ -409,9 +624,10 @@ namespace UnitTesting
             Assert::AreEqual(6, newProcedureTable.getProcedure(testProcName2)->getUses(4));
 
             // Checks that the two different ways to retrieve Procedures are equivalent
-            Assert::IsTrue(newProcedureTable.getProcedure(testProcName)->getUsesSize() == newProcedureTable.getProcedure(0)->getUsesSize());
-            Assert::IsTrue(newProcedureTable.getProcedure(testProcName2)->getUsesSize() == newProcedureTable.getProcedure(1)->getUsesSize());
-            
+            Assert::IsTrue(newProcedureTable.getProcedure(testProcName)->getUsesSize() ==
+                            newProcedureTable.getProcedure(0)->getUsesSize());
+            Assert::IsTrue(newProcedureTable.getProcedure(testProcName2)->getUsesSize() == 
+                            newProcedureTable.getProcedure(1)->getUsesSize());
         }
-    };
+   };
 }
