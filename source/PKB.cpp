@@ -11,7 +11,7 @@
 PKB* PKB::instance = NULL;
 
 // To enable the printing of debug lines
-const bool IS_DEBUGGING = true;
+const bool IS_DEBUGGING = false;
 
 PKB::PKB() {
 	numberOfStatements = 0;
