@@ -7,11 +7,11 @@ ProcedureTableProcedure::ProcedureTableProcedure(std::string name, int index) {
 
 	modifies = new std::vector<int>();
 	uses = new std::vector<int>();
-	procedureCalls = new std::vector<ProcedureTableProcedure*>();
-	statementCalls = new std::vector<int>();
+	procedureCallBy = new std::vector<ProcedureTableProcedure*>();
+	statementCallBy = new std::vector<int>();
 
-	indirectProcedureCalls = new std::set<int>();
-	isIndirectProcedureCallsModified = false;
+	indirectProcedureCallBy = new std::set<int>();
+	isIndirectProcedureCallByModified = false;
 }
 
 ProcedureTableProcedure::~ProcedureTableProcedure() {
@@ -19,10 +19,10 @@ ProcedureTableProcedure::~ProcedureTableProcedure() {
 	
 	delete modifies;
 	delete uses;
-	delete procedureCalls;
-	delete statementCalls;
+	delete procedureCallBy;
+	delete statementCallBy;
 
-	delete indirectProcedureCalls;
+	delete indirectProcedureCallBy;
 }
 
 std::string ProcedureTableProcedure::getName() {
@@ -33,54 +33,54 @@ int ProcedureTableProcedure::getIndex() {
 	return index;
 }
 
-ProcedureTableProcedure* ProcedureTableProcedure::getProcedureCall(int index) {
-	return procedureCalls->at(index);
+ProcedureTableProcedure* ProcedureTableProcedure::getProcedureCallBy(int index) {
+	return procedureCallBy->at(index);
 }
 
-int ProcedureTableProcedure::getProcedureCallsSize() {
-	return procedureCalls->size();
+int ProcedureTableProcedure::getProcedureCallBySize() {
+	return procedureCallBy->size();
 }
 
 #include <iostream>
 
-std::set<int>* ProcedureTableProcedure::getIndirectProcedureCalls() {
-	if (isIndirectProcedureCallsModified) {
+std::set<int>* ProcedureTableProcedure::getIndirectProcedureCallBy() {
+	if (isIndirectProcedureCallByModified) {
 		std::set<int>* secondarySet;
 		ProcedureTableProcedure* procedureCall;
 		int procedureCallIndex;
 
 		// Iterate through the procedures that call this procedure
-		int size = getProcedureCallsSize();
+		int size = getProcedureCallBySize();
 		for (int i = 0; i < size; i++) {
-			procedureCall = getProcedureCall(i);
+			procedureCall = getProcedureCallBy(i);
 			procedureCallIndex = procedureCall->getIndex();
 
 			// Check if you need to add this procedure's indirect procedure calls list to your own
-			if ((indirectProcedureCalls->count(procedureCallIndex) == 0) || (procedureCall->isIndirectProcedureCallsModified)) {
+			if ((indirectProcedureCallBy->count(procedureCallIndex) == 0) || (procedureCall->isIndirectProcedureCallByModified)) {
 				// Add the procedures that directly or indirectly call that procedure into the list as well
-				secondarySet = procedureCall->getIndirectProcedureCalls();
+				secondarySet = procedureCall->getIndirectProcedureCallBy();
 				int sizeOfSecondSet = secondarySet->size();
 				std::set<int>::iterator end = secondarySet->end();
 				for (std::set<int>::iterator x = secondarySet->begin(); x != end; x++) {
-					indirectProcedureCalls->insert(*x);
+					indirectProcedureCallBy->insert(*x);
 				}
 			}
 
-			indirectProcedureCalls->insert(procedureCallIndex);
+			indirectProcedureCallBy->insert(procedureCallIndex);
 		}
 
-		isIndirectProcedureCallsModified = false;
+		isIndirectProcedureCallByModified = false;
 	} 
 
-	return indirectProcedureCalls;
+	return indirectProcedureCallBy;
 }
 
-int ProcedureTableProcedure::getStatementCall(int index) {
-	return statementCalls->at(index);
+int ProcedureTableProcedure::getStatementCallBy(int index) {
+	return statementCallBy->at(index);
 }
 
-int ProcedureTableProcedure::getStatementCallsSize() {
-	return statementCalls->size();
+int ProcedureTableProcedure::getStatementCallBySize() {
+	return statementCallBy->size();
 }
 
 void ProcedureTableProcedure::addStatement(int statement) {
@@ -95,13 +95,13 @@ bool ProcedureTableProcedure::addUses(int variableIndexNumber) {
 	return DataStructureObject::addIntoVector(variableIndexNumber, uses);
 }
 
-bool ProcedureTableProcedure::addProcedureCalls(ProcedureTableProcedure* procedure) {
-	isIndirectProcedureCallsModified = true;
-	return DataStructureObject::addIntoVector(procedure, procedureCalls);
+bool ProcedureTableProcedure::addProcedureCallBy(ProcedureTableProcedure* procedure) {
+	isIndirectProcedureCallByModified = true;
+	return DataStructureObject::addIntoVector(procedure, procedureCallBy);
 }
 
-bool ProcedureTableProcedure::addStatementsCalls(int statementIndexNumber) {
-	return DataStructureObject::addIntoVector(statementIndexNumber, statementCalls);
+bool ProcedureTableProcedure::addStatementsCallBy(int statementIndexNumber) {
+	return DataStructureObject::addIntoVector(statementIndexNumber, statementCallBy);
 }
 
 int ProcedureTableProcedure::getUses(int index) {

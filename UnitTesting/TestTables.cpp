@@ -384,8 +384,8 @@ namespace UnitTesting
             Assert::AreEqual(1, newProcedureTable.getNumberOfProcedures());
             Assert::AreEqual(testProcName, newProcedureTable.getProcedure(testProcName)->getName());
             Assert::AreEqual(0, newProcedureTable.getProcedure(testProcName)->getIndex());
-            Assert::AreEqual(0, newProcedureTable.getProcedure(testProcName)->getProcedureCallsSize());
-            Assert::AreEqual(0, newProcedureTable.getProcedure(testProcName)->getStatementCallsSize());
+            Assert::AreEqual(0, newProcedureTable.getProcedure(testProcName)->getProcedureCallBySize());
+            Assert::AreEqual(0, newProcedureTable.getProcedure(testProcName)->getStatementCallBySize());
             Assert::AreEqual(1, newProcedureTable.getProcedure(testProcName)->getUsesSize());
             Assert::AreEqual(1, newProcedureTable.getProcedure(testProcName)->getUses(0));
             Assert::AreEqual(1, newProcedureTable.getProcedure(testProcName)->getModifiesSize());
@@ -796,22 +796,22 @@ namespace UnitTesting
             Assert::AreEqual(3, newStatementTable.getNumberOfStatements());
 
             // Calls relationships between Stmt-Proc
-            newProcedureTable.getProcedure(1)->addStatementsCalls(0);
-            newProcedureTable.getProcedure(2)->addStatementsCalls(1);
-            Assert::AreEqual(0, newProcedureTable.getProcedure(testProcName)->getStatementCallsSize());
-            Assert::AreEqual(1, newProcedureTable.getProcedure(testProcName2)->getStatementCallsSize());
-            Assert::AreEqual(1, newProcedureTable.getProcedure(testProcName3)->getStatementCallsSize());
-            Assert::AreEqual(0, newProcedureTable.getProcedure(testProcName2)->getStatementCall(0));
-            Assert::AreEqual(1, newProcedureTable.getProcedure(testProcName3)->getStatementCall(0));
+            newProcedureTable.getProcedure(1)->addStatementsCallBy(0);
+            newProcedureTable.getProcedure(2)->addStatementsCallBy(1);
+            Assert::AreEqual(0, newProcedureTable.getProcedure(testProcName)->getStatementCallBySize());
+            Assert::AreEqual(1, newProcedureTable.getProcedure(testProcName2)->getStatementCallBySize());
+            Assert::AreEqual(1, newProcedureTable.getProcedure(testProcName3)->getStatementCallBySize());
+            Assert::AreEqual(0, newProcedureTable.getProcedure(testProcName2)->getStatementCallBy(0));
+            Assert::AreEqual(1, newProcedureTable.getProcedure(testProcName3)->getStatementCallBy(0));
 
             // Calls relationships between Procs
-            newProcedureTable.getProcedure(testProcName2)->addProcedureCalls(newProcedureTable.getProcedure(testProcName));
-            newProcedureTable.getProcedure(testProcName3)->addProcedureCalls(newProcedureTable.getProcedure(testProcName2));
-            Assert::AreNotEqual(1, newProcedureTable.getProcedure(testProcName)->getProcedureCallsSize());
-            Assert::AreEqual(1, newProcedureTable.getProcedure(testProcName2)->getProcedureCallsSize());
-            Assert::AreEqual(1, newProcedureTable.getProcedure(testProcName3)->getProcedureCallsSize());
-            Assert::IsTrue(newProcedureTable.getProcedure(testProcName) == newProcedureTable.getProcedure(testProcName2)->getProcedureCall(0));
-            Assert::IsTrue(newProcedureTable.getProcedure(testProcName2) == newProcedureTable.getProcedure(testProcName3)->getProcedureCall(0));
+            newProcedureTable.getProcedure(testProcName2)->addProcedureCallBy(newProcedureTable.getProcedure(testProcName));
+            newProcedureTable.getProcedure(testProcName3)->addProcedureCallBy(newProcedureTable.getProcedure(testProcName2));
+            Assert::AreNotEqual(1, newProcedureTable.getProcedure(testProcName)->getProcedureCallBySize());
+            Assert::AreEqual(1, newProcedureTable.getProcedure(testProcName2)->getProcedureCallBySize());
+            Assert::AreEqual(1, newProcedureTable.getProcedure(testProcName3)->getProcedureCallBySize());
+            Assert::IsTrue(newProcedureTable.getProcedure(testProcName) == newProcedureTable.getProcedure(testProcName2)->getProcedureCallBy(0));
+            Assert::IsTrue(newProcedureTable.getProcedure(testProcName2) == newProcedureTable.getProcedure(testProcName3)->getProcedureCallBy(0));
         }
     };
 }

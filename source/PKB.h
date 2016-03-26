@@ -176,7 +176,7 @@ public:
 								If 2, look for variables that the statement with statement type "input" or
 								      the procedure with procedure name "input" uses
 		\param outputType The type of conditions to check for (eg. "procedure", "statement", "assign", "while", "if", "call")
-		\return The vector<string> of the statement numbers or variable names, or ["none"] if empty.
+		\return The vector<string> of the statement numbers or variable names.
 	*/
 	 virtual std::vector<std::string> PQLUses(std::string input, int argumentPosition, std::string outputType);
 
@@ -189,7 +189,7 @@ public:
 								If 2, look for variables that the statement with statement type "input" or
 								      the procedure with procedure name "input" uses
 		\param outputType The type of conditions to check for (eg. "procedure", "stmt", "assign", "while", "if", "call")
-		\return The vector<string> of the statement numbers or variable names, or ["none"] if empty.
+		\return The vector<string> of the statement numbers or variable names.
 	*/
 	 virtual std::vector<std::string> PQLModifies(std::string input, int argumentPosition, std::string outputType);
 
@@ -202,7 +202,7 @@ public:
 								If 2, look for the statement s that this statement is followed by (ie. Follows(this, s))
 		\param outputType Optional argument - the type of conditions to check for
 						  (eg. "stmt", "assign", "while", "if", "call"). Default is "stmt".
-		\return The vector<string> of the statement numbers, or ["none"] if empty.
+		\return The vector<string> of the statement numbers.
 	*/
 	 virtual std::vector<std::string> PQLFollows(int input, int argumentPosition, std::string outputType = "stmt");
 
@@ -215,7 +215,7 @@ public:
 								If 2, look for the statements s that this statement is indirectly followed by (ie. Follows*(this, s))
 		\param outputType Optional argument - the type of conditions to check for
 						  (eg. "stmt", "assign", "while", "if", "call"). Default is "stmt".
-		\return The vector<string> of the statement numbers, or ["none"] if empty.
+		\return The vector<string> of the statement numbers.
 	*/
 	 virtual std::vector<std::string> PQLFollowsStar(int statementNumber, int argumentPosition, std::string outputType = "stmt");
 
@@ -228,7 +228,7 @@ public:
 								If 2, look for the statements that this statement has as a parent (ie. Parent(_, s))
 		\param outputType Optional argument - the type of conditions to check for
 						  (eg. "stmt", "assign", "while", "if", "call"). Default is "stmt".
-		\return The vector<string> of the statement numbers, or ["none"] if empty.
+		\return The vector<string> of the statement numbers.
 	*/
 	 virtual std::vector<std::string> PQLParent(int statementNumber, int argumentPosition, std::string outputType = "stmt");
 
@@ -240,10 +240,9 @@ public:
 		\param argumentPosition the position of the input in the clause
 		\param outputType Optional argument - the type of conditions to check for
 						  (eg. "stmt", "assign", "while", "if", "call"). Default is "stmt".
-		\return the vector<string> of the statement numbers, or ["none"] if empty.
+		\return The vector<string> of the statement numbers.
 	*/
 	 virtual std::vector<std::string> PQLParentStar(int statementNumber, int argumentPosition, std::string outputType = "stmt");
-
 
 	//! Returns a list of items that fit the specified pattern condition.
 	/*!
@@ -252,9 +251,29 @@ public:
 		\param type The type of statements that you are looking for (eg. "Statement", "Assign", "While", etc.)
 		\param left The first item in the parentheses of the pattern clause
 		\param right The second item in the parentheses of the pattern clause
-		\return the vector<int>* of the list of integers of statements.
+		\return The vector<string> of the list of integers of statements.
 	*/
 	 virtual std::vector<std::string> PQLPattern(TNodeType type, Ref left, Ref right);
+
+	 //! Returns a list of procedures that this procedure calls, whether directly or indirectly.
+	 /*!
+		 One of the API functions that allows the PQL parser to extract information from the PKB.
+		 Call this function for Calls and Calls* clauses.
+		 \param procedureName The name of the current procedure
+		 \param isDirectCalls True for direct calls (Calls), and false for indirect calls (Calls*)
+		 \return The vector<string> of the list of names of procedures that this procedure calls.
+	 */
+	 virtual std::vector<std::string> PQLCalls(std::string procedureName, bool isDirectCalls);
+
+	 //! Returns a list of procedures that calls this procedure, whether directly or indirectly.
+	 /*!
+		 One of the API functions that allows the PQL parser to extract information from the PKB.
+		 Call this function for Calls and Calls* clauses.
+		 \param procedureName The name of the current procedure
+		 \param isDirectCalls True for direct calls (Calls), and false for indirect calls (Calls*)
+		 \return The vector<string> of the list of names of procedures that call this procedure.
+	 */
+	 virtual std::vector<std::string> PQLCalledBy(std::string procedureName, bool isDirectCalls);
 
 	// ---------------------------------------------------------------------------------
 	// API FUNCTIONS FOR PQL PARSER ENDS HERE!!!

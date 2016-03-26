@@ -213,7 +213,7 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 	}
 
 	// Add the Modifies and Uses relationships into procedures that call the procedure, and all other procedures that call those procedures, etc.
-	std::set<int>* proceduresSet = currentProcedure->getIndirectProcedureCalls();
+	std::set<int>* proceduresSet = currentProcedure->getIndirectProcedureCallBy();
 	std::set<int>::iterator end = proceduresSet->end();
 	ProcedureTableProcedure* procedureForAddingRelationship;
 	for (std::set<int>::iterator i = proceduresSet->begin(); i != end; i++) {
@@ -224,10 +224,10 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 		}
 
 		// Add the Modifies and Uses relationships into statements that call the above procedures
-		int statementCallsSize = procedureForAddingRelationship->getStatementCallsSize();
+		int statementCallsSize = procedureForAddingRelationship->getStatementCallBySize();
 		StatementTableStatement* statementForAddingRelationship;
 		for (int x = 0; x < statementCallsSize; x++) {
-			statementForAddingRelationship = statementTable->getStatementUsingStatementNumber(procedureForAddingRelationship->getStatementCall(x));
+			statementForAddingRelationship = statementTable->getStatementUsingStatementNumber(procedureForAddingRelationship->getStatementCallBy(x));
 			addRelationship(leftVariable, statementForAddingRelationship, Modifies);
 			for (int y = 0; y < rightVariablesSize; y++) {
 				addRelationship(rightVariables[y], statementForAddingRelationship, Uses);
@@ -236,10 +236,10 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 	}
 
 	// Add the Modifies and Uses relationships into statements that call this current procedure
-	int tempStatementCallSize = currentProcedure->getStatementCallsSize();
+	int tempStatementCallSize = currentProcedure->getStatementCallBySize();
 	StatementTableStatement* tempStatement;
 	for (int i = 0; i < tempStatementCallSize; i++) {
-		tempStatement = statementTable->getStatementUsingStatementNumber(currentProcedure->getStatementCall(i));
+		tempStatement = statementTable->getStatementUsingStatementNumber(currentProcedure->getStatementCallBy(i));
 		addRelationship(leftVariable, tempStatement, Modifies);
 		for (int j = 0; j < rightVariablesSize; j++) {
 			addRelationship(rightVariables[j], tempStatement, Uses);
@@ -260,8 +260,8 @@ void PKB::CallStatement(std::string procedure) {
 
 	// Add the procedure you're calling into the Calls relationship of the procedure that this statement belongs to
 	ProcedureTableProcedure* procedureBeingCalled = procedureTable->getProcedure(procedure);
-	procedureBeingCalled->addStatementsCalls(currentStatement->getStatementNumber());
-	procedureBeingCalled->addProcedureCalls(currentProcedure);
+	procedureBeingCalled->addStatementsCallBy(currentStatement->getStatementNumber());
+	procedureBeingCalled->addProcedureCallBy(currentProcedure);
 
 	// Retrieve information about this statement's ancestor(s) in order to add relationships later
 	int numberOfAncestors = currentStatement->getParentStarSize();
@@ -271,7 +271,7 @@ void PKB::CallStatement(std::string procedure) {
 	}
 
 	// Retrieve information about the procedures that call this current procedure
-	std::set<int>* tempIndirectProcedureCallsSet = currentProcedure->getIndirectProcedureCalls();
+	std::set<int>* tempIndirectProcedureCallsSet = currentProcedure->getIndirectProcedureCallBy();
 	vector<ProcedureTableProcedure*> tempIndirectProcedureCalls;
 	std::set<int>::iterator end = tempIndirectProcedureCallsSet->end();
 	for (std::set<int>::iterator iter = tempIndirectProcedureCallsSet->begin(); iter != end; iter++) {
@@ -280,10 +280,10 @@ void PKB::CallStatement(std::string procedure) {
 	int tempIndirectProcedureCallsSize = tempIndirectProcedureCalls.size();
 
 	// Retrieve information about the statements that call this current procedure
-	int tempStatementCallsSize = currentProcedure->getStatementCallsSize();
+	int tempStatementCallsSize = currentProcedure->getStatementCallBySize();
 	vector<StatementTableStatement*> tempStatementCalls;
 	for (int i = 0; i < tempStatementCallsSize; i++) {
-		tempStatementCalls.push_back(statementTable->getStatementUsingStatementNumber(currentProcedure->getStatementCall(i)));
+		tempStatementCalls.push_back(statementTable->getStatementUsingStatementNumber(currentProcedure->getStatementCallBy(i)));
 	}
 
 	// Add the relationships for the variables that are modified and used in the procedure being called into this
@@ -348,7 +348,7 @@ void PKB::WhileStart(NAME variable) {
 	}
 
 	// Add the Uses relationship into procedures that call the procedure, and all other procedures that call those procedures, etc.
-	std::set<int>* proceduresSet = currentProcedure->getIndirectProcedureCalls();
+	std::set<int>* proceduresSet = currentProcedure->getIndirectProcedureCallBy();
 	std::set<int>::iterator end = proceduresSet->end();
 	ProcedureTableProcedure* procedureForAddingRelationship;
 	for (std::set<int>::iterator i = proceduresSet->begin(); i != end; i++) {
@@ -356,10 +356,10 @@ void PKB::WhileStart(NAME variable) {
 		addRelationship(currentVariable, procedureForAddingRelationship, Uses);
 
 		// Add the Uses relationship into statements that call the above procedures
-		int statementCallsSize = procedureForAddingRelationship->getStatementCallsSize();
+		int statementCallsSize = procedureForAddingRelationship->getStatementCallBySize();
 		StatementTableStatement* statementForAddingRelationship;
 		for (int x = 0; x < statementCallsSize; x++) {
-			statementForAddingRelationship = statementTable->getStatementUsingStatementNumber(procedureForAddingRelationship->getStatementCall(x));
+			statementForAddingRelationship = statementTable->getStatementUsingStatementNumber(procedureForAddingRelationship->getStatementCallBy(x));
 			addRelationship(currentVariable, statementForAddingRelationship, Uses);
 		}
 	}
@@ -402,7 +402,7 @@ void PKB::IfStart(NAME variable) {
 	}
 
 	// Add the Uses relationship into procedures that call the procedure, and all other procedures that call those procedures, etc.
-	std::set<int>* proceduresSet = currentProcedure->getIndirectProcedureCalls();
+	std::set<int>* proceduresSet = currentProcedure->getIndirectProcedureCallBy();
 	std::set<int>::iterator end = proceduresSet->end();
 	ProcedureTableProcedure* procedureForAddingRelationship;
 	for (std::set<int>::iterator i = proceduresSet->begin(); i != end; i++) {
@@ -410,10 +410,10 @@ void PKB::IfStart(NAME variable) {
 		addRelationship(currentVariable, procedureForAddingRelationship, Uses);
 
 		// Add the Uses relationship into statements that call the above procedures
-		int statementCallsSize = procedureForAddingRelationship->getStatementCallsSize();
+		int statementCallsSize = procedureForAddingRelationship->getStatementCallBySize();
 		StatementTableStatement* statementForAddingRelationship;
 		for (int x = 0; x < statementCallsSize; x++) {
-			statementForAddingRelationship = statementTable->getStatementUsingStatementNumber(procedureForAddingRelationship->getStatementCall(x));
+			statementForAddingRelationship = statementTable->getStatementUsingStatementNumber(procedureForAddingRelationship->getStatementCallBy(x));
 			addRelationship(currentVariable, statementForAddingRelationship, Uses);
 		}
 	}
@@ -858,5 +858,35 @@ std::vector<std::string> PKB::PQLPattern(TNodeType type, Ref left, Ref right) {
 			*/
 		}
 	}
+	return returnList;
+}
+
+std::vector<std::string> PKB::PQLCalls(std::string procedureName, bool isDirectCalls) {
+	std::vector<std::string> returnList;
+	//int size;
+
+	// @todo
+
+	return returnList;
+}
+
+std::vector<std::string> PKB::PQLCalledBy(std::string procedureName, bool isDirectCalls) {
+	std::vector<std::string> returnList;
+
+	ProcedureTableProcedure* currentProcedure = procedureTable->getProcedure(procedureName);
+	if (isDirectCalls) {
+		int size = currentProcedure->getProcedureCallBySize();
+		for (int i = 0; i < size; i++) {
+			returnList.push_back(currentProcedure->getProcedureCallBy(i)->getName());
+		}
+	}
+	else {
+		std::set<int>* proceduresSet = currentProcedure->getIndirectProcedureCallBy();
+		std::set<int>::iterator end = proceduresSet->end();
+		for (std::set<int>::iterator iter = proceduresSet->begin(); iter != end; iter++) {
+			returnList.push_back(procedureTable->getProcedure(*iter)->getName());
+		}
+	}
+
 	return returnList;
 }
