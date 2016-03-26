@@ -262,6 +262,7 @@ void PKB::CallStatement(std::string procedure) {
 	ProcedureTableProcedure* procedureBeingCalled = procedureTable->getProcedure(procedure);
 	procedureBeingCalled->addStatementsCallBy(currentStatement->getStatementNumber());
 	procedureBeingCalled->addProcedureCallBy(currentProcedure);
+	currentProcedure->addProcedureCalls(procedureBeingCalled);
 
 	// Retrieve information about this statement's ancestor(s) in order to add relationships later
 	int numberOfAncestors = currentStatement->getParentStarSize();
@@ -863,17 +864,29 @@ std::vector<std::string> PKB::PQLPattern(TNodeType type, Ref left, Ref right) {
 
 std::vector<std::string> PKB::PQLCalls(std::string procedureName, bool isDirectCalls) {
 	std::vector<std::string> returnList;
-	//int size;
+	ProcedureTableProcedure* currentProcedure = procedureTable->getProcedure(procedureName);
 
-	// @todo
+	if (isDirectCalls) {
+		int size = currentProcedure->getProcedureCallsSize();
+		for (int i = 0; i < size; i++) {
+			returnList.push_back(currentProcedure->getProcedureCalls(i)->getName());
+		}
+	}
+	else {
+		std::set<int>* proceduresSet = currentProcedure->getIndirectProcedureCalls();
+		std::set<int>::iterator end = proceduresSet->end();
+		for (std::set<int>::iterator iter = proceduresSet->begin(); iter != end; iter++) {
+			returnList.push_back(procedureTable->getProcedure(*iter)->getName());
+		}
+	}
 
 	return returnList;
 }
 
 std::vector<std::string> PKB::PQLCalledBy(std::string procedureName, bool isDirectCalls) {
 	std::vector<std::string> returnList;
-
 	ProcedureTableProcedure* currentProcedure = procedureTable->getProcedure(procedureName);
+
 	if (isDirectCalls) {
 		int size = currentProcedure->getProcedureCallBySize();
 		for (int i = 0; i < size; i++) {
