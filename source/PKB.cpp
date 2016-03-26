@@ -1,12 +1,11 @@
 #include <cstdlib>
-#include "PKB.h"
 #include <iostream>
-#include <algorithm> 
-#include <functional> 
+#include <algorithm>
+#include <functional>
 #include <cctype>
-#include <locale>	
+#include <locale>
+#include "PKB.h"
 #include "SimpleParser.h"
-
 
 PKB* PKB::instance = NULL;
 
@@ -111,6 +110,22 @@ bool PKB::addRelationship(VariableTableVariable* variable, StatementTableStateme
 	}
 
 	return true;
+}
+
+TNodeType PKB::getType(std::string type) {
+	if (type == "assign") {
+		return Assign;
+	}
+	if (type == "while") {
+		return While;
+	}
+	if (type == "if") {
+		return If;
+	}
+	if (type == "call") {
+		return Call;
+	}
+	return Undefined;
 }
 
 PKB* PKB::getInstance() {
@@ -431,7 +446,6 @@ bool PKB::IfElseEnd() {
 	statementStackTrace->pop();
 
 	return true;
-
 }
 
 std::vector<std::string> PKB::PQLSelect(TNodeType outputType) {
@@ -483,10 +497,9 @@ std::vector<std::string> PKB::PQLUses(std::string input, int argumentPosition, s
 		else { // Check which statements are to be returned
 			bool returnAllStatements = (outputType == "stmt");
 			TNodeType typeToReturn = Undefined;
-			if (outputType == "assign") { typeToReturn = Assign; }
-			else if (outputType == "while") { typeToReturn = While; }
-			else if (outputType == "if") { typeToReturn = If; }
-			else if (outputType == "call") { typeToReturn = Call; }
+			if (!returnAllStatements) {
+				typeToReturn = getType(outputType);
+			}
 
 			if ((returnAllStatements) || (typeToReturn != Undefined)) {
 				size = variableToBeChecked->getStatementUsesSize();
@@ -522,10 +535,6 @@ std::vector<std::string> PKB::PQLUses(std::string input, int argumentPosition, s
 		}
 		break;
 	}
-
-	/*if (returnList.empty()) {
-		returnList.push_back("none");
-	}*/
 	return returnList;
 }
 
@@ -548,10 +557,9 @@ std::vector<std::string> PKB::PQLModifies(std::string input, int argumentPositio
 			// Check which statements are to be returned
 			bool returnAllStatements = (outputType == "stmt");
 			TNodeType typeToReturn = Undefined;
-			if (outputType == "assign") { typeToReturn = Assign; }
-			else if (outputType == "while") { typeToReturn = While; }
-			else if (outputType == "if") { typeToReturn = If; }
-			else if (outputType == "call") { typeToReturn = Call; }
+			if (!returnAllStatements) {
+				typeToReturn = getType(outputType);
+			}
 
 			if ((returnAllStatements) || (typeToReturn != Undefined)) {
 				size = variableToBeChecked->getStatementModifiesSize();
@@ -564,7 +572,7 @@ std::vector<std::string> PKB::PQLModifies(std::string input, int argumentPositio
 			}
 		}
 	}
-			break;
+		break;
 	case 2: // Check what variables are used by the procedure or statement with the procedure name or statement number "input"
 		if (outputType == "procedure") {
 			ProcedureTableProcedure* procedure = procedureTable->getProcedure(input);
@@ -587,101 +595,142 @@ std::vector<std::string> PKB::PQLModifies(std::string input, int argumentPositio
 		}
 		break;
 	}
-
-	/*if (returnList.empty()) {
-		returnList.push_back("none");
-	}*/
 	return returnList;
 }
 
-std::vector<std::string> PKB::PQLFollows(int statementNumber, int argumentPosition) {
+std::vector<std::string> PKB::PQLFollows(int statementNumber, int argumentPosition, std::string outputType) {
 	std::vector<std::string> returnList;
 	StatementTableStatement* statement = statementTable->getStatementUsingStatementNumber(statementNumber);
-	if (statement != NULL) { // In case a non-existing statement number was given
+	int statementReturnIndex;
+
+	bool returnAllStatements = (outputType == "stmt");
+	TNodeType typeToReturn = Undefined;
+	if (!returnAllStatements) {
+		typeToReturn = getType(outputType);
+	}
+
+	// In case a non-existing statement number was given
+	if ((statement != NULL) && ((returnAllStatements) || (typeToReturn != Undefined))) {
 		if (argumentPosition == 1) { //check follows
 			if (statement->hasFollows()) {
-				returnList.push_back(std::to_string(statement->getFollows()));
+				statementReturnIndex = statement->getFollows();
+				if ((returnAllStatements) || (statementTable->getStatementUsingStatementNumber(statementReturnIndex)->getType() == typeToReturn)) {
+					returnList.push_back(std::to_string(statementReturnIndex));
+				}
 			}
 		}
 		else if (argumentPosition == 2) { //check followed by
 			if (statement->hasFollowedBy()) {
-				returnList.push_back(std::to_string(statement->getFollowedBy()));
+				statementReturnIndex = statement->getFollowedBy();
+				if ((returnAllStatements) || (statementTable->getStatementUsingStatementNumber(statementReturnIndex)->getType() == typeToReturn)) {
+					returnList.push_back(std::to_string(statementReturnIndex));
+				}
 			}
 		}
 	}
-
-	/*if (returnList.empty()) {
-		returnList.push_back("none");
-	}*/
 	return returnList;
 }
 
-std::vector<std::string> PKB::PQLFollowsStar(int statementNumber, int argumentPosition) {
+std::vector<std::string> PKB::PQLFollowsStar(int statementNumber, int argumentPosition, std::string outputType) {
 	std::vector<std::string> returnList;
 	StatementTableStatement* statement = statementTable->getStatementUsingStatementNumber(statementNumber);
-	if (statement != NULL) {
+	int statementReturnIndex;
+
+	bool returnAllStatements = (outputType == "stmt");
+	TNodeType typeToReturn = Undefined;
+	if (!returnAllStatements) {
+		typeToReturn = getType(outputType);
+	}
+
+	if ((statement != NULL) && ((returnAllStatements) || (typeToReturn != Undefined))) {
 		int size;
 		if (argumentPosition == 1) { //check follows*
 			size = statement->getFollowsStarSize();
 			for (int i = 0; i < size; i++) {
-				returnList.push_back(std::to_string(statement->getFollowsStar(i)));
+				statementReturnIndex = statement->getFollowsStar(i);
+				if ((returnAllStatements) || (statementTable->getStatementUsingStatementNumber(statementReturnIndex)->getType() == typeToReturn)) {
+					returnList.push_back(std::to_string(statementReturnIndex));
+				}
 			}
 		}
 		else if (argumentPosition == 2) { //check followedBy*
 			size = statement->getFollowedByStarSize();
 			for (int i = 0; i < size; i++) {
-				returnList.push_back(std::to_string(statement->getFollowedByStar(i)));
+				statementReturnIndex = statement->getFollowedByStar(i);
+				if ((returnAllStatements) || (statementTable->getStatementUsingStatementNumber(statementReturnIndex)->getType() == typeToReturn)) {
+					returnList.push_back(std::to_string(statementReturnIndex));
+				}
 			}
 		}
 	}
-
-	/*if (returnList.empty()) {
-		returnList.push_back("none");
-	}*/
 	return returnList;
 }
 
-std::vector<std::string> PKB::PQLParent(int statementNumber, int argumentPosition) {
+std::vector<std::string> PKB::PQLParent(int statementNumber, int argumentPosition, std::string outputType) {
 	std::vector<std::string> returnList;
 	StatementTableStatement* statement = statementTable->getStatementUsingStatementNumber(statementNumber);
-	if (argumentPosition == 1) { //find parent
-		if (statement->hasParent()) {
-			returnList.push_back(std::to_string(statement->getParent()));
-		}
-	}
-	else if (argumentPosition == 2) { //find children
-		int size = statement->getChildrenSize();
-		for (int i = 0; i < size; i++) {
-			returnList.push_back(std::to_string(statement->getChildren(i)));
-		}
+	int statementReturnIndex;
+
+	bool returnAllStatements = (outputType == "stmt");
+	TNodeType typeToReturn = Undefined;
+	if (!returnAllStatements) {
+		typeToReturn = getType(outputType);
 	}
 
-	/*if (returnList.empty()) {
-		returnList.push_back("none");
-	}*/
+	if ((returnAllStatements) || (typeToReturn != Undefined)) {
+		if (argumentPosition == 1) { //find parent
+			if (statement->hasParent()) {
+				statementReturnIndex = statement->getParent();
+				if ((returnAllStatements) || (statementTable->getStatementUsingStatementNumber(statementReturnIndex)->getType() == typeToReturn)) {
+					returnList.push_back(std::to_string(statementReturnIndex));
+				}
+			}
+		}
+		else if (argumentPosition == 2) { //find children
+			int size = statement->getChildrenSize();
+			for (int i = 0; i < size; i++) {
+				statementReturnIndex = statement->getChildren(i);
+				if ((returnAllStatements) || (statementTable->getStatementUsingStatementNumber(statementReturnIndex)->getType() == typeToReturn)) {
+					returnList.push_back(std::to_string(statementReturnIndex));
+				}
+			}
+		}
+	}
 	return returnList;
 }
 
-std::vector<std::string> PKB::PQLParentStar(int statementNumber, int argumentPosition) {
+std::vector<std::string> PKB::PQLParentStar(int statementNumber, int argumentPosition, std::string outputType) {
 	std::vector<std::string> returnList;
 	StatementTableStatement* statement = statementTable->getStatementUsingStatementNumber(statementNumber);
 	int size;
-	if (argumentPosition == 1) { //find parent*
-		size = statement->getParentStarSize();
-		for (int i = 0; i < size; i++) {
-			returnList.push_back(std::to_string(statement->getParentStar(i)));
-		}
-	}
-	else if (argumentPosition == 2) { //find children*
-		size = statement->getChildrenStarSize();
-		for (int i = 0; i < size; i++) {
-			returnList.push_back(std::to_string(statement->getChildrenStar(i)));
-		}
+	int statementReturnIndex;
+
+	bool returnAllStatements = (outputType == "stmt");
+	TNodeType typeToReturn = Undefined;
+	if (!returnAllStatements) {
+		typeToReturn = getType(outputType);
 	}
 
-	/*if (returnList.empty()) {
-		returnList.push_back("none");
-	}*/
+	if ((returnAllStatements) || (typeToReturn != Undefined)) {
+		if (argumentPosition == 1) { //find parent*
+			size = statement->getParentStarSize();
+			for (int i = 0; i < size; i++) {
+				statementReturnIndex = statement->getParentStar(i);
+				if ((returnAllStatements) || (statementTable->getStatementUsingStatementNumber(statementReturnIndex)->getType() == typeToReturn)) {
+					returnList.push_back(std::to_string(statementReturnIndex));
+				}
+			}
+		}
+		else if (argumentPosition == 2) { //find children*
+			size = statement->getChildrenStarSize();
+			for (int i = 0; i < size; i++) {
+				statementReturnIndex = statement->getChildrenStar(i);
+				if ((returnAllStatements) || (statementTable->getStatementUsingStatementNumber(statementReturnIndex)->getType() == typeToReturn)) {
+					returnList.push_back(std::to_string(statementReturnIndex));
+				}
+			}
+		}
+	}
 	return returnList;
 }
 
@@ -809,9 +858,5 @@ std::vector<std::string> PKB::PQLPattern(TNodeType type, Ref left, Ref right) {
 			*/
 		}
 	}
-
-	/*if (returnList.empty()) {
-		returnList.push_back("none");
-	}*/
 	return returnList;
 }

@@ -51,6 +51,8 @@ private:
 	//! These functions is used by the API for the SIMPLE parser to add a relationship between two items (variables, statements, procedures, etc.).
 	bool addRelationship(VariableTableVariable* variable, ProcedureTableProcedure* procedure, RelationshipType relationship);
 	bool addRelationship(VariableTableVariable* variable, StatementTableStatement* statement, RelationshipType relationship);
+	//! This function is used by the API for the PKB parser to convert a string argument into a enum TNodeType
+	TNodeType getType(std::string type);
 protected:
 	PKB();
 	~PKB();
@@ -186,7 +188,7 @@ public:
 		\param argumentPosition If 1, look for statements and procedures that uses the variable named "input"
 								If 2, look for variables that the statement with statement type "input" or
 								      the procedure with procedure name "input" uses
-		\param outputType The type of conditions to check for (eg. "procedure", "statement", "assign", "while", "if", "call")
+		\param outputType The type of conditions to check for (eg. "procedure", "stmt", "assign", "while", "if", "call")
 		\return The vector<string> of the statement numbers or variable names, or ["none"] if empty.
 	*/
 	 virtual std::vector<std::string> PQLModifies(std::string input, int argumentPosition, std::string outputType);
@@ -198,9 +200,11 @@ public:
 		\param input The known statement in the clause
 		\param argumentPosition If 1, look for the statement s that this statement is following (ie. Follows(s, this))
 								If 2, look for the statement s that this statement is followed by (ie. Follows(this, s))
+		\param outputType Optional argument - the type of conditions to check for
+						  (eg. "stmt", "assign", "while", "if", "call"). Default is "stmt".
 		\return The vector<string> of the statement numbers, or ["none"] if empty.
 	*/
-	 virtual std::vector<std::string> PQLFollows(int input, int argumentPosition);
+	 virtual std::vector<std::string> PQLFollows(int input, int argumentPosition, std::string outputType = "stmt");
 
 	//! Returns a list of items that fit Follows*(x, y) conditions for the PQL parser.
 	/*!
@@ -209,9 +213,11 @@ public:
 		\param statementNumber The known statement in the clause
 		\param argumentPosition If 1, look for the statements s that this statement is indirectly following (ie. Follows*(s, this))
 								If 2, look for the statements s that this statement is indirectly followed by (ie. Follows*(this, s))
+		\param outputType Optional argument - the type of conditions to check for
+						  (eg. "stmt", "assign", "while", "if", "call"). Default is "stmt".
 		\return The vector<string> of the statement numbers, or ["none"] if empty.
 	*/
-	 virtual std::vector<std::string> PQLFollowsStar(int statementNumber, int argumentPosition);
+	 virtual std::vector<std::string> PQLFollowsStar(int statementNumber, int argumentPosition, std::string outputType = "stmt");
 
 	//! Returns a list of items that fit Parent(x, y) conditions for the PQL parser.
 	/*!
@@ -220,9 +226,11 @@ public:
 		\param statementNumber The known statement in the clause
 		\param argumentPosition If 1, look for the statements that this statement is a parent of (ie. Parent(s, _))
 								If 2, look for the statements that this statement has as a parent (ie. Parent(_, s))
+		\param outputType Optional argument - the type of conditions to check for
+						  (eg. "stmt", "assign", "while", "if", "call"). Default is "stmt".
 		\return The vector<string> of the statement numbers, or ["none"] if empty.
 	*/
-	 virtual std::vector<std::string> PQLParent(int statementNumber, int argumentPosition);
+	 virtual std::vector<std::string> PQLParent(int statementNumber, int argumentPosition, std::string outputType = "stmt");
 
 	//! Returns a list of items that fit the conditions of the specified item for the PQL parser.
 	/*!
@@ -230,9 +238,11 @@ public:
 		Call this function for selection of parent* clauses.
 		\param input the known variable in the clause
 		\param argumentPosition the position of the input in the clause
+		\param outputType Optional argument - the type of conditions to check for
+						  (eg. "stmt", "assign", "while", "if", "call"). Default is "stmt".
 		\return the vector<string> of the statement numbers, or ["none"] if empty.
 	*/
-	 virtual std::vector<std::string> PQLParentStar(int statementNumber, int argumentPosition);
+	 virtual std::vector<std::string> PQLParentStar(int statementNumber, int argumentPosition, std::string outputType = "stmt");
 
 
 	//! Returns a list of items that fit the specified pattern condition.
