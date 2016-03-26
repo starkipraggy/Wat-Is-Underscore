@@ -1,0 +1,290 @@
+1. StatementList
+stmt s;
+Select s
+1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33
+5000
+2. VariableList
+variable v;
+Select v
+a,b,c,d,e,f,g,h,x,y,z
+5000
+3. ProcedureList
+procedure p;
+Select p.procName
+SimpleProcOne,SimpleProcTwo,SimpleProcThree
+5000
+4. Basic Uses Queries
+stmt s;
+Select s such that Uses(s,"a")
+2,4,5,6,8,13,22,23,28
+5000
+5. Basic Uses Queries
+stmt s;
+Select s such that Uses(s,"b")
+2,13,22,23,26,27
+5000
+6. Basic Uses Queries
+stmt s;
+Select s such that Uses(s,"c")
+13,14,22,23,24
+5000
+7. Basic Uses Queries
+stmt s;
+Select s such that Uses(s,"d")
+2,3,4,6,7,13,17,22,23,24
+5000
+8. Basic Uses Queries
+stmt s;
+Select s such that Uses(s,"e")
+2,4,13,22
+5000
+9. Basic Uses Queries
+stmt s;
+Select s such that Uses(s,"f")
+none
+5000
+10. Basic Uses Queries
+stmt s;
+Select s such that Uses(s,"g")
+13,22,23,25,26
+5000
+11. Basic Uses Queries
+stmt s;
+Select s such that Uses(s,"h")
+none
+5000
+12. Basic Uses Queries
+stmt s;
+Select s such that Uses(s,"x")
+none
+5000
+13. Basic Uses Queries
+stmt s;
+Select s such that Uses(s,"y")
+none
+5000
+14. Basic Uses Queries
+stmt s;
+Select s such that Uses(s,"z")
+none
+5000
+15. Basic Uses Queries
+procedure p;
+Select p such that Uses(p, "a")
+SimpleProcOne,SimpleProcTwo
+5000
+16. Basic Uses Queries
+procedure p;
+Select p such that Uses(p, "b")
+SimpleProcOne,SimpleProcTwo
+5000
+17. Basic Uses Queries
+procedure p;
+Select p such that Uses(p, "c")
+SimpleProcOne,SimpleProcTwo
+5000
+18. Basic Uses Queries
+procedure p;
+Select p such that Uses(p, "d")
+SimpleProcOne,SimpleProcTwo
+5000
+19. Basic Uses Queries
+procedure p;
+Select p such that Uses(p, "e")
+SimpleProcOne,SimpleProcTwo
+5000
+20. Basic Uses Queries
+procedure p;
+Select p such that Uses(p, "f")
+SimpleProcOne
+5000
+21. Basic Uses Queries
+procedure p;
+Select p such that Uses(p, "g")
+SimpleProcOne,SimpleProcTwo
+5000
+22. Basic Uses Queries
+procedure p;
+Select p such that Uses(p, "h")
+none
+5000
+23. Basic Uses Queries
+procedure p;
+Select p such that Uses(p, "x")
+none
+5000
+24. Basic Uses Queries
+procedure p;
+Select p such that Uses(p, "y")
+none
+5000
+25. Basic Uses Queries
+procedure p;
+Select p such that Uses(p, "z")
+none
+5000
+26. Basic Uses Queries
+variable v;
+Select v such that Uses(1, v)
+none
+5000
+27. Basic Uses Queries
+variable v;
+Select v such that Uses(2, v)
+a,b,d,e
+5000
+28. Basic Uses Queries
+variable v;
+Select v such that Uses(3, v)
+d
+5000
+29. Basic Uses Queries
+variable v;
+Select v such that Uses(4, v)
+a,d,e
+5000
+30. Basic Uses Queries
+variable v;
+Select v such that Uses(5, v)
+a
+5000
+31. Basic Uses Queries
+variable v;
+Select v such that Uses(6, v)
+a,d
+5000
+32. Basic Uses Queries
+variable v;
+Select v such that Uses(7, v)
+d
+5000
+33. Basic Uses Queries
+variable v;
+Select v such that Uses(8, v)
+a
+5000
+34. Basic Uses Queries
+variable v;
+Select v such that Uses(9, v)
+none
+5000
+35. Basic Uses Queries
+variable v;
+Select v such that Uses(10, v)
+none
+5000
+36. Basic Uses Queries
+variable v;
+Select v such that Uses(11, v)
+b
+5000
+37. Basic Uses Queries
+variable v;
+Select v such that Uses(12, v)
+none
+5000
+38. Basic Uses Queries
+variable v;
+Select v such that Uses(13, v)
+a,b,c,d,e,g
+5000
+39. Basic Uses Queries
+variable v;
+Select v such that Uses(14, v)
+c
+5000
+40. Basic Uses Queries
+variable v;
+Select v such that Uses(15, v)
+f
+5000
+41. Basic Uses Queries
+variable v;
+Select v such that Uses(16, v)
+none
+5000
+42. Basic Uses Queries
+variable v;
+Select v such that Uses(17, v)
+d
+5000
+43. Basic Uses Queries
+variable v;
+Select v such that Uses(18, v)
+none
+5000
+44. Basic Uses Queries
+variable v;
+Select v such that Uses(19, v)
+none
+5000
+45. Basic Uses Queries
+variable v;
+Select v such that Uses(20, v)
+none
+5000
+46. Basic Uses Queries
+variable v;
+Select v such that Uses(21, v)
+none
+5000
+47. Basic Uses Queries
+variable v;
+Select v such that Uses(22, v)
+a,b,c,d,e,g
+5000
+48. Basic Uses Queries
+variable v;
+Select v such that Uses(23, v)
+a,b,c,d,g
+5000
+49. Basic Uses Queries
+variable v;
+Select v such that Uses(24, v)
+c,d
+5000
+50. Basic Uses Queries
+variable v;
+Select v such that Uses(25, v)
+g
+5000
+51. Basic Uses Queries
+variable v;
+Select v such that Uses(26, v)
+b,g
+5000
+52. Basic Uses Queries
+variable v;
+Select v such that Uses(27, v)
+b
+5000
+53. Basic Uses Queries
+variable v;
+Select v such that Uses(28, v)
+a
+5000
+54. Basic Uses Queries
+variable v;
+Select v such that Uses(29, v)
+none
+5000
+55. Basic Uses Queries
+variable v;
+Select v such that Uses(30, v)
+none
+5000
+56. Basic Uses Queries
+variable v;
+Select v such that Uses(31, v)
+none
+5000
+57. Basic Uses Queries
+variable v;
+Select v such that Uses(32, v)
+none
+5000
+58. Basic Uses Queries
+variable v;
+Select v such that Uses(33, v)
+none
+5000

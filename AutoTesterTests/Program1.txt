@@ -1,0 +1,38 @@
+procedure SimpleProcOne {
+    a = 29;                      //1
+    while b {                    //2
+        c = d * 3;               //3
+        if e then {              //4
+            a = a + 15;          //5
+            while d {            //6
+            d = d – 1;           //7
+            a = a – 2; }         //8
+            c = 1; } else {      //9
+            d = 10;              //10
+            e = 92 – b; }        //11
+        f = 666; }               //12
+    call SimpleProcTwo;          //13
+    f = 27 - c;                  //14
+    d = f + 29;                  //15
+    call SimpleProcThree;        //16
+    if d then {                  //17
+        a = 1; } else {          //18
+        d = 1; } }               //19
+
+procedure SimpleProcTwo {
+    a = 2;                       //20
+    g = 97;                      //21
+    while e {                    //22
+        if a then {              //23
+            b = c + d;           //24
+            g = g + 2;           //25
+            while g {            //26
+                f = 9 + b; }     //27
+            h = 21 + a; } else { //28
+            e = 999; } }         //29
+    call SimpleProcThree; }      //30
+
+procedure SimpleProcThree {
+    x = 29;                      //31
+    y = 12;                      //32
+    z = 6;}                      //33
