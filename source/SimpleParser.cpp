@@ -560,7 +560,21 @@ int SimpleParser::checkCall(unsigned int position, std::vector<std::string> toke
 				edges.push_back(callEdge);
 			}
 
-			callList.push_back(callName);
+			callList.push_back(callName); 
+
+			if (edges.empty() == false) {
+				Graph g(procedureMap.size());
+				for (auto x : edges) {
+					g.addEdge(x.first, x.second);
+				}
+
+				if (g.isCyclic()) {
+					std::cout << "Graph contains cycle. Invalid program! ";
+					isErrorDetected = true;
+					return position;
+				}
+			}
+
 			PKB::getInstance()->CallStatement(tokens[position - 1]);
 			break;
 		default:
