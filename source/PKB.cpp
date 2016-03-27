@@ -348,6 +348,9 @@ void PKB::WhileStart(NAME variable) {
 		addRelationship(currentVariable, statementToIterateThroughParents, Uses);
 	}
 
+	// Add the Uses relationship into the current procedure
+	addRelationship(currentVariable, currentProcedure, Uses);
+
 	// Add the Uses relationship into procedures that call the procedure, and all other procedures that call those procedures, etc.
 	std::set<int>* proceduresSet = currentProcedure->getIndirectProcedureCallBy();
 	std::set<int>::iterator end = proceduresSet->end();
@@ -777,9 +780,6 @@ std::vector<std::string> PKB::PQLPattern(TNodeType type, Ref left, Ref right) {
 	//std::cout << left.toString() << std::endl;
 	//std::cout << right.toString() << std::endl;
 	
-	// @todo Supposedly to use AST to check this, but since AST is not up yet, let's go with the lazy method
-	// @todo I'm really sorry for this. Will make sure this is no longer done like this by iteration 2./
-
 	int size = statementTable->getNumberOfStatements();
 	for (int i = 0; i < size; i++) {
 		StatementTableStatement* statement = statementTable->getStatementUsingVectorIndexNumber(i);
