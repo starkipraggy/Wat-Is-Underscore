@@ -235,14 +235,25 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 		}
 	}
 
-	// Add the Modifies and Uses relationships into statements that call this current procedure
+	// Add the Modifies and Uses relationships into statements that call this current procedure, and their ancestors
 	int tempStatementCallSize = currentProcedure->getStatementCallBySize();
 	StatementTableStatement* tempStatement;
+	StatementTableStatement* ancestorStatement;
+	int ancestorsSize;
 	for (int i = 0; i < tempStatementCallSize; i++) {
 		tempStatement = statementTable->getStatementUsingStatementNumber(currentProcedure->getStatementCallBy(i));
 		addRelationship(leftVariable, tempStatement, Modifies);
 		for (int j = 0; j < rightVariablesSize; j++) {
 			addRelationship(rightVariables[j], tempStatement, Uses);
+		}
+
+		ancestorsSize = tempStatement->getParentStarSize();
+		for (int j = 0; j < ancestorsSize; j++) {
+			ancestorStatement = statementTable->getStatementUsingStatementNumber(tempStatement->getParentStar(j));
+			addRelationship(leftVariable, ancestorStatement, Modifies);
+			for (int k = 0; k < rightVariablesSize; k++) {
+				addRelationship(rightVariables[k], ancestorStatement, Uses);
+			}
 		}
 	}
     
