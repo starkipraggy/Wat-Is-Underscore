@@ -35,4 +35,4 @@ procedure SimpleProcTwo {
 procedure SimpleProcThree {
     x = 29;                      //31
     y = 12;                      //32
-    z = 6; }                      //33
+    z = 6; }                     //33
