@@ -368,12 +368,17 @@ void PKB::WhileStart(NAME variable) {
 		}
 	}
 
-	// Add the Uses relationships into statements that call this current procedure
+	// Add the Uses relationships into statements that call this current procedure, and their ancestors
 	int tempStatementCallSize = currentProcedure->getStatementCallBySize();
 	StatementTableStatement* tempStatement;
+	int ancestorsSize;
 	for (int i = 0; i < tempStatementCallSize; i++) {
 		tempStatement = statementTable->getStatementUsingStatementNumber(currentProcedure->getStatementCallBy(i));
 		addRelationship(currentVariable, tempStatement, Uses);
+		ancestorsSize = tempStatement->getParentStarSize();
+		for (int j = 0; j < ancestorsSize; j++) {
+			addRelationship(currentVariable, statementTable->getStatementUsingStatementNumber(tempStatement->getParentStar(j)), Uses);
+		}
 	}
 
     //AST
@@ -430,12 +435,17 @@ void PKB::IfStart(NAME variable) {
 		}
 	}
 
-	// Add the Uses relationships into statements that call this current procedure
+	// Add the Uses relationships into statements that call this current procedure, and their ancestors
 	int tempStatementCallSize = currentProcedure->getStatementCallBySize();
 	StatementTableStatement* tempStatement;
+	int ancestorsSize;
 	for (int i = 0; i < tempStatementCallSize; i++) {
 		tempStatement = statementTable->getStatementUsingStatementNumber(currentProcedure->getStatementCallBy(i));
 		addRelationship(currentVariable, tempStatement, Uses);
+		ancestorsSize = tempStatement->getParentStarSize();
+		for (int j = 0; j < ancestorsSize; j++) {
+			addRelationship(currentVariable, statementTable->getStatementUsingStatementNumber(tempStatement->getParentStar(j)), Uses);
+		}
 	}
 
     //AST
