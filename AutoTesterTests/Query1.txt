@@ -288,3 +288,608 @@ variable v;
 Select v such that Uses(33, v)
 none
 5000
+59. Basic Modifies Queries
+stmt s;
+Select s such that Modifies(s,"a")
+1,2,4,5,6,8,13,17,18,20
+5000
+60. Basic Modifies Queries
+stmt s;
+Select s such that Modifies(s,"b")
+13,22,23,24
+5000
+61. Basic Modifies Queries
+stmt s;
+Select s such that Modifies(s,"c")
+2,3,4,9
+5000
+62. Basic Modifies Queries
+stmt s;
+Select s such that Modifies(s,"d")
+2,4,6,7,10,15,17,19
+5000
+63. Basic Modifies Queries
+stmt s;
+Select s such that Modifies(s,"e")
+2,4,11,13,22,23,29
+5000
+64. Basic Modifies Queries
+stmt s;
+Select s such that Modifies(s,"f")
+2,12,13,14,22,23,26,27
+5000
+65. Basic Modifies Queries
+stmt s;
+Select s such that Modifies(s,"g")
+13,21,22,23,25
+5000
+66. Basic Modifies Queries
+stmt s;
+Select s such that Modifies(s,"h")
+13,22,23,28
+5000
+67. Basic Modifies Queries
+stmt s;
+Select s such that Modifies(s,"x")
+13,16,30,31
+5000
+68. Basic Modifies Queries
+stmt s;
+Select s such that Modifies(s,"y")
+13,16,30,32
+5000
+69. Basic Modifies Queries
+stmt s;
+Select s such that Modifies(s,"z")
+13,16,30,33
+5000
+70. Basic Modifies Queries
+procedure p;
+Select p such that Modifies(p, "a")
+SimpleProcOne,SimpleProcTwo
+5000
+71. Basic Modifies Queries
+procedure p;
+Select p such that Modifies(p, "b")
+SimpleProcOne,SimpleProcTwo
+5000
+72. Basic Modifies Queries
+procedure p;
+Select p such that Modifies(p, "c")
+SimpleProcOne
+5000
+73. Basic Modifies Queries
+procedure p;
+Select p such that Modifies(p, "d")
+SimpleProcOne
+5000
+74. Basic Modifies Queries
+procedure p;
+Select p such that Modifies(p, "e")
+SimpleProcOne,SimpleProcTwo
+5000
+75. Basic Modifies Queries
+procedure p;
+Select p such that Modifies(p, "f")
+SimpleProcOne,SimpleProcTwo
+5000
+76. Basic Modifies Queries
+procedure p;
+Select p such that Modifies(p, "g")
+SimpleProcOne,SimpleProcTwo
+5000
+77. Basic Modifies Queries
+procedure p;
+Select p such that Modifies(p, "h")
+SimpleProcOne,SimpleProcTwo
+5000
+78. Basic Modifies Queries
+procedure p;
+Select p such that Modifies(p, "x")
+SimpleProcOne,SimpleProcTwo,SimpleProcThree
+5000
+79. Basic Modifies Queries
+procedure p;
+Select p such that Modifies(p, "y")
+SimpleProcOne,SimpleProcTwo,SimpleProcThree
+5000
+80. Basic Modifies Queries
+procedure p;
+Select p such that Modifies(p, "z")
+SimpleProcOne,SimpleProcTwo,SimpleProcThree
+5000
+81. Basic Modifies Queries
+variable v;
+Select v such that Modifies(1, v)
+a
+5000
+82. Basic Modifies Queries
+variable v;
+Select v such that Modifies(2, v)
+a,c,d,e,f
+5000
+83. Basic Modifies Queries
+variable v;
+Select v such that Modifies(3, v)
+c
+5000
+84. Basic Modifies Queries
+variable v;
+Select v such that Modifies(4, v)
+a,c,d,e
+5000
+85. Basic Modifies Queries
+variable v;
+Select v such that Modifies(5, v)
+a
+5000
+86. Basic Modifies Queries
+variable v;
+Select v such that Modifies(6, v)
+a,d
+5000
+87. Basic Modifies Queries
+variable v;
+Select v such that Modifies(7, v)
+d
+5000
+88. Basic Modifies Queries
+variable v;
+Select v such that Modifies(8, v)
+a
+5000
+89. Basic Modifies Queries
+variable v;
+Select v such that Modifies(9, v)
+c
+5000
+90. Basic Modifies Queries
+variable v;
+Select v such that Modifies(10, v)
+d
+5000
+91. Basic Modifies Queries
+variable v;
+Select v such that Modifies(11, v)
+e
+5000
+92. Basic Modifies Queries
+variable v;
+Select v such that Modifies(12, v)
+f
+5000
+93. Basic Modifies Queries
+variable v;
+Select v such that Modifies(13, v)
+a,b,e,f,g,h,x,y,z
+5000
+94. Basic Modifies Queries
+variable v;
+Select v such that Modifies(14, v)
+f
+5000
+95. Basic Modifies Queries
+variable v;
+Select v such that Modifies(15, v)
+d
+5000
+96. Basic Modifies Queries
+variable v;
+Select v such that Modifies(16, v)
+x,y,z
+5000
+97. Basic Modifies Queries
+variable v;
+Select v such that Modifies(17, v)
+a,d
+5000
+98. Basic Modifies Queries
+variable v;
+Select v such that Modifies(18, v)
+a
+5000
+99. Basic Modifies Queries
+variable v;
+Select v such that Modifies(19, v)
+d
+5000
+100. Basic Modifies Queries
+variable v;
+Select v such that Modifies(20, v)
+a
+5000
+101. Basic Modifies Queries
+variable v;
+Select v such that Modifies(21, v)
+g
+5000
+102. Basic Modifies Queries
+variable v;
+Select v such that Modifies(22, v)
+b,e,f,g,h
+5000
+103. Basic Modifies Queries
+variable v;
+Select v such that Modifies(23, v)
+b,e,f,g,h
+5000
+104. Basic Modifies Queries
+variable v;
+Select v such that Modifies(24, v)
+b
+5000
+105. Basic Modifies Queries
+variable v;
+Select v such that Modifies(25, v)
+g
+5000
+106. Basic Modifies Queries
+variable v;
+Select v such that Modifies(26, v)
+f
+5000
+107. Basic Modifies Queries
+variable v;
+Select v such that Modifies(27, v)
+f
+5000
+108. Basic Modifies Queries
+variable v;
+Select v such that Modifies(28, v)
+h
+5000
+109. Basic Modifies Queries
+variable v;
+Select v such that Modifies(29, v)
+e
+5000
+110. Basic Modifies Queries
+variable v;
+Select v such that Modifies(30, v)
+x,y,z
+5000
+111. Basic Modifies Queries
+variable v;
+Select v such that Modifies(31, v)
+x
+5000
+112. Basic Modifies Queries
+variable v;
+Select v such that Modifies(32, v)
+y
+5000
+113. Basic Modifies Queries
+variable v;
+Select v such that Modifies(33, v)
+z
+5000
+114. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 1)
+none
+5000
+115. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 2)
+1
+5000
+116. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 3)
+none
+5000
+117. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 4)
+3
+5000
+118. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 5)
+none
+5000
+119. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 6)
+5
+5000
+120. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 7)
+none
+5000
+121. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 8)
+7
+5000
+122. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 9)
+6
+5000
+123. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 10)
+none
+5000
+124. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 11)
+10
+5000
+125. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 12)
+4
+5000
+126. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 13)
+2
+5000
+127. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 14)
+13
+5000
+128. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 15)
+14
+5000
+129. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 16)
+15
+5000
+130. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 17)
+16
+5000
+131. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 18)
+none
+5000
+132. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 19)
+none
+5000
+133. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 20)
+none
+5000
+134. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 21)
+20
+5000
+135. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 22)
+21
+5000
+136. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 23)
+none
+5000
+137. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 24)
+none
+5000
+138. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 25)
+24
+5000
+139. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 26)
+25
+5000
+140. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 27)
+none
+5000
+141. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 28)
+26
+5000
+142. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 29)
+none
+5000
+143. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 30)
+22
+5000
+144. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 31)
+none
+5000
+145. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 32)
+31
+5000
+146. Basic Follows Queries
+stmt s;
+Select s such that Follows(s, 33)
+32
+5000
+147. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+148. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+149. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+150. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+151. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+152. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+153. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+154. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+155. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+156. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+157. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+158. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+159. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+160. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+161. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+162. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+163. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+164. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+165. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+166. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+167. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+168. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+169. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+170. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+171. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+172. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+173. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+174. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+175. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+176. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+177. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+178. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
+179. Basic FollowedBy Queries
+stmt s;
+Select s such that Follows(, s)
+
+5000
