@@ -21,7 +21,7 @@ Select s such that Uses(s,"a")
 5. Basic Uses Queries
 stmt s;
 Select s such that Uses(s,"b")
-2,13,22,23,26,27
+2,4,11,13,22,23,26,27
 5000
 6. Basic Uses Queries
 stmt s;
@@ -41,7 +41,7 @@ Select s such that Uses(s,"e")
 9. Basic Uses Queries
 stmt s;
 Select s such that Uses(s,"f")
-none
+15
 5000
 10. Basic Uses Queries
 stmt s;
@@ -141,7 +141,7 @@ d
 29. Basic Uses Queries
 variable v;
 Select v such that Uses(4, v)
-a,d,e
+a,b,d,e
 5000
 30. Basic Uses Queries
 variable v;
@@ -730,166 +730,166 @@ Select s such that Follows(s, 33)
 5000
 147. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(1, s)
+2
 5000
 148. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(2, s)
+13
 5000
 149. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(3, s)
+4
 5000
 150. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(4, s)
+12
 5000
 151. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(5, s)
+6
 5000
 152. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(6, s)
+9
 5000
 153. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(7, s)
+8
 5000
 154. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(8, s)
+none
 5000
 155. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(9, s)
+none
 5000
 156. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(10, s)
+11
 5000
 157. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(11, s)
+none
 5000
 158. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(12, s)
+none
 5000
 159. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(13, s)
+14
 5000
 160. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(14, s)
+15
 5000
 161. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(15, s)
+16
 5000
 162. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(16, s)
+17
 5000
 163. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(17, s)
+none
 5000
 164. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(18, s)
+none
 5000
 165. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(19, s)
+none
 5000
 166. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(20, s)
+21
 5000
 167. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(21, s)
+22
 5000
 168. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(22, s)
+30
 5000
 169. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(23, s)
+none
 5000
 170. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(24, s)
+25
 5000
 171. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(25, s)
+26
 5000
 172. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(26, s)
+28
 5000
 173. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(27, s)
+none
 5000
 174. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(28, s)
+none
 5000
 175. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(29, s)
+none
 5000
 176. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(30, s)
+none
 5000
 177. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(31, s)
+32
 5000
 178. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(32, s)
+33
 5000
 179. Basic FollowedBy Queries
 stmt s;
-Select s such that Follows(, s)
-
+Select s such that Follows(33, s)
+none
 5000
