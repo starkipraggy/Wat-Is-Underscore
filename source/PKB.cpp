@@ -365,6 +365,14 @@ void PKB::WhileStart(NAME variable) {
 		}
 	}
 
+	// Add the Uses relationships into statements that call this current procedure
+	int tempStatementCallSize = currentProcedure->getStatementCallBySize();
+	StatementTableStatement* tempStatement;
+	for (int i = 0; i < tempStatementCallSize; i++) {
+		tempStatement = statementTable->getStatementUsingStatementNumber(currentProcedure->getStatementCallBy(i));
+		addRelationship(currentVariable, tempStatement, Uses);
+	}
+
     //AST
 	currentProcedureAST->addWhileTNode(variable, currentStatement->getStatementNumber());
 }
@@ -417,6 +425,14 @@ void PKB::IfStart(NAME variable) {
 			statementForAddingRelationship = statementTable->getStatementUsingStatementNumber(procedureForAddingRelationship->getStatementCallBy(x));
 			addRelationship(currentVariable, statementForAddingRelationship, Uses);
 		}
+	}
+
+	// Add the Uses relationships into statements that call this current procedure
+	int tempStatementCallSize = currentProcedure->getStatementCallBySize();
+	StatementTableStatement* tempStatement;
+	for (int i = 0; i < tempStatementCallSize; i++) {
+		tempStatement = statementTable->getStatementUsingStatementNumber(currentProcedure->getStatementCallBy(i));
+		addRelationship(currentVariable, tempStatement, Uses);
 	}
 
     //AST
