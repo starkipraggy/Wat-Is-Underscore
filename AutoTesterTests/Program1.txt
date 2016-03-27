@@ -5,11 +5,11 @@ procedure SimpleProcOne {
         if e then {              //4
             a = a + 15;          //5
             while d {            //6
-                d = d – 1;       //7
-                a = a – 2; }     //8
+                d = d + 1;       //7
+                a = a + 2; }     //8
             c = 1; } else {      //9
             d = 10;              //10
-            e = 92 – b; }        //11
+            e = 92 + b; }        //11
         f = 666; }               //12
     call SimpleProcTwo;          //13
     f = 27 - c;                  //14
