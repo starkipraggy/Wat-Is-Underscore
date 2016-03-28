@@ -51,6 +51,9 @@ private:
 		Used to set "hasItsFollowedByStarChanged" boolean to true, so that it can no longer used cached followedByStar vector
 	*/
 	void followedByStarHasBeingModified();
+
+	std::vector<int>* previous;							/**< A list of statement numbers of statements that has this statement after directly in the CFG */
+	std::vector<int>* next;								/**< A list of statement numbers of statements that comes after this statement directly in the CFG */
 public:
 	//! Constructor for the StatementTableStatement.
 	/*!
@@ -360,4 +363,36 @@ public:
 		A new vector would be generated.
 	*/
 	void fetchNewCopyOfChildrenStar();
+
+	//! Getter function for the list of statement numbers of statements that has this statement after directly in the CFG
+	/*!
+		Getter function for list of statement numbers of statements that has this statement after directly in the CFG;
+		use this function to retrieve a vector of statement numbers of statements s which Next(s, this) is true
+		\return List of statement numbers of statements that this statement has this statement after directlyin the CFG
+	*/
+	std::vector<int>* getPrevious();
+
+	//! Getter function for the list of statement numbers of statements that comes after this statement directly in the CFG
+	/*!
+		Getter function for list of statement numbers of statements that comes after this statement directly in the CFG;
+		use this function to retrieve a vector of statement numbers of statements s which Next(this, s) is true
+		\return List of statement numbers of statements that comes after this statement directlyin the CFG
+	*/
+	std::vector<int>* getNext();
+
+	//! Getter function for the list of statement numbers of statements that has this statement after directly or indirectly in the CFG
+	/*!
+		Getter function for list of statement numbers of statements that has this statement after directly or indirectly in the CFG;
+		use this function to retrieve a vector of statement numbers of statements s which Next*(s, this) is true
+		\return List of statement numbers of statements that this statement has this statement after directly or indirectly in the CFG
+	*/
+	std::vector<int>* getPreviousStar();
+
+	//! Getter function for the list of statement numbers of statements that comes after this statement directly or indirectly in the CFG
+	/*!
+		Getter function for list of statement numbers of statements that comes after this statement directly or indirectly in the CFG;
+		use this function to retrieve a vector of statement numbers of statements s which Next*(this, s) is true
+		\return List of statement numbers of statements that comes after this statement directly or indirectly in the CFG
+	*/
+	std::vector<int>* getNextStar();
 };
