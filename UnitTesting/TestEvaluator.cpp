@@ -20,7 +20,9 @@ namespace UnitTesting {
 		Ref placeholderVar, partOfExpressionVar, exprVar, integerVar,
 			stmtVar, assignVar, whileVar, variableVar, constantVar, progLineVar,
 			invalidVar;
-		Clause* usesClause;
+		Clause* usesClauseFirst;
+		Clause* usesClauseSecond;
+		Clause* usesClauseBoth;
 		Clause* followsClause;
 		Clause* patternClause;
 		vector<Clause*> oneClauses;
@@ -37,11 +39,13 @@ namespace UnitTesting {
 			constantVar = Ref("c", "constant");
 			progLineVar = Ref("p", "prog_line");
 
-			usesClause = new Clause("USES", integerVar, stmtVar);
+			usesClauseFirst = new Clause("USES", assignVar, integerVar);
+			usesClauseSecond = new Clause("USES", integerVar, stmtVar);
+			usesClauseBoth = new Clause("USES", assignVar, stmtVar);
 			followsClause = new Clause("FOLLOWS", integerVar, stmtVar);
 			patternClause = new PatternClause("PATTERN", placeholderVar, partOfExpressionVar, assignVar);
 
-			oneClauses.push_back(usesClause);
+			oneClauses.push_back(usesClauseFirst);
 
 			pkb = StubPKB::getInstance();
 			PKB::setInstance(pkb);
@@ -49,7 +53,7 @@ namespace UnitTesting {
 			QueryTree::Instance()->newTree();
 		}
 
-		TEST_METHOD(TestEvaluator_SimpleEvaluation)
+		TEST_METHOD(TestEvaluator_SelectEvaluation)
 		{
 			QueryTree::Instance()->setSelect(variableVar);
 			
@@ -58,30 +62,40 @@ namespace UnitTesting {
 			Assert::IsTrue(output.at(0) == "AnswerForSelect", (wchar_t*)output.at(0).c_str());
 		}
 
-		TEST_METHOD(TestEvaluator_UsesEvaluation)
+		TEST_METHOD(TestEvaluator_UsesFirstEvaluation)
 		{
-			QueryTree::Instance()->setSelect(variableVar);
-			QueryTree::Instance()->addClause(usesClause);
+			QueryTree::Instance()->setSelect(assignVar);
+			QueryTree::Instance()->addClause(usesClauseFirst);
 
 			vector<string> output = q.process();
 
 			Assert::IsTrue(output.at(0) == "AnswerForUses", (wchar_t*)output.at(0).c_str());
 		}
 
-		TEST_METHOD(TestEvaluator_secondArgVariable_Follows)
+		TEST_METHOD(TestEvaluator_UsesSecondEvaluation)
 		{
-			QueryTree::Instance()->setSelect(variableVar);
-			QueryTree::Instance()->addClause(followsClause);
+			QueryTree::Instance()->setSelect(stmtVar);
+			QueryTree::Instance()->addClause(usesClauseSecond);
 
 			vector<string> output = q.process();
 
-			Assert::IsTrue(output.at(1) == "AnswerForFollows", (wchar_t*)output.at(0).c_str());
+			Assert::IsTrue(output.at(0) == "AnswerForUses", (wchar_t*)output.at(0).c_str());
+		}
+
+		TEST_METHOD(TestEvaluator_UsesBothEvaluation)
+		{
+			QueryTree::Instance()->setSelect(stmtVar);
+			QueryTree::Instance()->addClause(usesClauseBoth);
+
+			vector<string> output = q.process();
+
+			Assert::IsTrue(output.at(0) == "AnswerForSelect", (wchar_t*)output.at(0).c_str());
 		}
 
 		TEST_METHOD(TestEvaluator_PatternEvaluation)
 		{
-			QueryTree::Instance()->setSelect(variableVar);
-			QueryTree::Instance()->addClause(new PatternClause("PATTERN", placeholderVar, partOfExpressionVar, assignVar));
+			QueryTree::Instance()->setSelect(assignVar);
+			QueryTree::Instance()->addClause(patternClause);
 
 			vector<string> output = q.process();
 
@@ -90,9 +104,9 @@ namespace UnitTesting {
 
 		TEST_METHOD(TestEvaluator_MixEvaluation)
 		{
-			QueryTree::Instance()->setSelect(variableVar);
-			QueryTree::Instance()->addClause(usesClause);
-			QueryTree::Instance()->addClause(new PatternClause("PATTERN", placeholderVar, exprVar, assignVar));
+			QueryTree::Instance()->setSelect(assignVar);
+			QueryTree::Instance()->addClause(usesClauseFirst);
+			QueryTree::Instance()->addClause(patternClause);
 
 			vector<string> output = q.process();
 

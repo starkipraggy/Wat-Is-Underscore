@@ -11,7 +11,7 @@ Query base and call PKB to process them
 #include <string>
 #include <regex>
 #include <set>
-#include <unordered_set>
+#include <unordered_map>
 #include "Clause.h"
 #include "PatternClause.h"
 #include "QueryTree.h"
@@ -29,40 +29,35 @@ public:
 	std::vector<string> process();
 
 private:
-	unordered_set<string> result; /**< map to store output result */
-	set<string> eachResult; /**< temp set to store temp result during processing */
+	int directoryIndex; /**< int to increment table count */
+	unordered_map<string, int> directory; /**< map to store result col name and number */
+	vector<vector<string>> result; /**< table to track output result */
+	vector<vector<string>> tempResult; /**< temp for result */
 
-	//! Return result
-	/*!
-	convert result to vector<string> and return. Then reset result to {}
-	*/
-	vector<string> getResult();
 
-	//! Return each result
+	//! internal method to process one synonymn
 	/*!
-	convert each result to vector<string> and return. Then reset each result to {}
+	Internal method to process one synonymn. Can handle either synonymn with non-synonym or vice versa
 	*/
-	vector<string> getEachResult();
-
-	//! Add current result to each result
-	/*!
-	Adding current result to each result will get a each result that follows the set
-	property
-	*/
-	void accumulate(vector<string> currResult);
+	void processOneSynonym(Ref source, Ref des, string clause, int pos);
 	
-	//! Add current result to result
+	//! query a such that select clause
 	/*!
-	Adding current result to result will get a each result that follows the AND
-	property
+	Internal method of process to query a such that select clause and add to table
 	*/
-	void addResult(vector<string> currResult);
+	void add(Ref ref);
 
 	//! query a such that clause
 	/*!
-	Internal method of process to query a such that clause
+	Internal method of process to query a such that clause given the vector and its iterator
 	*/
-	void query(string clause, Ref source, Ref dest, int position);
+	vector<vector<string>> query(vector<string> queryResult, int i, vector<vector<string>> temp);
+
+	//! query a such that clause
+	/*!
+	Internal method of process to query a such that clause given the vector, its iterator and col number
+	*/
+	vector<vector<string>>::iterator query(vector<string> queryResult, vector<vector<string>>::iterator it, int col);
 
 	//! Convert a string type to its TNodeType
 	/*!
