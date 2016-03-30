@@ -410,5 +410,52 @@ namespace UnitTesting
 			//Assert
 			Assert::IsTrue(AST::compareTrees(expected->getTree()[0], result->getTree()[0]));
 		}
+
+		TEST_METHOD(MultipleNestedWhile) {
+			AST* expected = new AST("TestProcedure");
+			TNode* whileNode = new TNode(While);
+			whileNode->addChild(new TNode(VariableName, "x"));
+			whileNode->addChild(new TNode(StmtLst));
+			TNode* assign = new TNode(Assign);
+			assign->addChild(new TNode(OperatorEquals));
+			assign->getChildNodes()[0]->addChild(new TNode(VariableName, "y"));
+			assign->getChildNodes()[0]->addChild(advancedTree);
+			whileNode->getChildNodes()[1]->addChild(assign);
+			TNode* whileNode2 = new TNode(While);
+			whileNode2->addChild(new TNode(VariableName, "x"));
+			whileNode2->addChild(new TNode(StmtLst));
+			whileNode2->getChildNodes()[1]->addChild(assign);
+			TNode* whileNode3 = new TNode(While);
+			whileNode3->addChild(new TNode(VariableName, "x"));
+			whileNode3->addChild(new TNode(StmtLst));
+			whileNode3->getChildNodes()[1]->addChild(assign);
+			whileNode2->getChildNodes()[1]->addChild(whileNode3);
+			whileNode->getChildNodes()[1]->addChild(whileNode2);
+			whileNode->getChildNodes()[1]->addChild(assign);
+			expected->makeChild(expected->getTree()[0], whileNode);
+			expected->makeChild(expected->getTree()[0], assign);
+
+
+			std::string expression1 = "hewlett-(a+(b+c)*d)+euler";
+			std::vector<std::string> tokens1 = SimpleParser::tokenize(expression1);
+
+			AST* result = new AST("TestProcedure");
+
+			//Act
+			result->addWhileTNode("x", 0);
+			result->addAssignTNode("y", tokens1, 0);
+			result->addWhileTNode("x", 0);
+			result->addAssignTNode("y", tokens1, 0);
+			result->addWhileTNode("x", 0);
+			result->addAssignTNode("y", tokens1, 0);
+			result->addEndOfContainerRelation();
+			result->addEndOfContainerRelation();
+			result->addAssignTNode("y", tokens1, 0);
+			result->addEndOfContainerRelation();
+			result->addAssignTNode("y", tokens1, 0);
+
+			//Assert
+			Assert::IsTrue(AST::compareTrees(expected->getTree()[0], result->getTree()[0]));
+		}
 	};
 }

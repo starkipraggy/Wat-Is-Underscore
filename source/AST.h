@@ -19,6 +19,7 @@ class AST
 private:
 	std::vector<TNode*> tree;	/**< List of TNodes that make up the AST */
 	bool endOfContainerStmt = false;    /**< Used to determine the end of a container statement */
+	int numberOfEndContainerCalls = 0;	/**< Used to determine the number of end statement calls */
 
     //! Function to add a TNode in the tree
     /*!
