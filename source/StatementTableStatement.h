@@ -388,7 +388,7 @@ public:
 		use this function to retrieve a vector of pointers to statements s which Next*(s, this) is true
 		\return List of pointers to statements that this statement has this statement after directly or indirectly in the CFG
 	*/
-	std::vector<StatementTableStatement*>* getPreviousStar();
+	std::vector<StatementTableStatement*> getPreviousStar();
 
 	//! Getter function for the list of pointers to statements that comes after this statement directly or indirectly in the CFG
 	/*!
@@ -396,7 +396,7 @@ public:
 		use this function to retrieve a vector of pointers to statements s which Next*(this, s) is true
 		\return List of pointers to statements that comes after this statement directly or indirectly in the CFG
 	*/
-	std::vector<StatementTableStatement*>* getNextStar();
+	std::vector<StatementTableStatement*> getNextStar();
 
 	//! Getter function for the list of pointers to statements that affects this statement
 	/*!

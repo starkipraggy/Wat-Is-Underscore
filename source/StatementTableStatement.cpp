@@ -281,6 +281,7 @@ void StatementTableStatement::fetchNewCopyOfChildrenStar() {
 
 std::vector<StatementTableStatement*>* StatementTableStatement::getPrevious() {
 	if (previous == NULL) {
+		previous = new std::vector<StatementTableStatement*>();
 		// @todo
 	}
 	return previous;
@@ -288,6 +289,7 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getPrevious() {
 
 std::vector<StatementTableStatement*>* StatementTableStatement::getNext() {
 	if (next != NULL) {
+		next = new std::vector<StatementTableStatement*>();
 		// @todo
 	}
 	return next;
@@ -319,18 +321,25 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getNext() {
    P.P.P.S.: Never mind, sorry, I need a container of StatementTableStatement* pointers
    for my Affects */
 
-std::vector<StatementTableStatement*>* StatementTableStatement::getPreviousStar() {
+std::vector<StatementTableStatement*> StatementTableStatement::getPreviousStar() {
+	std::vector<StatementTableStatement*> previousStar;
+
 	// @todo
-	return NULL;
+
+	return previousStar;
 }
 
-std::vector<StatementTableStatement*>* StatementTableStatement::getNextStar() {
+std::vector<StatementTableStatement*> StatementTableStatement::getNextStar() {
+	std::vector<StatementTableStatement*> nextStar;
+
 	// @todo
-	return NULL;
+
+	return nextStar;
 }
 
 std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis() {
 	if (affectsThis != NULL) {
+		affectsThis = new std::vector<StatementTableStatement*>();
 		// @todo by Wei Liang
 	}
 	return affectsThis;
@@ -338,7 +347,10 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis()
 
 std::vector<StatementTableStatement*>* StatementTableStatement::getAffectedByThis() {
 	if (affectedByThis != NULL) {
-		// @todo by Wei Liang
+		affectedByThis = new std::vector<StatementTableStatement*>();
+		std::set<int> statementNumbersOfStatementsAlreadyChecked;
+
+
 	}
 	return affectedByThis;
 }
