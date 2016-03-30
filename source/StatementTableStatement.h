@@ -54,6 +54,8 @@ private:
 
 	std::vector<int>* previous;							/**< A list of statement numbers of statements that has this statement after directly in the CFG */
 	std::vector<int>* next;								/**< A list of statement numbers of statements that comes after this statement directly in the CFG */
+	std::vector<int>* affectsThis;						/**< A list of statement numbers of statements that affects this statement */
+	std::vector<int>* affectedByThis;					/**< A list of statement numbers of statements that this statement affects */
 public:
 	//! Constructor for the StatementTableStatement.
 	/*!
@@ -376,7 +378,7 @@ public:
 	/*!
 		Getter function for list of statement numbers of statements that comes after this statement directly in the CFG;
 		use this function to retrieve a vector of statement numbers of statements s which Next(this, s) is true
-		\return List of statement numbers of statements that comes after this statement directlyin the CFG
+		\return List of statement numbers of statements that comes after this statement directly in the CFG
 	*/
 	std::vector<int>* getNext();
 
@@ -395,4 +397,20 @@ public:
 		\return List of statement numbers of statements that comes after this statement directly or indirectly in the CFG
 	*/
 	std::vector<int>* getNextStar();
+
+	//! Getter function for the list of statement numbers of statements that affects this statement
+	/*!
+		Getter function for list of statement numbers of statements that affects this statement;
+		use this function to retrieve a vector of statement numbers of statements s which Affects(s, this) is true
+		\return List of statement numbers of statements that affects this statement
+	*/
+	std::vector<int>* getAffectsThis();
+
+	//! Getter function for the list of statement numbers of statements that this statement affects
+	/*!
+		Getter function for list of statement numbers of statements that this statement affects;
+		use this function to retrieve a vector of statement numbers of statements s which Affects(this, s) is true
+		\return List of statement numbers of statements that this statement affects
+	*/
+	std::vector<int>* getAffectedByThis();
 };

@@ -34,6 +34,8 @@ StatementTableStatement::StatementTableStatement(int statementNumber) {
 
 	previous = NULL;
 	next = NULL;
+	affectsThis = NULL;
+	affectedByThis = NULL;
 }
 
 StatementTableStatement::~StatementTableStatement() {
@@ -46,23 +48,15 @@ StatementTableStatement::~StatementTableStatement() {
 	delete childrenStar;
 	delete followedByStar;
 
-	if (previous != NULL) {
-		delete previous;
-	}
-	if (next != NULL) {
-		delete next;
-	}
+	if (previous != NULL) { delete previous; }
+	if (next != NULL) { delete next; }
+	if (affectsThis != NULL) { delete affectsThis; }
+	if (affectedByThis != NULL) { delete affectedByThis; }
 }
 
 int StatementTableStatement::getStatementNumber() {
 	return statementNumber;
 }
-
-/*
-int StatementTableStatement::getIndex() {
-	return index;
-}
-*/
 
 std::string StatementTableStatement::getRightHandSideExpression() {
 	return rightHandSideExpression;
@@ -322,12 +316,26 @@ std::vector<int>* StatementTableStatement::getNext() {
 		   another unsigned integer to do comparison with
 */
 
-std::vector<int>* getPreviousStar() {
+std::vector<int>* StatementTableStatement::getPreviousStar() {
 	// @todo
 	return NULL;
 }
 
-std::vector<int>* getNextStar() {
+std::vector<int>* StatementTableStatement::getNextStar() {
 	// @todo
 	return NULL;
+}
+
+std::vector<int>* StatementTableStatement::getAffectsThis() {
+	if (affectsThis != NULL) {
+		// @todo by Wei Liang
+	}
+	return affectsThis;
+}
+
+std::vector<int>* StatementTableStatement::getAffectedByThis() {
+	if (affectedByThis != NULL) {
+		// @todo by Wei Liang
+	}
+	return affectedByThis;
 }
