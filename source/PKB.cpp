@@ -169,7 +169,6 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 
 	// Fixed throughout the entire function as there is only one
 	VariableTableVariable* leftVariable = variableTable->getVariableUsingName(variable);
-	currentStatement->setControlVariable(leftVariable->getName());
 
 	// Used in for-loops for iterations, as there may be multiple right variables
 	std::vector<VariableTableVariable*> rightVariables;
@@ -184,6 +183,8 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 	currentStatement = newStatement();
 	// Set the type of the statement to be an assignment
 	currentStatement->setType(Assign);
+	// Set control variable of this statement
+	currentStatement->setControlVariable(leftVariable->getName());
 	// Set expression of this statement
 	std::string rightHandSideExpression = "";
 	for (unsigned int i = 0; i < size; i++) {
@@ -919,7 +920,6 @@ std::vector<std::string> PKB::PQLCalls(std::string procedureName, bool isDirectC
 			returnList.push_back(procedureTable->getProcedure(*iter)->getName());
 		}
 	}
-
 	return returnList;
 }
 
@@ -940,6 +940,93 @@ std::vector<std::string> PKB::PQLCalledBy(std::string procedureName, bool isDire
 			returnList.push_back(procedureTable->getProcedure(*iter)->getName());
 		}
 	}
+	return returnList;
+}
 
+std::vector<std::string> PKB::PQLPrevious(int statementNumber, bool isDirect) {
+	std::vector<std::string> returnList;
+	StatementTableStatement* currentStatement = statementTable->getStatementUsingStatementNumber(statementNumber);
+	int size;
+
+	if (isDirect) {
+		std::vector<StatementTableStatement*>* previousList = currentStatement->getPrevious();
+		size = previousList->size();
+		for (int i = 0; i < size; i++) {
+			returnList.push_back(std::to_string(previousList->at(i)->getStatementNumber()));
+		}
+	}
+	else {
+		std::vector<StatementTableStatement*> previousStarList = currentStatement->getPreviousStar();
+		size = previousStarList.size();
+		for (int i = 0; i < size; i++) {
+			returnList.push_back(std::to_string(previousStarList[i]->getStatementNumber()));
+		}
+	}
+	return returnList;
+}
+
+std::vector<std::string> PKB::PQLNext(int statementNumber, bool isDirect) {
+	std::vector<std::string> returnList;
+	StatementTableStatement* currentStatement = statementTable->getStatementUsingStatementNumber(statementNumber);
+	int size;
+
+	if (isDirect) {
+		std::vector<StatementTableStatement*>* nextList = currentStatement->getNext();
+		size = nextList->size();
+		for (int i = 0; i < size; i++) {
+			returnList.push_back(std::to_string(nextList->at(i)->getStatementNumber()));
+		}
+	}
+	else {
+		std::vector<StatementTableStatement*> nextStarList = currentStatement->getNextStar();
+		size = nextStarList.size();
+		for (int i = 0; i < size; i++) {
+			returnList.push_back(std::to_string(nextStarList[i]->getStatementNumber()));
+		}
+	}
+	return returnList;
+}
+
+std::vector<std::string> PKB::PQLAffectsThis(int statementNumber, bool isDirect) {
+	std::vector<std::string> returnList;
+	StatementTableStatement* currentStatement = statementTable->getStatementUsingStatementNumber(statementNumber);
+	int size;
+
+	if (isDirect) {
+		std::vector<StatementTableStatement*>* affectsThisList = currentStatement->getAffectsThis();
+		size = affectsThisList->size();
+		for (int i = 0; i < size; i++) {
+			returnList.push_back(std::to_string(affectsThisList->at(i)->getStatementNumber()));
+		}
+	}
+	else {
+		std::vector<StatementTableStatement*> affectsThisStarList = currentStatement->getAffectsThisStar();
+		size = affectsThisStarList.size();
+		for (int i = 0; i < size; i++) {
+			returnList.push_back(std::to_string(affectsThisStarList[i]->getStatementNumber()));
+		}
+	}
+	return returnList;
+}
+
+std::vector<std::string> PKB::PQLAffectedByThis(int statementNumber, bool isDirect) {
+	std::vector<std::string> returnList;
+	StatementTableStatement* currentStatement = statementTable->getStatementUsingStatementNumber(statementNumber);
+	int size;
+
+	if (isDirect) {
+		std::vector<StatementTableStatement*>* affectedByThisList = currentStatement->getAffectedByThis();
+		size = affectedByThisList->size();
+		for (int i = 0; i < size; i++) {
+			returnList.push_back(std::to_string(affectedByThisList->at(i)->getStatementNumber()));
+		}
+	}
+	else {
+		std::vector<StatementTableStatement*> affectedByThisStarList = currentStatement->getAffectedByThisStar();
+		size = affectedByThisStarList.size();
+		for (int i = 0; i < size; i++) {
+			returnList.push_back(std::to_string(affectedByThisStarList[i]->getStatementNumber()));
+		}
+	}
 	return returnList;
 }

@@ -236,7 +236,7 @@ public:
 	/*!
 		One of the API functions that allows the PQL parser to extract information from the PKB.
 		Call this function for selection of parent* clauses.
-		\param input the known variable in the clause
+		\param statementNumber The known statement in the clause
 		\param argumentPosition the position of the input in the clause
 		\param outputType Optional argument - the type of conditions to check for
 						  (eg. "stmt", "assign", "while", "if", "call"). Default is "stmt".
@@ -274,6 +274,46 @@ public:
 		 \return The vector<string> of the list of names of procedures that call this procedure.
 	 */
 	 virtual std::vector<std::string> PQLCalledBy(std::string procedureName, bool isDirectCalls);
+
+	 //! Returns a list of statements that has this statement after, whether directly or indirectly, in the CFG
+	 /*!
+		 One of the API functions that allows the PQL parser to extract information from the PKB.
+		 Call this function for Next and Next* clauses.
+		 \param statementNumber The statement number of the statement
+		 \param isDirectCalls True for direct (Next), and false for indirect (Next*)
+		 \return The vector<string> of the statement numbers of statements that has this statement after in the CFG
+	 */
+	 virtual std::vector<std::string> PQLPrevious(int statementNumber, bool isDirect);
+
+	 //! Returns a list of statements that comes after this statement, whether directly or indirectly, in the CFG
+	 /*!
+		 One of the API functions that allows the PQL parser to extract information from the PKB.
+		 Call this function for Next and Next* clauses.
+		 \param statementNumber The statement number of the statement
+		 \param isDirectCalls True for direct (Next), and false for indirect (Next*)
+		 \return The vector<string> of the statement numbers of statements that comes after this statement after in the CFG
+	 */
+	 virtual std::vector<std::string> PQLNext(int statementNumber, bool isDirect);
+
+	 //! Returns a list of statements that affects this statement, whether directly or indirectly
+	 /*!
+		 One of the API functions that allows the PQL parser to extract information from the PKB.
+		 Call this function for Affects and Affects* clauses.
+		 \param statementNumber The statement number of the statement
+		 \param isDirectCalls True for direct (Affects), and false for indirect (Affects*)
+		 \return The vector<string> of the statement numbers of statements that affects this statement
+	 */
+	 virtual std::vector<std::string> PQLAffectsThis(int statementNumber, bool isDirect);
+
+	 //! Returns a list of statements that this statement affects, whether directly or indirectly
+	 /*!
+		 One of the API functions that allows the PQL parser to extract information from the PKB.
+		 Call this function for Affects and Affects* clauses.
+		 \param statementNumber The statement number of the statement
+		 \param isDirectCalls True for direct (Affects), and false for indirect (Affects*)
+		 \return The vector<string> of the statement numbers of statements that this statement affects
+	 */
+	 virtual std::vector<std::string> PQLAffectedByThis(int statementNumber, bool isDirect);
 
 	// ---------------------------------------------------------------------------------
 	// API FUNCTIONS FOR PQL PARSER ENDS HERE!!!
