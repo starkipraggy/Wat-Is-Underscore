@@ -273,18 +273,20 @@ void StatementTableStatement::fetchNewCopyOfChildrenStar() {
    feel free to change it as you like. Let me and Alan know immediately if you
    have any questions. Leaving this to you, thanks a lot! ;D
 
-   PS: If you need access to your CFG object, may I suggest a static CFG* pointer
+   P.S.: If you need access to your CFG object, may I suggest a static CFG* pointer
    in this StatementTableStatement class, passed in during the creation of this
-   object? Either that or make your CFG a Singleton, Iunno, up to you to implement lols. */
+   object? Either that or make your CFG a Singleton, Iunno, up to you to implement lols.
+   P.P.S.: Never mind, sorry, I need a container of StatementTableStatement* pointers
+   for my Affects */
 
-std::vector<int>* StatementTableStatement::getPrevious() {
+std::vector<StatementTableStatement*>* StatementTableStatement::getPrevious() {
 	if (previous == NULL) {
 		// @todo
 	}
 	return previous;
 }
 
-std::vector<int>* StatementTableStatement::getNext() {
+std::vector<StatementTableStatement*>* StatementTableStatement::getNext() {
 	if (next != NULL) {
 		// @todo
 	}
@@ -314,26 +316,27 @@ std::vector<int>* StatementTableStatement::getNext() {
    P.P.S.: Go fix the damn signed/unsigned mismatch warnings in your AST.cpp, lines
 		   210 and 244 LOL. vector.size() returns an unsigned integer, so you'd need
 		   another unsigned integer to do comparison with
-*/
+   P.P.P.S.: Never mind, sorry, I need a container of StatementTableStatement* pointers
+   for my Affects */
 
-std::vector<int>* StatementTableStatement::getPreviousStar() {
+std::vector<StatementTableStatement*>* StatementTableStatement::getPreviousStar() {
 	// @todo
 	return NULL;
 }
 
-std::vector<int>* StatementTableStatement::getNextStar() {
+std::vector<StatementTableStatement*>* StatementTableStatement::getNextStar() {
 	// @todo
 	return NULL;
 }
 
-std::vector<int>* StatementTableStatement::getAffectsThis() {
+std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis() {
 	if (affectsThis != NULL) {
 		// @todo by Wei Liang
 	}
 	return affectsThis;
 }
 
-std::vector<int>* StatementTableStatement::getAffectedByThis() {
+std::vector<StatementTableStatement*>* StatementTableStatement::getAffectedByThis() {
 	if (affectedByThis != NULL) {
 		// @todo by Wei Liang
 	}
