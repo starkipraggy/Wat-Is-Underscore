@@ -1,5 +1,7 @@
 #include <iostream>
 #include <stack>
+#include <queue>
+#include <unordered_map>
 #include "StatementTableStatement.h"
 
 void StatementTableStatement::childrenStarHasBeingModified() {
@@ -340,7 +342,104 @@ std::vector<StatementTableStatement*> StatementTableStatement::getNextStar() {
 std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis() {
 	if (affectsThis != NULL) {
 		affectsThis = new std::vector<StatementTableStatement*>();
-		// @todo by Wei Liang
+		if (getType() == Assign) {
+			// Multiple uses variables here
+			int numberOfUsesVariables = getUsesSize();
+
+			std::set<int> statementNumbersOfWhilesAlreadyChecked;
+			std::unordered_map<StatementTableStatement*, bool*> statementsAndVariables;
+			std::queue<StatementTableStatement*> statementsToCheck;
+			StatementTableStatement* currentStatementToCheck;
+			bool* currentBooleans;
+			StatementTableStatement* previousStatement1;
+			StatementTableStatement* previousStatement2;
+			statementsToCheck.push(this);
+			currentBooleans = new bool[numberOfUsesVariables];
+			for (int i = 0; i < numberOfUsesVariables; i++) {
+				currentBooleans[i] = true;
+			}
+			statementsAndVariables.insert({this, currentBooleans});
+
+			while (!statementsToCheck.empty()) {
+				currentStatementToCheck = statementsToCheck.front();
+				statementsToCheck.pop();
+				currentBooleans = statementsAndVariables.at(currentStatementToCheck);
+
+				// Make sure we check only assign statements, and don't check self - check their modify
+				if ((currentStatementToCheck->getType() == Assign) && (currentStatementToCheck != this)) {
+					for (int i = 0; i < numberOfUsesVariables; i++) {
+						if ((currentBooleans[i]) && (currentStatementToCheck->getModifies(0) == getUses(i))) {
+							affectsThis->push_back(currentStatementToCheck);
+							i = numberOfUsesVariables; // Break out of for-loop
+						}
+					}
+				}
+
+				// Check what variables are we left with that can go up
+				if ((currentStatementToCheck->getType() == Assign) && (currentStatementToCheck != this)) {
+					for (int i = 0; i < numberOfUsesVariables; i++) {
+						if (currentStatementToCheck->getModifies(0) == getUses(i)) {
+							currentBooleans[i] = false;
+						}
+					}
+				}
+
+				// If assign statement, only able to continue up if at least one boolean is true
+				bool canContinue = false;
+				if (currentStatementToCheck->getType() == Assign) {
+					for (int i = 0; i < numberOfUsesVariables; i++) {
+						canContinue = canContinue || currentBooleans[i];
+					}
+				}
+				else {
+					canContinue = true;
+				}
+
+				// Continue up the CFG
+				if (canContinue) {
+					previousStatement1 = currentStatementToCheck->getPrevious()->at(0);
+					previousStatement2 = currentStatementToCheck->getPrevious()->at(1);
+
+					// if this is a while-statement, add the cyclic node into the queue first!
+					if (currentStatementToCheck->getType() == While) {
+						std::vector<StatementTableStatement*> previousStar = previousStatement2->getPreviousStar();
+						int sizeOfPreviousStar = previousStar.size();
+						for (int i = 0; i < sizeOfPreviousStar; i++) {
+							if (previousStar[i] == currentStatementToCheck) {
+								// This is the cyclic node, make sure we add it into the queue first
+								StatementTableStatement* temporaryForSwapping = previousStatement2;
+								previousStatement2 = previousStatement1;
+								previousStatement1 = temporaryForSwapping;
+								i = sizeOfPreviousStar; // Break out of loop
+							}
+						}
+					}
+
+					for (int x = 0; x < 2; x++) {
+						StatementTableStatement* tempStatement = (x == 0) ? previousStatement1 : previousStatement2;
+						bool* newBooleans;
+						if (statementsAndVariables.count(tempStatement) == 1) {
+							newBooleans = statementsAndVariables.at(tempStatement);
+							for (int i = 0; i < numberOfUsesVariables; i++) {
+								newBooleans[i] = newBooleans[i] || currentBooleans[i];
+							}
+						}
+						else {
+							newBooleans = new bool[numberOfUsesVariables];
+							for (int i = 0; i < numberOfUsesVariables; i++) {
+								newBooleans[i] = currentBooleans[i];
+							}
+							statementsAndVariables.insert({ tempStatement , newBooleans });
+						}
+						statementsToCheck.push(tempStatement);
+					}
+				}
+			}
+			// According to http://www.cplusplus.com/reference/unordered_map/unordered_map/clear/,
+			// the destructors of the elements inside the container are called, so I assume
+			// I don't have to do so manually. Let me know otherwise
+			statementsAndVariables.clear();
+		}
 	}
 	return affectsThis;
 }
@@ -348,9 +447,49 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis()
 std::vector<StatementTableStatement*>* StatementTableStatement::getAffectedByThis() {
 	if (affectedByThis != NULL) {
 		affectedByThis = new std::vector<StatementTableStatement*>();
-		std::set<int> statementNumbersOfStatementsAlreadyChecked;
+		if (getType() == Assign) {
+			std::set<int> statementNumbersOfStatementsAlreadyChecked;
+			std::stack<StatementTableStatement*> statementsToCheck;
+			StatementTableStatement* currentStatementToCheck;
+			int currentStatementNumber;
+			int currentStatementUsesSize;
+			std::vector<StatementTableStatement*>* currentStatementNext;
+			int currentStatementNextSize;
+			statementsToCheck.push(this);
 
+			int variableIndex = getModifies(0);
 
+			while (!statementsToCheck.empty()) {
+				currentStatementToCheck = statementsToCheck.top();
+				statementsToCheck.pop();
+				currentStatementNumber = currentStatementToCheck->getStatementNumber();
+
+				// Make sure we check only assign statements, and don't check self
+				if ((currentStatementToCheck->getType() == Assign) && (currentStatementToCheck != this)) {
+					// This statement is not checked; check it
+					if (statementNumbersOfStatementsAlreadyChecked.count(currentStatementNumber) != 1) {
+						currentStatementUsesSize = currentStatementToCheck->getUsesSize();
+						for (int i = 0; i < currentStatementUsesSize; i++) {
+							if (variableIndex == currentStatementToCheck->getUses(i)) {
+								affectedByThis->push_back(currentStatementToCheck);
+								i = currentStatementUsesSize; // Break out of for-loop
+							}
+						}
+					}
+				}
+
+				// If it does not modify (or is self), we continue down the CFG
+				if ((currentStatementToCheck->getType() != Assign) || (currentStatementToCheck->getModifies(0) != variableIndex) || (currentStatementToCheck == this)) {
+					currentStatementNext = currentStatementToCheck->getNext();
+					currentStatementNextSize = currentStatementNext->size();
+					for (int i = 0; i < currentStatementNextSize; i++) {
+						statementsToCheck.push(currentStatementNext->at(i));
+					}
+				}
+
+				statementNumbersOfStatementsAlreadyChecked.insert(currentStatementNumber);
+			}
+		}
 	}
 	return affectedByThis;
 }

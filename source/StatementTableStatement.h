@@ -18,7 +18,8 @@ private:
 	int statementNumber;									/**< The statement number of this statement */
 	TNodeType type;											/**< The type of this statement */
 	std::string rightHandSideExpression;					/**< Right hand side expression, specifically for assign statements, for pattern clauses */
-	NAME controlVariable;									/**< Control variable, specifically for if and while statements, for pattern clauses */
+	NAME controlVariable;									/**< Control variable, specifically for if and while statements, for pattern clauses.
+																 Also used for left hand side expression for assign statements, for Affects clauses */
 	
 	StatementTableStatement* follows;						/**< The pointer to the statement that this statement follows
 																 (this statement appears immediately after the one it follows) */

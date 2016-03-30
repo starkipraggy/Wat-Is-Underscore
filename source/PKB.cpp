@@ -169,6 +169,7 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 
 	// Fixed throughout the entire function as there is only one
 	VariableTableVariable* leftVariable = variableTable->getVariableUsingName(variable);
+	currentStatement->setControlVariable(leftVariable->getName());
 
 	// Used in for-loops for iterations, as there may be multiple right variables
 	std::vector<VariableTableVariable*> rightVariables;
@@ -341,6 +342,7 @@ void PKB::CallStatement(std::string procedure) {
 void PKB::WhileStart(NAME variable) {
 	StatementTableStatement* currentStatement = newStatement();
 	VariableTableVariable* currentVariable = variableTable->getVariableUsingName(variable);
+	currentStatement->setControlVariable(variable);
 
 	// Set the type of the statement to be a while-loop
 	currentStatement->setType(While);
@@ -411,6 +413,7 @@ bool PKB::WhileEnd() {
 void PKB::IfStart(NAME variable) {
 	StatementTableStatement* currentStatement = newStatement();
 	VariableTableVariable* currentVariable = variableTable->getVariableUsingName(variable);
+	currentStatement->setControlVariable(variable);
 
 	// Set the type of the statement to be an if-statement
 	currentStatement->setType(If);
