@@ -493,3 +493,60 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectedByThi
 	}
 	return affectedByThis;
 }
+
+std::vector<StatementTableStatement*> StatementTableStatement::getAffectsThisStar() {
+	std::vector<StatementTableStatement*> affectsThisStar;
+	std::set<StatementTableStatement*> statementsChecked;
+	std::stack<StatementTableStatement*> statementsToCheck;
+	statementsToCheck.push(this);
+	StatementTableStatement* currentStatementToCheck;
+	std::vector<StatementTableStatement*>* currentStatementAffectsThis;
+	int currentStatementAffectsThisSize;
+	StatementTableStatement* currentCurrentStatementAffectsThis;
+
+	while (!statementsToCheck.empty()) {
+		currentStatementToCheck = statementsToCheck.top();
+		statementsToCheck.pop();
+
+		if (statementsChecked.count(currentStatementToCheck) == 0) {
+			currentStatementAffectsThis = currentStatementToCheck->getAffectsThis();
+			currentStatementAffectsThisSize = currentStatementAffectsThis->size();
+			for (int i = 0; i < currentStatementAffectsThisSize; i++) {
+				currentCurrentStatementAffectsThis = currentStatementAffectsThis->at(i);
+				affectsThisStar.push_back(currentCurrentStatementAffectsThis);
+				statementsToCheck.push(currentCurrentStatementAffectsThis);
+			}
+			statementsChecked.insert(currentStatementToCheck);
+		}
+	}
+	return affectsThisStar;
+}
+
+std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThisStar() {
+	std::vector<StatementTableStatement*> affectedByThisStar;
+	std::set<StatementTableStatement*> statementsChecked;
+	std::stack<StatementTableStatement*> statementsToCheck;
+	statementsToCheck.push(this);
+	StatementTableStatement* currentStatementToCheck;
+	std::vector<StatementTableStatement*>* currentStatementAffectedByThis;
+	int currentStatementAffectedByThisSize;
+	StatementTableStatement* currentCurrentStatementAffectedByThis;
+
+	while (!statementsToCheck.empty()) {
+		currentStatementToCheck = statementsToCheck.top();
+		statementsToCheck.pop();
+
+		if (statementsChecked.count(currentStatementToCheck) == 0) {
+			currentStatementAffectedByThis = currentStatementToCheck->getAffectedByThis();
+			currentStatementAffectedByThisSize = currentStatementAffectedByThis->size();
+			for (int i = 0; i < currentStatementAffectedByThisSize; i++) {
+				currentCurrentStatementAffectedByThis = currentStatementAffectedByThis->at(i);
+				affectedByThisStar.push_back(currentCurrentStatementAffectedByThis);
+				statementsToCheck.push(currentCurrentStatementAffectedByThis);
+			}
+			statementsChecked.insert(currentStatementToCheck);
+		}
+	}
+
+	return affectedByThisStar;
+}

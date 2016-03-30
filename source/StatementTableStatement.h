@@ -399,19 +399,35 @@ public:
 	*/
 	std::vector<StatementTableStatement*> getNextStar();
 
-	//! Getter function for the list of pointers to statements that affects this statement
+	//! Getter function for the list of pointers to statements that directly affects this statement
 	/*!
-		Getter function for list of pointers to statements that affects this statement;
+		Getter function for list of pointers to statements that directly affects this statement;
 		use this function to retrieve a vector of pointers to statements s which Affects(s, this) is true
-		\return List of pointers to statements that affects this statement
+		\return List of pointers to statements that directly affects this statement
 	*/
 	std::vector<StatementTableStatement*>* getAffectsThis();
 
-	//! Getter function for the list of pointers to statements that this statement affects
+	//! Getter function for the list of pointers to statements that this statement directly affects
 	/*!
-		Getter function for list of pointers to statements that this statement affects;
+		Getter function for list of pointers to statements that this statement directly affects;
 		use this function to retrieve a vector of pointers to statements s which Affects(this, s) is true
-		\return List of pointers to statements that this statement affects
+		\return List of pointers to statements that this statement directly affects
 	*/
 	std::vector<StatementTableStatement*>* getAffectedByThis();
+
+	//! Getter function for the list of pointers to statements that directly or indirectly affects this statement
+	/*!
+		Getter function for list of pointers to statements that directly or indirectly affects this statement;
+		use this function to retrieve a vector of pointers to statements s which Affects*(s, this) is true
+		\return List of pointers to statements that directly or indirectly affects this statement
+	*/
+	std::vector<StatementTableStatement*> getAffectsThisStar();
+
+	//! Getter function for the list of pointers to statements that this statement directly or indirectly affects
+	/*!
+		Getter function for list of pointers to statements that this statement directly or indirectly affects;
+		use this function to retrieve a vector of pointers to statements s which Affects*(this, s) is true
+		\return List of pointers to statements that this statement directly or indirectly affects
+	*/
+	std::vector<StatementTableStatement*> getAffectedByThisStar();
 };
