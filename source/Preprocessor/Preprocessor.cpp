@@ -11,8 +11,8 @@ const regex partOfExpressionRegex("(^_\")[[:space:]]*([[:alpha:]]([[:alnum:]]|#)
 
 const regex designEntityRegex("^(procedure|stmtLst|stmt|assign|call|while|if|variable|constant|prog_line|plus|minus|times)$",icase);
 const regex attrNameRegex("^(procName|varName|value|stmt#)$", icase);
-const regex stmtDesignEntityRegex("^(stmtLst|stmt|assign|while|if|constant|prog_line|plus|minus|times)$", icase);
-const regex lineDesignEntityRegex("^(stmtLst|stmt|assign|while|if|constant|prog_line|plus|minus|times)$", icase);
+const regex stmtDesignEntityRegex("^(stmtLst|stmt|assign|while|if|prog_line)$", icase);
+const regex lineDesignEntityRegex("^(stmtLst|stmt|assign|call|while|if|prog_line)$", icase);
 const regex entDesignEntityRegex("^(assign|if|while|procedure)$", icase);
 const regex varDesignEntityRegex("^(variable)$", icase);
 
