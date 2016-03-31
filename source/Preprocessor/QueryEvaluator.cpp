@@ -290,7 +290,12 @@ vector<string> QueryEvaluator::queryPKB(string clause, string input, int argumen
 	else if (clause == "MODIFIES") {
 		output = pkb->PQLModifies(input, argumentPosition, outputType);
 	}
-
+	else if (clause == "CALLS") {
+		output = pkb->PQLCalls(input, argumentPosition);
+	}
+	else if (clause == "CALLS*") {
+		//output = pkb->PQLCallsStar(input, argumentPosition);
+	}
 	else{
 		int value = atoi(input.c_str());
 		if (clause == "FOLLOWS") {
@@ -304,6 +309,18 @@ vector<string> QueryEvaluator::queryPKB(string clause, string input, int argumen
 		}
 		else if (clause == "PARENT*") {
 			output = pkb->PQLParentStar(value, argumentPosition, outputType);
+		}
+		else if (clause == "NEXT") {
+			output = pkb->PQLNext(value, argumentPosition);
+		}
+		else if (clause == "NEXT*") {
+			//output = pkb->PQLNextStar(value, argumentPosition, outputType);
+		}
+		else if (clause == "AFFECTS") {
+			//output = pkb->PQLAffects(value, argumentPosition, outputType);
+		}
+		else if (clause == "AFFECTS*") {
+			//output = pkb->PQLAffectsStar(value, argumentPosition, outputType);
 		}
 	}
 
