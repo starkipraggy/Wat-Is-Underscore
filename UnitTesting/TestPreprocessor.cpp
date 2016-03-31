@@ -24,10 +24,10 @@ namespace UnitTesting {
 
 		const string simpleQuery = "assign a; select a",
 			simpleBoolQuery = "assign a; select BOOLEAN",
-			usesQuery = "variable v; constant c; select v such that uses(c, v)",
+			usesQuery = "variable v; assign a; select v such that uses(a, v)",
 			patternQuery = "assign a; select a pattern a(_,\"abc\")",
 			withQuery = "assign a; select a with a.stmt# = 123",
-			combinedQuery = "variable v; constant c; assign a; select a such that uses(c, v) pattern a(_,\"abc\")";
+			combinedQuery = "variable v; assign a; select a such that uses(a, v) pattern a(_,\"abc\")";
 	
 
 		TEST_METHOD_INITIALIZE(build) {
@@ -44,7 +44,7 @@ namespace UnitTesting {
 			boolVar = Ref("", "boolean");
 			withVar = Ref("a", "assign-stmt#");
 
-			usesClause = new Clause("USES", constantVar, variableVar);
+			usesClause = new Clause("USES", assignVar, variableVar);
 			patternClause = PatternClause("PATTERN", placeholderVar, exprVar, assignVar);
 			withClause = Clause("WITH", withVar, integerVar);
 			

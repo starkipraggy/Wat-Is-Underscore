@@ -117,11 +117,21 @@ private:
 	return true if type is stmtRef
 	*/
 	static bool isStmtRef(Ref v);
+	//! Check if type is lineRef
+	/*!
+	return true if type is lineRef
+	*/
+	static bool isLineRef(Ref v);
 	//! Check if type is EntRef
 	/*!
 	return true if type is EntRef
 	*/
 	static bool isEntRef(Ref v);
+	//! Check if type is VarRef
+	/*!
+	return true if type is VarRef
+	*/
+	static bool isVarRef(Ref v);
 	//! Check if type is ExprSpec
 	/*!
 	return true if type is ExprSpec
