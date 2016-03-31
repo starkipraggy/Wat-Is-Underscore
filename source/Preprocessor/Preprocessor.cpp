@@ -11,10 +11,10 @@ const regex expressionRegex("(^\"[[:alpha:]])([[:alnum:]]*|#*)*\"$");
 const regex patternExpressionRegex("(^\")[[:space:]]*([[:alpha:]]([[:alnum:]]|#)*|[[:digit:]]+)[[:space:]]*(\\+[[:space:]]*([[:alpha:]]([[:alnum:]]|#)*|[[:digit:]]+))*[[:space:]]*(\"$)");
 const regex partOfExpressionRegex("(^_\")[[:space:]]*([[:alpha:]]([[:alnum:]]|#)*|[[:digit:]]+)[[:space:]]*(\\+[[:space:]]*([[:alpha:]]([[:alnum:]]|#)*|[[:digit:]]+))*[[:space:]]*(\"_$)");
 
-const regex designEntityRegex("^(STMT|ASSIGN|WHILE|VARIABLE|CONSTANT|PROG_LINE)$",icase);
-const regex attrNameRegex("^(PROCNAME|VARNAME|VALUE|STMT#)$", icase);
-const regex stmtDesignEntityRegex("^(STMT|ASSIGN|WHILE|CONSTANT|PROG_LINE)$", icase);
-const regex entDesignEntityRegex("^(VARIABLE)$", icase);
+const regex designEntityRegex("^(procedure|stmtLst|stmt|assign|call|while|if|variable|constant|prog_line|plus|minus|times)$",icase);
+const regex attrNameRegex("^(procName|varName|value|stmt#)$", icase);
+const regex stmtDesignEntityRegex("^(stmtLst|stmt|assign|while|if|constant|prog_line|plus|minus|times)$", icase);
+const regex entDesignEntityRegex("^(procedure|variable)$", icase);
 
 const regex clauseRegex("such that+|pattern+|with+|and+", icase);
 const regex booleanRegex("^(BOOLEAN)$", icase);
