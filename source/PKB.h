@@ -63,6 +63,30 @@ public:
 	//! Allows modification to the static reference to the lone singleton instance.
 	static void PKB::setInstance(PKB* newPkb);
 
+    //! Getter function for the procedure table.
+    /*!
+        Getter function for the procedure table; use this function to
+        retrieve the procedure table that this object has.
+        \return The procedure table that this object has.
+    */
+    ProcedureTable* getProcedureTable();
+    
+    //! Getter function for the statement table.
+    /*!
+        Getter function for the statement table; use this function to
+        retrieve the statement table that this object has.
+        \return The statement table that this object has.
+    */
+    StatementTable* getStatementTable();
+    
+    //! Getter function for the variable table.
+    /*!
+        Getter function for the variable table; use this function to
+        retrieve the variable table that this object has.
+        \return The variable table that this object has.
+    */
+    VariableTable* getVariableTable();
+
 
 	// ---------------------------------------------------------------------------------
 	// API FUNCTIONS FOR SIMPLE PARSER STARTS HERE!!!
