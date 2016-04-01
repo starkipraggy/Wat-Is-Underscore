@@ -3,7 +3,7 @@
 using namespace std;
 using namespace std::regex_constants;
 
-const regex designEntityRegex("^(STMT|ASSIGN|WHILE|VARIABLE|CONSTANT|PROG_LINE)$", icase);
+const regex designEntityRegex("^(procedure|stmtLst|stmt|assign|call|while|if|variable|constant|prog_line|plus|minus|times)$", icase);
 
 PKB* pkb;
 
