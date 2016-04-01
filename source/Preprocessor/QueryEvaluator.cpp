@@ -291,10 +291,20 @@ vector<string> QueryEvaluator::queryPKB(string clause, string input, int argumen
 		output = pkb->PQLModifies(input, argumentPosition, outputType);
 	}
 	else if (clause == "CALLS") {
-		output = pkb->PQLCalls(input, argumentPosition);
+		if (argumentPosition == 1) {
+			output = pkb->PQLCalls(input, true);
+		}
+		else { //argumentPosition == 2
+			output = pkb->PQLCalledBy(input, true);
+		}
 	}
 	else if (clause == "CALLS*") {
-		//output = pkb->PQLCallsStar(input, argumentPosition);
+		if (argumentPosition == 1) {
+			output = pkb->PQLCalls(input, false);
+		}
+		else { //argumentPosition == 2
+			output = pkb->PQLCalledBy(input, false);
+		}
 	}
 	else{
 		int value = atoi(input.c_str());
@@ -311,35 +321,38 @@ vector<string> QueryEvaluator::queryPKB(string clause, string input, int argumen
 			output = pkb->PQLParentStar(value, argumentPosition, outputType);
 		}
 		else if (clause == "NEXT") {
-			output = pkb->PQLNext(value, argumentPosition);
-		}
-		else if (clause == "NEXT*") {
-			//output = pkb->PQLNextStar(value, argumentPosition, outputType);
-		}
-		else if (clause == "AFFECTS") {
-			//output = pkb->PQLAffects(value, argumentPosition, outputType);
-		}
-		else if (clause == "AFFECTS*") {
-			//output = pkb->PQLAffectsStar(value, argumentPosition, outputType);
-		}
-	}
-
-	/*if (toTNodeType(outputType) != Undefined) {
-		vector<string> selects = pkb->PQLSelect(toTNodeType(outputType));
-
-		vector<string> tempOutput;
-		std::copy(output.begin(), output.end(), std::inserter(tempOutput, tempOutput.begin()));
-		output = {};
-
-		for (int i = 0; i < tempOutput.size(); i++) {
-			for (int j = 0; j < selects.size(); j++) {
-				if (tempOutput.at(i) == selects.at(j)) {
-					output.push_back(tempOutput.at(i));
-				}
+			if (argumentPosition == 1) {
+				output = pkb->PQLPrevious(value, true);
+			}
+			else { //argumentPosition == 2
+				output = pkb->PQLNext(value, true);
 			}
 		}
-	}*/
-
+		else if (clause == "NEXT*") {
+			if (argumentPosition == 1) {
+				output = pkb->PQLPrevious(value, false);
+			}
+			else { //argumentPosition == 2
+				output = pkb->PQLNext(value, false);
+			}
+		}
+		else if (clause == "AFFECTS") {
+			if (argumentPosition == 1) {
+				output = pkb->PQLAffectsThis(value, true);
+			}
+			else { //argumentPosition == 2
+				output = pkb->PQLAffectedByThis(value, true);
+			}
+		}
+		else if (clause == "AFFECTS*") {
+			if (argumentPosition == 1) {
+				output = pkb->PQLAffectsThis(value, false);
+			}
+			else { //argumentPosition == 2
+				output = pkb->PQLAffectedByThis(value, false);
+			}
+		}
+	}
 
 	return output;
 }
