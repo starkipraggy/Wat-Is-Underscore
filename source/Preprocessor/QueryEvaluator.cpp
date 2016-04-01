@@ -54,12 +54,11 @@ std::vector<std::string> QueryEvaluator::process() {
 					unordered_map<string, int>::const_iterator item1 = directory.find(var1.getName());
 					unordered_map<string, int>::const_iterator item2 = directory.find(var2.getName());
 
-					if (item1 == directory.end() && item2 == directory.end()) {
+					if (item1 != directory.end() && item2 != directory.end()) {
 						for (vector<vector<string>>::iterator it = result.begin(); it != result.end();) {
 
-							int col = item2->second;
-							queryResult = queryPKB(clause, it->at(col), 2, var2.getType());
-							it = query(queryResult, it, col);
+							queryResult = queryPKB(clause, it->at(item1->second), 1, var1.getType());
+							it = query(queryResult, it, item2->second);
 
 						}
 					}
