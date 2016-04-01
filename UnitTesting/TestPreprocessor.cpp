@@ -83,6 +83,36 @@ namespace UnitTesting {
 			Assert::IsTrue(clauses.at(0)->equals(usesClause));
 		}
 
+		TEST_METHOD(TestPreprocessor_Follows1Query)
+		{
+			p.process("assign a; while w; select w such that Follows(w, a)");
+			select = QueryTree::Instance()->getSelect();
+			clauses = QueryTree::Instance()->getClauses();
+
+			Assert::IsTrue(select.equals(whileVar));
+			Assert::IsTrue(clauses.at(0)->equals(new Clause("follows", whileVar, assignVar)));
+		}
+
+		TEST_METHOD(TestPreprocessor_Follows2Query)
+		{
+			p.process("assign a; while w; select w such that Follows(a, w)");
+			select = QueryTree::Instance()->getSelect();
+			clauses = QueryTree::Instance()->getClauses();
+
+			Assert::IsTrue(select.equals(whileVar));
+			Assert::IsTrue(clauses.at(0)->equals(new Clause("follows", assignVar, whileVar)));
+		}
+
+		TEST_METHOD(TestPreprocessor_FollowsStarQuery)
+		{
+			p.process("stmt s; select s such that follows*(s,123)");
+			select = QueryTree::Instance()->getSelect();
+			clauses = QueryTree::Instance()->getClauses();
+
+			Assert::IsTrue(select.equals(stmtVar));
+			Assert::IsTrue(clauses.at(0)->equals(new Clause("follows*", stmtVar, integerVar)));
+		}
+
 		TEST_METHOD(TestPreprocessor_PatternQuery)
 		{
 			p.process(patternQuery);

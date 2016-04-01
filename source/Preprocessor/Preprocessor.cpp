@@ -17,9 +17,9 @@ const regex entDesignEntityRegex("^(assign|if|while|procedure)$", icase);
 const regex varDesignEntityRegex("^(variable)$", icase);
 
 const regex entVarRefRefRegex("^(modifies|uses)$", icase);
-const regex stmtVarRefRefRegex("^(modifies*|uses*)$", icase);
+const regex stmtVarRefRefRegex("^(modifies|uses)$", icase);
 const regex ententRefRefRegex("^(call|call*)$", icase);
-const regex stmtstmtRefRefRegex("^(parent|parent*|follows|follows*|affects|affects*)$", icase);
+const regex stmtstmtRefRefRegex("^(parent|parent\\*|follows|follows\\*|affects|affects\\*)$", icase);
 const regex linelineRefRefRegex("^(next|next*)$", icase);
 
 const regex clauseRegex("such that+|pattern+|with+|and+", icase);
@@ -231,14 +231,9 @@ void Preprocessor::addSuchThatClause(string rawClause) {
 		if (var1.equals(var2) && regex_match(var1.getType(), designEntityRegex)) {
 			throw "cannot same synonym ref";
 		}
-		else if (regex_match(condition, entVarRefRefRegex)) {
-			if (!(isEntRef(var1) && isVarRef(var2))) {
-				throw "invalid entVarRefRef";
-			}
-		}
-		else if (regex_match(condition, stmtVarRefRefRegex)) {
-			if (!(isStmtRef(var1) && isVarRef(var2))) {
-				throw "invalid stmtVarRefRef";
+		else if (regex_match(condition, entVarRefRefRegex) || regex_match(condition, stmtVarRefRefRegex)) {
+			if (!((isEntRef(var1) || isStmtRef(var1)) && isVarRef(var2))) {
+				throw "invalid entVarRefRef or stmtVarRefRef";
 			}
 		}
 		else if (regex_match(condition, ententRefRefRegex)) {
