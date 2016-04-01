@@ -18,15 +18,17 @@ namespace UnitTesting {
 
 		Ref placeholderVar, partOfExpressionVar, exprVar, integerVar,
 			stmtVar, assignVar, whileVar, variableVar, constantVar, progLineVar, 
-			invalidVar, boolVar, withVar;
-		Clause* usesClause, patternClause, withClause;
+			invalidVar, boolVar, withVar, procedureVar;
+		Clause* usesClause;
+		Clause* patternClause;
+		Clause* withClause;
 		vector<Clause*> oneClauses;
 
 		const string simpleQuery = "assign a; select a",
 			simpleBoolQuery = "assign a; select BOOLEAN",
 			usesQuery = "variable v; assign a; select v such that uses(a, v)",
 			patternQuery = "assign a; select a pattern a(_,\"abc\")",
-			withQuery = "assign a; select a with a.stmt# = 123",
+			withQuery = "procedure p; select p with p.procName = \"abc\"",
 			combinedQuery = "variable v; assign a; select a such that uses(a, v) pattern a(_,\"abc\")";
 	
 
@@ -40,13 +42,13 @@ namespace UnitTesting {
 			whileVar = Ref("w", "while");
 			variableVar = Ref("v", "variable");
 			constantVar = Ref("c", "constant");
-			progLineVar = Ref("p", "prog_line");
+			progLineVar = Ref("pl", "prog_line");
+			procedureVar = Ref("p", "procedure");
 			boolVar = Ref("", "boolean");
-			withVar = Ref("a", "assign-stmt#");
 
 			usesClause = new Clause("USES", assignVar, variableVar);
-			patternClause = PatternClause("PATTERN", placeholderVar, exprVar, assignVar);
-			withClause = Clause("WITH", withVar, integerVar);
+			patternClause = new PatternClause("PATTERN", placeholderVar, exprVar, assignVar);
+			withClause = new Clause("WITH", procedureVar, exprVar);
 			
 			oneClauses.push_back(usesClause);
 
@@ -120,7 +122,7 @@ namespace UnitTesting {
 			clauses = QueryTree::Instance()->getClauses();
 
 			Assert::IsTrue(select.equals(assignVar));
-			Assert::IsTrue(patternClause.equals(clauses.at(0)));
+			Assert::IsTrue(patternClause->equals(clauses.at(0)));
 		}
 
 		TEST_METHOD(TestPreprocessor_WithQuery)
@@ -129,8 +131,8 @@ namespace UnitTesting {
 			select = QueryTree::Instance()->getSelect();
 			clauses = QueryTree::Instance()->getClauses();
 
-			Assert::IsTrue(select.equals(assignVar));
-			Assert::IsTrue(withClause.equals(clauses.at(0)));
+			Assert::IsTrue(select.equals(procedureVar));
+			Assert::IsTrue(withClause->equals(clauses.at(0)));
 		}
 
 		TEST_METHOD(TestPreprocessor_CombinedQuery)
@@ -141,7 +143,7 @@ namespace UnitTesting {
 
 			Assert::IsTrue(select.equals(assignVar));
 			Assert::IsTrue(clauses.at(0)->equals(usesClause));
-			Assert::IsTrue(patternClause.equals(clauses.at(1)));
+			Assert::IsTrue(patternClause->equals(clauses.at(1)));
 		}
 	};
 }

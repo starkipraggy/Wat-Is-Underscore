@@ -381,6 +381,7 @@ Ref Preprocessor::createWithRef(string name) {
 		int position = name.find(".");
 		string synonym = trim(name.substr(0, position));
 		string attrName = trim(name.substr(position + 1));
+		attrName = StringToUpper(attrName);
 		try {
 			type = declarationMap.find(synonym)->second;
 		}
@@ -388,11 +389,30 @@ Ref Preprocessor::createWithRef(string name) {
 			throw msg;
 		}
 
-		if (!regex_match(attrName, attrNameRegex)) {
-			throw "wrong attrName";
+		if (StringToUpper(type) == "PROCEDURE") {
+			if (attrName != "PROCNAME") {
+				throw "wrong procedure type";
+			}
+		}
+		else if (StringToUpper(type) == "STMT" || StringToUpper(type) == "STMTLST") {
+			if (attrName != "STMT#") {
+				throw "wrong stmt type";
+			}
+		}
+		else if (StringToUpper(type) == "VARIABLE") {
+			if (attrName != "VARNAME") {
+				throw "wrong variable type";
+			}
+		}
+		else if (StringToUpper(type) == "CONSTANT") {
+			if (attrName != "VALUE") {
+				throw "wrong constant type";
+			}
+		}
+		else {
+			throw "synonym should not have type";
 		}
 
-		type = type + "-" + attrName;
 		ref = Ref(synonym, type);
 	}
 	else if (regex_match(name, identRegex)) {
