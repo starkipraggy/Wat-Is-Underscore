@@ -70,5 +70,17 @@ private:
 	Query the individual PKB method by the clause type
 	*/
 	vector<string> queryPKB(string clause, string input, int argumentPosition, string outputType);
+
+	//! remove from result table
+	/*!
+	Remove a row if the entry in pos1 equals to entry in pos2
+	*/
+	void remove(int pos1, int pos2);
+
+	//! remove from result table
+	/*!
+	Remove a row if the entry in pos1 equals to a string input
+	*/
+	void remove(int pos, string input);
 };
 #endif

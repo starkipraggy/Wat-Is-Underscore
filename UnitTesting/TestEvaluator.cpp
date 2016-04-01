@@ -19,11 +19,12 @@ namespace UnitTesting {
 
 		Ref placeholderVar, partOfExpressionVar, exprVar, integerVar,
 			stmtVar, assignVar, whileVar, variableVar, constantVar, progLineVar,
-			invalidVar;
+			invalidVar, withVar;
 		Clause* usesClauseFirst;
 		Clause* usesClauseSecond;
 		Clause* usesClauseBoth;
 		Clause* followsClause;
+		Clause* withClause;
 		Clause* patternClause;
 		vector<Clause*> oneClauses;
 
@@ -38,11 +39,13 @@ namespace UnitTesting {
 			variableVar = Ref("v", "variable");
 			constantVar = Ref("c", "constant");
 			progLineVar = Ref("p", "prog_line");
+			withVar = Ref("AnswerForWith", "expr");
 
 			usesClauseFirst = new Clause("USES", assignVar, integerVar);
 			usesClauseSecond = new Clause("USES", integerVar, stmtVar);
 			usesClauseBoth = new Clause("USES", assignVar, stmtVar);
 			followsClause = new Clause("FOLLOWS", integerVar, stmtVar);
+			withClause = new Clause("WITH", constantVar, withVar);
 			patternClause = new PatternClause("PATTERN", placeholderVar, partOfExpressionVar, assignVar);
 
 			oneClauses.push_back(usesClauseFirst);
@@ -100,6 +103,16 @@ namespace UnitTesting {
 			vector<string> output = q.process();
 
 			Assert::IsTrue(output.at(0) == "AnswerForPattern", (wchar_t*)output.at(0).c_str());
+		}
+
+		TEST_METHOD(TestEvaluator_WithEvaluation)
+		{
+			QueryTree::Instance()->setSelect(constantVar);
+			QueryTree::Instance()->addClause(withClause);
+
+			vector<string> output = q.process();
+
+			Assert::IsTrue(output.at(0) == "AnswerForWith", (wchar_t*)output.at(0).c_str());
 		}
 
 		TEST_METHOD(TestEvaluator_MixEvaluation)

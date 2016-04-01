@@ -49,6 +49,29 @@ std::vector<std::string> QueryEvaluator::process() {
 					}
 				}
 			}
+			else if (StringToUpper(clause) == "WITH") {
+				if (regex_match(var1.getType(), designEntityRegex) && regex_match(var2.getType(), designEntityRegex)) {
+					unordered_map<string, int>::const_iterator item1 = directory.find(var1.getName());
+					unordered_map<string, int>::const_iterator item2 = directory.find(var2.getName());
+
+					remove(item1->second, item2->second);
+				}
+				else if (regex_match(var1.getType(), designEntityRegex)) {
+					unordered_map<string, int>::const_iterator item1 = directory.find(var1.getName());
+
+					remove(item1->second, var2.getName());
+				}
+				else if (regex_match(var2.getType(), designEntityRegex)) {
+					unordered_map<string, int>::const_iterator item2 = directory.find(var2.getName());
+
+					remove(item2->second, var1.getName());
+				}
+				else {
+					if (var1.getName() != var2.getName()) {
+						throw "false evaluation";
+					}
+				}
+			}
 			else {
 				if (regex_match(var1.getType(), designEntityRegex) && regex_match(var2.getType(), designEntityRegex)) {
 					unordered_map<string, int>::const_iterator item1 = directory.find(var1.getName());
@@ -118,7 +141,7 @@ std::vector<std::string> QueryEvaluator::process() {
 							throw "result false";
 						}
 					}
-					if (var1.getType() == "placeholder") {
+					if (var2.getType() == "placeholder") {
 						queryResult = queryPKB(clause, var1.getName(), 1, select.getType());
 						if (queryResult.size() < 1) {
 							throw "result false";
@@ -221,6 +244,32 @@ void QueryEvaluator::add(Ref ref) {
 	pair<string, int> newPair(ref.getName(), directoryIndex);
 	directory.insert(newPair);
 	directoryIndex++;
+}
+
+void QueryEvaluator::remove(int pos1, int pos2) {
+	for (vector<vector<string>>::iterator it = result.begin(); it != result.end();) {
+
+		if (it->at(pos1) != it->at(pos2)) {
+			it = result.erase(it);
+		}
+		else {
+			++it;
+		}
+
+	}
+}
+
+void QueryEvaluator::remove(int pos, string input) {
+	for (vector<vector<string>>::iterator it = result.begin(); it != result.end();) {
+
+		if (it->at(pos) != input) {
+			it = result.erase(it);
+		}
+		else {
+			++it;
+		}
+
+	}
 }
 
 vector<vector<string>> QueryEvaluator::query(vector<string> queryResult, int i, vector<vector<string>> temp) {
