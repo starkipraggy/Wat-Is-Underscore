@@ -210,7 +210,7 @@ namespace UnitTesting
             Assert::AreEqual(0, test);
             test = PKB::getInstance()->getProcedureTable()->getProcedure(1)->getIndex();
             Assert::AreEqual(1, test);
-        
+
             test = PKB::getInstance()->getProcedureTable()->getProcedure(0)->getModifiesSize();
             Assert::AreEqual(2, test);
             test = PKB::getInstance()->getProcedureTable()->getProcedure(1)->getModifiesSize();
