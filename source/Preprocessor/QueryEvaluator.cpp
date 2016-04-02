@@ -301,14 +301,26 @@ TNodeType QueryEvaluator::toTNodeType(string type) {
 	type = StringToUpper(type);
 	TNodeType n = Undefined;
 
-	if (type == "STMT") {
+	if (type == "PROCEDURE") {
+		return ProcedureName;
+	}
+	else if (type == "STMTLST") {
+		return Undefined;
+	}
+	else if (type == "STMT") {
 		return Undefined; // Just Undefined will do, I will know that it's a statement. - Wei Liang
 	}
 	else if (type == "ASSIGN") {
 		return Assign;
 	}
+	else if (type == "CALL") {
+		return Call;
+	}
 	else if (type == "WHILE") {
 		return While;
+	}
+	else if (type == "IF") {
+		return If;
 	}
 	else if (type == "VARIABLE") {
 		return VariableName;
@@ -318,6 +330,15 @@ TNodeType QueryEvaluator::toTNodeType(string type) {
 	}
 	else if (type == "PROG_LINE") {
 		return Undefined;  // Just Undefined will do, I will know that it's a statement. - Wei Liang
+	}
+	else if (type == "PLUS") {
+		return OperatorPlus;
+	}
+	else if (type == "MINUS") {
+		return OperatorMinus;
+	}
+	else if (type == "TIMES") {
+		return OperatorTimes;
 	}
 	else {
 		return Undefined;
