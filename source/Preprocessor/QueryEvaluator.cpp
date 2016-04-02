@@ -36,9 +36,7 @@ std::vector<std::string> QueryEvaluator::process() {
 
 					}
 
-					pair<string, int> newPair(assignVar.getName(), directoryIndex);
-					directory.insert(newPair);
-					directoryIndex++;
+					addDirectory(assignVar.getName());
 				}
 				else {
 					for (vector<vector<string>>::iterator it = result.begin(); it != result.end();) {
@@ -96,9 +94,7 @@ std::vector<std::string> QueryEvaluator::process() {
 						}
 						result = tempResult;
 
-						pair<string, int> newPair(var1.getName(), directoryIndex);
-						directory.insert(newPair);
-						directoryIndex++;
+						addDirectory(var1.getName());
 
 					}
 					else if (item2 == directory.end()) {
@@ -112,11 +108,10 @@ std::vector<std::string> QueryEvaluator::process() {
 						}
 						result = tempResult;
 
-						pair<string, int> newPair(var2.getName(), directoryIndex);
-						directory.insert(newPair);
-						directoryIndex++;
+						addDirectory(var2.getName());
+
 					}
-					else {//item1 != directory.end() && item2 != directory.end()
+					else {//item1 == directory.end() && item2 == directory.end()
 						add(var1);
 
 						for (vector<vector<string>>::iterator it = result.begin(); it != result.end();) {
@@ -126,6 +121,8 @@ std::vector<std::string> QueryEvaluator::process() {
 							it = query(queryResult, it, col);
 
 						}
+
+						addDirectory(var2.getName());
 					}
 				}
 				else if (regex_match(var1.getType(), designEntityRegex)) {
@@ -193,9 +190,8 @@ void QueryEvaluator::processOneSynonym(Ref source, Ref des, string clause, int p
 
 		}
 
-		pair<string, int> newPair(source.getName(), directoryIndex);
-		directory.insert(newPair);
-		directoryIndex++;
+		addDirectory(source.getName());
+
 	}
 	else {
 		if (des.getType() == "placeholder") {
@@ -223,27 +219,14 @@ void QueryEvaluator::add(Ref ref) {
 
 	queryResult = pkb->PQLSelect(toTNodeType(ref.getType()));
 
-	//if (result.size() == 0) {
-		for (int i = 0; i < queryResult.size(); i++) {
-			temp = {};
-			temp.push_back(queryResult.at(i));
-			result.push_back(temp);
-		}
-	/*}
-	else {
-		for (int i = 0; i < result.size(); i++) {
-			temp = result.at(i);
-			for (int j = 0; j < queryResult.size(); j++) {
-				newTemp = temp;
-				newTemp.push_back(queryResult.at(j));
-				result.push_back(temp);
-			}
-		}
-	}*/
+	for (int i = 0; i < queryResult.size(); i++) {
+		temp = {};
+		temp.push_back(queryResult.at(i));
+		result.push_back(temp);
+	}
 
-	pair<string, int> newPair(ref.getName(), directoryIndex);
-	directory.insert(newPair);
-	directoryIndex++;
+	addDirectory(ref.getName());
+
 }
 
 void QueryEvaluator::remove(int pos1, int pos2) {
@@ -424,4 +407,10 @@ vector<string> QueryEvaluator::queryPKB(string clause, string input, int argumen
 	}
 
 	return output;
+}
+
+void QueryEvaluator::addDirectory(string name) {
+	pair<string, int> newPair(name, directoryIndex);
+	directory.insert(newPair);
+	directoryIndex++;
 }

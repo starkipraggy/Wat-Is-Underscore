@@ -82,5 +82,10 @@ private:
 	Remove a row if the entry in pos1 equals to a string input
 	*/
 	void remove(int pos, string input);
+	//! add a entry to directory
+	/*!
+	add a entry to directory. The entry is to keep track that the synonym is in result
+	*/
+	void addDirectory(string name);
 };
 #endif
