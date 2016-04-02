@@ -15,7 +15,8 @@ std::vector<std::string> QueryEvaluator::process() {
 
 	directoryIndex = 0;
 	result = {};
-	add(select);
+	queryResult = pkb->PQLSelect(toTNodeType(select.getType()));
+	add(queryResult, select.getName());
 
 	if (!clauses.empty()) {
 		for (auto& x : clauses) {
@@ -52,17 +53,33 @@ std::vector<std::string> QueryEvaluator::process() {
 					unordered_map<string, int>::const_iterator item1 = directory.find(var1.getName());
 					unordered_map<string, int>::const_iterator item2 = directory.find(var2.getName());
 
-					remove(item1->second, item2->second);
+					if (item1 == directory.end()) {
+						add({ var2.getName() }, var1.getName());
+						add({ var1.getName() }, var2.getName());
+					}
+					else {
+						remove(item1->second, item2->second);
+					}
 				}
 				else if (regex_match(var1.getType(), designEntityRegex)) {
 					unordered_map<string, int>::const_iterator item1 = directory.find(var1.getName());
 
-					remove(item1->second, var2.getName());
+					if (item1 == directory.end()) {
+						add({var2.getName()}, var1.getName());
+					}
+					else {
+						remove(item1->second, var2.getName());
+					}
 				}
 				else if (regex_match(var2.getType(), designEntityRegex)) {
 					unordered_map<string, int>::const_iterator item2 = directory.find(var2.getName());
 
-					remove(item2->second, var1.getName());
+					if (item2 == directory.end()) {
+						add({ var1.getName() }, var2.getName());
+					}
+					else {
+						remove(item2->second, var1.getName());
+					}
 				}
 				else {
 					if (var1.getName() != var2.getName()) {
@@ -112,13 +129,13 @@ std::vector<std::string> QueryEvaluator::process() {
 
 					}
 					else {//item1 == directory.end() && item2 == directory.end()
-						add(var1);
+						queryResult = pkb->PQLSelect(toTNodeType(var1.getType()));
+						add(queryResult, var1.getName());
 
 						for (vector<vector<string>>::iterator it = result.begin(); it != result.end();) {
 
-							int col = item2->second;
-							queryResult = queryPKB(clause, it->at(col), 2, var2.getType());
-							it = query(queryResult, it, col);
+							queryResult = queryPKB(clause, it->at(item1->second), 2, var2.getType());
+							it = query(queryResult, it, item2->second);
 
 						}
 
@@ -214,10 +231,8 @@ void QueryEvaluator::processOneSynonym(Ref source, Ref des, string clause, int p
 	}
 }
 
-void QueryEvaluator::add(Ref ref) {
-	vector<string> queryResult, temp, newTemp;
-
-	queryResult = pkb->PQLSelect(toTNodeType(ref.getType()));
+void QueryEvaluator::add(vector<string> queryResult, string name) {
+	vector<string> temp, newTemp;
 
 	for (int i = 0; i < queryResult.size(); i++) {
 		temp = {};
@@ -225,7 +240,7 @@ void QueryEvaluator::add(Ref ref) {
 		result.push_back(temp);
 	}
 
-	addDirectory(ref.getName());
+	addDirectory(name);
 
 }
 

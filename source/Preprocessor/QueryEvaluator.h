@@ -45,7 +45,7 @@ private:
 	/*!
 	Internal method of process to query a such that select clause and add to table
 	*/
-	void add(Ref ref);
+	void add(vector<string> queryResult, string name);
 
 	//! query a such that clause
 	/*!
