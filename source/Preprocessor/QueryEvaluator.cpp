@@ -14,6 +14,7 @@ std::vector<std::string> QueryEvaluator::process() {
 	pkb = PKB::getInstance();
 
 	directoryIndex = 0;
+	directory = {};
 	result = {};
 	queryResult = pkb->PQLSelect(toTNodeType(select.getType()));
 	add(queryResult, select.getName());
