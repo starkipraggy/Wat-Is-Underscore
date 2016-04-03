@@ -328,11 +328,12 @@ Ref Preprocessor::createSuchThatRef(string name) {
 		result = Ref(name, "placeholder");
 	}
 	else if (regex_match(name, identRegex)) {
-		try {
-			result = Ref(name, declarationMap.find(name)->second);
+		unordered_map<string, string>::const_iterator got = declarationMap.find(name);
+		if (got == declarationMap.end()) {
+			throw "no such declaration";
 		}
-		catch (const char* msg) {
-			throw msg;
+		else {
+			result = Ref(name, got->second);
 		}
 	}
 	else if (regex_match(name = removeSpace(name), expressionRegex)) {
