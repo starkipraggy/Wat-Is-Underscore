@@ -2,8 +2,8 @@
 using namespace std;
 using namespace std::regex_constants;
 
-const regex identRegex("(^[[:alpha:]])([[:alnum:]]+|#+)*$");
-const regex integerRegex("[[:digit:]]+");
+const regex identRegex("^[[:alpha:]]([#[:alnum:]]*$)");
+const regex integerRegex("^[[:digit:]]+$");
 const regex placeholderRegex("^_$");
 const regex expressionRegex("(^\"[[:alpha:]])([[:alnum:]]*|#*)*\"$");
 const regex patternExpressionRegex("(^\")[[:space:]]*([[:alpha:]]([[:alnum:]]|#)*|[[:digit:]]+)[[:space:]]*(\\+[[:space:]]*([[:alpha:]]([[:alnum:]]|#)*|[[:digit:]]+))*[[:space:]]*(\"$)");
