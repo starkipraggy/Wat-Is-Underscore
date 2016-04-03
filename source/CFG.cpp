@@ -4,7 +4,6 @@ CFGNode::CFGNode() {
     leftLmt = 0;
     rightLmt = 0;
     type = Unused;
-    useChd1 = true;
     child1 = NULL;
     child2 = NULL;
 }
@@ -18,13 +17,47 @@ CFGNode::CFGNode(CFGNodeType ty, int sm) {
 CFGNode::~CFGNode(){
 }
 
+CFGNodeType CFGNode::getType(){
+    return type;
+}
+
+int CFGNode::getLeftLmt() {
+    return leftLmt;
+}
+
+int CFGNode::getRightLmt(){
+    return rightLmt;
+}
+
+std::vector<CFGNode*> CFGNode::getParents(){
+    return parent;
+}
+
+CFGNode * CFGNode::getChd1(){
+    return child1;
+}
+
+CFGNode * CFGNode::getChd2(){
+    return child2;
+}
+
 void CFGNode::addChild(CFGNode * node){
-    if (useChd1) {
+    if (child1 == NULL || child1->getType() == Unused) {
         child1 = node;
     } else {
         child2 = node;
     }
     node->parent.push_back(this);
+}
+
+void CFGNode::initialise(CFGNodeType newType, int stmtNum){
+    type = newType;
+    leftLmt = stmtNum;
+    rightLmt = stmtNum;
+}
+
+void CFGNode::incrementRightLmt(){
+    rightLmt++;
 }
 
 CFG::CFG(){
@@ -48,22 +81,18 @@ CFGNode* CFG::CFGNodeByStmtNum(int stmtNum){
 }
 
 void CFG::addStmt(){
-    if (currNode->type == Unused) {
-        currNode->type = Normal;
-        currNode->leftLmt = stmtCount;
-        currNode->rightLmt = stmtCount;
+    if (currNode->getType() == Unused) {
+        currNode->initialise(Normal, stmtCount);
     } else {
-        currNode->rightLmt++;
+        currNode->incrementRightLmt();
     }
     stmtFinder[stmtCount] = currNode;
     stmtCount++;
 }
 
 void CFG::addWhileStmt(){
-    if (currNode->type == Unused) {
-        currNode->type = WhileNode;
-        currNode->leftLmt = stmtCount;
-        currNode->rightLmt = stmtCount;
+    if (currNode->getType() == Unused) {
+        currNode->initialise(WhileNode, stmtCount);
     } else {
         CFGNode* newWhile = new CFGNode(WhileNode, stmtCount);
         currNode->addChild(newWhile);
@@ -73,16 +102,15 @@ void CFG::addWhileStmt(){
     containerStk.push(currNode);
     stmtFinder[stmtCount] = currNode;
     currNode->addChild(new CFGNode());
-    currNode = currNode->child1;
+    currNode = currNode->getChd1();
     graph.push_back(currNode);
+    currNode->addChild(containerStk.top());
     stmtCount++;
 }
 
 void CFG::addIfStmt(){
-    if (currNode->type == Unused) {
-        currNode->type = IfElse;
-        currNode->leftLmt = stmtCount;
-        currNode->rightLmt = stmtCount;
+    if (currNode->getType() == Unused) {
+        currNode->initialise(IfElse, stmtCount);
     } else {
         CFGNode* newIf = new CFGNode(IfElse, stmtCount);
         currNode->addChild(newIf);
@@ -91,114 +119,132 @@ void CFG::addIfStmt(){
     }
     containerStk.push(currNode);
     stmtFinder[stmtCount] = currNode;
-    graph.push_back(currNode);
     currNode->addChild(new CFGNode());
-    currNode = currNode->child1;
+    currNode = currNode->getChd1();
     graph.push_back(currNode);
     stmtCount++;
 }
 
 void CFG::endWhileStmt(){
     containerStk.top()->addChild(new CFGNode());
-    currNode = containerStk.top()->child2;
+    currNode = containerStk.top()->getChd2();
+    graph.push_back(currNode);
     containerStk.pop();
 }
 
 void CFG::endIfStmt(){
     CFGNode* lastIf = containerStk.top();
     CFGNode* combined = new CFGNode();
-    lastIf->child1->addChild(combined);
-    lastIf->child2->addChild(combined);
+    lastIf->getChd1()->addChild(combined);
+    lastIf->getChd2()->addChild(combined);
     containerStk.pop();
     currNode = combined;
+    graph.push_back(currNode);
 }
 
 void CFG::elseStmt(){
     containerStk.top()->addChild(new CFGNode());
-    currNode = containerStk.top()->child2;
+    currNode = containerStk.top()->getChd2();
+    graph.push_back(currNode);
 }
 
-std::vector<int> CFG::nextToLeft(int stmtNum){
+std::vector<int> CFG::prevStmt(int stmtNum){
     std::vector<int> result;
     CFGNode* thisNode = stmtFinder[stmtNum];
-    if (stmtNum > thisNode->leftLmt) {
+    if (stmtNum > thisNode->getLeftLmt()) {
         result.push_back(stmtNum - 1);
     } else if (stmtNum == 1) {
         result.push_back(0);
     } else {
-        for (int i = 0; i < thisNode->parent.size(); i++) {
-            result.push_back(thisNode->parent[i]->rightLmt);
+        for (size_t i = 0; i < thisNode->getParents().size(); i++) {
+            result.push_back(thisNode->getParents()[i]->getRightLmt());
         }
     }
     return result;
 }
 
-std::vector<int> CFG::nextToRight(int stmtNum){
+std::vector<int> CFG::nextStmt(int stmtNum){
     std::vector<int> result;
     CFGNode* thisNode = stmtFinder[stmtNum];
-    if (stmtNum < thisNode->rightLmt) {
-        result.push_back(stmtNum - 1);
-    } else if (stmtNum == 1) {
+    if (stmtNum < thisNode->getRightLmt()) {
+        result.push_back(stmtNum + 1);
+    } else if (stmtNum == stmtCount) {
         result.push_back(0);
     } else {
-        result.push_back(thisNode->child1->leftLmt);
-        result.push_back(thisNode->child2->leftLmt);
+        if (thisNode->getChd1() != NULL){
+            result.push_back(thisNode->getChd1()->getLeftLmt());
+        }
+        if (thisNode->getChd2() != NULL) {
+            result.push_back(thisNode->getChd2()->getLeftLmt());
+        }
     }
     return result;
 }
 
-std::vector<int> CFG::nextStarToLeft(int stmtNum){
+std::vector<int> CFG::prevStmtStar(int stmtNum){
     std::vector<int> result;
     std::stack<CFGNode*> toSearch;
+    std::stack<CFGNode*> whileStack;
     CFGNode* thisNode = stmtFinder[stmtNum];
-    for (int i = thisNode->leftLmt; i < stmtNum; i++) {
+    for (int i = thisNode->getLeftLmt(); i < stmtNum; i++) {
         result.push_back(i);
     }
-    for (int i = 0; i < thisNode->parent.size(); i++) {
-        toSearch.push(thisNode->parent[i]);
+    for (size_t i = 0; i < thisNode->getParents().size(); i++) {
+        toSearch.push(thisNode->getParents()[i]);
+        if (thisNode->getParents()[i]->getType() == WhileNode) {
+            whileStack.push(thisNode->getParents()[i]);
+        }
     }
     while (!toSearch.empty()) {
         thisNode = toSearch.top();
         toSearch.pop();
 
-        for (int i = 0; i < thisNode->parent.size(); i++) {
-            if (thisNode->leftLmt > thisNode->parent[i]->rightLmt) {
-                toSearch.push(thisNode->parent[i]);
+        for (size_t i = 0; i < thisNode->getParents().size(); i++) {
+            if (thisNode->getParents()[i] != whileStack.top()) {
+                toSearch.push(thisNode->getParents()[i]);
+
+                if (thisNode->getParents()[i]->getType() == WhileNode) {
+                    whileStack.push(thisNode->getParents()[i]);
+                }
+            } else {
+                whileStack.pop();
             }
         }
         
-        for (int i = thisNode->leftLmt; i <= thisNode->rightLmt; i++) {
+        for (int i = thisNode->getLeftLmt(); i <= thisNode->getRightLmt(); i++) {
             result.push_back(i);
         }
     }
     return result;
 }
 
-std::vector<int> CFG::nextStarToRight(int stmtNum){
+std::vector<int> CFG::nextStmtStar(int stmtNum){
     std::vector<int> result;
     std::stack<CFGNode*> toSearch;
     CFGNode* thisNode = stmtFinder[stmtNum];
-    for (int i = stmtNum+1; i <= thisNode->rightLmt; i++) {
+    for (int i = stmtNum+1; i <= thisNode->getRightLmt(); i++) {
         result.push_back(i);
     }
-    if (thisNode->child1->type != Unused){
-        toSearch.push(thisNode->child1);
+    if (thisNode->getChd1() != NULL && thisNode->getChd1()->getType() != Unused){
+        toSearch.push(thisNode->getChd1());
     }
-    if (thisNode->child2->type != Unused) {
-        toSearch.push(thisNode->child2);
+    if (thisNode->getChd2() != NULL && thisNode->getChd2()->getType() != Unused) {
+        toSearch.push(thisNode->getChd2());
     }
     while (!toSearch.empty()) {
         thisNode = toSearch.top();
         toSearch.pop();
 
-        if (thisNode->child1->type != Unused && thisNode->rightLmt < thisNode->child1->leftLmt) {
-            toSearch.push(thisNode->child1);
+        if ((thisNode->getChd1() != NULL && thisNode->getChd1()->getType() != Unused) 
+            && thisNode->getRightLmt() < thisNode->getChd1()->getLeftLmt()) {
+            toSearch.push(thisNode->getChd1());
         }
-        if (thisNode->child1->type != Unused && thisNode->rightLmt < thisNode->child2->leftLmt) {
-            toSearch.push(thisNode->child2);
+        if ((thisNode->getChd2() != NULL && thisNode->getChd2()->getType() != Unused) 
+            && thisNode->getRightLmt() < thisNode->getChd2()->getLeftLmt()) {
+            toSearch.push(thisNode->getChd2());
         }
 
-        for (int i = thisNode->leftLmt; i <= thisNode->rightLmt; i++) {
+        for (size_t i = thisNode->getLeftLmt(); i <= thisNode->getRightLmt(); i++) {
             result.push_back(i);
         }
     }
