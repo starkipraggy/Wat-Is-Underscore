@@ -16,8 +16,10 @@ std::vector<std::string> QueryEvaluator::process() {
 	directoryIndex = 0;
 	directory = {};
 	result = {};
-	queryResult = pkb->PQLSelect(toTNodeType(select.getType()));
-	add(queryResult, select.getName());
+	if (select.getType() != "boolean") {
+		queryResult = pkb->PQLSelect(toTNodeType(select.getType()));
+		add(queryResult, select.getName());
+	}
 
 	if (!clauses.empty()) {
 		for (auto& x : clauses) {
@@ -172,7 +174,12 @@ std::vector<std::string> QueryEvaluator::process() {
 						}
 						queryResult = queryPKB(clause, var2.getName(), 1, type);
 						if (find(queryResult.begin(), queryResult.end(), var1.getName()) == queryResult.end()) {
-							throw "result false";
+							if (select.getType() == "boolean") {
+								return {"false"};
+							}
+							else {
+								return {};
+							}
 						}
 					}
 				}
@@ -181,8 +188,19 @@ std::vector<std::string> QueryEvaluator::process() {
 	}
 	 
 	vector<string> output;
-	for (unsigned int i = 0; i < result.size(); i++) {
-		output.push_back(result.at(i).at(0));
+
+	if (select.getType() != "boolean") {
+		for (unsigned int i = 0; i < result.size(); i++) {
+			output.push_back(result.at(i).at(0));
+		}
+	}
+	else {
+		if (result.size() > 0) {
+			output.push_back("true");
+		}
+		else {
+			output.push_back("false");
+		}
 	}
 	return output;
 }
