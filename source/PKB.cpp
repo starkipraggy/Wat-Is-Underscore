@@ -107,8 +107,8 @@ void PKB::ProcedureStart(std::string nameOfProcedure) {
 	currentProcedure = procedureTable->getProcedure(nameOfProcedure);
     currentProcedureAST = new AST(nameOfProcedure);
     currentProcedureCFG = new CFG();
-    procedureAST[nameOfProcedure] = currentProcedureAST;
-    procedureCFG[nameOfProcedure] = currentProcedureCFG;
+    procedureAST.push_back(currentProcedureAST);
+    procedureCFG.push_back(currentProcedureCFG);
 }
 
 void PKB::ProcedureEnd() {
@@ -616,113 +616,47 @@ static inline std::string &trim(std::string &s) {
 
 
 std::vector<std::string> PKB::PQLPattern(TNodeType type, Ref left, Ref right) {
-	std::vector<std::string> returnList;
-	//std::cout << "LOLL" << std::endl;
-	//std::cout << type << std::endl;
-	//std::cout << left.toString() << std::endl;
-	//std::cout << right.toString() << std::endl;
-	
-	// @todo Supposedly to use AST to check this, but since AST is not up yet, let's go with the lazy method
-	// @todo I'm really sorry for this. Will make sure this is no longer done like this by iteration 2./
+    std::vector<std::string> returnList;
 
-	int size = statementTable->getNumberOfStatements();
-	for (int i = 0; i < size; i++) {
-		StatementTableStatement* statement = statementTable->getStatementUsingVectorIndexNumber(i);
-		if (statement->getType() == type) {
-			switch (type) {
-				case Assign: {
-					if (left.getType() == "placeholder") {
-						if (trim(left.getName()) == "_") {
-							// left side is anything
-							//  so check right side with expr
-							if (right.getType() == "expr") {
-								if (right.getName().find("+" || "-" || "*") != std::string::npos) {
-									if (right.getName() == statement->getRightHandSideExpression()) {
-										returnList.push_back(std::to_string(statement->getStatementNumber()));
-										break;
-									}
-								}
-							}
-							else if (right.getType() == "part_of_expr") {
-								if (right.getName().find("+" || "-" || "*") != std::string::npos) {
-									if (right.getName() == statement->getRightHandSideExpression().substr(0, right.getName().length())) {
-										returnList.push_back(std::to_string(statement->getStatementNumber()));
-										break;
-									}
-								}
-                                else if (statement->getRightHandSideExpression().find(right.getName()) != std::string::npos) {
-                                    returnList.push_back(std::to_string(statement->getStatementNumber()));
-                                    break;
-                                }
-							}
-							else if (right.getType() == "placeholder") {
-								returnList.push_back(std::to_string(statement->getStatementNumber()));
-								break;
-							}
-						}
-					}
-					else if (variableTable->getVariableUsingVariableIndexNumber(statement->getModifies(0))->getName() == left.getName() || 
-						left.getType() == "ASSIGN") {
-						// left side is specific
-						// get assignment with left var
-						// then check right side with expr
-						if (right.getType() == "expr") {
-							if (right.getName().find("+" || "-" || "*") != std::string::npos) {
-								if (right.getName() == statement->getRightHandSideExpression().substr(0, right.getName().length())) {
-									returnList.push_back(std::to_string(statement->getStatementNumber()));
-									break;
-								}
-							}
-						}
-						else if (right.getType() == "part_of_expr") {
-                            if (right.getName().find("+" || "-" || "*") != std::string::npos) {
-								if (right.getName() == statement->getRightHandSideExpression().substr(0, right.getName().length())) {
-									returnList.push_back(std::to_string(statement->getStatementNumber()));
-									break;
-                                } 
+    switch (type) {
+    case Assign:
+        for (size_t proc = 0; proc < procedureAST.size(); proc++) {
+            for (size_t stmt = 0; stmt < procedureAST[proc]->getTree().size(); stmt++) {
+                if (procedureAST[proc]->getTree()[stmt]->getNodeType() == type) {
+                    if (left.getType() == "placeholder" || 
+                        left.getName() == procedureAST[proc]->getTree()[stmt]->getChildNodes()[0]->getChildNodes()[0]->getValue()) {
+                        TNode* rightTree = AST::constructExpressionTree(right.getName());
+                        if (right.getType() == "expr") {
+                            if (AST::compareTrees(rightTree,
+                                procedureAST[proc]->getTree()[stmt]->getChildNodes()[0]->getChildNodes()[1])) {
+                                returnList.push_back(std::to_string(procedureAST[proc]->getTree()[stmt]->getLineNumber()));
                             }
-                            else if (statement->getRightHandSideExpression().find(right.getName()) != std::string::npos) {
-                                returnList.push_back(std::to_string(statement->getStatementNumber()));
-                                break;
+                        } else if (right.getType() == "part_of_expr") {
+                            if (AST::findSubtreeInTree(rightTree, procedureAST[proc]->getTree()[stmt]->getChildNodes()[0]->getChildNodes()[1])) {
+                                returnList.push_back(std::to_string(procedureAST[proc]->getTree()[stmt]->getLineNumber()));
                             }
-						}
-						else if (right.getType() == "placeholder") {
-							returnList.push_back(std::to_string(statement->getStatementNumber()));
-							break;
-						}
+                        }
                     }
-					break;
-				}
-				case While:
-				case If: {
-					if (statement->getControlVariable() == left.getName() || left.getType() == "placeholder") {
-						returnList.push_back(std::to_string(statement->getStatementNumber()));
-					}
-					break;
-				}
-				default: {
-					break;
-				}
-			}
-
-
-			/*
-			if ((statement->getType() == type) &&
-				(((type == Assign) &&
-				(((left.getType() == "placeholder") || (variableTable->getVariableUsingVariableIndexNumber(statement->getModifies(0))->getName() == left.getName())) &&
-				((right.getType() == "placeholder") ||
-				((right.getType() == "part_of_expr") && (right.getName() == statement->getRightHandSideExpression().substr(0, right.getName().length())) ||
-				((right.getType() == "expr") && (right.getName() == statement->getRightHandSideExpression())))))) ||
-				(((type == While) || (type == If)) &&
-				((left.getType() == "placeholder") || (statement->getControlVariable() == left.getName()))))) {
-			returnList.push_back(std::to_string(statement->getStatementNumber()));
-			
-			*/
-		}
-	}
-
-	/*if (returnList.empty()) {
-		returnList.push_back("none");
-	}*/
+                }
+            }
+        }
+        break;
+    case While:
+    case If:
+        for (size_t proc = 0; proc < procedureAST.size(); proc++) {
+            for (size_t stmt = 0; stmt < procedureAST[proc]->getTree().size(); stmt++) {
+                if (procedureAST[proc]->getTree()[stmt]->getNodeType() == type) {
+                    if (left.getType() == "placeholder" ||
+                        left.getName() == procedureAST[proc]->getTree()[stmt]->getChildNodes()[0]->getValue()) {
+                        returnList.push_back(std::to_string(procedureAST[proc]->getTree()[stmt]->getLineNumber()));
+                    }
+                }
+            }
+        }
+        break;
+    default:
+        break;
+    }
+	
 	return returnList;
 }

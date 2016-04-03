@@ -45,8 +45,8 @@ private:
 	ProcedureTable* procedureTable;
 	StatementTable* statementTable;
 	VariableTable* variableTable;
-    std::unordered_map<std::string, AST*> procedureAST;
-    std::unordered_map<std::string, CFG*> procedureCFG;
+    std::vector<AST*> procedureAST;
+    std::vector<CFG*> procedureCFG;
 
 	ProcedureTableProcedure* currentProcedure;	/**< Used during SIMPLE parsing, this pointer points to the current procedure
 													 that statements that are currently being inputted belongs to */

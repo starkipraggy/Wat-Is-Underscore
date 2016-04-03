@@ -29,6 +29,7 @@ void CFGNode::addChild(CFGNode * node){
 
 CFG::CFG(){
     currNode = new CFGNode();
+    graph.push_back(currNode);
 }
 
 CFG::~CFG(){
@@ -48,6 +49,7 @@ CFGNode* CFG::CFGNodeByStmtNum(int stmtNum){
 
 void CFG::addStmt(){
     if (currNode->type == Unused) {
+        currNode->type = Normal;
         currNode->leftLmt = stmtCount;
         currNode->rightLmt = stmtCount;
     } else {
@@ -66,11 +68,13 @@ void CFG::addWhileStmt(){
         CFGNode* newWhile = new CFGNode(WhileNode, stmtCount);
         currNode->addChild(newWhile);
         currNode = newWhile;
+        graph.push_back(currNode);
     }
     containerStk.push(currNode);
     stmtFinder[stmtCount] = currNode;
     currNode->addChild(new CFGNode());
     currNode = currNode->child1;
+    graph.push_back(currNode);
     stmtCount++;
 }
 
@@ -83,11 +87,14 @@ void CFG::addIfStmt(){
         CFGNode* newIf = new CFGNode(IfElse, stmtCount);
         currNode->addChild(newIf);
         currNode = newIf;
+        graph.push_back(currNode);
     }
     containerStk.push(currNode);
     stmtFinder[stmtCount] = currNode;
+    graph.push_back(currNode);
     currNode->addChild(new CFGNode());
     currNode = currNode->child1;
+    graph.push_back(currNode);
     stmtCount++;
 }
 
