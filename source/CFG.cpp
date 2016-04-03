@@ -12,6 +12,8 @@ CFGNode::CFGNode(CFGNodeType ty, int sm) {
     type = ty;
     leftLmt = sm;
     rightLmt = sm;
+    child1 = NULL;
+    child2 = NULL;
 }
 
 CFGNode::~CFGNode(){
@@ -34,11 +36,11 @@ std::vector<CFGNode*> CFGNode::getParents(){
 }
 
 CFGNode * CFGNode::getChd1(){
-    return child1 == NULL ? NULL : child1;
+    return child1;
 }
 
 CFGNode * CFGNode::getChd2(){
-    return child2 == NULL ? NULL : child2;
+    return child2;
 }
 
 void CFGNode::addChild(CFGNode * node){
