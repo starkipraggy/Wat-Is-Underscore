@@ -1,12 +1,12 @@
 1 - Uses 1
 assign a;
 Select a such that Uses(a, "a")
-11
+6, 11
 5000
 2 - Uses 2
 stmt s;
 Select s such that Uses(s, "c")
-2, 4, 11
+1, 2, 4, 11
 5000
 3 - Uses 3
 variable v;
@@ -16,7 +16,7 @@ b, c, d, e, f
 4 - Modifies 1
 stmt s;
 Select s such that Modifies(s, "c")
-5
+2, 5, 11
 5000
 5 - Modifies 2
 variable v; stmt s;
@@ -41,17 +41,17 @@ none
 9 - Follows 3
 stmt s; assign a;
 Select s such that Follows(7, a)
-8
+
 5000
 10 - Follows* 1
 assign a;
 Select a such that Follows*(3, a)
-3, 4, 5, 6
+4, 5, 6
 5000
 11 - Follows* 2
 while w; assign a;
 Select w such that Follows*(w, a)
-3
+2
 5000
 12 - Follows* 3
 stmt s;
