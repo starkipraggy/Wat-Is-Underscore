@@ -186,7 +186,8 @@ public:
 	/*!
 		One of the API functions that allows the PQL parser to extract information from the PKB.
 		Call this function for selection without clauses.
-		\param outputType VariableName (for variables), Assign, If, While, Call, Undefined (for any statements)
+		\param outputType ProcedureName (for procedures),VariableName (for variables), 
+						  Assign, If, While, Call, Undefined (for any statements)
 		\return the vector<string> of the statement numbers or names.
 	*/
 	virtual std::vector<std::string> PQLSelect(TNodeType outputType);
