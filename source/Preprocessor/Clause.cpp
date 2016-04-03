@@ -25,7 +25,7 @@ string Clause::getQuery() {
 }
 
 bool Clause::equals(Clause* c) {
-	return clause == c->getClause() && refOne.equals(c->getRefOne())
+	return StringToUpper(clause) == StringToUpper(c->getClause()) && refOne.equals(c->getRefOne())
 		&& refTwo.equals(c->getRefTwo());
 }
 

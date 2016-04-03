@@ -34,11 +34,11 @@ std::vector<CFGNode*> CFGNode::getParents(){
 }
 
 CFGNode * CFGNode::getChd1(){
-    return child1;
+    return child1 == NULL ? NULL : child1;
 }
 
 CFGNode * CFGNode::getChd2(){
-    return child2;
+    return child2 == NULL ? NULL : child2;
 }
 
 void CFGNode::addChild(CFGNode * node){

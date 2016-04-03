@@ -56,7 +56,12 @@ TNode* AST::appendNewStmtNode(TNodeType type, std::string value, int stmtNum) {
         AST::makeChild(tree.back(), newNode);
     } else {
 		if (endOfContainerStmt) {
-			AST::makeChild(AST::getParent(AST::getParent(tree.back())), newNode);
+			TNode* currentNode = tree.back();
+			for (int i = numberOfEndContainerCalls; i != 0; i--) {
+				currentNode = getParent(currentNode);
+			}
+			numberOfEndContainerCalls = 0;
+			AST::makeChild(AST::getParent(currentNode), newNode);
 			endOfContainerStmt = false;
 		} else {
 			AST::makeChild(AST::getParent(tree.back()), newNode);
@@ -309,5 +314,6 @@ void AST::addElseRelation() {
 }
 
 void AST::addEndOfContainerRelation() {
+	numberOfEndContainerCalls += 1;
 	endOfContainerStmt = true;
 }

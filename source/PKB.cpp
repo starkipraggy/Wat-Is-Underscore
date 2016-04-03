@@ -1,7 +1,9 @@
 #include "PKB.h"
 
-
 PKB* PKB::instance = NULL;
+
+// To enable the printing of debug lines
+const bool IS_DEBUGGING = false;
 
 PKB::PKB() {
 	numberOfStatements = 0;
@@ -60,10 +62,16 @@ bool PKB::addRelationship(VariableTableVariable* variable, ProcedureTableProcedu
 	case Modifies:
 		procedure->addModifies(variableIndex);
 		variable->addProcedureModifies(procedureIndex);
+		if (IS_DEBUGGING) {
+			cout << "DEBUG: Modifies(" << procedure->getName() << ", " << variable->getName() << ")" << endl;
+		}
 		break;
 	case Uses:
 		procedure->addUses(variableIndex);
 		variable->addProcedureUses(procedureIndex);
+		if (IS_DEBUGGING) {
+			cout << "DEBUG: Uses(" << procedure->getName() << ", " << variable->getName() << ")" << endl;
+		}
 		break;
 	default:
 		return false;
@@ -80,15 +88,37 @@ bool PKB::addRelationship(VariableTableVariable* variable, StatementTableStateme
 	case Modifies:
 		statement->addModifies(variableIndex);
 		variable->addStatementModifies(statementIndex);
+		if (IS_DEBUGGING) {
+			cout << "DEBUG: Modifies(" << statementIndex << ", " << variable->getName() << ")" << endl;
+		}
 		break;
 	case Uses:
 		statement->addUses(variableIndex);
 		variable->addStatementUses(statementIndex);
+		if (IS_DEBUGGING) {
+			cout << "DEBUG: Uses(" << statementIndex << ", " << variable->getName() << ")" << endl;
+		}
 	default:
 		return false;
 	}
 
 	return true;
+}
+
+TNodeType PKB::getType(std::string type) {
+	if (type == "assign") {
+		return Assign;
+	}
+	if (type == "while") {
+		return While;
+	}
+	if (type == "if") {
+		return If;
+	}
+	if (type == "call") {
+		return Call;
+	}
+	return Undefined;
 }
 
 PKB* PKB::getInstance() {
@@ -101,6 +131,18 @@ void PKB::setInstance(PKB* newPkb) {
 	instance = newPkb;
 }
 
+ProcedureTable* PKB::getProcedureTable() {
+    return procedureTable;
+}
+
+StatementTable* PKB::getStatementTable() {
+    return statementTable;
+}
+
+VariableTable* PKB::getVariableTable() {
+    return variableTable;
+}
+
 void PKB::ProcedureStart(std::string nameOfProcedure) {
 	/* Create an entry for this new procedure in the procedure table, and keep a pointer to it in currentProcedure, 
 	   so that statements being inputted can have their statement numbers added under it */
@@ -109,6 +151,12 @@ void PKB::ProcedureStart(std::string nameOfProcedure) {
     currentProcedureCFG = new CFG();
     procedureAST.push_back(currentProcedureAST);
     procedureCFG.push_back(currentProcedureCFG);
+
+	// Clear current stack trace
+	if (statementStackTrace->top() != 0) {
+		statementStackTrace->pop();
+		statementStackTrace->push(0);
+	}
 }
 
 void PKB::ProcedureEnd() {
@@ -138,10 +186,13 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 		}
 	}
 	int rightVariablesSize = rightVariables.size();
+
 	// Create a new statement for this assign statement, adding the statement number into current procedure
 	currentStatement = newStatement();
 	// Set the type of the statement to be an assignment
 	currentStatement->setType(Assign);
+	// Set control variable of this statement
+	currentStatement->setControlVariable(leftVariable->getName());
 	// Set expression of this statement
 	std::string rightHandSideExpression = "";
 	for (unsigned int i = 0; i < size; i++) {
@@ -172,7 +223,7 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 	}
 
 	// Add the Modifies and Uses relationships into procedures that call the procedure, and all other procedures that call those procedures, etc.
-	std::set<int>* proceduresSet = currentProcedure->getIndirectProcedureCalls();
+	std::set<int>* proceduresSet = currentProcedure->getIndirectProcedureCallBy();
 	std::set<int>::iterator end = proceduresSet->end();
 	ProcedureTableProcedure* procedureForAddingRelationship;
 	for (std::set<int>::iterator i = proceduresSet->begin(); i != end; i++) {
@@ -183,20 +234,42 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 		}
 
 		// Add the Modifies and Uses relationships into statements that call the above procedures
-		int statementCallsSize = procedureForAddingRelationship->getStatementCallsSize();
+		int statementCallsSize = procedureForAddingRelationship->getStatementCallBySize();
 		StatementTableStatement* statementForAddingRelationship;
 		for (int x = 0; x < statementCallsSize; x++) {
-			statementForAddingRelationship = statementTable->getStatementUsingStatementNumber(procedureForAddingRelationship->getStatementCall(x));
+			statementForAddingRelationship = statementTable->getStatementUsingStatementNumber(procedureForAddingRelationship->getStatementCallBy(x));
 			addRelationship(leftVariable, statementForAddingRelationship, Modifies);
 			for (int y = 0; y < rightVariablesSize; y++) {
 				addRelationship(rightVariables[y], statementForAddingRelationship, Uses);
 			}
 		}
 	}
+
+	// Add the Modifies and Uses relationships into statements that call this current procedure, and their ancestors
+	int tempStatementCallSize = currentProcedure->getStatementCallBySize();
+	StatementTableStatement* tempStatement;
+	StatementTableStatement* ancestorStatement;
+	int ancestorsSize;
+	for (int i = 0; i < tempStatementCallSize; i++) {
+		tempStatement = statementTable->getStatementUsingStatementNumber(currentProcedure->getStatementCallBy(i));
+		addRelationship(leftVariable, tempStatement, Modifies);
+		for (int j = 0; j < rightVariablesSize; j++) {
+			addRelationship(rightVariables[j], tempStatement, Uses);
+		}
+
+		ancestorsSize = tempStatement->getParentStarSize();
+		for (int j = 0; j < ancestorsSize; j++) {
+			ancestorStatement = statementTable->getStatementUsingStatementNumber(tempStatement->getParentStar(j));
+			addRelationship(leftVariable, ancestorStatement, Modifies);
+			for (int k = 0; k < rightVariablesSize; k++) {
+				addRelationship(rightVariables[k], ancestorStatement, Uses);
+			}
+		}
+	}
     
     //AST
 	currentProcedureAST->addAssignTNode(variable, tokens, currentStatement->getStatementNumber());
-    //currentProcedureCFG->addStmt();
+    currentProcedureCFG->addStmt();
 
 	return true;
 }
@@ -209,8 +282,68 @@ void PKB::CallStatement(std::string procedure) {
 
 	// Add the procedure you're calling into the Calls relationship of the procedure that this statement belongs to
 	ProcedureTableProcedure* procedureBeingCalled = procedureTable->getProcedure(procedure);
-	procedureBeingCalled->addStatementsCalls(currentStatement->getStatementNumber());
-	procedureBeingCalled->addProcedureCalls(currentProcedure);
+	procedureBeingCalled->addStatementsCallBy(currentStatement->getStatementNumber());
+	procedureBeingCalled->addProcedureCallBy(currentProcedure);
+	currentProcedure->addProcedureCalls(procedureBeingCalled);
+
+	// Retrieve information about this statement's ancestor(s) in order to add relationships later
+	int numberOfAncestors = currentStatement->getParentStarSize();
+	vector<StatementTableStatement*> tempAncestors;
+	for (int i = 0; i < numberOfAncestors; i++) {
+		tempAncestors.push_back(statementTable->getStatementUsingStatementNumber(currentStatement->getParentStar(i)));
+	}
+
+	// Retrieve information about the procedures that call this current procedure
+	std::set<int>* tempIndirectProcedureCallsSet = currentProcedure->getIndirectProcedureCallBy();
+	vector<ProcedureTableProcedure*> tempIndirectProcedureCalls;
+	std::set<int>::iterator end = tempIndirectProcedureCallsSet->end();
+	for (std::set<int>::iterator iter = tempIndirectProcedureCallsSet->begin(); iter != end; iter++) {
+		tempIndirectProcedureCalls.push_back(procedureTable->getProcedure(*iter));
+	}
+	int tempIndirectProcedureCallsSize = tempIndirectProcedureCalls.size();
+
+	// Retrieve information about the statements that call this current procedure
+	int tempStatementCallsSize = currentProcedure->getStatementCallBySize();
+	vector<StatementTableStatement*> tempStatementCalls;
+	for (int i = 0; i < tempStatementCallsSize; i++) {
+		tempStatementCalls.push_back(statementTable->getStatementUsingStatementNumber(currentProcedure->getStatementCallBy(i)));
+	}
+
+	// Add the relationships for the variables that are modified and used in the procedure being called into this
+	// statement, its ancestor(s), its procedure and whatever calls its procedures
+	VariableTableVariable* tempVariable;
+	int tempSize = procedureBeingCalled->getModifiesSize();
+	for (int i = 0; i < tempSize; i++) { // Add Modifies relationships
+		tempVariable = variableTable->getVariableUsingVariableIndexNumber(procedureBeingCalled->getModifies(i));
+
+		addRelationship(tempVariable, currentStatement, Modifies);
+		for (int j = 0; j < numberOfAncestors; j++) {
+			addRelationship(tempVariable, tempAncestors[j], Modifies);
+		}
+		addRelationship(tempVariable, currentProcedure, Modifies);
+		for (int j = 0; j < tempIndirectProcedureCallsSize; j++) {
+			addRelationship(tempVariable, tempIndirectProcedureCalls[j], Modifies);
+		}
+		for (int j = 0; j < tempStatementCallsSize; j++) {
+			addRelationship(tempVariable, tempStatementCalls[j], Modifies);
+		}
+	}
+	tempSize = procedureBeingCalled->getUsesSize();
+	for (int i = 0; i < tempSize; i++) { // Add Uses relationships
+		tempVariable = variableTable->getVariableUsingVariableIndexNumber(procedureBeingCalled->getUses(i));
+
+		addRelationship(tempVariable, currentStatement, Uses);
+		for (int j = 0; j < numberOfAncestors; j++) {
+			addRelationship(tempVariable, tempAncestors[j], Uses);
+		}
+		addRelationship(tempVariable, currentProcedure, Uses);
+		for (int j = 0; j < tempIndirectProcedureCallsSize; j++) {
+			addRelationship(tempVariable, tempIndirectProcedureCalls[j], Uses);
+		}
+		for (int j = 0; j < tempStatementCallsSize; j++) {
+			addRelationship(tempVariable, tempStatementCalls[j], Uses);
+		}
+	}
 
     //AST
 	currentProcedureAST->addCallTNode(procedure, currentStatement->getStatementNumber());
@@ -220,6 +353,7 @@ void PKB::CallStatement(std::string procedure) {
 void PKB::WhileStart(NAME variable) {
 	StatementTableStatement* currentStatement = newStatement();
 	VariableTableVariable* currentVariable = variableTable->getVariableUsingName(variable);
+	currentStatement->setControlVariable(variable);
 
 	// Set the type of the statement to be a while-loop
 	currentStatement->setType(While);
@@ -238,8 +372,11 @@ void PKB::WhileStart(NAME variable) {
 		addRelationship(currentVariable, statementToIterateThroughParents, Uses);
 	}
 
+	// Add the Uses relationship into the current procedure
+	addRelationship(currentVariable, currentProcedure, Uses);
+
 	// Add the Uses relationship into procedures that call the procedure, and all other procedures that call those procedures, etc.
-	std::set<int>* proceduresSet = currentProcedure->getIndirectProcedureCalls();
+	std::set<int>* proceduresSet = currentProcedure->getIndirectProcedureCallBy();
 	std::set<int>::iterator end = proceduresSet->end();
 	ProcedureTableProcedure* procedureForAddingRelationship;
 	for (std::set<int>::iterator i = proceduresSet->begin(); i != end; i++) {
@@ -247,11 +384,24 @@ void PKB::WhileStart(NAME variable) {
 		addRelationship(currentVariable, procedureForAddingRelationship, Uses);
 
 		// Add the Uses relationship into statements that call the above procedures
-		int statementCallsSize = procedureForAddingRelationship->getStatementCallsSize();
+		int statementCallsSize = procedureForAddingRelationship->getStatementCallBySize();
 		StatementTableStatement* statementForAddingRelationship;
 		for (int x = 0; x < statementCallsSize; x++) {
-			statementForAddingRelationship = statementTable->getStatementUsingStatementNumber(procedureForAddingRelationship->getStatementCall(x));
+			statementForAddingRelationship = statementTable->getStatementUsingStatementNumber(procedureForAddingRelationship->getStatementCallBy(x));
 			addRelationship(currentVariable, statementForAddingRelationship, Uses);
+		}
+	}
+
+	// Add the Uses relationships into statements that call this current procedure, and their ancestors
+	int tempStatementCallSize = currentProcedure->getStatementCallBySize();
+	StatementTableStatement* tempStatement;
+	int ancestorsSize;
+	for (int i = 0; i < tempStatementCallSize; i++) {
+		tempStatement = statementTable->getStatementUsingStatementNumber(currentProcedure->getStatementCallBy(i));
+		addRelationship(currentVariable, tempStatement, Uses);
+		ancestorsSize = tempStatement->getParentStarSize();
+		for (int j = 0; j < ancestorsSize; j++) {
+			addRelationship(currentVariable, statementTable->getStatementUsingStatementNumber(tempStatement->getParentStar(j)), Uses);
 		}
 	}
 
@@ -276,6 +426,7 @@ bool PKB::WhileEnd() {
 void PKB::IfStart(NAME variable) {
 	StatementTableStatement* currentStatement = newStatement();
 	VariableTableVariable* currentVariable = variableTable->getVariableUsingName(variable);
+	currentStatement->setControlVariable(variable);
 
 	// Set the type of the statement to be an if-statement
 	currentStatement->setType(If);
@@ -295,7 +446,7 @@ void PKB::IfStart(NAME variable) {
 	}
 
 	// Add the Uses relationship into procedures that call the procedure, and all other procedures that call those procedures, etc.
-	std::set<int>* proceduresSet = currentProcedure->getIndirectProcedureCalls();
+	std::set<int>* proceduresSet = currentProcedure->getIndirectProcedureCallBy();
 	std::set<int>::iterator end = proceduresSet->end();
 	ProcedureTableProcedure* procedureForAddingRelationship;
 	for (std::set<int>::iterator i = proceduresSet->begin(); i != end; i++) {
@@ -303,11 +454,24 @@ void PKB::IfStart(NAME variable) {
 		addRelationship(currentVariable, procedureForAddingRelationship, Uses);
 
 		// Add the Uses relationship into statements that call the above procedures
-		int statementCallsSize = procedureForAddingRelationship->getStatementCallsSize();
+		int statementCallsSize = procedureForAddingRelationship->getStatementCallBySize();
 		StatementTableStatement* statementForAddingRelationship;
 		for (int x = 0; x < statementCallsSize; x++) {
-			statementForAddingRelationship = statementTable->getStatementUsingStatementNumber(procedureForAddingRelationship->getStatementCall(x));
+			statementForAddingRelationship = statementTable->getStatementUsingStatementNumber(procedureForAddingRelationship->getStatementCallBy(x));
 			addRelationship(currentVariable, statementForAddingRelationship, Uses);
+		}
+	}
+
+	// Add the Uses relationships into statements that call this current procedure, and their ancestors
+	int tempStatementCallSize = currentProcedure->getStatementCallBySize();
+	StatementTableStatement* tempStatement;
+	int ancestorsSize;
+	for (int i = 0; i < tempStatementCallSize; i++) {
+		tempStatement = statementTable->getStatementUsingStatementNumber(currentProcedure->getStatementCallBy(i));
+		addRelationship(currentVariable, tempStatement, Uses);
+		ancestorsSize = tempStatement->getParentStarSize();
+		for (int j = 0; j < ancestorsSize; j++) {
+			addRelationship(currentVariable, statementTable->getStatementUsingStatementNumber(tempStatement->getParentStar(j)), Uses);
 		}
 	}
 
@@ -342,12 +506,20 @@ bool PKB::IfElseEnd() {
 	statementStackTrace->pop();
 
 	return true;
-
 }
 
 std::vector<std::string> PKB::PQLSelect(TNodeType outputType) {
 	std::vector<std::string> returnList;
 	StatementTableStatement* statement;
+
+	// return all procedures
+	if (outputType == ProcedureName) {
+		int procedureTableSize = procedureTable->getNumberOfProcedures();
+		for (int i = 0; i < procedureTableSize; i++) {
+			returnList.push_back(procedureTable->getProcedure(i)->getName());
+		}
+		return returnList;
+	}
 
 	// return all variables
 	if (outputType == VariableName) {
@@ -394,10 +566,9 @@ std::vector<std::string> PKB::PQLUses(std::string input, int argumentPosition, s
 		else { // Check which statements are to be returned
 			bool returnAllStatements = (outputType == "stmt");
 			TNodeType typeToReturn = Undefined;
-			if (outputType == "assign") { typeToReturn = Assign; }
-			else if (outputType == "while") { typeToReturn = While; }
-			else if (outputType == "if") { typeToReturn = If; }
-			else if (outputType == "call") { typeToReturn = Call; }
+			if (!returnAllStatements) {
+				typeToReturn = getType(outputType);
+			}
 
 			if ((returnAllStatements) || (typeToReturn != Undefined)) {
 				size = variableToBeChecked->getStatementUsesSize();
@@ -433,10 +604,6 @@ std::vector<std::string> PKB::PQLUses(std::string input, int argumentPosition, s
 		}
 		break;
 	}
-
-	/*if (returnList.empty()) {
-		returnList.push_back("none");
-	}*/
 	return returnList;
 }
 
@@ -459,10 +626,9 @@ std::vector<std::string> PKB::PQLModifies(std::string input, int argumentPositio
 			// Check which statements are to be returned
 			bool returnAllStatements = (outputType == "stmt");
 			TNodeType typeToReturn = Undefined;
-			if (outputType == "assign") { typeToReturn = Assign; }
-			else if (outputType == "while") { typeToReturn = While; }
-			else if (outputType == "if") { typeToReturn = If; }
-			else if (outputType == "call") { typeToReturn = Call; }
+			if (!returnAllStatements) {
+				typeToReturn = getType(outputType);
+			}
 
 			if ((returnAllStatements) || (typeToReturn != Undefined)) {
 				size = variableToBeChecked->getStatementModifiesSize();
@@ -475,7 +641,7 @@ std::vector<std::string> PKB::PQLModifies(std::string input, int argumentPositio
 			}
 		}
 	}
-			break;
+		break;
 	case 2: // Check what variables are used by the procedure or statement with the procedure name or statement number "input"
 		if (outputType == "procedure") {
 			ProcedureTableProcedure* procedure = procedureTable->getProcedure(input);
@@ -498,101 +664,142 @@ std::vector<std::string> PKB::PQLModifies(std::string input, int argumentPositio
 		}
 		break;
 	}
-
-	/*if (returnList.empty()) {
-		returnList.push_back("none");
-	}*/
 	return returnList;
 }
 
-std::vector<std::string> PKB::PQLFollows(int statementNumber, int argumentPosition) {
+std::vector<std::string> PKB::PQLFollows(int statementNumber, int argumentPosition, std::string outputType) {
 	std::vector<std::string> returnList;
 	StatementTableStatement* statement = statementTable->getStatementUsingStatementNumber(statementNumber);
-	if (statement != NULL) { // In case a non-existing statement number was given
+	int statementReturnIndex;
+
+	bool returnAllStatements = (outputType == "stmt");
+	TNodeType typeToReturn = Undefined;
+	if (!returnAllStatements) {
+		typeToReturn = getType(outputType);
+	}
+
+	// In case a non-existing statement number was given
+	if ((statement != NULL) && ((returnAllStatements) || (typeToReturn != Undefined))) {
 		if (argumentPosition == 1) { //check follows
 			if (statement->hasFollows()) {
-				returnList.push_back(std::to_string(statement->getFollows()));
+				statementReturnIndex = statement->getFollows();
+				if ((returnAllStatements) || (statementTable->getStatementUsingStatementNumber(statementReturnIndex)->getType() == typeToReturn)) {
+					returnList.push_back(std::to_string(statementReturnIndex));
+				}
 			}
 		}
 		else if (argumentPosition == 2) { //check followed by
 			if (statement->hasFollowedBy()) {
-				returnList.push_back(std::to_string(statement->getFollowedBy()));
+				statementReturnIndex = statement->getFollowedBy();
+				if ((returnAllStatements) || (statementTable->getStatementUsingStatementNumber(statementReturnIndex)->getType() == typeToReturn)) {
+					returnList.push_back(std::to_string(statementReturnIndex));
+				}
 			}
 		}
 	}
-
-	/*if (returnList.empty()) {
-		returnList.push_back("none");
-	}*/
 	return returnList;
 }
 
-std::vector<std::string> PKB::PQLFollowsStar(int statementNumber, int argumentPosition) {
+std::vector<std::string> PKB::PQLFollowsStar(int statementNumber, int argumentPosition, std::string outputType) {
 	std::vector<std::string> returnList;
 	StatementTableStatement* statement = statementTable->getStatementUsingStatementNumber(statementNumber);
-	if (statement != NULL) {
+	int statementReturnIndex;
+
+	bool returnAllStatements = (outputType == "stmt");
+	TNodeType typeToReturn = Undefined;
+	if (!returnAllStatements) {
+		typeToReturn = getType(outputType);
+	}
+
+	if ((statement != NULL) && ((returnAllStatements) || (typeToReturn != Undefined))) {
 		int size;
 		if (argumentPosition == 1) { //check follows*
 			size = statement->getFollowsStarSize();
 			for (int i = 0; i < size; i++) {
-				returnList.push_back(std::to_string(statement->getFollowsStar(i)));
+				statementReturnIndex = statement->getFollowsStar(i);
+				if ((returnAllStatements) || (statementTable->getStatementUsingStatementNumber(statementReturnIndex)->getType() == typeToReturn)) {
+					returnList.push_back(std::to_string(statementReturnIndex));
+				}
 			}
 		}
 		else if (argumentPosition == 2) { //check followedBy*
 			size = statement->getFollowedByStarSize();
 			for (int i = 0; i < size; i++) {
-				returnList.push_back(std::to_string(statement->getFollowedByStar(i)));
+				statementReturnIndex = statement->getFollowedByStar(i);
+				if ((returnAllStatements) || (statementTable->getStatementUsingStatementNumber(statementReturnIndex)->getType() == typeToReturn)) {
+					returnList.push_back(std::to_string(statementReturnIndex));
+				}
 			}
 		}
 	}
-
-	/*if (returnList.empty()) {
-		returnList.push_back("none");
-	}*/
 	return returnList;
 }
 
-std::vector<std::string> PKB::PQLParent(int statementNumber, int argumentPosition) {
+std::vector<std::string> PKB::PQLParent(int statementNumber, int argumentPosition, std::string outputType) {
 	std::vector<std::string> returnList;
 	StatementTableStatement* statement = statementTable->getStatementUsingStatementNumber(statementNumber);
-	if (argumentPosition == 1) { //find parent
-		if (statement->hasParent()) {
-			returnList.push_back(std::to_string(statement->getParent()));
-		}
-	}
-	else if (argumentPosition == 2) { //find children
-		int size = statement->getChildrenSize();
-		for (int i = 0; i < size; i++) {
-			returnList.push_back(std::to_string(statement->getChildren(i)));
-		}
+	int statementReturnIndex;
+
+	bool returnAllStatements = (outputType == "stmt");
+	TNodeType typeToReturn = Undefined;
+	if (!returnAllStatements) {
+		typeToReturn = getType(outputType);
 	}
 
-	/*if (returnList.empty()) {
-		returnList.push_back("none");
-	}*/
+	if ((returnAllStatements) || (typeToReturn != Undefined)) {
+		if (argumentPosition == 1) { //find parent
+			if (statement->hasParent()) {
+				statementReturnIndex = statement->getParent();
+				if ((returnAllStatements) || (statementTable->getStatementUsingStatementNumber(statementReturnIndex)->getType() == typeToReturn)) {
+					returnList.push_back(std::to_string(statementReturnIndex));
+				}
+			}
+		}
+		else if (argumentPosition == 2) { //find children
+			int size = statement->getChildrenSize();
+			for (int i = 0; i < size; i++) {
+				statementReturnIndex = statement->getChildren(i);
+				if ((returnAllStatements) || (statementTable->getStatementUsingStatementNumber(statementReturnIndex)->getType() == typeToReturn)) {
+					returnList.push_back(std::to_string(statementReturnIndex));
+				}
+			}
+		}
+	}
 	return returnList;
 }
 
-std::vector<std::string> PKB::PQLParentStar(int statementNumber, int argumentPosition) {
+std::vector<std::string> PKB::PQLParentStar(int statementNumber, int argumentPosition, std::string outputType) {
 	std::vector<std::string> returnList;
 	StatementTableStatement* statement = statementTable->getStatementUsingStatementNumber(statementNumber);
 	int size;
-	if (argumentPosition == 1) { //find parent*
-		size = statement->getParentStarSize();
-		for (int i = 0; i < size; i++) {
-			returnList.push_back(std::to_string(statement->getParentStar(i)));
-		}
-	}
-	else if (argumentPosition == 2) { //find children*
-		size = statement->getChildrenStarSize();
-		for (int i = 0; i < size; i++) {
-			returnList.push_back(std::to_string(statement->getChildrenStar(i)));
-		}
+	int statementReturnIndex;
+
+	bool returnAllStatements = (outputType == "stmt");
+	TNodeType typeToReturn = Undefined;
+	if (!returnAllStatements) {
+		typeToReturn = getType(outputType);
 	}
 
-	/*if (returnList.empty()) {
-		returnList.push_back("none");
-	}*/
+	if ((returnAllStatements) || (typeToReturn != Undefined)) {
+		if (argumentPosition == 1) { //find parent*
+			size = statement->getParentStarSize();
+			for (int i = 0; i < size; i++) {
+				statementReturnIndex = statement->getParentStar(i);
+				if ((returnAllStatements) || (statementTable->getStatementUsingStatementNumber(statementReturnIndex)->getType() == typeToReturn)) {
+					returnList.push_back(std::to_string(statementReturnIndex));
+				}
+			}
+		}
+		else if (argumentPosition == 2) { //find children*
+			size = statement->getChildrenStarSize();
+			for (int i = 0; i < size; i++) {
+				statementReturnIndex = statement->getChildrenStar(i);
+				if ((returnAllStatements) || (statementTable->getStatementUsingStatementNumber(statementReturnIndex)->getType() == typeToReturn)) {
+					returnList.push_back(std::to_string(statementReturnIndex));
+				}
+			}
+		}
+	}
 	return returnList;
 }
 
@@ -658,5 +865,133 @@ std::vector<std::string> PKB::PQLPattern(TNodeType type, Ref left, Ref right) {
         break;
     }
 	
+	return returnList;
+}
+
+std::vector<std::string> PKB::PQLCalls(std::string procedureName, bool isDirectCalls) {
+	std::vector<std::string> returnList;
+	ProcedureTableProcedure* currentProcedure = procedureTable->getProcedure(procedureName);
+
+	if (isDirectCalls) {
+		int size = currentProcedure->getProcedureCallsSize();
+		for (int i = 0; i < size; i++) {
+			returnList.push_back(currentProcedure->getProcedureCalls(i)->getName());
+		}
+	}
+	else {
+		std::set<int>* proceduresSet = currentProcedure->getIndirectProcedureCalls();
+		std::set<int>::iterator end = proceduresSet->end();
+		for (std::set<int>::iterator iter = proceduresSet->begin(); iter != end; iter++) {
+			returnList.push_back(procedureTable->getProcedure(*iter)->getName());
+		}
+	}
+	return returnList;
+}
+
+std::vector<std::string> PKB::PQLCalledBy(std::string procedureName, bool isDirectCalls) {
+	std::vector<std::string> returnList;
+	ProcedureTableProcedure* currentProcedure = procedureTable->getProcedure(procedureName);
+
+	if (isDirectCalls) {
+		int size = currentProcedure->getProcedureCallBySize();
+		for (int i = 0; i < size; i++) {
+			returnList.push_back(currentProcedure->getProcedureCallBy(i)->getName());
+		}
+	}
+	else {
+		std::set<int>* proceduresSet = currentProcedure->getIndirectProcedureCallBy();
+		std::set<int>::iterator end = proceduresSet->end();
+		for (std::set<int>::iterator iter = proceduresSet->begin(); iter != end; iter++) {
+			returnList.push_back(procedureTable->getProcedure(*iter)->getName());
+		}
+	}
+	return returnList;
+}
+
+std::vector<std::string> PKB::PQLPrevious(int statementNumber, bool isDirect) {
+	std::vector<std::string> returnList;
+	StatementTableStatement* currentStatement = statementTable->getStatementUsingStatementNumber(statementNumber);
+	int size;
+
+	if (isDirect) {
+		std::vector<StatementTableStatement*>* previousList = currentStatement->getPrevious();
+		size = previousList->size();
+		for (int i = 0; i < size; i++) {
+			returnList.push_back(std::to_string(previousList->at(i)->getStatementNumber()));
+		}
+	}
+	else {
+		std::vector<StatementTableStatement*> previousStarList = currentStatement->getPreviousStar();
+		size = previousStarList.size();
+		for (int i = 0; i < size; i++) {
+			returnList.push_back(std::to_string(previousStarList[i]->getStatementNumber()));
+		}
+	}
+	return returnList;
+}
+
+std::vector<std::string> PKB::PQLNext(int statementNumber, bool isDirect) {
+	std::vector<std::string> returnList;
+	StatementTableStatement* currentStatement = statementTable->getStatementUsingStatementNumber(statementNumber);
+	int size;
+
+	if (isDirect) {
+		std::vector<StatementTableStatement*>* nextList = currentStatement->getNext();
+		size = nextList->size();
+		for (int i = 0; i < size; i++) {
+			returnList.push_back(std::to_string(nextList->at(i)->getStatementNumber()));
+		}
+	}
+	else {
+		std::vector<StatementTableStatement*> nextStarList = currentStatement->getNextStar();
+		size = nextStarList.size();
+		for (int i = 0; i < size; i++) {
+			returnList.push_back(std::to_string(nextStarList[i]->getStatementNumber()));
+		}
+	}
+	return returnList;
+}
+
+std::vector<std::string> PKB::PQLAffectsThis(int statementNumber, bool isDirect) {
+	std::vector<std::string> returnList;
+	StatementTableStatement* currentStatement = statementTable->getStatementUsingStatementNumber(statementNumber);
+	int size;
+
+	if (isDirect) {
+		std::vector<StatementTableStatement*>* affectsThisList = currentStatement->getAffectsThis();
+		size = affectsThisList->size();
+		for (int i = 0; i < size; i++) {
+			returnList.push_back(std::to_string(affectsThisList->at(i)->getStatementNumber()));
+		}
+	}
+	else {
+		std::vector<StatementTableStatement*> affectsThisStarList = currentStatement->getAffectsThisStar();
+		size = affectsThisStarList.size();
+		for (int i = 0; i < size; i++) {
+			returnList.push_back(std::to_string(affectsThisStarList[i]->getStatementNumber()));
+		}
+	}
+	return returnList;
+}
+
+std::vector<std::string> PKB::PQLAffectedByThis(int statementNumber, bool isDirect) {
+	std::vector<std::string> returnList;
+	StatementTableStatement* currentStatement = statementTable->getStatementUsingStatementNumber(statementNumber);
+	int size;
+
+	if (isDirect) {
+		std::vector<StatementTableStatement*>* affectedByThisList = currentStatement->getAffectedByThis();
+		size = affectedByThisList->size();
+		for (int i = 0; i < size; i++) {
+			returnList.push_back(std::to_string(affectedByThisList->at(i)->getStatementNumber()));
+		}
+	}
+	else {
+		std::vector<StatementTableStatement*> affectedByThisStarList = currentStatement->getAffectedByThisStar();
+		size = affectedByThisStarList.size();
+		for (int i = 0; i < size; i++) {
+			returnList.push_back(std::to_string(affectedByThisStarList[i]->getStatementNumber()));
+		}
+	}
 	return returnList;
 }

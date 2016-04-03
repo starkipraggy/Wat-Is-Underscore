@@ -15,42 +15,48 @@
 
 class StatementTableStatement {
 private:
-	int statementNumber;								/**< The statement number of this statement */
-	TNodeType type;										/**< The type of this statement */
-	std::string rightHandSideExpression;				/**< Right hand side expression, specifically for assign statements, for pattern clauses */
-	NAME controlVariable;								/**< Control variable, specifically for if and while statements, for pattern clauses */
+	int statementNumber;									/**< The statement number of this statement */
+	TNodeType type;											/**< The type of this statement */
+	std::string rightHandSideExpression;					/**< Right hand side expression, specifically for assign statements, for pattern clauses */
+	NAME controlVariable;									/**< Control variable, specifically for if and while statements, for pattern clauses.
+																 Also used for left hand side expression for assign statements, for Affects clauses */
+	
+	StatementTableStatement* follows;						/**< The pointer to the statement that this statement follows
+																 (this statement appears immediately after the one it follows) */
+	StatementTableStatement* followedBy;					/**< The statement number of the statement that this statement is followed
+																 (that statement appears immediately after this statement ) */
+	StatementTableStatement* parent;						/**< The pointer to the statement that is parent to this statement */
+	std::vector<StatementTableStatement*>* children;		/**< A list of pointers to statements that have this statement as parent */
+	std::vector<int>* modifies;								/**< A list of the index numbers of variables that this statement modifies */
+	std::vector<int>* uses;									/**< A list of the index numbers of variables that this statement uses */
 
-	StatementTableStatement* follows;					/**< The pointer to the statement that this statement follows
-															 (this statement appears immediately after the one it follows) */
-	StatementTableStatement* followedBy;				/**< The statement number of the statement that this statement is followed
-															 (that statement appears immediately after this statement ) */
-	StatementTableStatement* parent;					/**< The pointer to the statement that is parent to this statement */
-	std::vector<StatementTableStatement*>* children;	/**< A list of pointers to statements that have this statement as parent */
-	std::vector<int>* modifies;							/**< A list of the index numbers of variables that this statement modifies */
-	std::vector<int>* uses;								/**< A list of the index numbers of variables that this statement uses */
+	std::vector<int>* parentStar;							/**< A list of statement numbers; has its parent, its parent's parent, etc.
+																 Used for the Parent* relationship */
+	std::vector<int>* followsStar;							/**< A list of statement numbers; has the statement it follows, its follow's follow, etc.
+																 Used for the Follows* relationship */
 
-	std::vector<int>* parentStar;						/**< A list of statement numbers; has its parent, its parent's parent, etc.
-															 Used for the Parent* relationship */
-	std::vector<int>* followsStar;						/**< A list of statement numbers; has the statement it follows, its follow's follow, etc.
-															 Used for the Follows* relationship */
-
-	std::set<int>* childrenStar;						/**< A list of statement numbers; has its children, its children's children, etc.
-															 Used for the Parent* relationship */
-	bool hasItsChildrenStarChanged;						/**< Boolean control to check if a new childrenStar set should be fetched, or just use the one cached */
+	std::set<int>* childrenStar;							/**< A list of statement numbers; has its children, its children's children, etc.
+																 Used for the Parent* relationship */
+	bool hasItsChildrenStarChanged;							/**< Boolean control to check if a new childrenStar set should be fetched, or just use the one cached */
 	//! Used to set "hasItsChildrenStarChanged" boolean to true, so that it can no longer used cached childrenStar set
 	/*!
 		Used to set "hasItsChildrenStarChanged" boolean to true, so that it can no longer used cached childrenStar set
 	*/
 	void childrenStarHasBeingModified();
 
-	std::vector<int>* followedByStar;					/**< A list of statement numbers; has the one following it, the one following the one following it, etc.
-															 Used for the Follows* relationship */
-	bool hasItsFollowedByStarChanged;					/**< Boolean control to check if a new followedByStar vector should be fetched, or just use the one cached */
+	std::vector<int>* followedByStar;						/**< A list of statement numbers; has the one following it, the one following the one following it, etc.
+																 Used for the Follows* relationship */
+	bool hasItsFollowedByStarChanged;						/**< Boolean control to check if a new followedByStar vector should be fetched, or just use the one cached */
 	//! Used to set "hasItsFollowedByStarChanged" boolean to true, so that it can no longer used cached followedByStar vector
 	/*!
 		Used to set "hasItsFollowedByStarChanged" boolean to true, so that it can no longer used cached followedByStar vector
 	*/
 	void followedByStarHasBeingModified();
+
+	std::vector<StatementTableStatement*>* previous;		/**< A list of pointers to statements that has this statement after directly in the CFG */
+	std::vector<StatementTableStatement*>* next;			/**< A list of pointers to statements that comes after this statement directly in the CFG */
+	std::vector<StatementTableStatement*>* affectsThis;		/**< A list of pointers to statements that affects this statement */
+	std::vector<StatementTableStatement*>* affectedByThis;	/**< A list of pointers to statements that this statement affects */
 public:
 	//! Constructor for the StatementTableStatement.
 	/*!
@@ -360,4 +366,68 @@ public:
 		A new vector would be generated.
 	*/
 	void fetchNewCopyOfChildrenStar();
+
+	//! Getter function for the list of pointers to statements that has this statement after directly in the CFG
+	/*!
+		Getter function for list of pointers to statements that has this statement after directly in the CFG;
+		use this function to retrieve a vector of pointers to statements s which Next(s, this) is true
+		\return List of pointers to statements that this statement has this statement after directlyin the CFG
+	*/
+	std::vector<StatementTableStatement*>* getPrevious();
+
+	//! Getter function for the list of pointers to statements that comes after this statement directly in the CFG
+	/*!
+		Getter function for list of pointers to statements that comes after this statement directly in the CFG;
+		use this function to retrieve a vector of pointers to statements s which Next(this, s) is true
+		\return List of pointers to statements that comes after this statement directly in the CFG
+	*/
+	std::vector<StatementTableStatement*>* getNext();
+
+	//! Getter function for the list of pointers to statements that has this statement after directly or indirectly in the CFG
+	/*!
+		Getter function for list of pointers to statements that has this statement after directly or indirectly in the CFG;
+		use this function to retrieve a vector of pointers to statements s which Next*(s, this) is true
+		\return List of pointers to statements that this statement has this statement after directly or indirectly in the CFG
+	*/
+	std::vector<StatementTableStatement*> getPreviousStar();
+
+	//! Getter function for the list of pointers to statements that comes after this statement directly or indirectly in the CFG
+	/*!
+		Getter function for list of pointers to statements that comes after this statement directly or indirectly in the CFG;
+		use this function to retrieve a vector of pointers to statements s which Next*(this, s) is true
+		\return List of pointers to statements that comes after this statement directly or indirectly in the CFG
+	*/
+	std::vector<StatementTableStatement*> getNextStar();
+
+	//! Getter function for the list of pointers to statements that directly affects this statement
+	/*!
+		Getter function for list of pointers to statements that directly affects this statement;
+		use this function to retrieve a vector of pointers to statements s which Affects(s, this) is true
+		\return List of pointers to statements that directly affects this statement
+	*/
+	std::vector<StatementTableStatement*>* getAffectsThis();
+
+	//! Getter function for the list of pointers to statements that this statement directly affects
+	/*!
+		Getter function for list of pointers to statements that this statement directly affects;
+		use this function to retrieve a vector of pointers to statements s which Affects(this, s) is true
+		\return List of pointers to statements that this statement directly affects
+	*/
+	std::vector<StatementTableStatement*>* getAffectedByThis();
+
+	//! Getter function for the list of pointers to statements that directly or indirectly affects this statement
+	/*!
+		Getter function for list of pointers to statements that directly or indirectly affects this statement;
+		use this function to retrieve a vector of pointers to statements s which Affects*(s, this) is true
+		\return List of pointers to statements that directly or indirectly affects this statement
+	*/
+	std::vector<StatementTableStatement*> getAffectsThisStar();
+
+	//! Getter function for the list of pointers to statements that this statement directly or indirectly affects
+	/*!
+		Getter function for list of pointers to statements that this statement directly or indirectly affects;
+		use this function to retrieve a vector of pointers to statements s which Affects*(this, s) is true
+		\return List of pointers to statements that this statement directly or indirectly affects
+	*/
+	std::vector<StatementTableStatement*> getAffectedByThisStar();
 };

@@ -13,9 +13,8 @@ PKB* StubPKB::getInstance() {
 }
 
 std::vector<std::string> StubPKB::PQLSelect(TNodeType outputType) {
-	string var = "AnswerForSelect";
-	vector<string> output;
-	output.push_back(var);
+	vector<string> output = { "AnswerForSelect" , "AnswerForUses", "AnswerForFollows", 
+		"AnswerForPattern", "AnswerForMix", "AnswerForWith" };
 	return output;
 }
 
