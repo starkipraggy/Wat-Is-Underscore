@@ -359,18 +359,18 @@ vector<string> QueryEvaluator::queryPKB(string clause, string input, int argumen
 	}
 	else if (clause == "CALLS") {
 		if (argumentPosition == 1) {
-			output = pkb->PQLCalls(input, true);
+			output = pkb->PQLCalledBy(input, true);
 		}
 		else { //argumentPosition == 2
-			output = pkb->PQLCalledBy(input, true);
+			output = pkb->PQLCalls(input, true);
 		}
 	}
 	else if (clause == "CALLS*") {
 		if (argumentPosition == 1) {
-			output = pkb->PQLCalls(input, false);
+			output = pkb->PQLCalledBy(input, false);
 		}
 		else { //argumentPosition == 2
-			output = pkb->PQLCalledBy(input, false);
+			output = pkb->PQLCalls(input, false);
 		}
 	}
 	else{
