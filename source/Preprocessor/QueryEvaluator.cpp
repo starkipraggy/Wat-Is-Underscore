@@ -163,7 +163,14 @@ std::vector<std::string> QueryEvaluator::process() {
 						}
 					}
 					else {
-						queryResult = queryPKB(clause, var2.getName(), 1, select.getType());
+						string type;
+						if (clause == "calls" || clause == "calls*") {
+							type = "procedure";
+						}
+						else {
+							type = "stmt";
+						}
+						queryResult = queryPKB(clause, var2.getName(), 1, type);
 						if (find(queryResult.begin(), queryResult.end(), var1.getName()) == queryResult.end()) {
 							throw "result false";
 						}
