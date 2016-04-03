@@ -509,6 +509,15 @@ std::vector<std::string> PKB::PQLSelect(TNodeType outputType) {
 	std::vector<std::string> returnList;
 	StatementTableStatement* statement;
 
+	// return all procedures
+	if (outputType == ProcedureName) {
+		int procedureTableSize = procedureTable->getNumberOfProcedures();
+		for (int i = 0; i < procedureTableSize; i++) {
+			returnList.push_back(procedureTable->getProcedure(i)->getName());
+		}
+		return returnList;
+	}
+
 	// return all variables
 	if (outputType == VariableName) {
 		int variableTableSize = variableTable->getNumberOfVariables();
