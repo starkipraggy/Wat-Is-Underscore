@@ -103,7 +103,7 @@ std::vector<std::string> QueryEvaluator::process() {
 					else if (item1 == directory.end()) {
 
 						tempResult = {};
-						for (int i = 0; i < result.size(); i++) {
+						for (unsigned int i = 0; i < result.size(); i++) {
 
 							queryResult = queryPKB(clause, result.at(i).at(item2->second), 1, var1.getType());
 							tempResult = query(queryResult, i, tempResult);
@@ -117,7 +117,7 @@ std::vector<std::string> QueryEvaluator::process() {
 					else if (item2 == directory.end()) {
 						
 						tempResult = {};
-						for (int i = 0; i < result.size(); i++) {
+						for (unsigned int i = 0; i < result.size(); i++) {
 
 							queryResult = queryPKB(clause, result.at(i).at(item1->second), 2, var2.getType());
 							tempResult = query(queryResult, i, tempResult);
@@ -173,7 +173,7 @@ std::vector<std::string> QueryEvaluator::process() {
 	}
 	 
 	vector<string> output;
-	for (int i = 0; i < result.size(); i++) {
+	for (unsigned int i = 0; i < result.size(); i++) {
 		output.push_back(result.at(i).at(0));
 	}
 	return output;
@@ -186,7 +186,7 @@ void QueryEvaluator::processOneSynonym(Ref source, Ref des, string clause, int p
 
 		if (des.getType() == "placeholder") {
 			tempResult = {};
-			for (int i = 0; i < result.size(); i++) {
+			for (unsigned int i = 0; i < result.size(); i++) {
 
 				queryResult = queryPKB(clause, result.at(i).at(item->second), pos, source.getType());
 				tempResult = query(queryResult, i, tempResult);
@@ -198,7 +198,7 @@ void QueryEvaluator::processOneSynonym(Ref source, Ref des, string clause, int p
 		else {
 			queryResult = queryPKB(clause, des.getName(), pos, source.getType());
 			tempResult = {};
-			for (int i = 0; i < result.size(); i++) {
+			for (unsigned int i = 0; i < result.size(); i++) {
 
 				tempResult = query(queryResult, i, tempResult);
 
@@ -234,7 +234,7 @@ void QueryEvaluator::processOneSynonym(Ref source, Ref des, string clause, int p
 void QueryEvaluator::add(vector<string> queryResult, string name) {
 	vector<string> temp, newTemp;
 
-	for (int i = 0; i < queryResult.size(); i++) {
+	for (unsigned int i = 0; i < queryResult.size(); i++) {
 		temp = {};
 		temp.push_back(queryResult.at(i));
 		result.push_back(temp);
@@ -273,7 +273,7 @@ void QueryEvaluator::remove(int pos, string input) {
 vector<vector<string>> QueryEvaluator::query(vector<string> queryResult, int i, vector<vector<string>> temp) {
 	vector<string> eachTemp;
 
-	for (int j = 0; j < queryResult.size(); j++) {
+	for (unsigned int j = 0; j < queryResult.size(); j++) {
 		eachTemp = {};
 		eachTemp.assign(result.at(i).begin(), result.at(i).end());
 		eachTemp.push_back(queryResult.at(j));
