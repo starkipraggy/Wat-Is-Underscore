@@ -18,9 +18,9 @@ const regex varDesignEntityRegex("^(variable)$", icase);
 
 const regex entVarRefRefRegex("^(modifies|uses)$", icase);
 const regex stmtVarRefRefRegex("^(modifies|uses)$", icase);
-const regex ententRefRefRegex("^(call|call*)$", icase);
+const regex ententRefRefRegex("^(calls|calls\\*)$", icase);
 const regex stmtstmtRefRefRegex("^(parent|parent\\*|follows|follows\\*|affects|affects\\*)$", icase);
-const regex linelineRefRefRegex("^(next|next*)$", icase);
+const regex linelineRefRefRegex("^(next|next\\*)$", icase);
 
 const regex clauseRegex("such that+|pattern+|with+|and+", icase);
 const regex booleanRegex("^(BOOLEAN)$", icase);
