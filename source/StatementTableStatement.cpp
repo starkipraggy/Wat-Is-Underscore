@@ -3,6 +3,7 @@
 #include <queue>
 #include <unordered_map>
 #include "StatementTableStatement.h"
+#include "CFG.h"
 
 void StatementTableStatement::childrenStarHasBeingModified() {
 	hasItsChildrenStarChanged = true;
@@ -282,9 +283,11 @@ void StatementTableStatement::fetchNewCopyOfChildrenStar() {
    for my Affects */
 
 std::vector<StatementTableStatement*>* StatementTableStatement::getPrevious() {
+    CFG& stuff = CFG::getGlobalCFG();
 	if (previous == NULL) {
 		previous = new std::vector<StatementTableStatement*>();
 		// @todo
+        
 	}
 	return previous;
 }

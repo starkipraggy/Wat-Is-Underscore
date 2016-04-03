@@ -1,4 +1,5 @@
 #include "AST.h"
+#include "SimpleParser.h"
 
 AST::AST(){
     TNode* rootNode = new TNode(ProcedureName, "");

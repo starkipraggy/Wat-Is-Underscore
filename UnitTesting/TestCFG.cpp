@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
-#include "AST.h"
 #include "CFG.h"
+#include <algorithm>
 #include <iostream>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -13,6 +13,7 @@ namespace UnitTesting
 
         TEST_METHOD_INITIALIZE(InitialiseCFG) {
             testCFG = CFG();
+            testCFG.newProcedure();
         }
 
         TEST_METHOD(CFGOneStatement) {
@@ -158,6 +159,23 @@ namespace UnitTesting
             Assert::IsTrue(result[0] == 3);
         }
 
+        TEST_METHOD(CFGLastStmtNext) {
+            //Arrange
+            testCFG.addWhileStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.endWhileStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+
+            //Act
+            std::vector<int> result = testCFG.nextStmt(6);
+
+            //Assert
+            Assert::IsTrue(result.size() == 0);
+        }
+
         TEST_METHOD(CFGNextFromWhile) {
             //Arrange
             testCFG.addWhileStmt();
@@ -211,6 +229,35 @@ namespace UnitTesting
             //Assert
             Assert::IsTrue(result.size() == 1);
             Assert::IsTrue(result[0] == 2);
+        }
+
+        TEST_METHOD(CFGWhileHeadPrev) {
+            //Arrange
+            testCFG.addWhileStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.endWhileStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+
+            //Act
+            std::vector<int> result = testCFG.prevStmt(1);
+
+            //Assert
+            Assert::IsTrue(result.size() == 1);
+            Assert::IsTrue(result[0] == 3);
+        }
+
+        TEST_METHOD(CFGFirstStmtPrev) {
+            //Arrange
+            testCFG.addStmt();
+
+            //Act
+            std::vector<int> result = testCFG.prevStmt(1);
+
+            //Assert
+            Assert::IsTrue(result.size() == 0);
         }
 
         TEST_METHOD(CFGPrevOtherNode) {

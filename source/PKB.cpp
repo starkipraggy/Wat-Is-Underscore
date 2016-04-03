@@ -1,6 +1,14 @@
 #include "PKB.h"
+#include "CFG.h"
+#include <iostream>
+#include <algorithm> 
+#include <functional> 
+#include <cctype>
+#include <locale>	
+#include <cstdlib>
 
 PKB* PKB::instance = NULL;
+CFG& GlobalCFG = CFG::getGlobalCFG();
 
 // To enable the printing of debug lines
 const bool IS_DEBUGGING = false;
@@ -148,9 +156,10 @@ void PKB::ProcedureStart(std::string nameOfProcedure) {
 	   so that statements being inputted can have their statement numbers added under it */
 	currentProcedure = procedureTable->getProcedure(nameOfProcedure);
     currentProcedureAST = new AST(nameOfProcedure);
-    currentProcedureCFG = new CFG();
     procedureAST.push_back(currentProcedureAST);
-    procedureCFG.push_back(currentProcedureCFG);
+
+    //indicate to CFG to begin a new procedure
+    GlobalCFG.newProcedure();
 
 	// Clear current stack trace
 	if (statementStackTrace->top() != 0) {
@@ -163,7 +172,6 @@ void PKB::ProcedureEnd() {
 	// Remove the pointer to currentProcedure
 	currentProcedure = NULL;
     currentProcedureAST = NULL;
-    currentProcedureCFG = NULL;
 }
 
 bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::vector<ExpressionTokenType> types) {
@@ -269,7 +277,7 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
     
     //AST
 	currentProcedureAST->addAssignTNode(variable, tokens, currentStatement->getStatementNumber());
-    currentProcedureCFG->addStmt();
+    GlobalCFG.addStmt();
 
 	return true;
 }
@@ -347,7 +355,7 @@ void PKB::CallStatement(std::string procedure) {
 
     //AST
 	currentProcedureAST->addCallTNode(procedure, currentStatement->getStatementNumber());
-    currentProcedureCFG->addStmt();
+    GlobalCFG.addStmt();
 }
 
 void PKB::WhileStart(NAME variable) {
@@ -407,7 +415,7 @@ void PKB::WhileStart(NAME variable) {
 
     //AST
 	currentProcedureAST->addWhileTNode(variable, currentStatement->getStatementNumber());
-    currentProcedureCFG->addWhileStmt();
+    GlobalCFG.addWhileStmt();
 }
 
 bool PKB::WhileEnd() {
@@ -417,7 +425,7 @@ bool PKB::WhileEnd() {
 	}
 
 	currentProcedureAST->addEndOfContainerRelation();
-    currentProcedureCFG->endWhileStmt();
+    GlobalCFG.endWhileStmt();
 	statementStackTrace->pop();
 		
 	return true;
@@ -477,7 +485,7 @@ void PKB::IfStart(NAME variable) {
 
     //AST
 	currentProcedureAST->addIfTNode(variable, currentStatement->getStatementNumber());
-    currentProcedureCFG->addIfStmt();
+    GlobalCFG.addIfStmt();
 }
 
 bool PKB::ElseStart() {
@@ -490,8 +498,7 @@ bool PKB::ElseStart() {
 
     //AST
 	currentProcedureAST->addElseRelation();
-    currentProcedureCFG->elseStmt();
-    //currentProcedureAST->getLastAddedNode()->addChild(new TNode(StmtLst));
+    GlobalCFG.elseStmt();
 
 	return true;
 }
@@ -502,7 +509,7 @@ bool PKB::IfElseEnd() {
 	}
 
 	currentProcedureAST->addEndOfContainerRelation();
-    currentProcedureCFG->endIfStmt();
+    GlobalCFG.endIfStmt();
 	statementStackTrace->pop();
 
 	return true;

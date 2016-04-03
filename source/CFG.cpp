@@ -63,11 +63,15 @@ void CFGNode::incrementRightLmt(){
 }
 
 CFG::CFG(){
-    currNode = new CFGNode();
-    graph.push_back(currNode);
 }
 
 CFG::~CFG(){
+}
+
+CFG& CFG::getGlobalCFG(){
+    // TODO: insert return statement here
+    static CFG GlobalCFG;
+    return GlobalCFG;
 }
 
 std::vector<CFGNode*> CFG::getGraph(){
@@ -80,6 +84,11 @@ CFGNode* CFG::CFGNodeByStmtNum(int stmtNum){
     }catch (const std::out_of_range& oor) {
         return nullptr;
     }
+}
+
+void CFG::newProcedure() {
+    currNode = new CFGNode();
+    graph.push_back(currNode);
 }
 
 void CFG::addStmt(){
@@ -155,8 +164,6 @@ std::vector<int> CFG::prevStmt(int stmtNum){
     CFGNode* thisNode = stmtFinder[stmtNum];
     if (stmtNum > thisNode->getLeftLmt()) {
         result.push_back(stmtNum - 1);
-    } else if (stmtNum == 1) {
-        result.push_back(0);
     } else {
         for (size_t i = 0; i < thisNode->getParents().size(); i++) {
             result.push_back(thisNode->getParents()[i]->getRightLmt());
@@ -170,13 +177,11 @@ std::vector<int> CFG::nextStmt(int stmtNum){
     CFGNode* thisNode = stmtFinder[stmtNum];
     if (stmtNum < thisNode->getRightLmt()) {
         result.push_back(stmtNum + 1);
-    } else if (stmtNum == stmtCount) {
-        result.push_back(0);
     } else {
-        if (thisNode->getChd1() != NULL){
+        if (thisNode->getChd1() != NULL && thisNode->getChd1()->getType() != Unused){
             result.push_back(thisNode->getChd1()->getLeftLmt());
         }
-        if (thisNode->getChd2() != NULL) {
+        if (thisNode->getChd2() != NULL && thisNode->getChd2()->getType() != Unused) {
             result.push_back(thisNode->getChd2()->getLeftLmt());
         }
     }
@@ -246,7 +251,7 @@ std::vector<int> CFG::nextStmtStar(int stmtNum){
             toSearch.push(thisNode->getChd2());
         }
 
-        for (size_t i = thisNode->getLeftLmt(); i <= thisNode->getRightLmt(); i++) {
+        for (int i = thisNode->getLeftLmt(); i <= thisNode->getRightLmt(); i++) {
             result.push_back(i);
         }
     }

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <unordered_map>
 #include <stack>
+#include <unordered_map>
 
 enum CFGNodeType {
     Unused,
@@ -78,8 +78,12 @@ public:
     CFG();
     ~CFG();
 
+    static CFG& getGlobalCFG();
+
     std::vector<CFGNode*> getGraph();
     CFGNode* CFGNodeByStmtNum(int);
+
+    void newProcedure();
 
     void addStmt();
     void addWhileStmt();
