@@ -100,22 +100,8 @@ std::vector<std::string> QueryEvaluator::process() {
 
 						}
 					}
-					else if (item1 == directory.end()) {
+					else if (item1 != directory.end()) {
 
-						tempResult = {};
-						for (unsigned int i = 0; i < result.size(); i++) {
-
-							queryResult = queryPKB(clause, result.at(i).at(item2->second), 1, var1.getType());
-							tempResult = query(queryResult, i, tempResult);
-
-						}
-						result = tempResult;
-
-						addDirectory(var1.getName());
-
-					}
-					else if (item2 == directory.end()) {
-						
 						tempResult = {};
 						for (unsigned int i = 0; i < result.size(); i++) {
 
@@ -126,6 +112,20 @@ std::vector<std::string> QueryEvaluator::process() {
 						result = tempResult;
 
 						addDirectory(var2.getName());
+
+					}
+					else if (item2 != directory.end()) {
+						
+						tempResult = {};
+						for (unsigned int i = 0; i < result.size(); i++) {
+
+							queryResult = queryPKB(clause, result.at(i).at(item2->second), 1, var1.getType());
+							tempResult = query(queryResult, i, tempResult);
+
+						}
+						result = tempResult;
+
+						addDirectory(var1.getName());
 
 					}
 					else {//item1 == directory.end() && item2 == directory.end()
