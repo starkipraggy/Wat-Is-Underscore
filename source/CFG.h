@@ -107,6 +107,7 @@ public:
 private:
     std::vector<CFGNode*> graph;
     std::stack<CFGNode*> containerStk;
+    std::stack<CFGNode*> if1stchildStk;
     CFGNode* currNode;
     int stmtCount = 1;
     bool combine = false;

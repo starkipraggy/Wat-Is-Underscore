@@ -184,6 +184,34 @@ namespace UnitTesting
             Assert::IsTrue(result[0] == 3);
         }
 
+        TEST_METHOD(CFGPrevNestedIf) {
+            //Arrange
+            testCFG.addWhileStmt();
+            testCFG.addStmt();
+            testCFG.addIfStmt();
+            testCFG.addStmt();
+            testCFG.addWhileStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.endWhileStmt();
+            testCFG.addStmt();
+            testCFG.elseStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.endIfStmt();
+            testCFG.addStmt();
+            testCFG.endWhileStmt();
+
+            //Act
+            std::vector<int> result = testCFG.prevStmt(11);
+
+            //Assert
+            Assert::IsTrue(result.size() == 2);
+            std::sort(result.begin(), result.end());
+            Assert::IsTrue(result[0] == 8);
+            Assert::IsTrue(result[1] == 10);
+        }
+
         TEST_METHOD(CFGNextDiffProc) {
             //Arrange
             testCFG.addStmt();

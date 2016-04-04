@@ -152,14 +152,17 @@ void CFG::endWhileStmt(){
 void CFG::endIfStmt(){
     CFGNode* lastIf = containerStk.top();
     CFGNode* combined = new CFGNode();
-    lastIf->getChd1()->addChild(combined);
-    lastIf->getChd2()->addChild(combined);
+    CFGNode* b1end = lastIf->getChd1();
+    if1stchildStk.top()->addChild(combined);
+    currNode->addChild(combined);
+    if1stchildStk.pop();
     containerStk.pop();
     currNode = combined;
     graph.push_back(currNode);
 }
 
 void CFG::elseStmt(){
+    if1stchildStk.push(currNode);
     containerStk.top()->addChild(new CFGNode());
     currNode = containerStk.top()->getChd2();
     graph.push_back(currNode);
