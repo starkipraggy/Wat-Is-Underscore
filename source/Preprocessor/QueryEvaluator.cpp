@@ -98,7 +98,7 @@ std::vector<std::string> QueryEvaluator::process() {
 					if (item1 != directory.end() && item2 != directory.end()) {
 						for (vector<vector<string>>::iterator it = result.begin(); it != result.end();) {
 
-							queryResult = queryPKB(clause, it->at(item1->second), 1, var1.getType());
+							queryResult = queryPKB(clause, it->at(item1->second), 2, var2.getType());
 							it = query(queryResult, it, item2->second);
 
 						}
@@ -415,34 +415,34 @@ vector<string> QueryEvaluator::queryPKB(string clause, string input, int argumen
 		}
 		else if (clause == "NEXT") {
 			if (argumentPosition == 1) {
-				output = pkb->PQLPrevious(value, true);
+				output = pkb->PQLNext(value, true);
 			}
 			else { //argumentPosition == 2
-				output = pkb->PQLNext(value, true);
+				output = pkb->PQLPrevious(value, true);
 			}
 		}
 		else if (clause == "NEXT*") {
 			if (argumentPosition == 1) {
-				output = pkb->PQLPrevious(value, false);
+				output = pkb->PQLNext(value, false);
 			}
 			else { //argumentPosition == 2
-				output = pkb->PQLNext(value, false);
+				output = pkb->PQLPrevious(value, false);
 			}
 		}
 		else if (clause == "AFFECTS") {
 			if (argumentPosition == 1) {
-				output = pkb->PQLAffectsThis(value, true);
+				output = pkb->PQLAffectedByThis(value, true);
 			}
 			else { //argumentPosition == 2
-				output = pkb->PQLAffectedByThis(value, true);
+				output = pkb->PQLAffectsThis(value, true);
 			}
 		}
 		else if (clause == "AFFECTS*") {
 			if (argumentPosition == 1) {
-				output = pkb->PQLAffectsThis(value, false);
+				output = pkb->PQLAffectedByThis(value, false);
 			}
 			else { //argumentPosition == 2
-				output = pkb->PQLAffectedByThis(value, false);
+				output = pkb->PQLAffectsThis(value, false);
 			}
 		}
 	}
