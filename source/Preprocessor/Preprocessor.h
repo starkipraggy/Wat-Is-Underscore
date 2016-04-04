@@ -112,6 +112,11 @@ private:
 	return a ref of with with type derived from name
 	*/
 	Ref createWithRef(string name);
+	//! Create a attr ref
+	/*!
+	return a ref of attrRef with type derived from name. Input must consist of "."
+	*/
+	Ref createAttrRef(string name);
 	//! Check if type is stmtRef
 	/*!
 	return true if type is stmtRef

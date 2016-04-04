@@ -123,18 +123,25 @@ void Preprocessor::setDeclaration(string line) {
 }
 
 void Preprocessor::setSelect() {
-	string name, type;
+	Ref ref;
 
 	if (regex_match(selectPart, booleanRegex)) {
-		name = "";
-		type = "boolean";
+		ref = Ref("", "boolean");
+	}
+	else if (selectPart.find(".") != string::npos) {
+		ref = createAttrRef(selectPart);
 	}
 	else {
-		name = selectPart;
-		type = declarationMap.find(name)->second;
+		unordered_map<string, string>::const_iterator got = declarationMap.find(selectPart);
+		if (got == declarationMap.end()) {
+			throw "no such declaration";
+		}
+		else {
+			ref = Ref(selectPart, got->second);
+		}
 	}
 
-	QueryTree::Instance()->setSelect(Ref(name, type));
+	QueryTree::Instance()->setSelect(ref);
 }
 
 void Preprocessor::setQueryTree() {
@@ -377,44 +384,7 @@ Ref Preprocessor::createWithRef(string name) {
 	Ref ref;
 	
 	if (name.find(".") != string::npos) {
-		string type;
-
-		int position = name.find(".");
-		string synonym = trim(name.substr(0, position));
-		string attrName = trim(name.substr(position + 1));
-		attrName = StringToUpper(attrName);
-		try {
-			type = declarationMap.find(synonym)->second;
-		}
-		catch (const char* msg) {
-			throw msg;
-		}
-
-		if (StringToUpper(type) == "PROCEDURE") {
-			if (attrName != "PROCNAME") {
-				throw "wrong procedure type";
-			}
-		}
-		else if (StringToUpper(type) == "STMT" || StringToUpper(type) == "STMTLST") {
-			if (attrName != "STMT#") {
-				throw "wrong stmt type";
-			}
-		}
-		else if (StringToUpper(type) == "VARIABLE") {
-			if (attrName != "VARNAME") {
-				throw "wrong variable type";
-			}
-		}
-		else if (StringToUpper(type) == "CONSTANT") {
-			if (attrName != "VALUE") {
-				throw "wrong constant type";
-			}
-		}
-		else {
-			throw "synonym should not have type";
-		}
-
-		ref = Ref(synonym, type);
+		ref = createAttrRef(name);
 	}
 	else if (regex_match(name, identRegex)) {
 		try {
@@ -443,6 +413,47 @@ Ref Preprocessor::createWithRef(string name) {
 	//check if same type
 
 	return ref;
+}
+
+Ref Preprocessor::createAttrRef(string name) {
+	string type;
+
+	int position = name.find(".");
+	string synonym = trim(name.substr(0, position));
+	string attrName = trim(name.substr(position + 1));
+	attrName = StringToUpper(attrName);
+	try {
+		type = declarationMap.find(synonym)->second;
+	}
+	catch (const char* msg) {
+		throw msg;
+	}
+
+	if (StringToUpper(type) == "PROCEDURE") {
+		if (attrName != "PROCNAME") {
+			throw "wrong procedure type";
+		}
+	}
+	else if (StringToUpper(type) == "STMT" || StringToUpper(type) == "STMTLST") {
+		if (attrName != "STMT#") {
+			throw "wrong stmt type";
+		}
+	}
+	else if (StringToUpper(type) == "VARIABLE") {
+		if (attrName != "VARNAME") {
+			throw "wrong variable type";
+		}
+	}
+	else if (StringToUpper(type) == "CONSTANT") {
+		if (attrName != "VALUE") {
+			throw "wrong constant type";
+		}
+	}
+	else {
+		throw "synonym should not have type";
+	}
+
+	return Ref(synonym, type);
 }
 
 bool Preprocessor::isStmtRef(Ref v) {
