@@ -187,10 +187,10 @@ std::vector<int> CFG::nextStmt(int stmtNum){
     if (stmtNum < thisNode->getRightLmt()) {
         result.push_back(stmtNum + 1);
     } else {
-        if (thisNode->getChd1() != NULL && thisNode->getChd1()->getType() != Unused){
+        if (thisNode->getChd1() != NULL ){
             result.push_back(thisNode->getChd1()->getLeftLmt());
         }
-        if (thisNode->getChd2() != NULL && thisNode->getChd2()->getType() != Unused) {
+        if (thisNode->getChd2() != NULL ) {
             result.push_back(thisNode->getChd2()->getLeftLmt());
         }
     }
