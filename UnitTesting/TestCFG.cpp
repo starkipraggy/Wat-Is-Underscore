@@ -159,6 +159,19 @@ namespace UnitTesting
             Assert::IsTrue(result[0] == 3);
         }
 
+        TEST_METHOD(CFGNextDiffProc) {
+            //Arrange
+            testCFG.addStmt();
+            testCFG.newProcedure();
+            testCFG.addStmt();
+
+            //Act
+            std::vector<int> result = testCFG.nextStmt(1);
+
+            //Assert
+            Assert::IsTrue(result.size() == 0);
+        }
+
         TEST_METHOD(CFGLastStmtNext) {
             //Arrange
             testCFG.addWhileStmt();

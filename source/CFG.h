@@ -3,6 +3,10 @@
 #include <stack>
 #include <unordered_map>
 
+//forward declaration
+class StatementTable;
+class StatementTableStatement;
+
 enum CFGNodeType {
     Unused,
     Normal,
@@ -82,6 +86,7 @@ public:
 
     std::vector<CFGNode*> getGraph();
     CFGNode* CFGNodeByStmtNum(int);
+    void setStmtTable(StatementTable*);
 
     void newProcedure();
 
@@ -97,6 +102,8 @@ public:
     std::vector<int> nextStmtStar(int);
     std::vector<int> prevStmtStar(int);
 
+    void convertIntToStatement(std::vector<int>, std::vector<StatementTableStatement*>&);
+
 private:
     std::vector<CFGNode*> graph;
     std::stack<CFGNode*> containerStk;
@@ -106,4 +113,5 @@ private:
     bool ifelse = false;
     bool endIf = false;
     std::unordered_map<int,CFGNode*> stmtFinder;
+    StatementTable* stmtObjTable;
 };

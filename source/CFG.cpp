@@ -1,4 +1,5 @@
 #include "CFG.h"
+#include "StatementTable.h"
 
 CFGNode::CFGNode() {
     leftLmt = 0;
@@ -84,6 +85,10 @@ CFGNode* CFG::CFGNodeByStmtNum(int stmtNum){
     }catch (const std::out_of_range& oor) {
         return nullptr;
     }
+}
+
+void CFG::setStmtTable(StatementTable * table){
+    stmtObjTable = table;
 }
 
 void CFG::newProcedure() {
@@ -223,6 +228,12 @@ std::vector<int> CFG::prevStmtStar(int stmtNum){
         }
     }
     return result;
+}
+
+void CFG::convertIntToStatement(std::vector<int> input, std::vector<StatementTableStatement*>& result){
+    for (size_t i = 0; i < input.size(); i++) {
+        result.push_back(stmtObjTable->getStatementUsingStatementNumber(input[i]));
+    }
 }
 
 std::vector<int> CFG::nextStmtStar(int stmtNum){
