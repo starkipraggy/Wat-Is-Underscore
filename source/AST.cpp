@@ -1,4 +1,5 @@
 #include "AST.h"
+#include "SimpleParser.h"
 
 AST::AST(){
     TNode* rootNode = new TNode(ProcedureName, "");
@@ -212,7 +213,7 @@ TNode* AST::constructExpressionTree(std::vector<std::string> &tokens){
 
 void AST::convertExpressionToTNodes(std::string expression, std::vector<TNode*> &resVector) {
     std::vector<std::string> tokens = SimpleParser::tokenize(expression);
-    for (int i = 0; i < tokens.size(); i++) {
+    for (size_t i = 0; i < tokens.size(); i++) {
         TNode* node = new TNode();
         if (tokens[i] == "+") {
             node->setNodeType(OperatorPlus);
@@ -246,7 +247,7 @@ bool AST::compareTrees(TNode * tree1, TNode * tree2){
     } else if ((tree1->getChildNodes()).size() != (tree2->getChildNodes()).size()) {
         return false;
     } else {
-        for (int i = 0; i < tree1->getChildNodes().size(); i++){
+        for (size_t i = 0; i < tree1->getChildNodes().size(); i++){
             if (!AST::compareTrees(tree1->getChildNodes()[i], tree2->getChildNodes()[i])) {
                 return false;
             }

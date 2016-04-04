@@ -3,6 +3,7 @@
 #include <queue>
 #include <unordered_map>
 #include "StatementTableStatement.h"
+#include "CFG.h"
 
 void StatementTableStatement::childrenStarHasBeingModified() {
 	hasItsChildrenStarChanged = true;
@@ -282,19 +283,29 @@ void StatementTableStatement::fetchNewCopyOfChildrenStar() {
    for my Affects */
 
 std::vector<StatementTableStatement*>* StatementTableStatement::getPrevious() {
-	if (previous == NULL) {
-		previous = new std::vector<StatementTableStatement*>();
-		// @todo
-	}
-	return previous;
+    if (previous != NULL) {
+        return previous;
+    } else {
+        CFG GlobalCFG = CFG::getGlobalCFG();
+        std::vector<int> intermediate = GlobalCFG.prevStmt(statementNumber);
+        std::vector<StatementTableStatement*>* result = new std::vector<StatementTableStatement*>();
+        GlobalCFG.convertIntToStatement(intermediate, *result);
+        previous = result;
+        return result;
+    }
 }
 
 std::vector<StatementTableStatement*>* StatementTableStatement::getNext() {
-	if (next != NULL) {
-		next = new std::vector<StatementTableStatement*>();
-		// @todo
-	}
-	return next;
+    if (next != NULL) {
+        return next;
+    } else {
+        CFG GlobalCFG = CFG::getGlobalCFG();
+        std::vector<int> intermediate = GlobalCFG.nextStmt(statementNumber);
+        std::vector<StatementTableStatement*>* result = new std::vector<StatementTableStatement*>();
+        GlobalCFG.convertIntToStatement(intermediate, *result);
+        next = result;
+        return result;
+    }
 }
 
 // @note for Wilson
@@ -324,23 +335,40 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getNext() {
    for my Affects */
 
 std::vector<StatementTableStatement*> StatementTableStatement::getPreviousStar() {
-	std::vector<StatementTableStatement*> previousStar;
+	//std::vector<StatementTableStatement*> previousStar;
 
-	// @todo
+   /* if (previous != NULL) {
+        return previous;
+    } else {*/
+        CFG GlobalCFG = CFG::getGlobalCFG();
+        std::vector<int> intermediate = GlobalCFG.prevStmtStar(statementNumber);
+        std::vector<StatementTableStatement*>* result = new std::vector<StatementTableStatement*>();
+        GlobalCFG.convertIntToStatement(intermediate, *result);
+        previous = result;
+        return *result;
+    /*}
 
-	return previousStar;
+	return previousStar;*/
 }
 
 std::vector<StatementTableStatement*> StatementTableStatement::getNextStar() {
-	std::vector<StatementTableStatement*> nextStar;
+	//std::vector<StatementTableStatement*> nextStar;
 
-	// @todo
+    /*if (nextStar != NULL) {
+        return nextStar;
+    } else {*/
+        CFG GlobalCFG = CFG::getGlobalCFG();
+        std::vector<int> intermediate = GlobalCFG.nextStmtStar(statementNumber);
+        std::vector<StatementTableStatement*>* result = new std::vector<StatementTableStatement*>();
+        GlobalCFG.convertIntToStatement(intermediate, *result);
+        return *result;
+    //}
 
-	return nextStar;
+	//return nextStar;
 }
 
 std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis() {
-	if (affectsThis != NULL) {
+	if (affectsThis == NULL) {
 		affectsThis = new std::vector<StatementTableStatement*>();
 		if (getType() == Assign) {
 			// Multiple uses variables here
@@ -445,7 +473,7 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis()
 }
 
 std::vector<StatementTableStatement*>* StatementTableStatement::getAffectedByThis() {
-	if (affectedByThis != NULL) {
+	if (affectedByThis == NULL) {
 		affectedByThis = new std::vector<StatementTableStatement*>();
 		if (getType() == Assign) {
 			std::set<int> statementNumbersOfStatementsAlreadyChecked;

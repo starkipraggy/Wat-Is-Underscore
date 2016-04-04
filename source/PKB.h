@@ -8,14 +8,15 @@
 
 #pragma once
 
-#include <string>
-#include <stack>
-#include <unordered_map>
+#include "SimpleParser.h"
 #include "AST.h"
 #include "ProcedureTable.h"
 #include "StatementTable.h"
 #include "VariableTable.h"
 #include "Preprocessor/Ref.h"
+#include <string>
+#include <stack>
+#include <unordered_map>
 
 enum ExpressionTokenType {
 	Variable,
@@ -29,6 +30,8 @@ enum RelationshipType {
 	Uses
 };
 
+class CFG;
+
 class PKB {
 private:
 	static PKB* instance;
@@ -37,7 +40,7 @@ private:
 	ProcedureTable* procedureTable;
 	StatementTable* statementTable;
 	VariableTable* variableTable;
-    std::unordered_map<std::string, AST*> procedureAST;
+    std::vector<AST*> procedureAST;
 
 	ProcedureTableProcedure* currentProcedure;	/**< Used during SIMPLE parsing, this pointer points to the current procedure
 													 that statements that are currently being inputted belongs to */

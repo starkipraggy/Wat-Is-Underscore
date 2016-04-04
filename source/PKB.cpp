@@ -1,13 +1,14 @@
-#include <cstdlib>
-#include <iostream>
-#include <algorithm>
-#include <functional>
-#include <cctype>
-#include <locale>
 #include "PKB.h"
-#include "SimpleParser.h"
+#include "CFG.h"
+#include <iostream>
+#include <algorithm> 
+#include <functional> 
+#include <cctype>
+#include <locale>	
+#include <cstdlib>
 
 PKB* PKB::instance = NULL;
+CFG& GlobalCFG = CFG::getGlobalCFG();
 
 // To enable the printing of debug lines
 const bool IS_DEBUGGING = false;
@@ -17,7 +18,7 @@ PKB::PKB() {
 	procedureTable = new ProcedureTable();
 	statementTable = new StatementTable();
 	variableTable = new VariableTable();
-
+    GlobalCFG.setStmtTable(statementTable);
 	currentProcedure = NULL;
 	statementStackTrace = new std::stack<int>();
 	statementStackTrace->push(0);
@@ -155,7 +156,10 @@ void PKB::ProcedureStart(std::string nameOfProcedure) {
 	   so that statements being inputted can have their statement numbers added under it */
 	currentProcedure = procedureTable->getProcedure(nameOfProcedure);
     currentProcedureAST = new AST(nameOfProcedure);
-    procedureAST[nameOfProcedure] = currentProcedureAST;
+    procedureAST.push_back(currentProcedureAST);
+
+    //indicate to CFG to begin a new procedure
+    GlobalCFG.newProcedure();
 
 	// Clear current stack trace
 	if (statementStackTrace->top() != 0) {
@@ -273,6 +277,7 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
     
     //AST
 	currentProcedureAST->addAssignTNode(variable, tokens, currentStatement->getStatementNumber());
+    GlobalCFG.addStmt();
 
 	return true;
 }
@@ -350,6 +355,7 @@ void PKB::CallStatement(std::string procedure) {
 
     //AST
 	currentProcedureAST->addCallTNode(procedure, currentStatement->getStatementNumber());
+    GlobalCFG.addStmt();
 }
 
 void PKB::WhileStart(NAME variable) {
@@ -409,6 +415,7 @@ void PKB::WhileStart(NAME variable) {
 
     //AST
 	currentProcedureAST->addWhileTNode(variable, currentStatement->getStatementNumber());
+    GlobalCFG.addWhileStmt();
 }
 
 bool PKB::WhileEnd() {
@@ -418,6 +425,7 @@ bool PKB::WhileEnd() {
 	}
 
 	currentProcedureAST->addEndOfContainerRelation();
+    GlobalCFG.endWhileStmt();
 	statementStackTrace->pop();
 		
 	return true;
@@ -477,6 +485,7 @@ void PKB::IfStart(NAME variable) {
 
     //AST
 	currentProcedureAST->addIfTNode(variable, currentStatement->getStatementNumber());
+    GlobalCFG.addIfStmt();
 }
 
 bool PKB::ElseStart() {
@@ -489,7 +498,7 @@ bool PKB::ElseStart() {
 
     //AST
 	currentProcedureAST->addElseRelation();
-    //currentProcedureAST->getLastAddedNode()->addChild(new TNode(StmtLst));
+    GlobalCFG.elseStmt();
 
 	return true;
 }
@@ -500,6 +509,7 @@ bool PKB::IfElseEnd() {
 	}
 
 	currentProcedureAST->addEndOfContainerRelation();
+    GlobalCFG.endIfStmt();
 	statementStackTrace->pop();
 
 	return true;
@@ -820,107 +830,48 @@ static inline std::string &trim(std::string &s) {
 
 
 std::vector<std::string> PKB::PQLPattern(TNodeType type, Ref left, Ref right) {
-	std::vector<std::string> returnList;
-	//std::cout << "LOLL" << std::endl;
-	//std::cout << type << std::endl;
-	//std::cout << left.toString() << std::endl;
-	//std::cout << right.toString() << std::endl;
-	
-	int size = statementTable->getNumberOfStatements();
-	for (int i = 0; i < size; i++) {
-		StatementTableStatement* statement = statementTable->getStatementUsingVectorIndexNumber(i);
-		if (statement->getType() == type) {
-			switch (type) {
-				case Assign: {
-					if (left.getType() == "placeholder") {
-						if (trim(left.getName()) == "_") {
-							// left side is anything
-							//  so check right side with expr
-							if (right.getType() == "expr") {
-								if (right.getName().find("+" || "-" || "*") != std::string::npos) {
-									if (right.getName() == statement->getRightHandSideExpression()) {
-										returnList.push_back(std::to_string(statement->getStatementNumber()));
-										break;
-									}
-								}
-							}
-							else if (right.getType() == "part_of_expr") {
-								if (right.getName().find("+" || "-" || "*") != std::string::npos) {
-									if (right.getName() == statement->getRightHandSideExpression().substr(0, right.getName().length())) {
-										returnList.push_back(std::to_string(statement->getStatementNumber()));
-										break;
-									}
-								}
-                                else if (statement->getRightHandSideExpression().find(right.getName()) != std::string::npos) {
-                                    returnList.push_back(std::to_string(statement->getStatementNumber()));
-                                    break;
-                                }
-							}
-							else if (right.getType() == "placeholder") {
-								returnList.push_back(std::to_string(statement->getStatementNumber()));
-								break;
-							}
-						}
-					}
-					else if (variableTable->getVariableUsingVariableIndexNumber(statement->getModifies(0))->getName() == left.getName() || 
-						left.getType() == "ASSIGN") {
-						// left side is specific
-						// get assignment with left var
-						// then check right side with expr
-						if (right.getType() == "expr") {
-							if (right.getName().find("+" || "-" || "*") != std::string::npos) {
-								if (right.getName() == statement->getRightHandSideExpression().substr(0, right.getName().length())) {
-									returnList.push_back(std::to_string(statement->getStatementNumber()));
-									break;
-								}
-							}
-						}
-						else if (right.getType() == "part_of_expr") {
-                            if (right.getName().find("+" || "-" || "*") != std::string::npos) {
-								if (right.getName() == statement->getRightHandSideExpression().substr(0, right.getName().length())) {
-									returnList.push_back(std::to_string(statement->getStatementNumber()));
-									break;
-                                } 
+    std::vector<std::string> returnList;
+
+    switch (type) {
+    case Assign:
+        for (size_t proc = 0; proc < procedureAST.size(); proc++) {
+            for (size_t stmt = 0; stmt < procedureAST[proc]->getTree().size(); stmt++) {
+                if (procedureAST[proc]->getTree()[stmt]->getNodeType() == type) {
+                    if (left.getType() == "placeholder" || 
+                        left.getName() == procedureAST[proc]->getTree()[stmt]->getChildNodes()[0]->getChildNodes()[0]->getValue()) {
+                        TNode* rightTree = AST::constructExpressionTree(right.getName());
+                        if (right.getType() == "expr") {
+                            if (AST::compareTrees(rightTree,
+                                procedureAST[proc]->getTree()[stmt]->getChildNodes()[0]->getChildNodes()[1])) {
+                                returnList.push_back(std::to_string(procedureAST[proc]->getTree()[stmt]->getLineNumber()));
                             }
-                            else if (statement->getRightHandSideExpression().find(right.getName()) != std::string::npos) {
-                                returnList.push_back(std::to_string(statement->getStatementNumber()));
-                                break;
+                        } else if (right.getType() == "part_of_expr") {
+                            if (AST::findSubtreeInTree(rightTree, procedureAST[proc]->getTree()[stmt]->getChildNodes()[0]->getChildNodes()[1])) {
+                                returnList.push_back(std::to_string(procedureAST[proc]->getTree()[stmt]->getLineNumber()));
                             }
-						}
-						else if (right.getType() == "placeholder") {
-							returnList.push_back(std::to_string(statement->getStatementNumber()));
-							break;
-						}
+                        }
                     }
-					break;
-				}
-				case While:
-				case If: {
-					if (statement->getControlVariable() == left.getName() || left.getType() == "placeholder") {
-						returnList.push_back(std::to_string(statement->getStatementNumber()));
-					}
-					break;
-				}
-				default: {
-					break;
-				}
-			}
-
-
-			/*
-			if ((statement->getType() == type) &&
-				(((type == Assign) &&
-				(((left.getType() == "placeholder") || (variableTable->getVariableUsingVariableIndexNumber(statement->getModifies(0))->getName() == left.getName())) &&
-				((right.getType() == "placeholder") ||
-				((right.getType() == "part_of_expr") && (right.getName() == statement->getRightHandSideExpression().substr(0, right.getName().length())) ||
-				((right.getType() == "expr") && (right.getName() == statement->getRightHandSideExpression())))))) ||
-				(((type == While) || (type == If)) &&
-				((left.getType() == "placeholder") || (statement->getControlVariable() == left.getName()))))) {
-			returnList.push_back(std::to_string(statement->getStatementNumber()));
-			
-			*/
-		}
-	}
+                }
+            }
+        }
+        break;
+    case While:
+    case If:
+        for (size_t proc = 0; proc < procedureAST.size(); proc++) {
+            for (size_t stmt = 0; stmt < procedureAST[proc]->getTree().size(); stmt++) {
+                if (procedureAST[proc]->getTree()[stmt]->getNodeType() == type) {
+                    if (left.getType() == "placeholder" ||
+                        left.getName() == procedureAST[proc]->getTree()[stmt]->getChildNodes()[0]->getValue()) {
+                        returnList.push_back(std::to_string(procedureAST[proc]->getTree()[stmt]->getLineNumber()));
+                    }
+                }
+            }
+        }
+        break;
+    default:
+        break;
+    }
+	
 	return returnList;
 }
 
@@ -969,20 +920,19 @@ std::vector<std::string> PKB::PQLPrevious(int statementNumber, bool isDirect) {
 	StatementTableStatement* currentStatement = statementTable->getStatementUsingStatementNumber(statementNumber);
 	int size;
 
-	if (isDirect) {
-		std::vector<StatementTableStatement*>* previousList = currentStatement->getPrevious();
-		size = previousList->size();
-		for (int i = 0; i < size; i++) {
-			returnList.push_back(std::to_string(previousList->at(i)->getStatementNumber()));
-		}
-	}
-	else {
-		std::vector<StatementTableStatement*> previousStarList = currentStatement->getPreviousStar();
-		size = previousStarList.size();
-		for (int i = 0; i < size; i++) {
-			returnList.push_back(std::to_string(previousStarList[i]->getStatementNumber()));
-		}
-	}
+    if (isDirect) {
+        std::vector<StatementTableStatement*>* previousList = currentStatement->getPrevious();
+        size = previousList->size();
+        for (int i = 0; i < size; i++) {
+            returnList.push_back(std::to_string(previousList->at(i)->getStatementNumber()));
+        }
+    } else {
+        std::vector<StatementTableStatement*> previousStarList = currentStatement->getPreviousStar();
+        size = previousStarList.size();
+        for (int i = 0; i < size; i++) {
+            returnList.push_back(std::to_string(previousStarList[i]->getStatementNumber()));
+        }
+    }
 	return returnList;
 }
 
@@ -991,20 +941,19 @@ std::vector<std::string> PKB::PQLNext(int statementNumber, bool isDirect) {
 	StatementTableStatement* currentStatement = statementTable->getStatementUsingStatementNumber(statementNumber);
 	int size;
 
-	if (isDirect) {
-		std::vector<StatementTableStatement*>* nextList = currentStatement->getNext();
-		size = nextList->size();
-		for (int i = 0; i < size; i++) {
-			returnList.push_back(std::to_string(nextList->at(i)->getStatementNumber()));
-		}
-	}
-	else {
-		std::vector<StatementTableStatement*> nextStarList = currentStatement->getNextStar();
-		size = nextStarList.size();
-		for (int i = 0; i < size; i++) {
-			returnList.push_back(std::to_string(nextStarList[i]->getStatementNumber()));
-		}
-	}
+    if (isDirect) {
+        std::vector<StatementTableStatement*>* nextList = currentStatement->getNext();
+        size = nextList->size();
+        for (int i = 0; i < size; i++) {
+            returnList.push_back(std::to_string(nextList->at(i)->getStatementNumber()));
+        }
+    } else {
+        std::vector<StatementTableStatement*> nextStarList = currentStatement->getNextStar();
+        size = nextStarList.size();
+        for (int i = 0; i < size; i++) {
+            returnList.push_back(std::to_string(nextStarList[i]->getStatementNumber()));
+        }
+    }
 	return returnList;
 }
 

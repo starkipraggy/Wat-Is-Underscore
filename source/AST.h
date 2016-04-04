@@ -1,9 +1,11 @@
 #pragma once
 
-#include <vector>
 #include "TNode.h"
+#include <vector>
 #include <stack>
-#include "SimpleParser.h"
+
+//Forward declaration
+class TNode;
 
 //! Class that represents an AST for a single procedure.
 /** 

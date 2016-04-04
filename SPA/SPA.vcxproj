@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\Assign.cpp" />
+    <ClCompile Include="..\source\CFG.cpp" />
     <ClCompile Include="..\source\DesignExtractor.cpp" />
     <ClCompile Include="..\source\Expression.cpp" />
     <ClCompile Include="..\source\Factor.cpp" />
@@ -43,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\Assign.h" />
+    <ClInclude Include="..\source\CFG.h" />
     <ClInclude Include="..\source\Expression.h" />
     <ClInclude Include="..\source\Factor.h" />
     <ClInclude Include="..\source\FileIO.h" />
