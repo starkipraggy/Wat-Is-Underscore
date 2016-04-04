@@ -120,7 +120,7 @@ void CFG::addWhileStmt(){
     currNode->addChild(new CFGNode());
     currNode = currNode->getChd1();
     graph.push_back(currNode);
-    currNode->addChild(containerStk.top());
+    //currNode->addChild(containerStk.top());
     stmtCount++;
 }
 
@@ -142,6 +142,7 @@ void CFG::addIfStmt(){
 }
 
 void CFG::endWhileStmt(){
+    currNode->addChild(containerStk.top());
     containerStk.top()->addChild(new CFGNode());
     currNode = containerStk.top()->getChd2();
     graph.push_back(currNode);
