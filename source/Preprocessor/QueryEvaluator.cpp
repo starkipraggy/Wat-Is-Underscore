@@ -415,18 +415,18 @@ vector<string> QueryEvaluator::queryPKB(string clause, string input, int argumen
 		}
 		else if (clause == "NEXT") {
 			if (argumentPosition == 1) {
-				output = pkb->PQLNext(value, true);
+				output = pkb->PQLPrevious(value, true);
 			}
 			else { //argumentPosition == 2
-				output = pkb->PQLPrevious(value, true);
+				output = pkb->PQLNext(value, true);
 			}
 		}
 		else if (clause == "NEXT*") {
 			if (argumentPosition == 1) {
-				output = pkb->PQLNext(value, false);
+				output = pkb->PQLPrevious(value, false);
 			}
 			else { //argumentPosition == 2
-				output = pkb->PQLPrevious(value, false);
+				output = pkb->PQLNext(value, false);
 			}
 		}
 		else if (clause == "AFFECTS") {
