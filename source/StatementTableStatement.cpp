@@ -335,36 +335,30 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getNext() {
    for my Affects */
 
 std::vector<StatementTableStatement*> StatementTableStatement::getPreviousStar() {
-	//std::vector<StatementTableStatement*> previousStar;
-
-   /* if (previous != NULL) {
-        return previous;
-    } else {*/
+    if (previousStar != NULL) {
+        return *previousStar;
+    } else {
         CFG GlobalCFG = CFG::getGlobalCFG();
         std::vector<int> intermediate = GlobalCFG.prevStmtStar(statementNumber);
         std::vector<StatementTableStatement*>* result = new std::vector<StatementTableStatement*>();
         GlobalCFG.convertIntToStatement(intermediate, *result);
         previous = result;
+        previousStar = result;
         return *result;
-    /*}
-
-	return previousStar;*/
+    }
 }
 
 std::vector<StatementTableStatement*> StatementTableStatement::getNextStar() {
-	//std::vector<StatementTableStatement*> nextStar;
-
-    /*if (nextStar != NULL) {
-        return nextStar;
-    } else {*/
+    if (nextStar != NULL) {
+        return *nextStar;
+    } else {
         CFG GlobalCFG = CFG::getGlobalCFG();
         std::vector<int> intermediate = GlobalCFG.nextStmtStar(statementNumber);
         std::vector<StatementTableStatement*>* result = new std::vector<StatementTableStatement*>();
         GlobalCFG.convertIntToStatement(intermediate, *result);
+        nextStar = result;
         return *result;
-    //}
-
-	//return nextStar;
+    }
 }
 
 std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis() {

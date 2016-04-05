@@ -53,8 +53,10 @@ private:
 	*/
 	void followedByStarHasBeingModified();
 
-	std::vector<StatementTableStatement*>* previous;		/**< A list of pointers to statements that has this statement after directly in the CFG */
+	std::vector<StatementTableStatement*>* previous;		/**< A list of pointers to statements that comes directly before this statement in the CFG */
+    std::vector<StatementTableStatement*>* previousStar;    /**< A list of pointers to all statements that comes before this statement in the CFG */
 	std::vector<StatementTableStatement*>* next;			/**< A list of pointers to statements that comes after this statement directly in the CFG */
+    std::vector<StatementTableStatement*>* nextStar;        /**< A list of pointers to all statements that comes after this statement in the CFG */
 	std::vector<StatementTableStatement*>* affectsThis;		/**< A list of pointers to statements that affects this statement */
 	std::vector<StatementTableStatement*>* affectedByThis;	/**< A list of pointers to statements that this statement affects */
 public:
