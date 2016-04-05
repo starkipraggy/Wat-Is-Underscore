@@ -184,34 +184,6 @@ namespace UnitTesting
             Assert::IsTrue(result[0] == 3);
         }
 
-        TEST_METHOD(CFGPrevNestedIf) {
-            //Arrange
-            testCFG.addWhileStmt();
-            testCFG.addStmt();
-            testCFG.addIfStmt();
-            testCFG.addStmt();
-            testCFG.addWhileStmt();
-            testCFG.addStmt();
-            testCFG.addStmt();
-            testCFG.endWhileStmt();
-            testCFG.addStmt();
-            testCFG.elseStmt();
-            testCFG.addStmt();
-            testCFG.addStmt();
-            testCFG.endIfStmt();
-            testCFG.addStmt();
-            testCFG.endWhileStmt();
-
-            //Act
-            std::vector<int> result = testCFG.prevStmt(11);
-
-            //Assert
-            Assert::IsTrue(result.size() == 2);
-            std::sort(result.begin(), result.end());
-            Assert::IsTrue(result[0] == 8);
-            Assert::IsTrue(result[1] == 10);
-        }
-
         TEST_METHOD(CFGNextDiffProc) {
             //Arrange
             testCFG.addStmt();
@@ -278,6 +250,32 @@ namespace UnitTesting
             Assert::IsTrue(result.size() == 1);
             Assert::IsTrue(result[0] == 1);
         }
+ 
+        TEST_METHOD(CFGNextEndWhileIfNesting) {
+            //Arrange
+            testCFG.addStmt();
+            testCFG.addWhileStmt();
+            testCFG.addStmt();
+            testCFG.addIfStmt();
+            testCFG.addStmt();
+            testCFG.addWhileStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.endWhileStmt();
+            testCFG.addStmt();
+            testCFG.elseStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.endIfStmt();
+            testCFG.endWhileStmt();
+
+            //Act
+            std::vector<int> result = testCFG.nextStmt(9);
+
+            //Assert
+            Assert::IsTrue(result.size() == 1);
+            Assert::IsTrue(result[0] == 2);
+        }
 
         TEST_METHOD(CFGPrev) {
             //Arrange
@@ -324,6 +322,34 @@ namespace UnitTesting
 
             //Assert
             Assert::IsTrue(result.size() == 0);
+        }
+
+        TEST_METHOD(CFGPrevNestedIf) {
+            //Arrange
+            testCFG.addWhileStmt();
+            testCFG.addStmt();
+            testCFG.addIfStmt();
+            testCFG.addStmt();
+            testCFG.addWhileStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.endWhileStmt();
+            testCFG.addStmt();
+            testCFG.elseStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.endIfStmt();
+            testCFG.addStmt();
+            testCFG.endWhileStmt();
+
+            //Act
+            std::vector<int> result = testCFG.prevStmt(11);
+
+            //Assert
+            Assert::IsTrue(result.size() == 2);
+            std::sort(result.begin(), result.end());
+            Assert::IsTrue(result[0] == 8);
+            Assert::IsTrue(result[1] == 10);
         }
 
         TEST_METHOD(CFGPrevOtherNode) {
@@ -416,7 +442,7 @@ namespace UnitTesting
             }
         }
 
-        TEST_METHOD(CFGNextEndWhileIfNesting) {
+        TEST_METHOD(CFGPrevStarEdgeCase) {
             //Arrange
             testCFG.addStmt();
             testCFG.addWhileStmt();
@@ -432,14 +458,84 @@ namespace UnitTesting
             testCFG.addStmt();
             testCFG.addStmt();
             testCFG.endIfStmt();
+            testCFG.addStmt();
             testCFG.endWhileStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.addIfStmt();
+            testCFG.addStmt();
+            testCFG.elseStmt();
+            testCFG.addStmt();
+            testCFG.endIfStmt();
 
             //Act
-            std::vector<int> result = testCFG.nextStmt(9);
+            std::vector<int> result = testCFG.prevStmtStar(17);
 
             //Assert
-            Assert::IsTrue(result.size() == 1);
-            Assert::IsTrue(result[0] == 2);
+            Assert::IsTrue(result.size() == 16);
+            std::sort(result.begin(), result.end());
+            for (int i = 0; i < 16; i++) {
+                Assert::IsTrue(result[i] == i + 1);
+            }
+        }
+
+        TEST_METHOD(CFGPrevStarEdgeCase2) {
+            //Arrange
+            testCFG.newProcedure();
+            testCFG.addStmt();
+            testCFG.addWhileStmt();
+            testCFG.addStmt();
+            testCFG.addIfStmt();
+            testCFG.addStmt();
+            testCFG.addWhileStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.endWhileStmt();
+            testCFG.addStmt();
+            testCFG.elseStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.endIfStmt();
+            testCFG.addStmt();
+            testCFG.endWhileStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.addIfStmt();
+            testCFG.addStmt();
+            testCFG.elseStmt();
+            testCFG.addStmt();
+            testCFG.endIfStmt();
+
+            testCFG.newProcedure();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.addWhileStmt();
+            testCFG.addIfStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.addWhileStmt();
+            testCFG.addStmt();
+            testCFG.endWhileStmt();
+            testCFG.addStmt();
+            testCFG.elseStmt();
+            testCFG.addStmt();
+            testCFG.endIfStmt();
+            testCFG.endWhileStmt();
+            testCFG.addStmt();
+            
+            //Act
+            std::vector<int> result = testCFG.prevStmtStar(23);
+
+            //Assert
+            Assert::IsTrue(result.size() == 10);
+            std::sort(result.begin(), result.end());
+            for (int i = 0; i < 10; i++) {
+                Assert::IsTrue(result[i] == i + 20);
+            }
         }
     };
 }

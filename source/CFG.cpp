@@ -213,7 +213,7 @@ std::vector<int> CFG::prevStmtStar(int stmtNum){
     std::vector<int> result;
     std::stack<CFGNode*> toSearch;
     std::stack<CFGNode*> whileStack;
-    std::queue<CFGNode*> ifQueue;
+    std::stack<CFGNode*> ifQueue;
     CFGNode* thisNode = stmtFinder[stmtNum];
     for (int i = thisNode->getLeftLmt(); i < stmtNum; i++) {
         result.push_back(i);
@@ -247,7 +247,7 @@ std::vector<int> CFG::prevStmtStar(int stmtNum){
                     result.push_back(thisNode->getParents()[i]->getLeftLmt());
                 }
             } else if (thisNode->getParents()[i]->getType() == IfElse) {
-                if (ifQueue.empty() || thisNode->getParents()[i] != ifQueue.front()) {
+                if (ifQueue.empty() || thisNode->getParents()[i] != ifQueue.top()) {
                     ifQueue.push(thisNode->getParents()[i]);
                     toSearch.push(thisNode->getParents()[i]);
                 } else {
@@ -262,7 +262,8 @@ std::vector<int> CFG::prevStmtStar(int stmtNum){
         }
         
         if (thisNode->getType() != IfElse &&
-            thisNode->getType() != WhileNode) {
+            thisNode->getType() != WhileNode &&
+            thisNode->getType() != Unused) {
             for (int i = thisNode->getLeftLmt(); i <= thisNode->getRightLmt(); i++) {
                 result.push_back(i);
             }
