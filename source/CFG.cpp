@@ -1,6 +1,5 @@
 #include "CFG.h"
 #include "StatementTable.h"
-#include <queue>
 
 CFGNode::CFGNode() {
     leftLmt = 0;
@@ -254,15 +253,13 @@ std::vector<int> CFG::prevStmtStar(int stmtNum){
                     if (!ifQueue.empty()) {
                         ifQueue.pop();
                     }
-                    result.push_back(thisNode->getParents()[i]->getLeftLmt());
                 }
             } else {
                 toSearch.push(thisNode->getParents()[i]);
             }
         }
         
-        if (thisNode->getType() != IfElse &&
-            thisNode->getType() != WhileNode &&
+        if (thisNode->getType() != WhileNode &&
             thisNode->getType() != Unused) {
             for (int i = thisNode->getLeftLmt(); i <= thisNode->getRightLmt(); i++) {
                 result.push_back(i);
@@ -281,31 +278,51 @@ void CFG::convertIntToStatement(std::vector<int> input, std::vector<StatementTab
 std::vector<int> CFG::nextStmtStar(int stmtNum){
     std::vector<int> result;
     std::stack<CFGNode*> toSearch;
+    //Only for container statement nodes
+    std::unordered_map<CFGNode*, int> traversed;
     CFGNode* thisNode = stmtFinder[stmtNum];
     for (int i = stmtNum+1; i <= thisNode->getRightLmt(); i++) {
         result.push_back(i);
     }
-    if (thisNode->getChd1() != NULL && thisNode->getChd1()->getType() != Unused){
+    if (thisNode->getChd1() != NULL){
         toSearch.push(thisNode->getChd1());
     }
-    if (thisNode->getChd2() != NULL && thisNode->getChd2()->getType() != Unused) {
+    if (thisNode->getChd2() != NULL) {
         toSearch.push(thisNode->getChd2());
     }
+    if (thisNode->getType() == IfElse || thisNode->getType() == WhileNode) {
+        traversed[thisNode] = 0;
+    }
+
     while (!toSearch.empty()) {
         thisNode = toSearch.top();
         toSearch.pop();
 
-        if ((thisNode->getChd1() != NULL && thisNode->getChd1()->getType() != Unused) 
-            && thisNode->getRightLmt() < thisNode->getChd1()->getLeftLmt()) {
+        if (traversed.count(thisNode)) {
+            if (traversed[thisNode] == 0) {
+                for (int i = thisNode->getLeftLmt(); i <= thisNode->getRightLmt(); i++) {
+                    result.push_back(i);
+                }
+                traversed[thisNode] == 1;
+            }
+            continue;
+        }
+
+        if ((thisNode->getChd1() != NULL)) {
             toSearch.push(thisNode->getChd1());
         }
-        if ((thisNode->getChd2() != NULL && thisNode->getChd2()->getType() != Unused) 
-            && thisNode->getRightLmt() < thisNode->getChd2()->getLeftLmt()) {
+        if ((thisNode->getChd2() != NULL)) {
             toSearch.push(thisNode->getChd2());
         }
 
-        for (int i = thisNode->getLeftLmt(); i <= thisNode->getRightLmt(); i++) {
-            result.push_back(i);
+        if (thisNode->getType() == IfElse || thisNode->getType() == WhileNode) {
+            traversed[thisNode] = 1;
+        }
+
+        if (thisNode->getType() != Unused) {
+            for (int i = thisNode->getLeftLmt(); i <= thisNode->getRightLmt(); i++) {
+                result.push_back(i);
+            }
         }
     }
     return result;

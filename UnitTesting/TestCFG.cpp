@@ -384,10 +384,67 @@ namespace UnitTesting
             std::vector<int> result = testCFG.nextStmtStar(1);
 
             //Assert
-            Assert::IsTrue(result.size() == 5);
+            Assert::IsTrue(result.size() == 6);
             std::sort(result.begin(), result.end());
-            for (int i = 0; i < 5; i++) {
-                Assert::IsTrue(result[i] == i+2);
+            for (int i = 0; i < 6; i++) {
+                Assert::IsTrue(result[i] == i+1);
+            }
+        }
+
+        TEST_METHOD(CFGNextStarEdgeCase2) {
+            //Arrange
+            testCFG.newProcedure();
+            testCFG.addStmt();
+            testCFG.addWhileStmt();
+            testCFG.addStmt();
+            testCFG.addIfStmt();
+            testCFG.addStmt();
+            testCFG.addWhileStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.endWhileStmt();
+            testCFG.addStmt();
+            testCFG.elseStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.endIfStmt();
+            testCFG.addStmt();
+            testCFG.endWhileStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.addIfStmt();
+            testCFG.addStmt();
+            testCFG.elseStmt();
+            testCFG.addStmt();
+            testCFG.endIfStmt();
+
+            testCFG.newProcedure();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.addWhileStmt();
+            testCFG.addIfStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.addWhileStmt();
+            testCFG.addStmt();
+            testCFG.endWhileStmt();
+            testCFG.addStmt();
+            testCFG.elseStmt();
+            testCFG.addStmt();
+            testCFG.endIfStmt();
+            testCFG.endWhileStmt();
+            testCFG.addStmt();
+
+            //Act
+            std::vector<int> result = testCFG.nextStmtStar(23);
+
+            //Assert
+            Assert::IsTrue(result.size() == 9);
+            std::sort(result.begin(), result.end());
+            for (int i = 0; i < 9; i++) {
+                Assert::IsTrue(result[i] == i + 22);
             }
         }
 
