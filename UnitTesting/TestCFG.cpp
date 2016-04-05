@@ -385,5 +385,61 @@ namespace UnitTesting
                 Assert::IsTrue(result[i] == i + 1);
             }
         }
+
+        TEST_METHOD(CFGPrevStarNesting) {
+            //Arrange
+            testCFG.addStmt();
+            testCFG.addWhileStmt();
+            testCFG.addStmt();
+            testCFG.addIfStmt();
+            testCFG.addStmt();
+            testCFG.addWhileStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.endWhileStmt();
+            testCFG.addStmt();
+            testCFG.elseStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.endIfStmt();
+            testCFG.addStmt();
+            testCFG.endWhileStmt();
+
+            //Act
+            std::vector<int> result = testCFG.prevStmtStar(2);
+
+            //Assert
+            Assert::IsTrue(result.size() == 12);
+            std::sort(result.begin(), result.end());
+            for (int i = 0; i < 12; i++) {
+                Assert::IsTrue(result[i] == i+1);
+            }
+        }
+
+        TEST_METHOD(CFGNextEndWhileIfNesting) {
+            //Arrange
+            testCFG.addStmt();
+            testCFG.addWhileStmt();
+            testCFG.addStmt();
+            testCFG.addIfStmt();
+            testCFG.addStmt();
+            testCFG.addWhileStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.endWhileStmt();
+            testCFG.addStmt();
+            testCFG.elseStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.endIfStmt();
+            testCFG.endWhileStmt();
+
+            //Act
+            std::vector<int> result = testCFG.nextStmt(9);
+
+            //Assert
+            Assert::IsTrue(result.size() == 1);
+            Assert::IsTrue(result[0] == 2);
+        }
     };
 }

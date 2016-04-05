@@ -1,5 +1,6 @@
 #include "CFG.h"
 #include "StatementTable.h"
+#include <queue>
 
 CFGNode::CFGNode() {
     leftLmt = 0;
@@ -193,8 +194,13 @@ std::vector<int> CFG::nextStmt(int stmtNum){
     if (stmtNum < thisNode->getRightLmt()) {
         result.push_back(stmtNum + 1);
     } else {
-        if (thisNode->getChd1() != NULL && thisNode->getChd1()->getType() != Unused){
-            result.push_back(thisNode->getChd1()->getLeftLmt());
+        if (thisNode->getChd1() != NULL) {
+            if (thisNode->getChd1()->getType() != Unused) {
+                result.push_back(thisNode->getChd1()->getLeftLmt());
+            } else if (thisNode->getChd1()->getChd1() != NULL){
+                thisNode = thisNode->getChd1();
+                result.push_back(thisNode->getChd1()->getLeftLmt());
+            }
         }
         if (thisNode->getChd2() != NULL && thisNode->getChd2()->getType() != Unused) {
             result.push_back(thisNode->getChd2()->getLeftLmt());
@@ -207,14 +213,22 @@ std::vector<int> CFG::prevStmtStar(int stmtNum){
     std::vector<int> result;
     std::stack<CFGNode*> toSearch;
     std::stack<CFGNode*> whileStack;
+    std::queue<CFGNode*> ifQueue;
     CFGNode* thisNode = stmtFinder[stmtNum];
     for (int i = thisNode->getLeftLmt(); i < stmtNum; i++) {
         result.push_back(i);
+    }
+    if (thisNode->getType() == WhileNode) {
+        whileStack.push(thisNode);
+    } else if (thisNode->getType() == IfElse) {
+        ifQueue.push(thisNode);
     }
     for (size_t i = 0; i < thisNode->getParents().size(); i++) {
         toSearch.push(thisNode->getParents()[i]);
         if (thisNode->getParents()[i]->getType() == WhileNode) {
             whileStack.push(thisNode->getParents()[i]);
+        } else if (thisNode->getParents()[i]->getType() == IfElse) {
+            ifQueue.push(thisNode->getParents()[i]);
         }
     }
     while (!toSearch.empty()) {
@@ -222,19 +236,36 @@ std::vector<int> CFG::prevStmtStar(int stmtNum){
         toSearch.pop();
 
         for (size_t i = 0; i < thisNode->getParents().size(); i++) {
-            if (thisNode->getParents()[i] != whileStack.top()) {
-                toSearch.push(thisNode->getParents()[i]);
-
-                if (thisNode->getParents()[i]->getType() == WhileNode) {
+            if (thisNode->getParents()[i]->getType() == WhileNode){
+                if (whileStack.empty() || thisNode->getParents()[i] != whileStack.top()) {
                     whileStack.push(thisNode->getParents()[i]);
+                    toSearch.push(thisNode->getParents()[i]);
+                } else {
+                    if (!whileStack.empty()) {
+                        whileStack.pop();
+                    }
+                    result.push_back(thisNode->getParents()[i]->getLeftLmt());
+                }
+            } else if (thisNode->getParents()[i]->getType() == IfElse) {
+                if (ifQueue.empty() || thisNode->getParents()[i] != ifQueue.front()) {
+                    ifQueue.push(thisNode->getParents()[i]);
+                    toSearch.push(thisNode->getParents()[i]);
+                } else {
+                    if (!ifQueue.empty()) {
+                        ifQueue.pop();
+                    }
+                    result.push_back(thisNode->getParents()[i]->getLeftLmt());
                 }
             } else {
-                whileStack.pop();
+                toSearch.push(thisNode->getParents()[i]);
             }
         }
         
-        for (int i = thisNode->getLeftLmt(); i <= thisNode->getRightLmt(); i++) {
-            result.push_back(i);
+        if (thisNode->getType() != IfElse &&
+            thisNode->getType() != WhileNode) {
+            for (int i = thisNode->getLeftLmt(); i <= thisNode->getRightLmt(); i++) {
+                result.push_back(i);
+            }
         }
     }
     return result;
