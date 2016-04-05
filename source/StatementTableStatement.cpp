@@ -36,7 +36,9 @@ StatementTableStatement::StatementTableStatement(int statementNumber) {
 	hasItsFollowedByStarChanged = false;
 
 	previous = NULL;
+	previousStar = NULL;
 	next = NULL;
+	nextStar = NULL;
 	affectsThis = NULL;
 	affectedByThis = NULL;
 }
