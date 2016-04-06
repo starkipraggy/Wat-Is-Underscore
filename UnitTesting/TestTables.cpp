@@ -27,7 +27,7 @@ namespace UnitTesting
 
             StatementTableStatement::StatementTableStatement(1);
             newStatementTable.addStatement(1);
-            newProcedureTable.getProcedure(testProcName)->addStatement(1);
+            //newProcedureTable.getProcedure(testProcName)->addStatement(1); //@sorry
 
             NAME a = "a";
             VariableTableVariable::VariableTableVariable(a, 1);
@@ -75,7 +75,7 @@ namespace UnitTesting
 
             StatementTableStatement::StatementTableStatement(1);
             newStatementTable.addStatement(1);
-            newProcedureTable.getProcedure(testProcName)->addStatement(1);
+            //newProcedureTable.getProcedure(testProcName)->addStatement(1); //@sorry
 
             NAME a = "a";
             VariableTableVariable::VariableTableVariable(a, 1);
@@ -163,6 +163,8 @@ namespace UnitTesting
             newStatementTable.addStatement(6);
             newStatementTable.addStatement(7);
             newStatementTable.addStatement(8);
+			//@sorry
+			/*
             newProcedureTable.getProcedure(testProcName)->addStatement(1);
             newProcedureTable.getProcedure(testProcName)->addStatement(2);
             newProcedureTable.getProcedure(testProcName2)->addStatement(3);
@@ -171,6 +173,7 @@ namespace UnitTesting
             newProcedureTable.getProcedure(testProcName2)->addStatement(6);
             newProcedureTable.getProcedure(testProcName2)->addStatement(7);
             newProcedureTable.getProcedure(testProcName2)->addStatement(8);
+			*/
             Assert::AreEqual(8, newStatementTable.getNumberOfStatements());
             Assert::AreEqual(1, newStatementTable.getStatementUsingStatementNumber(1)->getStatementNumber());
             Assert::AreEqual(2, newStatementTable.getStatementUsingStatementNumber(2)->getStatementNumber());
@@ -356,7 +359,7 @@ namespace UnitTesting
 
             StatementTableStatement::StatementTableStatement(1);
             newStatementTable.addStatement(1);
-            newProcedureTable.getProcedure(testProcName)->addStatement(1);
+            //newProcedureTable.getProcedure(testProcName)->addStatement(1); // @sorry
 
             NAME a = "a";
             VariableTableVariable::VariableTableVariable(a, 1);
@@ -434,12 +437,15 @@ namespace UnitTesting
             newStatementTable.addStatement(4);
             newStatementTable.addStatement(5);
             newStatementTable.addStatement(6);
+			// @sorry
+			/*
             newProcedureTable.getProcedure(testProcName)->addStatement(1);
             newProcedureTable.getProcedure(testProcName)->addStatement(2);
             newProcedureTable.getProcedure(testProcName2)->addStatement(3);
             newProcedureTable.getProcedure(testProcName2)->addStatement(4);
             newProcedureTable.getProcedure(testProcName2)->addStatement(5);
             newProcedureTable.getProcedure(testProcName2)->addStatement(6);
+			*/
             Assert::AreEqual(6, newStatementTable.getNumberOfStatements());
 
             // Creating Variables
@@ -790,9 +796,12 @@ namespace UnitTesting
             newStatementTable.addStatement(1);
             newStatementTable.addStatement(2);
             newStatementTable.addStatement(3);
+			// @sorry
+			/*
             newProcedureTable.getProcedure(testProcName)->addStatement(1);
             newProcedureTable.getProcedure(testProcName2)->addStatement(2);
             newProcedureTable.getProcedure(testProcName3)->addStatement(3);
+			*/
             Assert::AreEqual(3, newStatementTable.getNumberOfStatements());
 
             // Calls relationships between Stmt-Proc

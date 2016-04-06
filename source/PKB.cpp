@@ -36,13 +36,14 @@ StatementTableStatement* PKB::newStatement() {
 	// number of statements as the new statement's index number
 	numberOfStatements++;
 
-	// Adds statement number into current procedure
-	if (currentProcedure != NULL) {
-		currentProcedure->addStatement(numberOfStatements);
-	}
-
 	// Create a new statement in StatementTable with the index number
 	StatementTableStatement* currentStatement = statementTable->addStatement(numberOfStatements);
+
+	// Adds statement number into current procedure
+	if (currentProcedure != NULL) {
+		currentProcedure->addStatement(currentStatement);
+		currentStatement->setProcedureIndexNumber(currentProcedure->getIndex());
+	}
 
 	// Sets this statement's Follows relationship using the statement stack trace
 	if (statementStackTrace->top() != 0) {
@@ -293,6 +294,7 @@ void PKB::CallStatement(std::string procedure) {
 	procedureBeingCalled->addStatementsCallBy(currentStatement->getStatementNumber());
 	procedureBeingCalled->addProcedureCallBy(currentProcedure);
 	currentProcedure->addProcedureCalls(procedureBeingCalled);
+	currentStatement->setCalls(procedureBeingCalled->getFirstStatementPointer());
 
 	// Retrieve information about this statement's ancestor(s) in order to add relationships later
 	int numberOfAncestors = currentStatement->getParentStarSize();

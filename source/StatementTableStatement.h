@@ -20,7 +20,10 @@ private:
 	std::string rightHandSideExpression;					/**< Right hand side expression, specifically for assign statements, for pattern clauses */
 	NAME controlVariable;									/**< Control variable, specifically for if and while statements, for pattern clauses.
 																 Also used for left hand side expression for assign statements, for Affects clauses */
+	int procedureIndexNumber;								/**< Index number of the procedure that it belongs to */
 	
+	StatementTableStatement** calls;						/**< The pointer to the pointer pointing to the first statement of the procedure
+																 that this Calls statement calls, or NULL if it is not a Calls statement*/
 	StatementTableStatement* follows;						/**< The pointer to the statement that this statement follows
 																 (this statement appears immediately after the one it follows) */
 	StatementTableStatement* followedBy;					/**< The statement number of the statement that this statement is followed
@@ -91,6 +94,13 @@ public:
 	*/
 	NAME getControlVariable();
 
+	//! Getter function for the index number of the procedure that it belongs to.
+	/*!
+		Getter function for the index number of the procedure that it belongs to.
+		\return Index number of the procedure that it belongs to.
+	*/
+	int getProcedureIndexNumber();
+
 	//! Checks if this is a statement assigned to be the parent of this statement.
 	/*!
 		Checks if this is a statement assigned to be the parent of this statement.
@@ -100,11 +110,19 @@ public:
 
 	//! Getter function for the statement number of the parent of this statement.
 	/*!
-	Getter function for the statement number of the parent of this statement; use this function to
-	retrieve the statement number of the parent of the statement that this object is representing.
-	\return Statement number of this statement's parent, or 0 if it does not have any.
+		Getter function for the statement number of the parent of this statement; use this function to
+		retrieve the statement number of the parent of the statement that this object is representing.
+		\return Statement number of this statement's parent, or 0 if it does not have any.
 	*/
 	int getParent();
+
+	//! Getter function for pointer to the pointer pointing to the first statement of the procedure that this Calls statement calls
+	/*!
+		Getter function for pointer to the pointer pointing to the first statement of the procedure that this Calls statement calls;
+		use this function to retrieve the pointer to the pointer pointing to the first statement of the procedure that this Calls statement calls.
+		\return Pointer to the pointer pointing to the first statement of the procedure that this Calls statement calls, or NULL if it is not a Calls statement
+	*/
+	StatementTableStatement** getCalls();
 
 	//! Checks if this is a statement that this statement is following.
 	/*!
@@ -143,6 +161,21 @@ public:
 		\param controlVariable The name of the variable that controls this
 	*/
 	void setControlVariable(NAME controlVariable);
+
+	//! Setter function for the index number of the procedure that it belongs to.
+	/*!
+		Setter function for the index number of the procedure that it belongs to.
+		\param procedureIndexNumber The index number of the procedure that it belongs to
+	*/
+	void setProcedureIndexNumber(int procedureIndexNumber);
+
+	//! Setter function for the pointer to the pointer pointing to the first statement of the procedure that this Calls statement calls.
+	/*!
+		Setter function for the pointer to the pointer pointing to the first statement of the procedure that this Calls statement calls;
+		use this function to assign the pointer to the pointer pointing to the first statement of the procedure that this Calls statement calls.
+		\param follows Pointer to the pointer pointing to the first statement of the procedure that this Calls statement calls, or NULL if it is not a Calls statement.
+	*/
+	void setCalls(StatementTableStatement** calls);
 
 	//! Setter function for the statement number of the statement that this statement is following.
 	/*!

@@ -13,12 +13,14 @@
 #include <set>
 #include "TypeDef.h"
 #include "DataStructureObject.h"
+#include "StatementTableStatement.h"
 
 class ProcedureTableProcedure {
 private:
 	std::string name;										/**< The name of this procedure */
 	int index;												/**< Index number of this procedure */
 	std::vector<int>* statements;							/**< The index numbers of the statements that belongs to this procedure */
+	StatementTableStatement* firstStatement;				/**< Pointer to the object representing the first statement of this procedure */
 
 	std::vector<int>* modifies;								/**< A list of the index numbers of variables that this procedure modifies */
 	std::vector<int>* uses;									/**< A list of the index numbers of variables that this procedure uses */
@@ -58,6 +60,67 @@ public:
 		\return The index number of the variable that this item is representing has.
 	*/
 	int getIndex();
+
+	//! Getter function for the pointer to the pointer to the first statement of the procedure.
+	/*!
+		Getter function for the pointer to the pointer to the first statement of the procedure;
+		use this function to retrieve the pointer to the pointer to the first statement of the procedure.
+		\return The pointer to the pointer to the first statement of the procedure.
+	*/
+	/*
+                                              ```...```                                              
+                                     ``....................```                                      
+                                 ``..............................`                                  
+                             ``.....................................``                              
+                           .............-++ooo+++/:-....-:++ooooo+-....`                            
+                         .-............/mo:::/+oyydmdddhdhyso++osdd-.....`                          
+                       .-..............ymosyhhysso+smh++dhssyyys+oNs.......`                        
+                     .-............../hmmh+:----/oyhd-..:ddyo/::+smm-........``                     
+                   `--......-.......:s/:hdoosyhhs+-h+....:dooyhhsoyN:...........``                  
+                  `.......--.......-/-..-+oo+::-../m-...../d/.-/+syy.--...-.....-..```              
+                 `-.....--........-/-..-.`....-...yh...`...od:........:---:.......`                 
+                 .....--.`......../:...:.`....:.-.mo.......-hh..-...----::--......-.`               
+                 -...-.........../:...::.....-:./-N/........+m:..--:--::-..:..........````          
+               `.--.-............/..../:.....::./:m-........:d/.-:::---.:..-.....------.`           
+             ``.-.--............-/...:/:...../:./:/.........-+/:::::-...-:..:....-..``              
+                ---.............-:..-/+/.....//.//...........///:---:..../-.:--..-                  
+              ``-...............:-..//+/..---//-//:..........////-..-/-..-/.::--.-.``               
+            `...................:..:/+++:--../::///:.......-./:::/:---/:-.::.:--.-`                 
+              `---------....-...:..//+:+:..../::////-:......--..``.::-.:/:-/--...-`                 
+               ........-.-..-..-:.:::+://----/.`-:////-.....-..-..``.-:::////:-..-`                 
+               -......--:...-..-/./:-/:+hddmdh/``-/////-....-.yddhs/.``.-:+////..-`                 
+               -....----/...-..-/--.+hNNmmmhms-```.-----......ymmmmmdo-``.///::-.-`                 
+               -...--.--/...-..-+-.ydhmddddddm-``````````````-mddhdhdNm-`./::....-`                 
+               ........-/...-..-/:dd/hmdhyyyhm+``````````````/dysssydmhm--/-:....-`                 
+               .----/-:-/...:.`-::+s`/s//sssyd/``````````````://+sssym-s.:-.-....-`                 
+               ....././//:..-``.:-...`---+oshs.```````````````///+//+/.`..`-.-...-                  
+               --..-/-//:+.-.``..`..````````...````````````````.````````.``-..-..-                  
+              `:...//://-/:-``.-``..````````````````````.```````````````-.``...-.-                  
+              .-..-/////.::.``-````:````````````````````..``````````````.-```-`-.:                  
+              -...///+/:.--..`.-```.-.```````````````````-.``````````....``.-....:                  
+             `-..-///+/:...--...-.``......`````````````-/.````````.....````-.-..-:                  
+             ....////+/:..../:-.`.``````....``````````-+o```````...````````.::..-:`                 
+            `...-////+/:....://:.```````````...``````.:::`````..``````````-//:..--`                 
+            ....//////+:....:////:.```````````..`````.::-````..``````````-///:..-..                 
+           `...-//////+:....-/////+:.```````````..````...```.``````````.:/+//-..-..                 
+           ....////////:.....:////+/--.``````````..```..```.`````````.-///+//-.....                 
+          ....-/////////.....-/////:--:-.`````````-:-----:/.````````.:///+///..-...                 
+         `..../////////:......-////+:----`````````.///::::/````````.://+/+//:..-...                 
+         ....:///////..-......-:///+-:::.`````````-////::/+.````````-:/++///-.--...                 
+        `....+////+:.``-.......-://+--:.`````````.:-::://///.````````-::////--.-...                 
+        ....:////+o+/.`-........-///.:.``````````:---:://:/::`````````-:////-..-...                 
+       `-.../////hmmmdy+-.......-://:-....``````-///::/::/::/-.``````..:///--+-...-                 
+       ....:////ommmmmmNo........-::/odo/+s/```:yssssy+::/odds-````.ys//ys.`:mdo-.-                 
+       -.../////hmmmmmmmm:........-.`/M/``oM:`+No--::+Ns:::mm//````.o.``oN-`smmmh/:                 
+      `-..:////+dmmmmmmmmd:.......```:M/..sm-`mm----::dN:--md::-``````./hs..dmmmmmy`                
+      ..../////+dNmmmmmmmmd/.....````:Ms++o-`.mm:--:/:dN:--md-:/-`````y/.```-ymmmmmh.               
+      -..:////+smmmmmmmmdhyh/...`````:M/`````.oN+::::+Ny:::mm::::.````/.``````:hmdmmdo.             
+      -../////+hmmmmmdo:.```.-.`````:sms/.``.``/ysoosyo::/ommo.``-```:mo```````.-.-+hmms.           
+     `-.:////+/dmmmmo.`.:++o:````````....``..`````..``````````````-```.```````````-/:+dmh.          
+     `-./////+/mmmy.`./+:...``````````````.-`````````````````````.::```````````````....ymy`         
+     `-://///++mm/``:o-``-.``````````````.:-....``````````````...`-::.```````````````.-.om.    
+	*/
+	StatementTableStatement** getFirstStatementPointer();
 
 	//! Getter function for members of the procedure calls vector.
 	/*!
@@ -140,7 +203,7 @@ public:
 		This function is used by the SIMPLE parser API to add index numbers of additional statements that belongs to this procedure.
 		\param statement The index number of the statement that belongs to this procedure.
 	*/
-	void addStatement(int statement);
+	void addStatement(StatementTableStatement* statement);
 	
 	//! Allows the adding of variables that this procedure modifies.
 	/*!

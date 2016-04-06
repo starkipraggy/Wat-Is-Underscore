@@ -4,6 +4,7 @@ ProcedureTableProcedure::ProcedureTableProcedure(std::string name, int index) {
 	this->name = name;
 	this->index = index;
 	statements = new std::vector<int>();
+	firstStatement = NULL;
 
 	modifies = new std::vector<int>();
 	uses = new std::vector<int>();
@@ -36,6 +37,40 @@ std::string ProcedureTableProcedure::getName() {
 
 int ProcedureTableProcedure::getIndex() {
 	return index;
+}
+
+StatementTableStatement** ProcedureTableProcedure::getFirstStatementPointer() {
+	/*
+	ddddddddhdmdy+/-....``````..`.```--:.:..::-:::---.```.`-::://:/-.``./:-.`.....`.........hhhhhhhhdddd
+	ddddddddhmmdy+/.....``````--..`..-:/-/--/:.:/:----```.`::::-///:-.../::.....-.`..`......syhhhyhhhddd
+	ddddddddhmmdy+/.....``````-:.-.--:/+:/:./:.::/::::.....//--:/::::..::/:-..---....`......ohhhhhhhhhdd
+	ddddddddhmmdy+/.....`.````-:-:..-:::-//++/------...-----...-/::+-.:-./::.-:--....`......ohhhhhhhhddd
+	ddddddddhmmdy+/-........``-:.::.:/oyhhhhddho.```.`````````.ohhdhhhyo+/::.-::-.....-.....ohhhhhhhhddd
+	ddddddddhmmdy+/-`..........:--:+yhshyyyyyyy+:`````````````.:ohyyyyyyhys:/.-:-.....-.....shhhhhhhhddd
+	ddddddddhmmdy+/:...........:/.+do/yyysysosy..``````````````.ysooyosyh+oho.-:......-.....shhhhhhhdddd
+	ddddddddhmmdy+/:...........-:/d+-`+//+so+os-```````````````.+:/+s++os:-+h/::......-.....yhhhhhhhhhhh
+	ddddddddhdmdy+//...-........--h/```:/+/:/+o`````````````````.///::/+y.`-y/:-......:.....yhhhhhhhhhhh
+	ddddddddhmmdy+/:-...-.......-`.:.``-//:-/+.``````````````````:+/-:+o-``.:`:.......:-....hhhhhhhhhhhh
+	ddddddddhdmdy+/::...:.........`````.--:/-.````````````````````.-//-.``````:......./:...-hhhhhhhhhhhd
+	ddddddddhmmdy+/::...:-........```````````````````````````````````````````.-.......//...-hhhhhhhhhhhd
+	ddddddddhdmmy+/:/.-.::.......-``````````````````````.````````````````````-.......-//-..-yhhhhhhhhhhd
+	ddddddddhmmmy+/::---:/-..-.....`````````````````````````````````````````.-.......///:...syhhhhhhhhhd
+	ddddddddhmmmy+/:::--:/:..-.....``````````````-----:::--...``````````````.....-..-/+//-..+hhddddddddd
+	dddddddddmNmy+/::/.-///-.-......````````````.+//:::::://++:`````````````-...--..:/+///-.-hyhhhhhhhhh
+	ddddddddhmmmy+:://.:///:.--....:````````````::::::::::::::/````````````-....:-.-//++//:--+hyhhhsssyy
+	dddddddddmNmy+///::/+///--/....:-```````````-::::::::::::::````````````:..../-.:::/+//+:--shyhysssyy
+	dddddddddmNdsooo/::/+////-/-...-/:.`````````./::::::::::::.``````````./-...-+---.:::oyddhyshhysssyyy
+	dddddddddmmdddddddy+-/+/+-/-..../:/:.````````.-::::::::::.`````````.-:+....-/-:/-:yddddddddddhsosyyy
+	hhhhhhhhhhddddddddddh/-/+/::....//://:....`````...-----.````````.-::://....:/-/-sdddddddddddddhysysy
+	ssssssssydddddddddddddy--o/:....:+/:////-....`.........`..```.-////:/+:.-..:/:odddddddddddddddddhssy
+	ysssssshdddddddddddddddm+-+/...-:+///////oo:...............-:/++//://+---..:/+mddmdddddddddddddddyss
+	yyyssyydddddddddddddmddmmyo/..--:++/://///s//::--......--:://:+//://++--.-.:+sddmdddddddddddddddddyh
+	hyyhhhdddddddddddddddmddmmy:..--:+::/://////:::::::::::::://:///////++:---.-oyddmdddddddddddddddddhh
+	hhhhhodddddddddddddddmdddmd:.---:+/.-:///////:::::::::::::/:////////o+:-----+ddddddddddddddddddddddy
+	ddds/ydddddddddddddddddddmd-----:++...://///+/:::::::::::://+/////:-++/-----+ddddddddddddddddddddddo
+	dd+/+hdddddddddddddddddddms-----/++.....:////+//:::::::////+///:-..-+++-----+dddmdddddddddddddddddds
+	*/
+	return &firstStatement;
 }
 
 ProcedureTableProcedure* ProcedureTableProcedure::getProcedureCalls(int index) {
@@ -126,8 +161,11 @@ int ProcedureTableProcedure::getStatementCallBySize() {
 	return statementCallBy->size();
 }
 
-void ProcedureTableProcedure::addStatement(int statement) {
-	statements->push_back(statement);
+void ProcedureTableProcedure::addStatement(StatementTableStatement* statement) {
+	if (statements->size() == 0) {
+		firstStatement = statement;
+	}
+	statements->push_back(statement->getStatementNumber());
 }
 
 bool ProcedureTableProcedure::addModifies(int variableIndexNumber) {
