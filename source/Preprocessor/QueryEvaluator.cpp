@@ -4,6 +4,7 @@ using namespace std;
 using namespace std::regex_constants;
 
 const regex designEntityRegex("^(procedure|stmtLst|stmt|assign|call|while|if|variable|constant|prog_line|plus|minus|times)$", icase);
+const regex nameRegex("^[[:alpha:]]([[:alnum:]]*$)");
 
 PKB* pkb;
 
@@ -378,10 +379,20 @@ vector<string> QueryEvaluator::queryPKB(string clause, string input, int argumen
 	clause = StringToUpper(clause);
 
 	if (clause == "USES") {
-		output = pkb->PQLUses(input, argumentPosition, outputType);
+		if (regex_match(input, nameRegex) && argumentPosition == 2) {
+			output = pkb->PQLUses(input, argumentPosition, "procedure");
+		}
+		else {
+			output = pkb->PQLUses(input, argumentPosition, outputType);
+		}
 	}
 	else if (clause == "MODIFIES") {
-		output = pkb->PQLModifies(input, argumentPosition, outputType);
+		if (regex_match(input, nameRegex) && argumentPosition == 2) {
+			output = pkb->PQLModifies(input, argumentPosition, "procedure");
+		}
+		else {
+			output = pkb->PQLModifies(input, argumentPosition, outputType);
+		}
 	}
 	else if (clause == "CALLS") {
 		if (argumentPosition == 1) {
