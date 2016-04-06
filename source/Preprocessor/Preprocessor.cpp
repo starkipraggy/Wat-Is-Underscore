@@ -15,6 +15,7 @@ const regex stmtDesignEntityRegex("^(stmtLst|stmt|assign|while|if|prog_line)$", 
 const regex lineDesignEntityRegex("^(stmtLst|stmt|assign|call|while|if|prog_line)$", icase);
 const regex entDesignEntityRegex("^(assign|if|while|procedure)$", icase);
 const regex varDesignEntityRegex("^(variable)$", icase);
+const regex patternRegex("assign|while|if", icase);
 
 const regex entVarRefRefRegex("^(modifies|uses)$", icase);
 const regex stmtVarRefRefRegex("^(modifies|uses)$", icase);
@@ -278,8 +279,8 @@ void Preprocessor::addPatternClause(string rawClause) {
 	string assignedVariable = rawClause.substr(0, openBracket);
 	assignedVariable = trim(assignedVariable);
 	string assignedType = declarationMap.find(assignedVariable)->second;
-	if (assignedType != "assign") {
-		throw "syn-assign must be of type assign";
+	if (!regex_match(assignedType, patternRegex)) {
+		throw "wrong assigned type";
 	}
 	Ref assignedVar = Ref(assignedVariable, assignedType);
 
