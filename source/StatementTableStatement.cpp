@@ -532,6 +532,7 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThis
 		std::vector<int> currentModifyVariables;
 		std::queue<StatementTableStatement*> statementsToCheck;
 		std::queue<std::vector<int>> modifyVariablesOfStatementsToCheck;
+		std::unordered_map<StatementTableStatement*, std::vector<std::vector<int>>> whileLoopsAndTheirVariables;
 
 		// Assign statements only have one Next
 		statementsToCheck.push(getNext()->at(0));
@@ -597,12 +598,52 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThis
 
 				// Push next into the two queues - push cyclic node
 				for (int i = 0; i < 2; i++) {
-					statementsToCheck.push((i == 0) ? cyclicNode : nonCyclicNode);
-					std::vector<int> newModifyVariables = currentModifyVariables;
-					modifyVariablesOfStatementsToCheck.push(newModifyVariables);
-				}
+					// Check if cyclic node should be visited again
+					bool pushNodeIntoQueue = true;
+					if (i == 1) {
+						if (whileLoopsAndTheirVariables.count(currentStatement) > 0) {
+							std::vector<std::vector<int>> vectorOfCurrentModifiesVariables = whileLoopsAndTheirVariables.at(currentStatement);
+							int vectorOfCurrentModifiesVariablesSize = vectorOfCurrentModifiesVariables.size();
+							for (int x = 0; x < vectorOfCurrentModifiesVariablesSize; x++) {
+								int currentModifyVariablesSize = currentModifyVariables.size();
+								int vectorModifyVariablesSize = vectorOfCurrentModifiesVariables[x].size();
+								// Check if they are identical
+								bool isIdentical = false;
+								if (currentModifyVariablesSize == vectorModifyVariablesSize) {
+									isIdentical = true;
+									for (int a = 0; a < currentModifyVariablesSize; a++) {
+										if (currentModifyVariables[a] != vectorOfCurrentModifiesVariables[x][a]) {
+											isIdentical = false;
+											a = currentModifyVariablesSize; // Break out of for-loop
+										}
+									}
+								}
+								if (isIdentical) {
+									pushNodeIntoQueue = false; // Do not visit this node
+									x = vectorOfCurrentModifiesVariablesSize; // Break out for for-loop
+								}
+							}
+						}
+					}
 
-				// @todo FIND OUT A WAY TO BREAK OUT OF A WHILE-CONDITION
+					if (pushNodeIntoQueue) {
+						statementsToCheck.push((i == 0) ? cyclicNode : nonCyclicNode);
+						std::vector<int> newModifyVariables = currentModifyVariables;
+						modifyVariablesOfStatementsToCheck.push(newModifyVariables);
+
+						// Add information about the cyclic node into whileLoopsAndTheirVariables unordered_map
+						if (i == 1) {
+							if (whileLoopsAndTheirVariables.count(currentStatement) == 0) {
+								std::vector<std::vector<int>> vectorOfCurrentModifiesVariables;
+								vectorOfCurrentModifiesVariables.push_back(newModifyVariables);
+								whileLoopsAndTheirVariables.insert({ currentStatement, vectorOfCurrentModifiesVariables });
+							}
+							else {
+								whileLoopsAndTheirVariables.at(currentStatement).push_back(newModifyVariables);
+							}
+						}
+					}
+				}
 			}
 				break;
 			}
