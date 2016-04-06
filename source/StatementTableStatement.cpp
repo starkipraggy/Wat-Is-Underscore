@@ -329,6 +329,7 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis()
 			// Multiple uses variables here
 			int numberOfUsesVariables = getUsesSize();
 
+			bool checkSelfOnce = false;
 			std::set<int> statementNumbersAlreadyChecked;
 			std::unordered_map<StatementTableStatement*, bool*> statementsAndVariables;
 			std::queue<StatementTableStatement*> statementsToCheck;
@@ -349,6 +350,14 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis()
 				currentBooleans = statementsAndVariables.at(currentStatementToCheck);
 				if (currentStatementToCheck != this) {
 					statementNumbersAlreadyChecked.insert(currentStatementToCheck->getStatementNumber());
+				}
+				else {
+					if (checkSelfOnce) {
+						statementNumbersAlreadyChecked.insert(currentStatementToCheck->getStatementNumber());
+					}
+					else {
+						checkSelfOnce = true;
+					}
 				}
 
 				// Make sure we check only assign statements, and don't check self - check their modify
