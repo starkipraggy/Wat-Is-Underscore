@@ -91,6 +91,9 @@
     <ClCompile Include="..\source\CFG.cpp">
       <Filter>Source\PKB</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\Preprocessor\PatternIfClause.cpp">
+      <Filter>Source\Preprocessor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\FileIO.h">
@@ -188,6 +191,9 @@
     </ClInclude>
     <ClInclude Include="..\source\CFG.h">
       <Filter>Header\PKB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Preprocessor\PatternIfClause.h">
+      <Filter>Header\Preprocessor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
