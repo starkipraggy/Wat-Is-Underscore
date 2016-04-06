@@ -45,7 +45,7 @@ namespace UnitTesting {
 			usesClauseSecond = new Clause("USES", integerVar, stmtVar);
 			usesClauseBoth = new Clause("USES", assignVar, stmtVar);
 			followsClause = new Clause("FOLLOWS", integerVar, stmtVar);
-			withClause = new Clause("WITH", constantVar, withVar);
+			withClause = new Clause("WITH", assignVar, withVar);
 			patternClause = new PatternClause("PATTERN", placeholderVar, partOfExpressionVar, assignVar);
 
 			oneClauses.push_back(usesClauseFirst);
@@ -107,7 +107,7 @@ namespace UnitTesting {
 
 		TEST_METHOD(TestEvaluator_WithEvaluation)
 		{
-			QueryTree::Instance()->setSelect(constantVar);
+			QueryTree::Instance()->setSelect(assignVar);
 			QueryTree::Instance()->addClause(withClause);
 
 			vector<string> output = q.process();

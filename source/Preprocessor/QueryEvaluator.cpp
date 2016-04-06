@@ -56,20 +56,23 @@ std::vector<std::string> QueryEvaluator::process() {
 				if (regex_match(var1.getType(), designEntityRegex) && regex_match(var2.getType(), designEntityRegex)) {
 					unordered_map<string, int>::const_iterator item1 = directory.find(var1.getName());
 					unordered_map<string, int>::const_iterator item2 = directory.find(var2.getName());
+					
 
 					if (item1 == directory.end()) {
-						add({ var2.getName() }, var1.getName());
-						add({ var1.getName() }, var2.getName());
+						queryResult = pkb->PQLSelect(toTNodeType(var1.getType()));
+						add(queryResult, var1.getName());
+						queryResult = pkb->PQLSelect(toTNodeType(var2.getType()));
+						add(queryResult, var2.getName());
 					}
-					else {
-						remove(item1->second, item2->second);
-					}
+						
+					remove(item1->second, item2->second);
 				}
 				else if (regex_match(var1.getType(), designEntityRegex)) {
 					unordered_map<string, int>::const_iterator item1 = directory.find(var1.getName());
+					checkValid(var2.getName(), var1.getType());
 
 					if (item1 == directory.end()) {
-						add({var2.getName()}, var1.getName());
+						add({ var2.getName() }, var1.getName());
 					}
 					else {
 						remove(item1->second, var2.getName());
@@ -77,6 +80,7 @@ std::vector<std::string> QueryEvaluator::process() {
 				}
 				else if (regex_match(var2.getType(), designEntityRegex)) {
 					unordered_map<string, int>::const_iterator item2 = directory.find(var2.getName());
+					checkValid(var1.getName(), var2.getType());
 
 					if (item2 == directory.end()) {
 						add({ var1.getName() }, var2.getName());
@@ -294,6 +298,13 @@ void QueryEvaluator::remove(int pos, string input) {
 			++it;
 		}
 
+	}
+}
+
+void QueryEvaluator::checkValid(string input, string type) {
+	vector<string> queryResult = pkb->PQLSelect(toTNodeType(type));
+	if (find(queryResult.begin(), queryResult.end(), input) == queryResult.end()) {
+		throw "invalid input";
 	}
 }
 
