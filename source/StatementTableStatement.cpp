@@ -360,18 +360,16 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis()
 					}
 				}
 
-				// Make sure we check only assign statements, and don't check self - check their modify
-				if ((currentStatementToCheck->getType() == Assign) && (currentStatementToCheck != this)) {
+				// Make sure we check only assign statements
+				if (currentStatementToCheck->getType() == Assign) {
 					for (int i = 0; i < numberOfUsesVariables; i++) {
 						if ((currentBooleans[i]) && (currentStatementToCheck->getModifies(0) == getUses(i))) {
 							affectsThis->push_back(currentStatementToCheck);
 							i = numberOfUsesVariables; // Break out of for-loop
 						}
 					}
-				}
 
-				// Check what variables are we left with that can go up
-				if ((currentStatementToCheck->getType() == Assign) && (currentStatementToCheck != this)) {
+					// Check what variables are we left with that can go up
 					for (int i = 0; i < numberOfUsesVariables; i++) {
 						if (currentStatementToCheck->getModifies(0) == getUses(i)) {
 							currentBooleans[i] = false;
