@@ -380,29 +380,14 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis()
 
 				// Continue up the CFG
 				if (canContinue) {
-					previousStatement1 = currentStatementToCheck->getPrevious()->at(0);
-					previousStatement2 = currentStatementToCheck->getPrevious()->at(1);
+					std::vector<StatementTableStatement*>* currentStatementPrevious = currentStatementToCheck->getPrevious();
+					switch (currentStatementPrevious->size()) {
+					case 1:
+						previousStatement1 = currentStatementToCheck->getPrevious()->at(0);
 
-					// if this is a while-statement, add the cyclic node into the queue first!
-					if (currentStatementToCheck->getType() == While) {
-						std::vector<StatementTableStatement*>* previousStar = previousStatement2->getPreviousStar();
-						int sizeOfPreviousStar = previousStar->size();
-						for (int i = 0; i < sizeOfPreviousStar; i++) {
-							if (previousStar->at(i) == currentStatementToCheck) {
-								// This is the cyclic node, make sure we add it into the queue first
-								StatementTableStatement* temporaryForSwapping = previousStatement2;
-								previousStatement2 = previousStatement1;
-								previousStatement1 = temporaryForSwapping;
-								i = sizeOfPreviousStar; // Break out of loop
-							}
-						}
-					}
-
-					for (int x = 0; x < 2; x++) {
-						StatementTableStatement* tempStatement = (x == 0) ? previousStatement1 : previousStatement2;
 						bool* newBooleans;
-						if (statementsAndVariables.count(tempStatement) == 1) {
-							newBooleans = statementsAndVariables.at(tempStatement);
+						if (statementsAndVariables.count(previousStatement1) == 1) {
+							newBooleans = statementsAndVariables.at(previousStatement1);
 							for (int i = 0; i < numberOfUsesVariables; i++) {
 								newBooleans[i] = newBooleans[i] || currentBooleans[i];
 							}
@@ -412,9 +397,48 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis()
 							for (int i = 0; i < numberOfUsesVariables; i++) {
 								newBooleans[i] = currentBooleans[i];
 							}
-							statementsAndVariables.insert({ tempStatement , newBooleans });
+							statementsAndVariables.insert({ previousStatement1 , newBooleans });
 						}
-						statementsToCheck.push(tempStatement);
+						statementsToCheck.push(previousStatement1);
+						break;
+					case 2:
+						previousStatement1 = currentStatementToCheck->getPrevious()->at(0);
+						previousStatement2 = currentStatementToCheck->getPrevious()->at(1);
+
+						// if this is a while-statement, add the cyclic node into the queue first!
+						if (currentStatementToCheck->getType() == While) {
+							int currentChildrenSize = currentStatementToCheck->getChildrenSize();
+							for (int i = 0; i < currentChildrenSize; i++) {
+								int previousStatement2StatementNumber = previousStatement2->getStatementNumber();
+								if (previousStatement2StatementNumber == currentStatementToCheck->getChildren(i)) {
+									// This is the cyclic node, make sure we add it into the queue first
+									StatementTableStatement* temporaryForSwapping = previousStatement2;
+									previousStatement2 = previousStatement1;
+									previousStatement1 = temporaryForSwapping;
+									i = currentChildrenSize; // Break out of loop safely
+								}
+							}
+						}
+
+						for (int x = 0; x < 2; x++) {
+							StatementTableStatement* tempStatement = (x == 0) ? previousStatement1 : previousStatement2;
+							bool* newBooleans;
+							if (statementsAndVariables.count(tempStatement) == 1) {
+								newBooleans = statementsAndVariables.at(tempStatement);
+								for (int i = 0; i < numberOfUsesVariables; i++) {
+									newBooleans[i] = newBooleans[i] || currentBooleans[i];
+								}
+							}
+							else {
+								newBooleans = new bool[numberOfUsesVariables];
+								for (int i = 0; i < numberOfUsesVariables; i++) {
+									newBooleans[i] = currentBooleans[i];
+								}
+								statementsAndVariables.insert({ tempStatement , newBooleans });
+							}
+							statementsToCheck.push(tempStatement);
+						}
+						break;
 					}
 				}
 			}
@@ -438,7 +462,7 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectedByThi
 			int currentStatementUsesSize;
 			std::vector<StatementTableStatement*>* currentStatementNext;
 			int currentStatementNextSize;
-			statementsToCheck.push(this);
+			statementsToCheck.push(getNext()->at(0)); // Push the next statement; assign statements only have one Next
 
 			int variableIndex = getModifies(0);
 
@@ -447,10 +471,10 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectedByThi
 				statementsToCheck.pop();
 				currentStatementNumber = currentStatementToCheck->getStatementNumber();
 
-				// Make sure we check only assign statements, and don't check self
-				if ((currentStatementToCheck->getType() == Assign) && (currentStatementToCheck != this)) {
+				// Make sure we check only assign statements
+				if (currentStatementToCheck->getType() == Assign) {
 					// This statement is not checked; check it
-					if (statementNumbersOfStatementsAlreadyChecked.count(currentStatementNumber) != 1) {
+					if (statementNumbersOfStatementsAlreadyChecked.count(currentStatementNumber) == 0) {
 						currentStatementUsesSize = currentStatementToCheck->getUsesSize();
 						for (int i = 0; i < currentStatementUsesSize; i++) {
 							if (variableIndex == currentStatementToCheck->getUses(i)) {
@@ -461,8 +485,8 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectedByThi
 					}
 				}
 
-				// If it does not modify (or is self), we continue down the CFG
-				if ((currentStatementToCheck->getType() != Assign) || (currentStatementToCheck->getModifies(0) != variableIndex) || (currentStatementToCheck == this)) {
+				// If it does not modify, we continue down the CFG
+				if ((currentStatementToCheck->getType() != Assign) || (currentStatementToCheck->getModifies(0) != variableIndex)) {
 					currentStatementNext = currentStatementToCheck->getNext();
 					currentStatementNextSize = currentStatementNext->size();
 					for (int i = 0; i < currentStatementNextSize; i++) {
