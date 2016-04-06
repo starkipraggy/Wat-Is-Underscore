@@ -54,7 +54,9 @@ StatementTableStatement::~StatementTableStatement() {
 	delete followedByStar;
 
 	if (previous != NULL) { delete previous; }
+	if (previousStar != NULL) { delete previousStar; }
 	if (next != NULL) { delete next; }
+	if (nextStar != NULL) { delete nextStar; }
 	if (affectsThis != NULL) { delete affectsThis; }
 	if (affectedByThis != NULL) { delete affectedByThis; }
 }
@@ -268,99 +270,56 @@ void StatementTableStatement::fetchNewCopyOfChildrenStar() {
 	}
 }
 
-// @note for Wilson
-/* For the two functions that comes after this, named getPrevious() and getNext(),
-   you will find a if-statement with an empty body, other than a // @todo note.
-   Please kindly initialize the respective std::vector<int>*, previous and next,
-   inside the body of those if-statements. Likewise, if you find that a
-   std::vector<int>* may not suit your requirements (eg you may find a
-   std::set<int>* better, or a std::vector<StatementTableStatement*>* better),
-   feel free to change it as you like. Let me and Alan know immediately if you
-   have any questions. Leaving this to you, thanks a lot! ;D
-
-   P.S.: If you need access to your CFG object, may I suggest a static CFG* pointer
-   in this StatementTableStatement class, passed in during the creation of this
-   object? Either that or make your CFG a Singleton, Iunno, up to you to implement lols.
-   P.P.S.: Never mind, sorry, I need a container of StatementTableStatement* pointers
-   for my Affects */
-
 std::vector<StatementTableStatement*>* StatementTableStatement::getPrevious() {
     if (previous != NULL) {
         return previous;
-    } else {
-        CFG GlobalCFG = CFG::getGlobalCFG();
-        std::vector<int> intermediate = GlobalCFG.prevStmt(statementNumber);
-        std::vector<StatementTableStatement*>* result = new std::vector<StatementTableStatement*>();
-        GlobalCFG.convertIntToStatement(intermediate, *result);
-        previous = result;
-        return result;
     }
+
+    CFG GlobalCFG = CFG::getGlobalCFG();
+    std::vector<int> intermediate = GlobalCFG.prevStmt(statementNumber);
+    std::vector<StatementTableStatement*>* result = new std::vector<StatementTableStatement*>();
+    GlobalCFG.convertIntToStatement(intermediate, *result);
+    previous = result;
+    return result;
 }
 
 std::vector<StatementTableStatement*>* StatementTableStatement::getNext() {
     if (next != NULL) {
         return next;
-    } else {
-        CFG GlobalCFG = CFG::getGlobalCFG();
-        std::vector<int> intermediate = GlobalCFG.nextStmt(statementNumber);
-        std::vector<StatementTableStatement*>* result = new std::vector<StatementTableStatement*>();
-        GlobalCFG.convertIntToStatement(intermediate, *result);
-        next = result;
-        return result;
     }
+
+    CFG GlobalCFG = CFG::getGlobalCFG();
+    std::vector<int> intermediate = GlobalCFG.nextStmt(statementNumber);
+    std::vector<StatementTableStatement*>* result = new std::vector<StatementTableStatement*>();
+    GlobalCFG.convertIntToStatement(intermediate, *result);
+    next = result;
+    return result;
 }
 
-// @note for Wilson
-/* For the following two functions that come after this, getPreviousStar() and
-   getNextStar(), we are not allowed to store them in a table, even after computing
-   their contents (retarded, I know, but whatever rofl). Right now, we have two ways
-   of implementing this:
-   1. Make use of the CFG, traverse through the entire thing until you reach the end
-   2. Use the Previous and Next tables respectively of other StatementTableStatement
-      objects recursively
-   If you'd like to do this the second way then maybe we'd need to change our container
-   to store StatementTableStatement* pointers instead of just statement number
-   integers, for ease of recursion (since we don't have access to where those objects
-   are if we only store their statement numbers), so it seems to me like the first
-   way may be more intuitive, but which, of course, requires more effort on your part,
-   as you are the one who came up with the CFG. Anyway, I leave it fully up to you
-   how you would like to implement it. Again, let me and Alan know if there is any
-   questions you have or things you need, etc. Thanks a lot!
-
-   Yours sincerely, Wei Liang
-
-   P.S.: Sorry for the tl;dr
-   P.P.S.: Go fix the damn signed/unsigned mismatch warnings in your AST.cpp, lines
-		   210 and 244 LOL. vector.size() returns an unsigned integer, so you'd need
-		   another unsigned integer to do comparison with
-   P.P.P.S.: Never mind, sorry, I need a container of StatementTableStatement* pointers
-   for my Affects */
-
-std::vector<StatementTableStatement*> StatementTableStatement::getPreviousStar() {
+std::vector<StatementTableStatement*>* StatementTableStatement::getPreviousStar() {
     if (previousStar != NULL) {
-        return *previousStar;
-    } else {
-        CFG GlobalCFG = CFG::getGlobalCFG();
-        std::vector<int> intermediate = GlobalCFG.prevStmtStar(statementNumber);
-        std::vector<StatementTableStatement*>* result = new std::vector<StatementTableStatement*>();
-        GlobalCFG.convertIntToStatement(intermediate, *result);
-        previous = result;
-        previousStar = result;
-        return *result;
+        return previousStar;
     }
+
+    CFG GlobalCFG = CFG::getGlobalCFG();
+    std::vector<int> intermediate = GlobalCFG.prevStmtStar(statementNumber);
+    std::vector<StatementTableStatement*>* result = new std::vector<StatementTableStatement*>();
+    GlobalCFG.convertIntToStatement(intermediate, *result);
+    previousStar = result;
+    return result;
 }
 
-std::vector<StatementTableStatement*> StatementTableStatement::getNextStar() {
+std::vector<StatementTableStatement*>* StatementTableStatement::getNextStar() {
     if (nextStar != NULL) {
-        return *nextStar;
-    } else {
-        CFG GlobalCFG = CFG::getGlobalCFG();
-        std::vector<int> intermediate = GlobalCFG.nextStmtStar(statementNumber);
-        std::vector<StatementTableStatement*>* result = new std::vector<StatementTableStatement*>();
-        GlobalCFG.convertIntToStatement(intermediate, *result);
-        nextStar = result;
-        return *result;
+        return nextStar;
     }
+
+    CFG GlobalCFG = CFG::getGlobalCFG();
+    std::vector<int> intermediate = GlobalCFG.nextStmtStar(statementNumber);
+    std::vector<StatementTableStatement*>* result = new std::vector<StatementTableStatement*>();
+    GlobalCFG.convertIntToStatement(intermediate, *result);
+    nextStar = result;
+    return result;
 }
 
 std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis() {
@@ -426,10 +385,10 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis()
 
 					// if this is a while-statement, add the cyclic node into the queue first!
 					if (currentStatementToCheck->getType() == While) {
-						std::vector<StatementTableStatement*> previousStar = previousStatement2->getPreviousStar();
-						int sizeOfPreviousStar = previousStar.size();
+						std::vector<StatementTableStatement*>* previousStar = previousStatement2->getPreviousStar();
+						int sizeOfPreviousStar = previousStar->size();
 						for (int i = 0; i < sizeOfPreviousStar; i++) {
-							if (previousStar[i] == currentStatementToCheck) {
+							if (previousStar->at(i) == currentStatementToCheck) {
 								// This is the cyclic node, make sure we add it into the queue first
 								StatementTableStatement* temporaryForSwapping = previousStatement2;
 								previousStatement2 = previousStatement1;

@@ -927,10 +927,10 @@ std::vector<std::string> PKB::PQLPrevious(int statementNumber, bool isDirect) {
             returnList.push_back(std::to_string(previousList->at(i)->getStatementNumber()));
         }
     } else {
-        std::vector<StatementTableStatement*> previousStarList = currentStatement->getPreviousStar();
-        size = previousStarList.size();
+        std::vector<StatementTableStatement*>* previousStarList = currentStatement->getPreviousStar();
+        size = previousStarList->size();
         for (int i = 0; i < size; i++) {
-            returnList.push_back(std::to_string(previousStarList[i]->getStatementNumber()));
+            returnList.push_back(std::to_string(previousStarList->at(i)->getStatementNumber()));
         }
     }
 	return returnList;
@@ -948,10 +948,10 @@ std::vector<std::string> PKB::PQLNext(int statementNumber, bool isDirect) {
             returnList.push_back(std::to_string(nextList->at(i)->getStatementNumber()));
         }
     } else {
-        std::vector<StatementTableStatement*> nextStarList = currentStatement->getNextStar();
-        size = nextStarList.size();
+        std::vector<StatementTableStatement*>* nextStarList = currentStatement->getNextStar();
+        size = nextStarList->size();
         for (int i = 0; i < size; i++) {
-            returnList.push_back(std::to_string(nextStarList[i]->getStatementNumber()));
+            returnList.push_back(std::to_string(nextStarList->at(i)->getStatementNumber()));
         }
     }
 	return returnList;
