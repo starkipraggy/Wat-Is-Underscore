@@ -521,10 +521,13 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectsThisSta
 
 	}
 
+	std::cout << "SHOURAI SE YO, SHOOTING STAR DRAGON!!" << std::endl;
+
 	return affectsThisStar;
 }
 
 std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThisStar() {
+	std::cout << "TSUDOISHI YUME NO KESSHO GA, ARATANA SHINKA E NO TOBIRA WO HIRAKU!!" << std::endl;
 	std::vector<StatementTableStatement*> affectedByThisStar;
 	if (getType() == Assign) {
 		StatementTableStatement* currentStatement;
@@ -636,7 +639,7 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThis
 						// Add information about the cyclic node into whileLoopsAndTheirVariables unordered_map
 						if (i == 1) {
 							// Debug XXX
-							std::cout << currentStatement << ": ";
+							std::cout << currentStatement->getStatementNumber() << ": ";
 							for (unsigned int wtf = 0; wtf < newModifyVariables.size(); wtf++) {
 								std::cout << newModifyVariables[wtf] << " ";
 							}
@@ -660,5 +663,6 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThis
 		}
 	}
 
+	std::cout << "HIKARI SASU MICHI TO NAREEE! ACCEL SYNCHROOOOO!!" << std::endl;
 	return affectedByThisStar;
 }
