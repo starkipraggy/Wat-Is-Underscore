@@ -329,7 +329,7 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis()
 			// Multiple uses variables here
 			int numberOfUsesVariables = getUsesSize();
 
-			std::set<int> statementNumbersOfWhilesAlreadyChecked;
+			std::set<int> statementNumbersAlreadyChecked;
 			std::unordered_map<StatementTableStatement*, bool*> statementsAndVariables;
 			std::queue<StatementTableStatement*> statementsToCheck;
 			StatementTableStatement* currentStatementToCheck;
@@ -347,6 +347,7 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis()
 				currentStatementToCheck = statementsToCheck.front();
 				statementsToCheck.pop();
 				currentBooleans = statementsAndVariables.at(currentStatementToCheck);
+				statementNumbersAlreadyChecked.insert(currentStatementToCheck->getStatementNumber());
 
 				// Make sure we check only assign statements, and don't check self - check their modify
 				if ((currentStatementToCheck->getType() == Assign) && (currentStatementToCheck != this)) {
@@ -436,7 +437,9 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis()
 								}
 								statementsAndVariables.insert({ tempStatement , newBooleans });
 							}
-							statementsToCheck.push(tempStatement);
+							if (statementNumbersAlreadyChecked.count(tempStatement->getStatementNumber()) == 0) {
+								statementsToCheck.push(tempStatement);
+							}
 						}
 						break;
 					}
@@ -473,14 +476,11 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectedByThi
 
 				// Make sure we check only assign statements
 				if (currentStatementToCheck->getType() == Assign) {
-					// This statement is not checked; check it
-					if (statementNumbersOfStatementsAlreadyChecked.count(currentStatementNumber) == 0) {
-						currentStatementUsesSize = currentStatementToCheck->getUsesSize();
-						for (int i = 0; i < currentStatementUsesSize; i++) {
-							if (variableIndex == currentStatementToCheck->getUses(i)) {
-								affectedByThis->push_back(currentStatementToCheck);
-								i = currentStatementUsesSize; // Break out of for-loop
-							}
+					currentStatementUsesSize = currentStatementToCheck->getUsesSize();
+					for (int i = 0; i < currentStatementUsesSize; i++) {
+						if (variableIndex == currentStatementToCheck->getUses(i)) {
+							affectedByThis->push_back(currentStatementToCheck);
+							i = currentStatementUsesSize; // Break out of for-loop
 						}
 					}
 				}
@@ -490,7 +490,10 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectedByThi
 					currentStatementNext = currentStatementToCheck->getNext();
 					currentStatementNextSize = currentStatementNext->size();
 					for (int i = 0; i < currentStatementNextSize; i++) {
-						statementsToCheck.push(currentStatementNext->at(i));
+						StatementTableStatement* nextStatement = currentStatementNext->at(i);
+						if (statementNumbersOfStatementsAlreadyChecked.count(nextStatement->getStatementNumber()) == 0) {
+							statementsToCheck.push(nextStatement);
+						}
 					}
 				}
 
@@ -503,55 +506,66 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectedByThi
 
 std::vector<StatementTableStatement*> StatementTableStatement::getAffectsThisStar() {
 	std::vector<StatementTableStatement*> affectsThisStar;
-	std::set<StatementTableStatement*> statementsChecked;
-	std::stack<StatementTableStatement*> statementsToCheck;
-	statementsToCheck.push(this);
-	StatementTableStatement* currentStatementToCheck;
-	std::vector<StatementTableStatement*>* currentStatementAffectsThis;
-	int currentStatementAffectsThisSize;
-	StatementTableStatement* currentCurrentStatementAffectsThis;
 
-	while (!statementsToCheck.empty()) {
-		currentStatementToCheck = statementsToCheck.top();
-		statementsToCheck.pop();
+	if (getType() == Assign) {
 
-		if (statementsChecked.count(currentStatementToCheck) == 0) {
-			currentStatementAffectsThis = currentStatementToCheck->getAffectsThis();
-			currentStatementAffectsThisSize = currentStatementAffectsThis->size();
-			for (int i = 0; i < currentStatementAffectsThisSize; i++) {
-				currentCurrentStatementAffectsThis = currentStatementAffectsThis->at(i);
-				affectsThisStar.push_back(currentCurrentStatementAffectsThis);
-				statementsToCheck.push(currentCurrentStatementAffectsThis);
-			}
-			statementsChecked.insert(currentStatementToCheck);
-		}
 	}
+
 	return affectsThisStar;
 }
 
 std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThisStar() {
 	std::vector<StatementTableStatement*> affectedByThisStar;
-	std::set<StatementTableStatement*> statementsChecked;
-	std::stack<StatementTableStatement*> statementsToCheck;
-	statementsToCheck.push(this);
-	StatementTableStatement* currentStatementToCheck;
-	std::vector<StatementTableStatement*>* currentStatementAffectedByThis;
-	int currentStatementAffectedByThisSize;
-	StatementTableStatement* currentCurrentStatementAffectedByThis;
+	if (getType() == Assign) {
+		StatementTableStatement* currentStatement;
+		std::vector<int> currentModifyVariables;
+		std::queue<StatementTableStatement*> statementsToCheck;
+		std::queue<std::vector<int>> modifyVariablesOfStatementsToCheck;
 
-	while (!statementsToCheck.empty()) {
-		currentStatementToCheck = statementsToCheck.top();
-		statementsToCheck.pop();
+		// Assign statements only have one Next
+		statementsToCheck.push(getNext()->at(0));
+		// Assign statements have only one Modify
+		modifyVariablesOfStatementsToCheck.push(std::vector<int>(getModifies(0)));
 
-		if (statementsChecked.count(currentStatementToCheck) == 0) {
-			currentStatementAffectedByThis = currentStatementToCheck->getAffectedByThis();
-			currentStatementAffectedByThisSize = currentStatementAffectedByThis->size();
-			for (int i = 0; i < currentStatementAffectedByThisSize; i++) {
-				currentCurrentStatementAffectedByThis = currentStatementAffectedByThis->at(i);
-				affectedByThisStar.push_back(currentCurrentStatementAffectedByThis);
-				statementsToCheck.push(currentCurrentStatementAffectedByThis);
+		while (!statementsToCheck.empty()) {
+			currentStatement = statementsToCheck.front();
+			currentModifyVariables = modifyVariablesOfStatementsToCheck.front();
+			statementsToCheck.pop();
+			modifyVariablesOfStatementsToCheck.pop();
+
+			switch (currentStatement->getType()) {
+			case Assign:
+			{
+				int currentModifyVariablesSize = currentModifyVariables.size();
+				int currentStatementUsesSize = currentStatement->getUsesSize();
+				std::vector<int> newModifyVariables;
+				for (int i = 0; i < currentModifyVariablesSize; i++) {
+					// Check if this statement uses any variables modified previously
+					for (int j = 0; j < currentStatementUsesSize; j++) {
+						if (currentModifyVariables[i] == currentStatement->getUses(j)) {
+							affectedByThisStar.push_back(currentStatement);
+							j = currentStatementUsesSize; // Break out of inner loop safely
+						}
+					}
+
+					// Check if this statement modifies any variables modified previously
+					if (currentModifyVariables[i] != currentStatement->getModifies(0)) { // Assign statement has only one Modify
+						newModifyVariables.push_back(currentModifyVariables[i]);
+					}
+				}
+
+				// Push next into the two queues
+				statementsToCheck.push(currentStatement->getNext()->at(0)); // Assign statement has only one Next
+				modifyVariablesOfStatementsToCheck.push(newModifyVariables);
 			}
-			statementsChecked.insert(currentStatementToCheck);
+				break;
+			case If:
+				// Push next into the two queues
+				break;
+			case While:
+				// Push next into the two queues
+				break;
+			}
 		}
 	}
 
