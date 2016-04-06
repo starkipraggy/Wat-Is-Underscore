@@ -347,7 +347,9 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis()
 				currentStatementToCheck = statementsToCheck.front();
 				statementsToCheck.pop();
 				currentBooleans = statementsAndVariables.at(currentStatementToCheck);
-				statementNumbersAlreadyChecked.insert(currentStatementToCheck->getStatementNumber());
+				if (currentStatementToCheck != this) {
+					statementNumbersAlreadyChecked.insert(currentStatementToCheck->getStatementNumber());
+				}
 
 				// Make sure we check only assign statements, and don't check self - check their modify
 				if ((currentStatementToCheck->getType() == Assign) && (currentStatementToCheck != this)) {
@@ -560,10 +562,39 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThis
 			}
 				break;
 			case If:
+			{
 				// Push next into the two queues
+				for (int i = 0; i < 2; i++) {
+					statementsToCheck.push(currentStatement->getNext()->at(i));
+					std::vector<int> newModifyVariables = currentModifyVariables;
+					modifyVariablesOfStatementsToCheck.push(newModifyVariables);
+				}
+			}
 				break;
 			case While:
-				// Push next into the two queues
+			{
+				// Find out which next node is the cyclic node
+				StatementTableStatement* cyclicNode;
+				StatementTableStatement* nonCyclicNode;
+				if (currentStatement->getNext()->at(0)->getParent() == currentStatement->getStatementNumber()) {
+					// currentStatement->getNext()->at(0) is cyclic node
+					cyclicNode = currentStatement->getNext()->at(0);
+					nonCyclicNode = currentStatement->getNext()->at(1);
+				}
+				else {
+					cyclicNode = currentStatement->getNext()->at(1);
+					nonCyclicNode = currentStatement->getNext()->at(0);
+				}
+
+				// Push next into the two queues - push cyclic node
+				for (int i = 0; i < 2; i++) {
+					statementsToCheck.push((i == 0) ? cyclicNode : nonCyclicNode);
+					std::vector<int> newModifyVariables = currentModifyVariables;
+					modifyVariablesOfStatementsToCheck.push(newModifyVariables);
+				}
+
+				// @todo FIND OUT A WAY TO BREAK OUT OF A WHILE-CONDITION
+			}
 				break;
 			}
 		}
