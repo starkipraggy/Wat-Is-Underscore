@@ -15,7 +15,7 @@ const regex stmtDesignEntityRegex("^(stmtLst|stmt|assign|while|if|prog_line)$", 
 const regex lineDesignEntityRegex("^(stmtLst|stmt|assign|call|while|if|prog_line)$", icase);
 const regex entDesignEntityRegex("^(assign|if|while|procedure)$", icase);
 const regex varDesignEntityRegex("^(variable)$", icase);
-const regex patternRegex("assign|while|if", icase);
+const regex patternRegex("^(assign|while|if)$", icase);
 
 const regex entVarRefRefRegex("^(modifies|uses)$", icase);
 const regex stmtVarRefRefRegex("^(modifies|uses)$", icase);
@@ -27,12 +27,15 @@ const regex clauseRegex("such that+|pattern+|with+|and+", icase);
 const regex booleanRegex("^(BOOLEAN)$", icase);
 
 void Preprocessor::process(string statement) {
-	initialize(statement);
-	setMap();
-	setSelect();
-	setQueryTree();
-
-	//QueryTree::Instance()->v1Validation();
+	try {
+		initialize(statement);
+		setMap();
+		setSelect();
+		setQueryTree();
+	}
+	catch (const char* msg) {
+		throw msg;
+	}
 
 }
 
@@ -159,27 +162,32 @@ void Preprocessor::processClauses(string declarationQueries) {
 	int submatches[] = { -1, 0 };
 	std::regex_token_iterator<std::string::iterator> rit(declarationQueries.begin(), declarationQueries.end(), clauseRegex, submatches);
 	std::regex_token_iterator<std::string::iterator> rend;
-
 	int i = -1;
-	while (rit != rend) {
-		eachToken = trim(rit->str());
-		if (i == -1) {
-			if (eachToken != "") {
-				throw "should not have condition before clause";
-			}
-		}
-		else{
-			if (i % 2 == 0) { //clause
-				if (StringToUpper(eachToken) != "AND") {
-					clause = eachToken;
+
+	try{
+		while (rit != rend) {
+			eachToken = trim(rit->str());
+			if (i == -1) {
+				if (eachToken != "") {
+					throw "should not have condition before clause";
 				}
 			}
-			else { //condition
-				addClause(eachToken, clause);
+			else {
+				if (i % 2 == 0) { //clause
+					if (StringToUpper(eachToken) != "AND") {
+						clause = eachToken;
+					}
+				}
+				else { //condition
+					addClause(eachToken, clause);
+				}
 			}
+			++rit;
+			i++;
 		}
-		++rit;
-		i++;
+	}
+	catch (const char* msg) {
+		throw msg;
 	}
 
 	if (i % 2 != 0) {
@@ -302,6 +310,14 @@ void Preprocessor::addPatternClause(string rawClause) {
 	firstVariable = trim(firstVariable);
 	secondVariable = trim(secondVariable);
 	Ref var1 = createPatternRef(firstVariable);
+	if (assignedType == "if") {
+		if (removeSpace(secondVariable) == "_,_") {
+			secondVariable = "_";
+		}
+		else {
+			throw "if pattern has no 3rd clause";
+		}
+	}
 	Ref var2 = createPatternRef(secondVariable);
 
 	if (isEntRef(var1) && isExprSpec(var2)) {
