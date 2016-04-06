@@ -474,8 +474,9 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectedByThi
 			int currentStatementUsesSize;
 			std::vector<StatementTableStatement*>* currentStatementNext;
 			int currentStatementNextSize;
-			statementsToCheck.push(getNext()->at(0)); // Push the next statement; assign statements only have one Next
-
+			if (getNext()->size() > 0) {
+				statementsToCheck.push(getNext()->at(0)); // Push the next statement; assign statements only have one Next
+			}
 			int variableIndex = getModifies(0);
 
 			while (!statementsToCheck.empty()) {
@@ -532,10 +533,10 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThis
 		std::queue<std::vector<int>> modifyVariablesOfStatementsToCheck;
 		std::unordered_map<StatementTableStatement*, std::vector<std::vector<int>>> whileLoopsAndTheirVariables;
 
-		// Assign statements only have one Next
-		statementsToCheck.push(getNext()->at(0));
-		// Assign statements have only one Modify
-		modifyVariablesOfStatementsToCheck.push(std::vector<int>(getModifies(0)));
+		if (getNext()->size() > 0) {
+			statementsToCheck.push(getNext()->at(0)); // Assign statements only have one Next
+		}
+		modifyVariablesOfStatementsToCheck.push(std::vector<int>(getModifies(0))); // Assign statements have only one Modify
 
 		while (!statementsToCheck.empty()) {
 			currentStatement = statementsToCheck.front();
@@ -565,8 +566,11 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThis
 				}
 
 				// Push next into the two queues
-				statementsToCheck.push(currentStatement->getNext()->at(0)); // Assign statement has only one Next
-				modifyVariablesOfStatementsToCheck.push(newModifyVariables);
+				std::vector<StatementTableStatement*>* statementNext = currentStatement->getNext();
+				if (statementNext->size() > 0) {
+					statementsToCheck.push(statementNext->at(0)); // Assign statement has only one Next
+					modifyVariablesOfStatementsToCheck.push(newModifyVariables);
+				}
 			}
 				break;
 			case If:
@@ -631,6 +635,14 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThis
 
 						// Add information about the cyclic node into whileLoopsAndTheirVariables unordered_map
 						if (i == 1) {
+							// Debug XXX
+							std::cout << currentStatement << ": ";
+							for (unsigned int wtf = 0; wtf < newModifyVariables.size(); wtf++) {
+								std::cout << newModifyVariables[wtf] << " ";
+							}
+							std::cout << std::endl;
+							// End debug XXX
+
 							if (whileLoopsAndTheirVariables.count(currentStatement) == 0) {
 								std::vector<std::vector<int>> vectorOfCurrentModifiesVariables;
 								vectorOfCurrentModifiesVariables.push_back(newModifyVariables);
