@@ -431,18 +431,18 @@ vector<string> QueryEvaluator::queryPKB(string clause, string input, int argumen
 		}
 		else if (clause == "AFFECTS") {
 			if (argumentPosition == 1) {
-				output = pkb->PQLAffectedByThis(value, true);
+				output = pkb->PQLAffectsThis(value, true);
 			}
 			else { //argumentPosition == 2
-				output = pkb->PQLAffectsThis(value, true);
+				output = pkb->PQLAffectedByThis(value, true);
 			}
 		}
 		else if (clause == "AFFECTS*") {
 			if (argumentPosition == 1) {
-				output = pkb->PQLAffectedByThis(value, false);
+				output = pkb->PQLAffectsThis(value, false);
 			}
 			else { //argumentPosition == 2
-				output = pkb->PQLAffectsThis(value, false);
+				output = pkb->PQLAffectedByThis(value, false);
 			}
 		}
 	}
