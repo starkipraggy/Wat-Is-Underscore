@@ -303,7 +303,7 @@ std::vector<int> CFG::nextStmtStar(int stmtNum){
                 for (int i = thisNode->getLeftLmt(); i <= thisNode->getRightLmt(); i++) {
                     result.push_back(i);
                 }
-                traversed[thisNode] = 1;
+                traversed[thisNode] == 1;
             }
             continue;
         }
