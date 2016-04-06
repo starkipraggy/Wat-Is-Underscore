@@ -434,6 +434,22 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThis
 		}
 
 		while (currentStatement != NULL) {
+			// For debug purposes
+			/*
+			std::cout << currentStatement->getStatementNumber() << ": ";
+			std::vector<int> wtfIsGoingOn = statementsAndModifyVariablesToCheck.at(currentStatement);
+			for (unsigned int i = 0; i < wtfIsGoingOn.size(); i++) {
+				std::cout << "\'" << wtfIsGoingOn[i] << "\' ";
+			}
+			if (currentStatement->getType() == Assign) {
+				std::cout << " - ";
+				for (int i = 0; i < currentStatement->getUsesSize(); i++) {
+					std::cout << "\'" << currentStatement->getUses(i) << "\' ";
+				}
+			}
+			std::cout << std::endl;
+			*/
+
 			switch (currentStatement->getType()) {
 			case Assign:
 			{
@@ -510,16 +526,22 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThis
 						statementNumbersAfterCalls.pop();
 					}
 					else {
-						StatementTableStatement* nextStatement = statementNumbersAndStatements.at(currentStatementNumber + 1);
-						if (nextStatement->getProcedureIndexNumber() == currentStatement->getProcedureIndexNumber()) {
-							currentStatementNumber++;
+						if (statementNumbersAndStatements.count(currentStatementNumber + 1) == 0) {
+							currentStatementNumber = biggestStatementNumberThatWeKnowOf + 1; // Time to shut this down!
 						}
 						else {
-							currentStatementNumber = biggestStatementNumberThatWeKnowOf + 1; // Time to shut this down!
+							StatementTableStatement* nextStatement = statementNumbersAndStatements.at(currentStatementNumber + 1);
+							if (nextStatement->getProcedureIndexNumber() == currentStatement->getProcedureIndexNumber()) {
+								currentStatementNumber++;
+							}
+							else {
+								currentStatementNumber = biggestStatementNumberThatWeKnowOf + 1; // Time to shut this down!
+							}
 						}
 					}
 				}
 			}
+
 				break;
 			case If:
 			case While:
