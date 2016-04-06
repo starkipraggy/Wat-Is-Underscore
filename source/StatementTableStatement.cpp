@@ -326,138 +326,7 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis()
 	if (affectsThis == NULL) {
 		affectsThis = new std::vector<StatementTableStatement*>();
 		if (getType() == Assign) {
-			// Multiple uses variables here
-			int numberOfUsesVariables = getUsesSize();
-
-			bool checkSelfOnce = false;
-			std::set<int> statementNumbersAlreadyChecked;
-			std::unordered_map<StatementTableStatement*, bool*> statementsAndVariables;
-			std::queue<StatementTableStatement*> statementsToCheck;
-			StatementTableStatement* currentStatementToCheck;
-			bool* currentBooleans;
-			StatementTableStatement* previousStatement1;
-			StatementTableStatement* previousStatement2;
-			statementsToCheck.push(this);
-			currentBooleans = new bool[numberOfUsesVariables];
-			for (int i = 0; i < numberOfUsesVariables; i++) {
-				currentBooleans[i] = true;
-			}
-			statementsAndVariables.insert({this, currentBooleans});
-
-			while (!statementsToCheck.empty()) {
-				currentStatementToCheck = statementsToCheck.front();
-				statementsToCheck.pop();
-				currentBooleans = statementsAndVariables.at(currentStatementToCheck);
-				if (currentStatementToCheck != this) {
-					statementNumbersAlreadyChecked.insert(currentStatementToCheck->getStatementNumber());
-				}
-				else {
-					if (checkSelfOnce) {
-						statementNumbersAlreadyChecked.insert(currentStatementToCheck->getStatementNumber());
-					}
-					else {
-						checkSelfOnce = true;
-					}
-				}
-
-				// Make sure we check only assign statements
-				if (currentStatementToCheck->getType() == Assign) {
-					for (int i = 0; i < numberOfUsesVariables; i++) {
-						if ((currentBooleans[i]) && (currentStatementToCheck->getModifies(0) == getUses(i))) {
-							affectsThis->push_back(currentStatementToCheck);
-							i = numberOfUsesVariables; // Break out of for-loop
-						}
-					}
-
-					// Check what variables are we left with that can go up
-					for (int i = 0; i < numberOfUsesVariables; i++) {
-						if (currentStatementToCheck->getModifies(0) == getUses(i)) {
-							currentBooleans[i] = false;
-						}
-					}
-				}
-
-				// If assign statement, only able to continue up if at least one boolean is true
-				bool canContinue = false;
-				if (currentStatementToCheck->getType() == Assign) {
-					for (int i = 0; i < numberOfUsesVariables; i++) {
-						canContinue = canContinue || currentBooleans[i];
-					}
-				}
-				else {
-					canContinue = true;
-				}
-
-				// Continue up the CFG
-				if (canContinue) {
-					std::vector<StatementTableStatement*>* currentStatementPrevious = currentStatementToCheck->getPrevious();
-					switch (currentStatementPrevious->size()) {
-					case 1:
-						previousStatement1 = currentStatementToCheck->getPrevious()->at(0);
-
-						bool* newBooleans;
-						if (statementsAndVariables.count(previousStatement1) == 1) {
-							newBooleans = statementsAndVariables.at(previousStatement1);
-							for (int i = 0; i < numberOfUsesVariables; i++) {
-								newBooleans[i] = newBooleans[i] || currentBooleans[i];
-							}
-						}
-						else {
-							newBooleans = new bool[numberOfUsesVariables];
-							for (int i = 0; i < numberOfUsesVariables; i++) {
-								newBooleans[i] = currentBooleans[i];
-							}
-							statementsAndVariables.insert({ previousStatement1 , newBooleans });
-						}
-						statementsToCheck.push(previousStatement1);
-						break;
-					case 2:
-						previousStatement1 = currentStatementToCheck->getPrevious()->at(0);
-						previousStatement2 = currentStatementToCheck->getPrevious()->at(1);
-
-						// if this is a while-statement, add the cyclic node into the queue first!
-						if (currentStatementToCheck->getType() == While) {
-							int currentChildrenSize = currentStatementToCheck->getChildrenSize();
-							for (int i = 0; i < currentChildrenSize; i++) {
-								int previousStatement2StatementNumber = previousStatement2->getStatementNumber();
-								if (previousStatement2StatementNumber == currentStatementToCheck->getChildren(i)) {
-									// This is the cyclic node, make sure we add it into the queue first
-									StatementTableStatement* temporaryForSwapping = previousStatement2;
-									previousStatement2 = previousStatement1;
-									previousStatement1 = temporaryForSwapping;
-									i = currentChildrenSize; // Break out of loop safely
-								}
-							}
-						}
-
-						for (int x = 0; x < 2; x++) {
-							StatementTableStatement* tempStatement = (x == 0) ? previousStatement1 : previousStatement2;
-							bool* newBooleans;
-							if (statementsAndVariables.count(tempStatement) == 1) {
-								newBooleans = statementsAndVariables.at(tempStatement);
-								for (int i = 0; i < numberOfUsesVariables; i++) {
-									newBooleans[i] = newBooleans[i] || currentBooleans[i];
-								}
-							}
-							else {
-								newBooleans = new bool[numberOfUsesVariables];
-								for (int i = 0; i < numberOfUsesVariables; i++) {
-									newBooleans[i] = currentBooleans[i];
-								}
-								statementsAndVariables.insert({ tempStatement , newBooleans });
-							}
-							if (statementNumbersAlreadyChecked.count(tempStatement->getStatementNumber()) == 0) {
-								statementsToCheck.push(tempStatement);
-							}
-						}
-						break;
-					}
-				}
-			}
-			// According to http://www.cplusplus.com/reference/unordered_map/unordered_map/clear/,
-			// the destructors of the elements inside the container are called, so I assume
-			// I don't have to do so manually. Let me know otherwise
-			statementsAndVariables.clear();
+			// @todo Affects(s,5)
 		}
 	}
 	return affectsThis;
@@ -518,151 +387,254 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectsThisSta
 	std::vector<StatementTableStatement*> affectsThisStar;
 
 	if (getType() == Assign) {
-
+		// @todo Affects*(s,5)
 	}
-
-	std::cout << "SHOURAI SE YO, SHOOTING STAR DRAGON!!" << std::endl;
 
 	return affectsThisStar;
 }
 
 std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThisStar() {
-	std::cout << "TSUDOISHI YUME NO KESSHO GA, ARATANA SHINKA E NO TOBIRA WO HIRAKU!!" << std::endl;
 	std::vector<StatementTableStatement*> affectedByThisStar;
+
+	// @todo Affects*(5,s)
 	if (getType() == Assign) {
-		StatementTableStatement* currentStatement;
-		std::vector<int> currentModifyVariables;
-		std::queue<StatementTableStatement*> statementsToCheck;
-		std::queue<std::vector<int>> modifyVariablesOfStatementsToCheck;
-		std::unordered_map<StatementTableStatement*, std::vector<std::vector<int>>> whileLoopsAndTheirVariables;
-
+		int currentStatementNumber = -1;
+		int biggestStatementNumberThatWeKnowOf = -1;
+		std::unordered_map<int, StatementTableStatement*> statementNumbersAndStatements;
+		std::unordered_map<StatementTableStatement*, std::vector<int>> statementsAndModifyVariablesToCheck;
+		std::unordered_map<StatementTableStatement*, std::vector<std::vector<int>>> whileStatementsAndHistoryOfModifiesVariables;
+		StatementTableStatement* currentStatement = NULL;
 		if (getNext()->size() > 0) {
-			statementsToCheck.push(getNext()->at(0)); // Assign statements only have one Next
+			currentStatement = getNext()->at(0);
+			std::vector<int> modifyVariables;
+			modifyVariables.push_back(getModifies(0));
+			currentStatementNumber = currentStatement->getStatementNumber();
+			statementNumbersAndStatements.insert({ currentStatementNumber, currentStatement });
+			biggestStatementNumberThatWeKnowOf = currentStatementNumber;
+			statementsAndModifyVariablesToCheck.insert({ currentStatement, modifyVariables });
 		}
-		modifyVariablesOfStatementsToCheck.push(std::vector<int>(getModifies(0))); // Assign statements have only one Modify
 
-		while (!statementsToCheck.empty()) {
-			currentStatement = statementsToCheck.front();
-			currentModifyVariables = modifyVariablesOfStatementsToCheck.front();
-			statementsToCheck.pop();
-			modifyVariablesOfStatementsToCheck.pop();
-
+		while (currentStatement != NULL) {
 			switch (currentStatement->getType()) {
 			case Assign:
 			{
-				int currentModifyVariablesSize = currentModifyVariables.size();
-				int currentStatementUsesSize = currentStatement->getUsesSize();
-				std::vector<int> newModifyVariables;
-				for (int i = 0; i < currentModifyVariablesSize; i++) {
-					// Check if this statement uses any variables modified previously
-					for (int j = 0; j < currentStatementUsesSize; j++) {
-						if (currentModifyVariables[i] == currentStatement->getUses(j)) {
+				std::vector<int> modifyVariables = statementsAndModifyVariablesToCheck.at(currentStatement);
+				int modifyVariablesSize = modifyVariables.size();
+				int useVariablesSize = currentStatement->getUsesSize();
+
+				// Check if this statement uses any modify variables
+				for (int x = 0; x < modifyVariablesSize; x++) {
+					for (int y = 0; y < useVariablesSize; y++) {
+						if (modifyVariables[x] == currentStatement->getUses(y)) {
 							affectedByThisStar.push_back(currentStatement);
-							j = currentStatementUsesSize; // Break out of inner loop safely
+							// Break out of both loops
+							x = modifyVariablesSize;
+							y = useVariablesSize;
 						}
 					}
+				}
 
-					// Check if this statement modifies any variables modified previously
-					if (currentModifyVariables[i] != currentStatement->getModifies(0)) { // Assign statement has only one Modify
-						newModifyVariables.push_back(currentModifyVariables[i]);
+				// Check if this statement modifies any modify variables
+				std::vector<int> newModifyVariables;
+				for (int x = 0; x < modifyVariablesSize; x++) {
+					if (modifyVariables[x] != currentStatement->getModifies(0)) {
+						newModifyVariables.push_back(modifyVariables[x]);
 					}
 				}
 
-				// Push next into the two queues
-				std::vector<StatementTableStatement*>* statementNext = currentStatement->getNext();
-				if (statementNext->size() > 0) {
-					statementsToCheck.push(statementNext->at(0)); // Assign statement has only one Next
-					modifyVariablesOfStatementsToCheck.push(newModifyVariables);
+				// Add next information to the information we know
+				int minimum = currentStatementNumber + 1;
+				std::vector<StatementTableStatement*>* currentStatementNexts = currentStatement->getNext();
+				if (currentStatementNexts->size() > 0) {
+					StatementTableStatement* currentStatementNext = currentStatementNexts->at(0);
+					int currentStatementNextNumber = currentStatementNext->getStatementNumber();
+					statementNumbersAndStatements.insert({ currentStatementNextNumber, currentStatementNext });
+					if (biggestStatementNumberThatWeKnowOf < currentStatementNextNumber) {
+						biggestStatementNumberThatWeKnowOf = currentStatementNextNumber;
+					}
+					if (currentStatementNextNumber < minimum) {
+						minimum = currentStatementNextNumber;
+					}
+
+					if (statementsAndModifyVariablesToCheck.count(currentStatementNext) > 0) {
+						std::set<int> newVariables;
+						std::vector<int> existingVariables = statementsAndModifyVariablesToCheck.at(currentStatementNext);
+						int existingVariablesSize = existingVariables.size();
+						int newModifyVariablesSize = newModifyVariables.size();
+						for (int i = 0; i < existingVariablesSize; i++) {
+							newVariables.insert(existingVariables[i]);
+						}
+						for (int i = 0; i < newModifyVariablesSize; i++) {
+							newVariables.insert(newModifyVariables[i]);
+						}
+						std::vector<int> newVariablesToBeAdded;
+						std::set<int>::iterator end = newVariables.end();
+						for (std::set<int>::iterator it = newVariables.begin(); it != end; it++) {
+							newVariablesToBeAdded.push_back(*it);
+						}
+						statementsAndModifyVariablesToCheck.insert({ currentStatementNext, newVariablesToBeAdded });
+					}
+					else {
+						statementsAndModifyVariablesToCheck.insert({ currentStatementNext, newModifyVariables });
+					}
 				}
+				currentStatementNumber = minimum;
 			}
 				break;
 			case If:
-			{
-				// Push next into the two queues
-				for (int i = 0; i < 2; i++) {
-					statementsToCheck.push(currentStatement->getNext()->at(i));
-					std::vector<int> newModifyVariables = currentModifyVariables;
-					modifyVariablesOfStatementsToCheck.push(newModifyVariables);
-				}
-			}
-				break;
 			case While:
 			{
-				// Find out which next node is the cyclic node
-				StatementTableStatement* cyclicNode;
-				StatementTableStatement* nonCyclicNode;
-				if (currentStatement->getNext()->at(0)->getParent() == currentStatement->getStatementNumber()) {
-					// currentStatement->getNext()->at(0) is cyclic node
-					cyclicNode = currentStatement->getNext()->at(0);
-					nonCyclicNode = currentStatement->getNext()->at(1);
-				}
-				else {
-					cyclicNode = currentStatement->getNext()->at(1);
-					nonCyclicNode = currentStatement->getNext()->at(0);
+				int minimum = currentStatementNumber + 1;
+				std::vector<StatementTableStatement*>* currentStatementNexts = currentStatement->getNext();
+				for (int i = 0; i < 2; i++) {
+					StatementTableStatement* currentStatementNext = currentStatementNexts->at(i);
+					int currentStatementNextNumber = currentStatementNext->getStatementNumber();
+					statementNumbersAndStatements.insert({ currentStatementNextNumber, currentStatementNext });
+					if (biggestStatementNumberThatWeKnowOf < currentStatementNextNumber) {
+						biggestStatementNumberThatWeKnowOf = currentStatementNextNumber;
+					}
+					if (currentStatementNextNumber < minimum) {
+						minimum = currentStatementNextNumber;
+					}
+
+					std::vector<int> newModifyVariables = statementsAndModifyVariablesToCheck.at(currentStatement);
+					if (statementsAndModifyVariablesToCheck.count(currentStatementNext) > 0) {
+						std::set<int> newVariables;
+						std::vector<int> existingVariables = statementsAndModifyVariablesToCheck.at(currentStatementNext);
+						int existingVariablesSize = existingVariables.size();
+						int newModifyVariablesSize = newModifyVariables.size();
+						for (int i = 0; i < existingVariablesSize; i++) {
+							newVariables.insert(existingVariables[i]);
+						}
+						for (int i = 0; i < newModifyVariablesSize; i++) {
+							newVariables.insert(newModifyVariables[i]);
+						}
+						std::vector<int> newVariablesToBeAdded;
+						std::set<int>::iterator end = newVariables.end();
+						for (std::set<int>::iterator it = newVariables.begin(); it != end; it++) {
+							newVariablesToBeAdded.push_back(*it);
+						}
+						statementsAndModifyVariablesToCheck.insert({ currentStatementNext, newVariablesToBeAdded });
+					}
+					else {
+						statementsAndModifyVariablesToCheck.insert({ currentStatementNext, newModifyVariables });
+					}
 				}
 
-				// Push next into the two queues - push cyclic node
-				for (int i = 0; i < 2; i++) {
-					// Check if cyclic node should be visited again
-					bool pushNodeIntoQueue = true;
-					if (i == 1) {
-						if (whileLoopsAndTheirVariables.count(currentStatement) > 0) {
-							std::vector<std::vector<int>> vectorOfCurrentModifiesVariables = whileLoopsAndTheirVariables.at(currentStatement);
-							int vectorOfCurrentModifiesVariablesSize = vectorOfCurrentModifiesVariables.size();
-							for (int x = 0; x < vectorOfCurrentModifiesVariablesSize; x++) {
-								int currentModifyVariablesSize = currentModifyVariables.size();
-								int vectorModifyVariablesSize = vectorOfCurrentModifiesVariables[x].size();
-								// Check if they are identical
-								bool isIdentical = false;
-								if (currentModifyVariablesSize == vectorModifyVariablesSize) {
-									isIdentical = true;
-									for (int a = 0; a < currentModifyVariablesSize; a++) {
-										if (currentModifyVariables[a] != vectorOfCurrentModifiesVariables[x][a]) {
-											isIdentical = false;
-											a = currentModifyVariablesSize; // Break out of for-loop
-										}
+				if (currentStatement->getType() == While) {
+					if (whileStatementsAndHistoryOfModifiesVariables.count(currentStatement) == 0) {
+						std::vector<std::vector<int>> vectorOfVectors;
+						vectorOfVectors.push_back(statementsAndModifyVariablesToCheck.at(currentStatement));
+						whileStatementsAndHistoryOfModifiesVariables.insert({ currentStatement, vectorOfVectors });
+						currentStatementNumber = minimum;
+					}
+					else {
+						bool hasPatternRepeat = true;
+						std::vector<std::vector<int>> vectorOfVectors = whileStatementsAndHistoryOfModifiesVariables.at(currentStatement);
+						int vectorOfVectorsSize = vectorOfVectors.size();
+						std::vector<int> latestVector = statementsAndModifyVariablesToCheck.at(currentStatement);
+						int latestVectorSize = latestVector.size();
+						for (int x = 0; x < vectorOfVectorsSize; x++) {
+							if (vectorOfVectors[x].size() == latestVectorSize) {
+								for (int y = 0; y < latestVectorSize; y++) {
+									if (vectorOfVectors[x][y] != latestVector[y]) {
+										hasPatternRepeat = false;
+										y = latestVectorSize; // Break out of for-loop
 									}
 								}
-								if (isIdentical) {
-									pushNodeIntoQueue = false; // Do not visit this node
-									x = vectorOfCurrentModifiesVariablesSize; // Break out for for-loop
-								}
-							}
-						}
-					}
-
-					if (pushNodeIntoQueue) {
-						statementsToCheck.push((i == 0) ? cyclicNode : nonCyclicNode);
-						std::vector<int> newModifyVariables = currentModifyVariables;
-						modifyVariablesOfStatementsToCheck.push(newModifyVariables);
-
-						// Add information about the cyclic node into whileLoopsAndTheirVariables unordered_map
-						if (i == 1) {
-							// Debug XXX
-							std::cout << currentStatement->getStatementNumber() << ": ";
-							for (unsigned int wtf = 0; wtf < newModifyVariables.size(); wtf++) {
-								std::cout << newModifyVariables[wtf] << " ";
-							}
-							std::cout << std::endl;
-							// End debug XXX
-
-							if (whileLoopsAndTheirVariables.count(currentStatement) == 0) {
-								std::vector<std::vector<int>> vectorOfCurrentModifiesVariables;
-								vectorOfCurrentModifiesVariables.push_back(newModifyVariables);
-								whileLoopsAndTheirVariables.insert({ currentStatement, vectorOfCurrentModifiesVariables });
 							}
 							else {
-								whileLoopsAndTheirVariables.at(currentStatement).push_back(newModifyVariables);
+								hasPatternRepeat = false;
+							}
+
+							if (hasPatternRepeat) {
+								int next1 = currentStatement->getNext()->at(0)->getStatementNumber();
+								int next2 = currentStatement->getNext()->at(1)->getStatementNumber();
+								if (next1 > next2) {
+									currentStatementNumber = next1;
+								}
+								else {
+									currentStatementNumber = next2;
+								}
+								x = vectorOfVectorsSize; // Break out of for-loop
+							}
+							else {
+								hasPatternRepeat = true;
 							}
 						}
 					}
+				}
+				else {
+					currentStatementNumber = minimum;
 				}
 			}
 				break;
+			default:
+			{
+				int minimum = currentStatementNumber + 1;
+				std::vector<StatementTableStatement*>* currentStatementNexts = currentStatement->getNext();
+				if (currentStatementNexts->size() > 0) {
+					StatementTableStatement* currentStatementNext = currentStatementNexts->at(0);
+					int currentStatementNextNumber = currentStatementNext->getStatementNumber();
+					statementNumbersAndStatements.insert({ currentStatementNextNumber, currentStatementNext });
+					if (biggestStatementNumberThatWeKnowOf < currentStatementNextNumber) {
+						biggestStatementNumberThatWeKnowOf = currentStatementNextNumber;
+					}
+					if (currentStatementNextNumber < minimum) {
+						minimum = currentStatementNextNumber;
+					}
+
+					std::vector<int> newModifyVariables = statementsAndModifyVariablesToCheck.at(currentStatement);
+					if (statementsAndModifyVariablesToCheck.count(currentStatementNext) > 0) {
+						std::set<int> newVariables;
+						std::vector<int> existingVariables = statementsAndModifyVariablesToCheck.at(currentStatementNext);
+						int existingVariablesSize = existingVariables.size();
+						int newModifyVariablesSize = newModifyVariables.size();
+						for (int i = 0; i < existingVariablesSize; i++) {
+							newVariables.insert(existingVariables[i]);
+						}
+						for (int i = 0; i < newModifyVariablesSize; i++) {
+							newVariables.insert(newModifyVariables[i]);
+						}
+						std::vector<int> newVariablesToBeAdded;
+						std::set<int>::iterator end = newVariables.end();
+						for (std::set<int>::iterator it = newVariables.begin(); it != end; it++) {
+							newVariablesToBeAdded.push_back(*it);
+						}
+						statementsAndModifyVariablesToCheck.insert({ currentStatementNext, newVariablesToBeAdded });
+					}
+					else {
+						statementsAndModifyVariablesToCheck.insert({ currentStatementNext, newModifyVariables });
+					}
+				}
+				currentStatementNumber = minimum;
+			}
+				break;
+			}
+
+			// Move on to the next statement in sequence of statement numbers
+			if (statementNumbersAndStatements.count(currentStatementNumber) > 0) {
+				currentStatement = statementNumbersAndStatements.at(currentStatementNumber);
+			}
+			else {
+				bool hasFoundNext = false;
+				for (int runningOutOfVariableNamesForForLoops = currentStatementNumber;
+						runningOutOfVariableNamesForForLoops <= biggestStatementNumberThatWeKnowOf;
+						runningOutOfVariableNamesForForLoops++) {
+					if (statementNumbersAndStatements.count(runningOutOfVariableNamesForForLoops) > 0) {
+						currentStatementNumber = runningOutOfVariableNamesForForLoops;
+						currentStatement = statementNumbersAndStatements.at(currentStatementNumber);
+						hasFoundNext = true;
+						// Break out of for-loop
+						runningOutOfVariableNamesForForLoops = biggestStatementNumberThatWeKnowOf;
+					}
+				}
+				if (!hasFoundNext) {
+					currentStatement = NULL;
+				}
 			}
 		}
 	}
 
-	std::cout << "HIKARI SASU MICHI TO NAREEE! ACCEL SYNCHROOOOO!!" << std::endl;
 	return affectedByThisStar;
 }
