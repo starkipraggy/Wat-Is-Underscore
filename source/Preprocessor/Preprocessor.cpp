@@ -343,7 +343,7 @@ Ref Preprocessor::createSuchThatRef(string name) {
 			result = Ref(name, got->second);
 		}
 	}
-	else if (regex_match(name = removeSpace(name), expressionRegex)) {
+	else if (regex_match(name, expressionRegex)) {
 		result = Ref(name.substr(1, name.length() - 2), "expr");
 	}
 	else {
@@ -400,7 +400,7 @@ Ref Preprocessor::createWithRef(string name) {
 			throw msg;
 		}
 	}
-	else if (regex_match(name = removeSpace(name), expressionRegex)) {
+	else if (regex_match(name, expressionRegex)) {
 		ref = Ref(name.substr(1, name.length() - 2), "expr");
 	}
 	else if (regex_match(name, integerRegex)) {
