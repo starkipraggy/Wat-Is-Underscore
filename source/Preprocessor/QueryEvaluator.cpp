@@ -39,9 +39,8 @@ std::vector<std::string> QueryEvaluator::process() {
 					add(queryResult, assignVar.getName());
 				}
 				else {
+					queryResult = pkb->PQLPattern(toTNodeType(assignVar.getType()), var1, var2);
 					for (vector<vector<string>>::iterator it = result.begin(); it != result.end();) {
-
-						queryResult = pkb->PQLPattern(toTNodeType(assignVar.getType()), var1, var2);
 
 						it = query(queryResult, it, item->second);
 
