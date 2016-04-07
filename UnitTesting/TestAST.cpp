@@ -120,6 +120,17 @@ namespace UnitTesting
             Assert::IsTrue(AST::compareTrees(basicTree, answer));
         }
 
+        TEST_METHOD(ExpressionEmptyString) {
+            //Arrange
+            std::vector<std::string> tokens;
+
+            //Act
+            TNode* answer = AST::constructExpressionTree("");
+
+            //Assert
+            Assert::IsTrue(answer == NULL);
+        }
+
         TEST_METHOD(AddAssignTNode) {
             //Arrange
             AST* expected = new AST("TestProcedure");

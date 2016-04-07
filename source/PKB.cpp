@@ -841,15 +841,19 @@ std::vector<std::string> PKB::PQLPattern(TNodeType type, Ref left, Ref right) {
                 if (procedureAST[proc]->getTree()[stmt]->getNodeType() == type) {
                     if (left.getType() == "placeholder" || 
                         left.getName() == procedureAST[proc]->getTree()[stmt]->getChildNodes()[0]->getChildNodes()[0]->getValue()) {
-                        TNode* rightTree = AST::constructExpressionTree(right.getName());
-                        if (right.getType() == "expr") {
-                            if (AST::compareTrees(rightTree,
-                                procedureAST[proc]->getTree()[stmt]->getChildNodes()[0]->getChildNodes()[1])) {
-                                returnList.push_back(std::to_string(procedureAST[proc]->getTree()[stmt]->getLineNumber()));
-                            }
-                        } else if (right.getType() == "part_of_expr") {
-                            if (AST::findSubtreeInTree(rightTree, procedureAST[proc]->getTree()[stmt]->getChildNodes()[0]->getChildNodes()[1])) {
-                                returnList.push_back(std::to_string(procedureAST[proc]->getTree()[stmt]->getLineNumber()));
+                        if (right.getType() == "placeholder") {
+                            returnList.push_back(std::to_string(procedureAST[proc]->getTree()[stmt]->getLineNumber()));
+                        } else {
+                            TNode* rightTree = AST::constructExpressionTree(right.getName());
+                            if (right.getType() == "expr") {
+                                if (AST::compareTrees(rightTree,
+                                    procedureAST[proc]->getTree()[stmt]->getChildNodes()[0]->getChildNodes()[1])) {
+                                    returnList.push_back(std::to_string(procedureAST[proc]->getTree()[stmt]->getLineNumber()));
+                                }
+                            } else if (right.getType() == "part_of_expr") {
+                                if (AST::findSubtreeInTree(rightTree, procedureAST[proc]->getTree()[stmt]->getChildNodes()[0]->getChildNodes()[1])) {
+                                    returnList.push_back(std::to_string(procedureAST[proc]->getTree()[stmt]->getLineNumber()));
+                                }
                             }
                         }
                     }

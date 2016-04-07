@@ -122,6 +122,10 @@ TNode* AST::constructExpressionTree(std::vector<std::string> &tokens){
     std::stack<TNode*> operatorstk;
     std::stack<TNode*> operandstk;
 
+    if (tokens.size() == 0) {
+        return NULL;
+    }
+
     for (unsigned int i = 0; i < tokens.size(); i++) {
         //ignore underscores
         if (tokens[i] == "_") {
