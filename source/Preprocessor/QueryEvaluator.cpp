@@ -18,6 +18,7 @@ std::vector<std::string> QueryEvaluator::process() {
 	directory = {};
 	result = {};
 	if (select.getType() != "boolean") {
+		vector<string> eachTemp;
 		queryResult = pkb->PQLSelect(toTNodeType(select.getType()));
 		add(queryResult, select.getName());
 	}
@@ -34,19 +35,14 @@ std::vector<std::string> QueryEvaluator::process() {
 				unordered_map<string, int>::const_iterator item = directory.find(assignVar.getName());
 
 				if (item == directory.end()) {
-					for (vector<vector<string>>::iterator it = result.begin(); it != result.end();) {
-
-						queryResult = pkb->PQLPattern(Assign, var1, var2);
-						it = query(queryResult, it, item->second);
-
-					}
-
-					addDirectory(assignVar.getName());
+					queryResult = pkb->PQLPattern(Assign, var1, var2);
+					add(queryResult, assignVar.getName());
 				}
 				else {
 					for (vector<vector<string>>::iterator it = result.begin(); it != result.end();) {
 
 						queryResult = pkb->PQLPattern(Assign, var1, var2);
+
 						it = query(queryResult, it, item->second);
 
 					}
@@ -61,6 +57,7 @@ std::vector<std::string> QueryEvaluator::process() {
 					if (item1 == directory.end()) {
 						queryResult = pkb->PQLSelect(toTNodeType(var1.getType()));
 						add(queryResult, var1.getName());
+
 						queryResult = pkb->PQLSelect(toTNodeType(var2.getType()));
 						add(queryResult, var2.getName());
 					}
@@ -114,7 +111,7 @@ std::vector<std::string> QueryEvaluator::process() {
 						for (unsigned int i = 0; i < result.size(); i++) {
 
 							queryResult = queryPKB(clause, result.at(i).at(item1->second), 2, var2.getType());
-							tempResult = query(queryResult, i, tempResult);
+							tempResult = add(queryResult, i, tempResult);
 
 						}
 						result = tempResult;
@@ -128,7 +125,7 @@ std::vector<std::string> QueryEvaluator::process() {
 						for (unsigned int i = 0; i < result.size(); i++) {
 
 							queryResult = queryPKB(clause, result.at(i).at(item2->second), 1, var1.getType());
-							tempResult = query(queryResult, i, tempResult);
+							tempResult = add(queryResult, i, tempResult);
 
 						}
 						result = tempResult;
@@ -220,7 +217,7 @@ void QueryEvaluator::processOneSynonym(Ref source, Ref des, string clause, int p
 			for (unsigned int i = 0; i < result.size(); i++) {
 
 				queryResult = queryPKB(clause, result.at(i).at(item->second), pos, source.getType());
-				tempResult = query(queryResult, i, tempResult);
+				tempResult = add(queryResult, i, tempResult);
 
 			}
 			result = tempResult;
@@ -231,7 +228,7 @@ void QueryEvaluator::processOneSynonym(Ref source, Ref des, string clause, int p
 			tempResult = {};
 			for (unsigned int i = 0; i < result.size(); i++) {
 
-				tempResult = query(queryResult, i, tempResult);
+				tempResult = add(queryResult, i, tempResult);
 
 			}
 			result = tempResult;
@@ -260,19 +257,6 @@ void QueryEvaluator::processOneSynonym(Ref source, Ref des, string clause, int p
 			}
 		}
 	}
-}
-
-void QueryEvaluator::add(vector<string> queryResult, string name) {
-	vector<string> temp, newTemp;
-
-	for (unsigned int i = 0; i < queryResult.size(); i++) {
-		temp = {};
-		temp.push_back(queryResult.at(i));
-		result.push_back(temp);
-	}
-
-	addDirectory(name);
-
 }
 
 void QueryEvaluator::remove(int pos1, int pos2) {
@@ -308,7 +292,33 @@ void QueryEvaluator::checkValid(string input, string type) {
 	}
 }
 
-vector<vector<string>> QueryEvaluator::query(vector<string> queryResult, int i, vector<vector<string>> temp) {
+void QueryEvaluator::add(vector<string> queryResult, string name) {
+	vector<vector<string>> temp;
+	vector<string> eachTemp;
+
+	if (result.empty()) {
+		for (unsigned int i = 0; i < queryResult.size(); i++) {
+			eachTemp = {};
+			eachTemp.push_back(queryResult.at(i));
+			temp.push_back(eachTemp);
+		}
+	}
+	else {
+		for (unsigned int i = 0; i < result.size(); i++) {
+			for (unsigned int j = 0; j < queryResult.size(); j++) {
+				eachTemp = {};
+				eachTemp.assign(result.at(i).begin(), result.at(i).end());
+				eachTemp.push_back(queryResult.at(j));
+				temp.push_back(eachTemp);
+			}
+		}
+	}
+
+	addDirectory(name);
+	result = temp;
+}
+
+vector<vector<string>> QueryEvaluator::add(vector<string> queryResult, int i, vector<vector<string>> temp) {
 	vector<string> eachTemp;
 
 	for (unsigned int j = 0; j < queryResult.size(); j++) {

@@ -40,18 +40,17 @@ private:
 	Internal method to process one synonymn. Can handle either synonymn with non-synonym or vice versa
 	*/
 	void processOneSynonym(Ref source, Ref des, string clause, int pos);
-	
-	//! query a such that select clause
+
+	//! add to table
 	/*!
-	Internal method of process to query a such that select clause and add to table
+	Internal method of process to add queryResult to all row in table
 	*/
 	void add(vector<string> queryResult, string name);
-
-	//! query a such that clause
+	//! add to table
 	/*!
-	Internal method of process to query a such that clause given the vector and its iterator
+	Internal method of process to add queryResult to all row in table
 	*/
-	vector<vector<string>> query(vector<string> queryResult, int i, vector<vector<string>> temp);
+	vector<vector<string>> add(vector<string> queryResult, int i, vector<vector<string>> temp);
 
 	//! query a such that clause
 	/*!
