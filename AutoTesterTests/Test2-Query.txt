@@ -55,7 +55,7 @@ none
 5000
 12 - Pattern 3
 if ifstmt;
-Select ifstmt Pattern ifstmt("x", _)
+Select ifstmt Pattern ifstmt("x", _,_)
 10
 5000
 13 - Parent* 1
@@ -110,7 +110,7 @@ none
 5000;
 23 - Different statements
 assign a; stmt s;
-Select a such that Modifies (s, x) pattern a(x, _)
+Select a such that Modifies (s, "x") pattern a("x", _)
 1,4,7,11,15
 5000
 24 - Check if it checks called functions as well
@@ -140,7 +140,7 @@ i, x, y, z
 5000
 29 - test combination
 if ifstmt;
-Select ifstmt such that Uses(ifstmt, "x") and Modifies(ifstmt, "z") pattern ifstmt("x", _)
+Select ifstmt such that Uses(ifstmt, "x") and Modifies(ifstmt, "z") pattern ifstmt("x", _,_)
 10
 5000
 30 - test combination
@@ -152,4 +152,9 @@ Select s such that Uses(s, "x") and Follows(s1, s)
 stmt s,s1; 
 Select s such that Follows*(s1, s) and Follows*(s, s1)
 
+5000
+31 - test procedure
+variable v;
+Select v such that Uses("Second", v)
+i,x,y,z
 5000
