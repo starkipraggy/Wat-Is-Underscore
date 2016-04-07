@@ -100,7 +100,7 @@ Select a pattern a(_, _"b + c + d"_)
 5000
 21 - Correct Pattern Tree
 assign a; stmt s;
-Select s pattern a(_, "d * a")
+Select s pattern a(_, _"d * a"_)
 11
 5000
 22 - 3 patterns
@@ -113,30 +113,30 @@ assign a; stmt s;
 Select a such that Uses(a, "b") and Parent(s, a) pattern a("a", _)
 3
 5000
-24 - check synonyms
+24 - check synonyms(pattern cannot use stmt)
 stmt s;
 Select s such that Uses(s, "b") and Modifies(s, "c") pattern s("i", _)
-2
+
 5000
-25 - 3 patterns
+25 - 3 patterns(pattern cannot use stmt)
 stmt s; variable v;
 Select s such that Uses(s, v) and Modifies(s, v) pattern s(_, _"d"_)
-11
+
 5000
 26 - 3 patterns
 stmt s; assign a;
 Select s such that Uses(7, "j") and Parent(s, 7) pattern a(_,"a")
-true
+2
 5000
-27 - test Boolean
+27 - test Boolean(a is not declared)
 if ifstmt; stmt s; while w;
 Select ifstmt such that Follows*(3, s) and Parent(w, 10) pattern a("c", _)
-true
+
 5000
 28 - check common synonym
 stmt s;
 Select s such that Modifies(s, "j") and Uses(s, "j") pattern s("j", _)
-none 
+ 
 5000
 29 - Test odd combinations
 stmt s,s1;
@@ -146,11 +146,10 @@ Select s such that Uses(s,k) and Parent*(s,s1)
 30 - check common synonym but different stmt
 assign a; stmt s;
 Select a such that Modifies(a, "b") pattern s("a", _)
-4
+
 5000
 31 - check reverse combination
 variable v; stmt s,s1;
 Select v such that Modifies(s, v) and Follows(s1, s) pattern s1(v, _)
-a
 
 5000
