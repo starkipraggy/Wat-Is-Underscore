@@ -293,7 +293,11 @@ void Preprocessor::addPatternClause(string rawClause) {
 	}
 	string assignedVariable = rawClause.substr(0, openBracket);
 	assignedVariable = trim(assignedVariable);
-	string assignedType = declarationMap.find(assignedVariable)->second;
+	unordered_map<string, string>::const_iterator got = declarationMap.find(assignedVariable);
+	if (got == declarationMap.end()) {
+		throw "not a valid declaration";
+	}
+	string assignedType = got->second;
 	if (!regex_match(assignedType, patternRegex)) {
 		throw "wrong assigned type";
 	}
