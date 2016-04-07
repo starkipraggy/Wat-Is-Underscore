@@ -142,6 +142,11 @@ private:
 	return true if type is ExprSpec
 	*/
 	static bool isExprSpec(Ref v);
+	//! Return declaration type given a declaration name
+	/*!
+	Return declaration type given a declaration name. Throw error if name not found
+	*/
+	string getDeclarationType(string name);
 };
 
 #endif

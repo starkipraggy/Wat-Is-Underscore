@@ -121,7 +121,8 @@ void Preprocessor::setDeclaration(string line) {
 		for (auto& x : variables) {
 			if (std::regex_match(x, identRegex)) {
 				std::pair<std::string, std::string> newPair(x, first);
-				if (declarationMap.find(x) != declarationMap.end()) {
+				unordered_map<string, string>::const_iterator got = declarationMap.find(x);
+				if (got != declarationMap.end()) {
 					throw "cannot have synonym with the same name";
 				}
 				declarationMap.insert(newPair);
@@ -143,13 +144,16 @@ void Preprocessor::setSelect() {
 		ref = createAttrRef(selectPart);
 	}
 	else {
-		unordered_map<string, string>::const_iterator got = declarationMap.find(selectPart);
-		if (got == declarationMap.end()) {
-			throw "no such declaration";
+		string type;
+
+		try {
+			type = getDeclarationType(selectPart);
 		}
-		else {
-			ref = Ref(selectPart, got->second);
+		catch (const char* msg) {
+			throw msg;
 		}
+
+		ref = Ref(selectPart, type);
 	}
 
 	QueryTree::Instance()->setSelect(ref);
@@ -293,11 +297,15 @@ void Preprocessor::addPatternClause(string rawClause) {
 	}
 	string assignedVariable = rawClause.substr(0, openBracket);
 	assignedVariable = trim(assignedVariable);
-	unordered_map<string, string>::const_iterator got = declarationMap.find(assignedVariable);
-	if (got == declarationMap.end()) {
-		throw "not a valid declaration";
+	string assignedType;
+	
+	try {
+		assignedType = getDeclarationType(assignedVariable);
 	}
-	string assignedType = got->second;
+	catch (const char* msg) {
+		throw msg;
+	}
+
 	if (!regex_match(assignedType, patternRegex)) {
 		throw "wrong assigned type";
 	}
@@ -363,13 +371,16 @@ Ref Preprocessor::createSuchThatRef(string name) {
 		result = Ref(name, "placeholder");
 	}
 	else if (regex_match(name, identRegex)) {
-		unordered_map<string, string>::const_iterator got = declarationMap.find(name);
-		if (got == declarationMap.end()) {
-			throw "no such declaration";
+		string type;
+		
+		try {
+			type = getDeclarationType(name);
 		}
-		else {
-			result = Ref(name, got->second);
+		catch (const char* msg) {
+			throw msg;
 		}
+
+		result = Ref(name, type);
 	}
 	else if (regex_match(name, expressionRegex)) {
 		result = Ref(name.substr(1, name.length() - 2), "expr");
@@ -395,12 +406,15 @@ Ref Preprocessor::createPatternRef(string name) {
 		ref = Ref(name.substr(1, name.length() - 2), "expr");
 	}
 	else if (regex_match(name, identRegex)) {
+		string type;
 		try {
-			ref = Ref(name, declarationMap.find(name)->second);
+			type = getDeclarationType(name);
 		}
 		catch (const char* msg) {
 			throw msg;
 		}
+
+		ref = Ref(name, type);
 	}
 	else {
 		throw "invalid pattern";
@@ -416,7 +430,7 @@ Ref Preprocessor::createWithRef(string name) {
 	}
 	else if (regex_match(name, identRegex)) {
 		try {
-			string type = declarationMap.find(name)->second;
+			string type = getDeclarationType(name);
 			if (type == "prog_line") {
 				ref = Ref(name, type);
 			}
@@ -451,7 +465,7 @@ Ref Preprocessor::createAttrRef(string name) {
 	string attrName = trim(name.substr(position + 1));
 	attrName = StringToUpper(attrName);
 	try {
-		type = declarationMap.find(synonym)->second;
+		type = getDeclarationType(synonym);
 	}
 	catch (const char* msg) {
 		throw msg;
@@ -516,4 +530,12 @@ bool Preprocessor::isExprSpec(Ref v) {
 	string type = v.getType();
 
 	return (type == "placeholder" || type == "part_of_expr" || type == "expr");
+}
+
+string Preprocessor::getDeclarationType(string name) {
+	unordered_map<string, string>::const_iterator got = declarationMap.find(name);
+	if (got == declarationMap.end()) {
+		throw "invalid declaration";
+	}
+	return got->second;
 }
