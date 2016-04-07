@@ -35,13 +35,13 @@ std::vector<std::string> QueryEvaluator::process() {
 				unordered_map<string, int>::const_iterator item = directory.find(assignVar.getName());
 
 				if (item == directory.end()) {
-					queryResult = pkb->PQLPattern(Assign, var1, var2);
+					queryResult = pkb->PQLPattern(toTNodeType(assignVar.getType()), var1, var2);
 					add(queryResult, assignVar.getName());
 				}
 				else {
 					for (vector<vector<string>>::iterator it = result.begin(); it != result.end();) {
 
-						queryResult = pkb->PQLPattern(Assign, var1, var2);
+						queryResult = pkb->PQLPattern(toTNodeType(assignVar.getType()), var1, var2);
 
 						it = query(queryResult, it, item->second);
 
