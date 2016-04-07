@@ -294,7 +294,8 @@ void PKB::CallStatement(std::string procedure) {
 	procedureBeingCalled->addStatementsCallBy(currentStatement->getStatementNumber());
 	procedureBeingCalled->addProcedureCallBy(currentProcedure);
 	currentProcedure->addProcedureCalls(procedureBeingCalled);
-	currentStatement->setCalls(procedureBeingCalled->getFirstStatementPointer());
+	currentStatement->setFirstCalls(procedureBeingCalled->getFirstStatementPointer());
+	currentStatement->setLastCalls(procedureBeingCalled->getLastStatementPointer());
 
 	// Retrieve information about this statement's ancestor(s) in order to add relationships later
 	int numberOfAncestors = currentStatement->getParentStarSize();

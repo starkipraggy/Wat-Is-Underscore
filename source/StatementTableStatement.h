@@ -21,8 +21,10 @@ private:
 	NAME controlVariable;									/**< Control variable, specifically for if and while statements, for pattern clauses.
 																 Also used for left hand side expression for assign statements, for Affects clauses */
 	int procedureIndexNumber;								/**< Index number of the procedure that it belongs to */
-	
-	StatementTableStatement** calls;						/**< The pointer to the pointer pointing to the first statement of the procedure
+
+	StatementTableStatement** firstCalls;					/**< The pointer to the pointer pointing to the first statement of the procedure
+																 that this Calls statement calls, or NULL if it is not a Calls statement*/
+	StatementTableStatement** lastCalls;					/**< The pointer to the pointer pointing to the last statement of the procedure
 																 that this Calls statement calls, or NULL if it is not a Calls statement*/
 	StatementTableStatement* follows;						/**< The pointer to the statement that this statement follows
 																 (this statement appears immediately after the one it follows) */
@@ -122,7 +124,15 @@ public:
 		use this function to retrieve the pointer to the pointer pointing to the first statement of the procedure that this Calls statement calls.
 		\return Pointer to the pointer pointing to the first statement of the procedure that this Calls statement calls, or NULL if it is not a Calls statement
 	*/
-	StatementTableStatement** getCalls();
+	StatementTableStatement** getFirstCalls();
+
+	//! Getter function for pointer to the pointer pointing to the last statement of the procedure that this Calls statement calls
+	/*!
+		Getter function for pointer to the pointer pointing to the last statement of the procedure that this Calls statement calls;
+		use this function to retrieve the pointer to the pointer pointing to the last statement of the procedure that this Calls statement calls.
+		\return Pointer to the pointer pointing to the last statement of the procedure that this Calls statement calls, or NULL if it is not a Calls statement
+	*/
+	StatementTableStatement** getLastCalls();
 
 	//! Checks if this is a statement that this statement is following.
 	/*!
@@ -175,7 +185,15 @@ public:
 		use this function to assign the pointer to the pointer pointing to the first statement of the procedure that this Calls statement calls.
 		\param follows Pointer to the pointer pointing to the first statement of the procedure that this Calls statement calls, or NULL if it is not a Calls statement.
 	*/
-	void setCalls(StatementTableStatement** calls);
+	void setFirstCalls(StatementTableStatement** firstCalls);
+
+	//! Setter function for the pointer to the pointer pointing to the last statement of the procedure that this Calls statement calls.
+	/*!
+		Setter function for the pointer to the pointer pointing to the last statement of the procedure that this Calls statement calls;
+		use this function to assign the pointer to the pointer pointing to the last statement of the procedure that this Calls statement calls.
+		\param follows Pointer to the pointer pointing to the last statement of the procedure that this Calls statement calls, or NULL if it is not a Calls statement.
+	*/
+	void setLastCalls(StatementTableStatement** lastCalls);
 
 	//! Setter function for the statement number of the statement that this statement is following.
 	/*!

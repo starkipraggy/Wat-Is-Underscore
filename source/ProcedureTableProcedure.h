@@ -21,6 +21,7 @@ private:
 	int index;												/**< Index number of this procedure */
 	std::vector<int>* statements;							/**< The index numbers of the statements that belongs to this procedure */
 	StatementTableStatement* firstStatement;				/**< Pointer to the object representing the first statement of this procedure */
+	StatementTableStatement* lastStatement;					/**< Pointer to the object representing the last statement of this procedure */
 
 	std::vector<int>* modifies;								/**< A list of the index numbers of variables that this procedure modifies */
 	std::vector<int>* uses;									/**< A list of the index numbers of variables that this procedure uses */
@@ -121,6 +122,14 @@ public:
      `-://///++mm/``:o-``-.``````````````.:-....``````````````...`-::.```````````````.-.om.    
 	*/
 	StatementTableStatement** getFirstStatementPointer();
+
+	//! Getter function for the pointer to the pointer to the last statement of the procedure.
+	/*!
+		Getter function for the pointer to the pointer to the last statement of the procedure;
+		use this function to retrieve the pointer to the pointer to the last statement of the procedure.
+		\return The pointer to the pointer to the last statement of the procedure.
+	*/
+	StatementTableStatement** getLastStatementPointer();
 
 	//! Getter function for members of the procedure calls vector.
 	/*!

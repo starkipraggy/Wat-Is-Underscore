@@ -5,6 +5,7 @@ ProcedureTableProcedure::ProcedureTableProcedure(std::string name, int index) {
 	this->index = index;
 	statements = new std::vector<int>();
 	firstStatement = NULL;
+	lastStatement = NULL;
 
 	modifies = new std::vector<int>();
 	uses = new std::vector<int>();
@@ -71,6 +72,10 @@ StatementTableStatement** ProcedureTableProcedure::getFirstStatementPointer() {
 	dd+/+hdddddddddddddddddddms-----/++.....:////+//:::::::////+///:-..-+++-----+dddmdddddddddddddddddds
 	*/
 	return &firstStatement;
+}
+
+StatementTableStatement** ProcedureTableProcedure::getLastStatementPointer() {
+	return &lastStatement;
 }
 
 ProcedureTableProcedure* ProcedureTableProcedure::getProcedureCalls(int index) {
@@ -165,6 +170,7 @@ void ProcedureTableProcedure::addStatement(StatementTableStatement* statement) {
 	if (statements->size() == 0) {
 		firstStatement = statement;
 	}
+	lastStatement = statement;
 	statements->push_back(statement->getStatementNumber());
 }
 
