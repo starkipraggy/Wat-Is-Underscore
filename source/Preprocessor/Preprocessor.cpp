@@ -72,9 +72,16 @@ void Preprocessor::initialize(string statement) {
 
 	//set selectPart
 	if (statement.find(' ') != string::npos) {
-		int position = statement.find(' ');
-		selectPart = statement.substr(0, position);
-		clausesPart = trim(statement.substr(position + 1));
+		if (statement.find('>') != string::npos) {
+			int position = statement.find('>');
+			selectPart = statement.substr(0, position + 1);
+			clausesPart = trim(statement.substr(position));
+		}
+		else {
+			int position = statement.find(' ');
+			selectPart = statement.substr(0, position);
+			clausesPart = trim(statement.substr(position + 1));
+		}
 	}
 	else {
 		selectPart = statement;
