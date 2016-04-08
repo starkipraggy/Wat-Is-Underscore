@@ -156,7 +156,7 @@ void Preprocessor::setSelect() {
 		ref = Ref(selectPart, type);
 	}
 
-	QueryTree::Instance()->setSelect(ref);
+	QueryTree::Instance()->setSelect({ ref });
 }
 
 void Preprocessor::setQueryTree() {

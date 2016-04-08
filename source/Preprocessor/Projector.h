@@ -9,6 +9,7 @@ for output. It also generate output in the desired format
 
 #include <string>
 #include <vector>
+using namespace std;
 
 class Projector {
 public:
@@ -16,7 +17,7 @@ public:
 	/*!
 	Main method to Process raw result and generate string of output
 	*/
-	std::vector<std::string> process(std::vector<std::string> result);
+	std::vector<std::string> process(std::vector<std::vector<std::string>> rawResult);
 
 private:
 };

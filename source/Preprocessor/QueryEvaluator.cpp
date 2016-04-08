@@ -8,8 +8,8 @@ const regex nameRegex("^[[:alpha:]]([[:alnum:]]*$)");
 
 PKB* pkb;
 
-std::vector<std::string> QueryEvaluator::process() {
-	Ref select = QueryTree::Instance()->getSelect();
+vector<vector<string>> QueryEvaluator::process() {
+	vector<Ref> select = QueryTree::Instance()->getSelect();
 	vector<Clause*> clauses = QueryTree::Instance()->getClauses();
 	vector<string> queryResult;
 	pkb = PKB::getInstance();
@@ -160,33 +160,34 @@ std::vector<std::string> QueryEvaluator::process() {
 					processOneSynonym(var2, var1, clause, 2);
 				}
 				else {
+					string type;
+					if (clause == "calls" || clause == "calls*") {
+						type = "procedure";
+					}
+					else {
+						type = "stmt";
+					}
+
 					if (var1.getType() == "placeholder") {
-						queryResult = queryPKB(clause, var2.getName(), 1, select.getType());
+						queryResult = queryPKB(clause, var2.getName(), 1, type);
 						if (queryResult.size() < 1) {
 							throw "result false";
 						}
 					}
 					if (var2.getType() == "placeholder") {
-						queryResult = queryPKB(clause, var1.getName(), 1, select.getType());
+						queryResult = queryPKB(clause, var1.getName(), 1, type);
 						if (queryResult.size() < 1) {
 							throw "result false";
 						}
 					}
 					else {
-						string type;
-						if (clause == "calls" || clause == "calls*") {
-							type = "procedure";
-						}
-						else {
-							type = "stmt";
-						}
 						queryResult = queryPKB(clause, var2.getName(), 1, type);
 						if (find(queryResult.begin(), queryResult.end(), var1.getName()) == queryResult.end()) {
-							if (select.getType() == "boolean") {
-								return {"false"};
+							if (select.at(0).getType() == "boolean") {
+								return{ {"false"} };
 							}
 							else {
-								return {};
+								return{ {} };
 							}
 						}
 						else {
@@ -198,26 +199,36 @@ std::vector<std::string> QueryEvaluator::process() {
 		}
 	}
 	 
-	vector<string> output;
+	vector<vector<string>> output;
 
-	if (select.getType() != "boolean") {
-		unordered_map<string, int>::const_iterator item = directory.find(select.getName());
-		if (item == directory.end()) {
-			queryResult = pkb->PQLSelect(toTNodeType(select.getType()));
-			add(queryResult, select.getName());
+	if (select.at(0).getType() != "boolean") {
+		unordered_map<string, int>::const_iterator item;
+		vector<string> eachOutput;
+		vector<int> tempPos;
+
+		for (unsigned int i = 0; i < select.size(); i++) {
+			item = directory.find(select.at(i).getName());
+			if (item == directory.end()) {
+				queryResult = pkb->PQLSelect(toTNodeType(select.at(i).getType()));
+				add(queryResult, select.at(i).getName());
+			}
+			item = directory.find(select.at(i).getName());
+			tempPos.push_back(item->second);
 		}
-
-		item = directory.find(select.getName());
 		for (unsigned int i = 0; i < result.size(); i++) {
-			output.push_back(result.at(i).at(item->second));
+			eachOutput = {};
+			for (unsigned int j = 0; j < tempPos.size(); j++) {
+				eachOutput.push_back(result.at(i).at(tempPos.at(j)));
+			}
+			output.push_back(eachOutput);
 		}
 	}
 	else {
 		if (result.size() > 0 || isTrueStatement) {
-			output.push_back("true");
+			output = { {"true"} };
 		}
 		else {
-			output.push_back("false");
+			output = { {"false"} };
 		}
 	}
 	return output;

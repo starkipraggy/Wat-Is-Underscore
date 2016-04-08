@@ -26,7 +26,7 @@ public:
 	/*!
 	Main method to Process QueryTree and generate result
 	*/
-	std::vector<string> process();
+	vector<vector<string>> process();
 
 private:
 	int directoryIndex; /**< int to increment table count */

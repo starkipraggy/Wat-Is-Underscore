@@ -12,7 +12,7 @@ namespace UnitTesting {
 		Preprocessor p;
 
 		//setup
-		Ref select;
+		vector<Ref> select;
 		vector<Clause*> clauses;
 
 
@@ -61,7 +61,7 @@ namespace UnitTesting {
 			select = QueryTree::Instance()->getSelect();
 			clauses = QueryTree::Instance()->getClauses();
 
-			Assert::IsTrue(select.equals(assignVar));
+			Assert::IsTrue(select.at(0).equals(assignVar));
 			Assert::IsTrue(clauses.empty());
 		}
 
@@ -71,7 +71,7 @@ namespace UnitTesting {
 			select = QueryTree::Instance()->getSelect();
 			clauses = QueryTree::Instance()->getClauses();
 
-			Assert::IsTrue(select.equals(boolVar));
+			Assert::IsTrue(select.at(0).equals(boolVar));
 			Assert::IsTrue(clauses.empty());
 		}
 
@@ -81,7 +81,7 @@ namespace UnitTesting {
 			select = QueryTree::Instance()->getSelect();
 			clauses = QueryTree::Instance()->getClauses();
 			
-			Assert::IsTrue(select.equals(variableVar));
+			Assert::IsTrue(select.at(0).equals(variableVar));
 			Assert::IsTrue(clauses.at(0)->equals(usesClause));
 		}
 
@@ -91,7 +91,7 @@ namespace UnitTesting {
 			select = QueryTree::Instance()->getSelect();
 			clauses = QueryTree::Instance()->getClauses();
 
-			Assert::IsTrue(select.equals(whileVar));
+			Assert::IsTrue(select.at(0).equals(whileVar));
 			Assert::IsTrue(clauses.at(0)->equals(new Clause("follows", whileVar, assignVar)));
 		}
 
@@ -101,7 +101,7 @@ namespace UnitTesting {
 			select = QueryTree::Instance()->getSelect();
 			clauses = QueryTree::Instance()->getClauses();
 
-			Assert::IsTrue(select.equals(whileVar));
+			Assert::IsTrue(select.at(0).equals(whileVar));
 			Assert::IsTrue(clauses.at(0)->equals(new Clause("follows", assignVar, whileVar)));
 		}
 
@@ -111,7 +111,7 @@ namespace UnitTesting {
 			select = QueryTree::Instance()->getSelect();
 			clauses = QueryTree::Instance()->getClauses();
 
-			Assert::IsTrue(select.equals(stmtVar));
+			Assert::IsTrue(select.at(0).equals(stmtVar));
 			Assert::IsTrue(clauses.at(0)->equals(new Clause("follows*", stmtVar, integerVar)));
 		}
 
@@ -121,7 +121,7 @@ namespace UnitTesting {
 			select = QueryTree::Instance()->getSelect();
 			clauses = QueryTree::Instance()->getClauses();
 
-			Assert::IsTrue(select.equals(assignVar));
+			Assert::IsTrue(select.at(0).equals(assignVar));
 			Assert::IsTrue(patternClause->equals(clauses.at(0)));
 		}
 
@@ -131,7 +131,7 @@ namespace UnitTesting {
 			select = QueryTree::Instance()->getSelect();
 			clauses = QueryTree::Instance()->getClauses();
 
-			Assert::IsTrue(select.equals(procedureVar));
+			Assert::IsTrue(select.at(0).equals(procedureVar));
 			Assert::IsTrue(withClause->equals(clauses.at(0)));
 		}
 
@@ -141,7 +141,7 @@ namespace UnitTesting {
 			select = QueryTree::Instance()->getSelect();
 			clauses = QueryTree::Instance()->getClauses();
 
-			Assert::IsTrue(select.equals(assignVar));
+			Assert::IsTrue(select.at(0).equals(assignVar));
 			Assert::IsTrue(clauses.at(0)->equals(usesClause));
 			Assert::IsTrue(patternClause->equals(clauses.at(1)));
 		}

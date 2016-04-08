@@ -16,6 +16,7 @@ namespace UnitTesting {
 		Ref select;
 		vector<Clause*> clauses;
 		PKB* pkb;
+		vector<vector<string>> output;
 
 		Ref placeholderVar, partOfExpressionVar, exprVar, integerVar,
 			stmtVar, assignVar, whileVar, variableVar, constantVar, progLineVar,
@@ -58,72 +59,72 @@ namespace UnitTesting {
 
 		TEST_METHOD(TestEvaluator_SelectEvaluation)
 		{
-			QueryTree::Instance()->setSelect(variableVar);
+			QueryTree::Instance()->setSelect({ variableVar });
 			
-			vector<string> output = q.process();
+			output = q.process();
 			
-			Assert::IsTrue(output.at(0) == "AnswerForSelect", (wchar_t*)output.at(0).c_str());
+			Assert::IsTrue(output.at(0).at(0) == "AnswerForSelect");
 		}
 
 		TEST_METHOD(TestEvaluator_UsesFirstEvaluation)
 		{
-			QueryTree::Instance()->setSelect(assignVar);
+			QueryTree::Instance()->setSelect({ assignVar });
 			QueryTree::Instance()->addClause(usesClauseFirst);
 
-			vector<string> output = q.process();
+			output = q.process();
 
-			Assert::IsTrue(output.at(0) == "AnswerForUses", (wchar_t*)output.at(0).c_str());
+			Assert::IsTrue(output.at(0).at(0) == "AnswerForUses");
 		}
 
 		TEST_METHOD(TestEvaluator_UsesSecondEvaluation)
 		{
-			QueryTree::Instance()->setSelect(stmtVar);
+			QueryTree::Instance()->setSelect({ stmtVar });
 			QueryTree::Instance()->addClause(usesClauseSecond);
 
-			vector<string> output = q.process();
+			output = q.process();
 
-			Assert::IsTrue(output.at(0) == "AnswerForUses", (wchar_t*)output.at(0).c_str());
+			Assert::IsTrue(output.at(0).at(0) == "AnswerForUses");
 		}
 
 		TEST_METHOD(TestEvaluator_UsesBothEvaluation)
 		{
-			QueryTree::Instance()->setSelect(stmtVar);
+			QueryTree::Instance()->setSelect({ stmtVar });
 			QueryTree::Instance()->addClause(usesClauseBoth);
 
-			vector<string> output = q.process();
+			output = q.process();
 
-			Assert::IsTrue(output.at(0) == "AnswerForUses", (wchar_t*)output.at(0).c_str());
+			Assert::IsTrue(output.at(0).at(0) == "AnswerForUses");
 		}
 
 		TEST_METHOD(TestEvaluator_PatternEvaluation)
 		{
-			QueryTree::Instance()->setSelect(assignVar);
+			QueryTree::Instance()->setSelect({ assignVar });
 			QueryTree::Instance()->addClause(patternClause);
 
-			vector<string> output = q.process();
+			output = q.process();
 
-			Assert::IsTrue(output.at(0) == "AnswerForPattern", (wchar_t*)output.at(0).c_str());
+			Assert::IsTrue(output.at(0).at(0) == "AnswerForPattern");
 		}
 
 		TEST_METHOD(TestEvaluator_WithEvaluation)
 		{
-			QueryTree::Instance()->setSelect(assignVar);
+			QueryTree::Instance()->setSelect({ assignVar });
 			QueryTree::Instance()->addClause(withClause);
 
-			vector<string> output = q.process();
+			output = q.process();
 
-			Assert::IsTrue(output.at(0) == "AnswerForWith", (wchar_t*)output.at(0).c_str());
+			Assert::IsTrue(output.at(0).at(0) == "AnswerForWith");
 		}
 
 		TEST_METHOD(TestEvaluator_MixEvaluation)
 		{
-			QueryTree::Instance()->setSelect(assignVar);
+			QueryTree::Instance()->setSelect({ assignVar });
 			QueryTree::Instance()->addClause(usesClauseFirst);
 			QueryTree::Instance()->addClause(patternClause);
 
-			vector<string> output = q.process();
+			output = q.process();
 
-			Assert::IsTrue(output.at(0) == "AnswerForMix", (wchar_t*)output.at(0).c_str());
+			Assert::IsTrue(output.at(0).at(0) == "AnswerForMix");
 		}
 
 	};
