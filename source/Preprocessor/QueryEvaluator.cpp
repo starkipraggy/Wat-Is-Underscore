@@ -245,14 +245,14 @@ void QueryEvaluator::processOneSynonym(Ref source, Ref des, string clause, int p
 			}
 			result = tempResult;
 
+			addDirectory(source.getName());
+
 		}
 		else {
 			queryResult = queryPKB(clause, des.getName(), pos, source.getType());
 			add(queryResult, source.getName());
 
 		}
-
-		addDirectory(source.getName());
 
 	}
 	else {
