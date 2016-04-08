@@ -26,7 +26,9 @@ namespace UnitTesting {
 
 		const string simpleQuery = "assign a; select a",
 			simpleBoolQuery = "assign a; select BOOLEAN",
+			simpleTupleQuery = "assign a; variable v; select <a,v>",
 			usesQuery = "variable v; assign a; select v such that uses(a, v)",
+			usesTupleQuery = "variable v; assign a; select <a,v> such that uses(a, v)",
 			patternQuery = "assign a; select a pattern a(_,\"abc\")",
 			withQuery = "procedure p; select p with p.procName = \"abc\"",
 			combinedQuery = "variable v; assign a; select a such that uses(a, v) pattern a(_,\"abc\")";
@@ -75,6 +77,17 @@ namespace UnitTesting {
 			Assert::IsTrue(clauses.empty());
 		}
 
+		TEST_METHOD(TestPreprocessor_SimpleTupleQuery)
+		{
+			p.process(simpleTupleQuery);
+			select = QueryTree::Instance()->getSelect();
+			clauses = QueryTree::Instance()->getClauses();
+
+			Assert::IsTrue(select.at(0).equals(assignVar));
+			Assert::IsTrue(select.at(1).equals(variableVar));
+			Assert::IsTrue(clauses.empty());
+		}
+
 		TEST_METHOD(TestPreprocessor_UsesQuery)
 		{
 			p.process(usesQuery);
@@ -82,6 +95,18 @@ namespace UnitTesting {
 			clauses = QueryTree::Instance()->getClauses();
 			
 			Assert::IsTrue(select.at(0).equals(variableVar));
+			Assert::IsTrue(clauses.at(0)->equals(usesClause));
+		}
+
+
+		TEST_METHOD(TestPreprocessor_UsesTupleQuery)
+		{
+			p.process(usesTupleQuery);
+			select = QueryTree::Instance()->getSelect();
+			clauses = QueryTree::Instance()->getClauses();
+
+			Assert::IsTrue(select.at(0).equals(assignVar));
+			Assert::IsTrue(select.at(1).equals(variableVar));
 			Assert::IsTrue(clauses.at(0)->equals(usesClause));
 		}
 

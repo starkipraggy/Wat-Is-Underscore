@@ -66,6 +66,16 @@ namespace UnitTesting {
 			Assert::IsTrue(output.at(0).at(0) == "AnswerForSelect");
 		}
 
+		TEST_METHOD(TestEvaluator_TupleEvaluation)
+		{
+			QueryTree::Instance()->setSelect({ variableVar, assignVar });
+
+			output = q.process();
+
+			Assert::IsTrue(output.at(0).at(0) == "AnswerForSelect");
+			Assert::IsTrue(output.at(0).at(1) == "AnswerForSelect");
+		}
+
 		TEST_METHOD(TestEvaluator_UsesFirstEvaluation)
 		{
 			QueryTree::Instance()->setSelect({ assignVar });

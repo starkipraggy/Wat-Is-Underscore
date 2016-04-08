@@ -18,11 +18,6 @@ vector<vector<string>> QueryEvaluator::process() {
 	directoryIndex = 0;
 	directory = {};
 	result = {};
-	/*if (select.getType() != "boolean") {
-		vector<string> eachTemp;
-		queryResult = pkb->PQLSelect(toTNodeType(select.getType()));
-		add(queryResult, select.getName());
-	}*/
 
 	if (!clauses.empty()) {
 		for (auto& x : clauses) {
@@ -199,22 +194,23 @@ vector<vector<string>> QueryEvaluator::process() {
 		}
 	}
 	 
-	vector<vector<string>> output;
+	vector<vector<string>> output = {};
 
 	if (select.at(0).getType() != "boolean") {
 		unordered_map<string, int>::const_iterator item;
 		vector<string> eachOutput;
-		vector<int> tempPos;
+		vector<int> tempPos = {};
 
 		for (unsigned int i = 0; i < select.size(); i++) {
 			item = directory.find(select.at(i).getName());
 			if (item == directory.end()) {
 				queryResult = pkb->PQLSelect(toTNodeType(select.at(i).getType()));
 				add(queryResult, select.at(i).getName());
+				item = directory.find(select.at(i).getName());
 			}
-			item = directory.find(select.at(i).getName());
 			tempPos.push_back(item->second);
 		}
+
 		for (unsigned int i = 0; i < result.size(); i++) {
 			eachOutput = {};
 			for (unsigned int j = 0; j < tempPos.size(); j++) {

@@ -2,6 +2,8 @@
 using namespace std;
 using namespace std::regex_constants;
 
+const regex tupleRegex("^<[[:space:]]*[[:alpha:]]([#[:alnum:]])*([[:space:]]*,[[:space:]]*[[:alpha:]]([#[:alnum:]])*)*[[:space:]]*>$");
+
 const regex identRegex("^[[:alpha:]]([#[:alnum:]]*$)");
 const regex integerRegex("^[[:digit:]]+$");
 const regex placeholderRegex("^_$");
@@ -75,7 +77,7 @@ void Preprocessor::initialize(string statement) {
 		if (statement.find('>') != string::npos) {
 			int position = statement.find('>');
 			selectPart = statement.substr(0, position + 1);
-			clausesPart = trim(statement.substr(position));
+			clausesPart = trim(statement.substr(position + 2));
 		}
 		else {
 			int position = statement.find(' ');
@@ -136,27 +138,41 @@ void Preprocessor::setDeclaration(string line) {
 
 void Preprocessor::setSelect() {
 	Ref ref;
+	vector<string> eachSelect;
+	vector<Ref> select;
 
-	if (regex_match(selectPart, booleanRegex)) {
-		ref = Ref("", "boolean");
-	}
-	else if (selectPart.find(".") != string::npos) {
-		ref = createAttrRef(selectPart);
+	if (regex_match(selectPart, tupleRegex)) {
+		selectPart = selectPart.substr(1, selectPart.length() - 2);
+
+		eachSelect = tokenize(selectPart, ",");
 	}
 	else {
-		string type;
-
-		try {
-			type = getDeclarationType(selectPart);
-		}
-		catch (const char* msg) {
-			throw msg;
-		}
-
-		ref = Ref(selectPart, type);
+		eachSelect = {selectPart};
 	}
 
-	QueryTree::Instance()->setSelect({ ref });
+	for (unsigned int i = 0; i < eachSelect.size(); i++) {
+		selectPart = trim(eachSelect.at(i));
+		if (regex_match(selectPart, booleanRegex)) {
+			ref = Ref("", "boolean");
+		}
+		else if (selectPart.find(".") != string::npos) {
+			ref = createAttrRef(selectPart);
+		}
+		else {
+			string type;
+
+			try {
+				type = getDeclarationType(selectPart);
+			}
+			catch (const char* msg) {
+				throw msg;
+			}
+
+			ref = Ref(selectPart, type);
+		}
+		select.push_back(ref);
+	}
+	QueryTree::Instance()->setSelect(select);
 }
 
 void Preprocessor::setQueryTree() {
