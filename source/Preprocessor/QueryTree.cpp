@@ -57,21 +57,3 @@ void QueryTree::newTree() {
 		temp.assign(remaining.begin(), remaining.end());
 	}
 }*/
-
-bool QueryTree::v1Validation() {
-	if (clauses.size() > 2) {
-		throw "only can have max two clause";
-	}
-	else if (clauses.size() == 2) {
-		if (clauses[0]->getClause() == "PATTERN" && clauses[1]->getClause() == "PATTERN") {
-			throw "cannot have more than one pattern clause";
-		}
-		else if (!(clauses[0]->getClause() == "PATTERN" || clauses[1]->getClause() == "PATTERN")) {
-			throw "can only have one such that clause";
-		}
-		if (!clauses[0]->hasAtMostOneCommonSynonym(clauses[1])) {
-			throw "clauses can only have one common synonym";
-		}
-	}
-	return true;
-}

@@ -57,15 +57,7 @@ public:
 	void newTree();
 
 	//void buildTree();
-	
-
-	//! Special validation for Iteration One
-	/*!
-	As Iteration One constrain some of the functionality, this method is use as a 
-	additional check to restrict these functionality
-	*/
-	bool v1Validation();
-	
+		
 private:
 	static QueryTree* m_pInstance;
 	Ref selectVariable; /**< variable of the select clause */
