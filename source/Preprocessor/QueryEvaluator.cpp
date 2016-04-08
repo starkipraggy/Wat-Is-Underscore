@@ -18,11 +18,11 @@ std::vector<std::string> QueryEvaluator::process() {
 	directoryIndex = 0;
 	directory = {};
 	result = {};
-	if (select.getType() != "boolean") {
+	/*if (select.getType() != "boolean") {
 		vector<string> eachTemp;
 		queryResult = pkb->PQLSelect(toTNodeType(select.getType()));
 		add(queryResult, select.getName());
-	}
+	}*/
 
 	if (!clauses.empty()) {
 		for (auto& x : clauses) {
@@ -140,12 +140,15 @@ std::vector<std::string> QueryEvaluator::process() {
 						queryResult = pkb->PQLSelect(toTNodeType(var1.getType()));
 						add(queryResult, var1.getName());
 
-						for (vector<vector<string>>::iterator it = result.begin(); it != result.end();) {
+						item1 = directory.find(var1.getName());
+						tempResult = {};
+						for (unsigned int i = 0; i < result.size(); i++) {
 
-							queryResult = queryPKB(clause, it->at(item1->second), 2, var2.getType());
-							it = query(queryResult, it, item2->second);
+							queryResult = queryPKB(clause, result.at(i).at(item1->second), 2, var2.getType());
+							tempResult = add(queryResult, i, tempResult);
 
 						}
+						result = tempResult;
 
 						addDirectory(var2.getName());
 					}
@@ -198,8 +201,15 @@ std::vector<std::string> QueryEvaluator::process() {
 	vector<string> output;
 
 	if (select.getType() != "boolean") {
+		unordered_map<string, int>::const_iterator item = directory.find(select.getName());
+		if (item == directory.end()) {
+			queryResult = pkb->PQLSelect(toTNodeType(select.getType()));
+			add(queryResult, select.getName());
+		}
+
+		item = directory.find(select.getName());
 		for (unsigned int i = 0; i < result.size(); i++) {
-			output.push_back(result.at(i).at(0));
+			output.push_back(result.at(i).at(item->second));
 		}
 	}
 	else {
@@ -231,13 +241,7 @@ void QueryEvaluator::processOneSynonym(Ref source, Ref des, string clause, int p
 		}
 		else {
 			queryResult = queryPKB(clause, des.getName(), pos, source.getType());
-			tempResult = {};
-			for (unsigned int i = 0; i < result.size(); i++) {
-
-				tempResult = add(queryResult, i, tempResult);
-
-			}
-			result = tempResult;
+			add(queryResult, source.getName());
 
 		}
 
