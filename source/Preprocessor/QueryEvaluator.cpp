@@ -14,6 +14,7 @@ std::vector<std::string> QueryEvaluator::process() {
 	vector<string> queryResult;
 	pkb = PKB::getInstance();
 
+	isTrueStatement = false;
 	directoryIndex = 0;
 	directory = {};
 	result = {};
@@ -88,6 +89,9 @@ std::vector<std::string> QueryEvaluator::process() {
 				else {
 					if (var1.getName() != var2.getName()) {
 						throw "false evaluation";
+					}
+					else {
+						isTrueStatement = true;
 					}
 				}
 			}
@@ -182,6 +186,9 @@ std::vector<std::string> QueryEvaluator::process() {
 								return {};
 							}
 						}
+						else {
+							isTrueStatement = true;
+						}
 					}
 				}
 			}
@@ -196,7 +203,7 @@ std::vector<std::string> QueryEvaluator::process() {
 		}
 	}
 	else {
-		if (result.size() > 0) {
+		if (result.size() > 0 || isTrueStatement) {
 			output.push_back("true");
 		}
 		else {

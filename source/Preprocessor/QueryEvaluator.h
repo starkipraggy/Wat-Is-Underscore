@@ -33,7 +33,7 @@ private:
 	unordered_map<string, int> directory; /**< map to store result col name and number */
 	vector<vector<string>> result; /**< table to track output result */
 	vector<vector<string>> tempResult; /**< temp for result */
-
+	bool isTrueStatement; /**< true if non-synonym clauses are true */
 
 	//! internal method to process one synonymn
 	/*!
