@@ -92,7 +92,7 @@ namespace UnitTesting {
 
 			vector<string> output = q.process();
 
-			Assert::IsTrue(output.at(0) == "AnswerForSelect", (wchar_t*)output.at(0).c_str());
+			Assert::IsTrue(output.at(0) == "AnswerForUses", (wchar_t*)output.at(0).c_str());
 		}
 
 		TEST_METHOD(TestEvaluator_PatternEvaluation)
