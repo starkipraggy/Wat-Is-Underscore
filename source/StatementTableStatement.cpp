@@ -349,6 +349,10 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getNextStar() {
     return result;
 }
 
+// Set to true if statements in procedures being called should be traced for Affects
+// Set to false if going to simply regard the variables modified by the procedure
+bool bonusImplementation = false;
+
 std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis() {
 	if (affectsThis == NULL) {
 		affectsThis = new std::vector<StatementTableStatement*>();
@@ -356,6 +360,8 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis()
 			// Used by the algorithm to keep track of its progress
 			std::set<int> statementNumbersOfStatementsAlreadyChecked;
 			std::stack<StatementTableStatement*> statementsToCheck;
+			// This stack is only used by the bonus implementation
+			std::stack<StatementTableStatement*> statementsFromPreviousProcedures;
 			std::unordered_map<StatementTableStatement*, std::vector<int>> statementsAndUseVariablesToCheck;
 
 			// Use to keep track of the current statement being processed by the algorithm
@@ -400,8 +406,8 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis()
 
 				// Make sure we check only assign statements
 				if (currentStatementToCheck->getType() == Assign) {
-					// Check its modify variables and see if there are any 
-					// that matches the uses variables that this statement has
+					// Check the list of uses variables and see if there are any 
+					// that matches the modify variable that this statement has
 					for (int i = 0; i < thisStatementUseVariableIndexesSize; i++) {
 						if (currentStatementToCheck->getModifies(0) == thisStatementUseVariableIndexes[i]) {
 							affectsThis->push_back(currentStatementToCheck); // Add it into the list to be returned
@@ -412,21 +418,58 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis()
 						}
 					}
 				}
+				else if ((currentStatementToCheck->getType() == Call) && (!bonusImplementation)) {
+					// Check the list of uses variables and see if there are any 
+					// that matches the modify variables that this statement has
+					for (int i = 0; i < thisStatementUseVariableIndexesSize; i++) {
+						if (currentStatementToCheck->getModifies(0) != thisStatementUseVariableIndexes[i]) {
+							// Variables not used by current statement can be continued to be checked in previous node(s)
+							previousStatementUseVariableIndexes.push_back(thisStatementUseVariableIndexes[i]);
+						}
+					}
+				}
 				else {
-					// We do not take any variables away if this is not an assign statement
+					// We do not take any variables away if this is not an assign/calls statement
 					previousStatementUseVariableIndexes = thisStatementUseVariableIndexes;
 				}
 
 				// Continue up the CFG - make sure there is still at least one remaining use variables
 				// that we have to check with before adding it into the statementsToCheck stack
 				if (previousStatementUseVariableIndexes.size() > 0) {
-					currentStatementPrevious = currentStatementToCheck->getPrevious();
-					currentStatementPreviousSize = currentStatementPrevious->size();
-					for (int i = 0; i < currentStatementPreviousSize; i++) {
-						currentStatementPreviousSpecific = currentStatementPrevious->at(i);
+					if ((currentStatementToCheck->getType() == Call) && (bonusImplementation)) {
+						currentStatementPreviousSpecific = *currentStatementToCheck->getLastCalls();
 						if (statementNumbersOfStatementsAlreadyChecked.count(currentStatementPreviousSpecific->getStatementNumber()) == 0) {
 							statementsToCheck.push(currentStatementPreviousSpecific);
 							statementsAndUseVariablesToCheck.insert({ currentStatementPreviousSpecific, previousStatementUseVariableIndexes });
+						}
+						currentStatementPrevious = currentStatementToCheck->getPrevious();
+						currentStatementPreviousSize = currentStatementPrevious->size();
+						if (currentStatementPreviousSize > 0) {
+							// Call should only have 0~1 Next
+							currentStatementPreviousSpecific = currentStatementPrevious->at(0);
+							if (statementNumbersOfStatementsAlreadyChecked.count(currentStatementPreviousSpecific->getStatementNumber()) == 0) {
+								statementsFromPreviousProcedures.push(currentStatementPreviousSpecific);
+							}
+						}
+					}
+					else {
+						currentStatementPrevious = currentStatementToCheck->getPrevious();
+						currentStatementPreviousSize = currentStatementPrevious->size();
+						for (int i = 0; i < currentStatementPreviousSize; i++) {
+							currentStatementPreviousSpecific = currentStatementPrevious->at(i);
+							if (statementNumbersOfStatementsAlreadyChecked.count(currentStatementPreviousSpecific->getStatementNumber()) == 0) {
+								statementsToCheck.push(currentStatementPreviousSpecific);
+								statementsAndUseVariablesToCheck.insert({ currentStatementPreviousSpecific, previousStatementUseVariableIndexes });
+							}
+						}
+
+						// If statement has no next, and there is a previous procedure
+						// that called the procedure this statement is in, we try to jump back
+						if ((currentStatementPreviousSize == 0) && (!statementsFromPreviousProcedures.empty())) {
+							currentStatementPreviousSpecific = statementsFromPreviousProcedures.top();
+							statementsToCheck.push(currentStatementPreviousSpecific);
+							statementsAndUseVariablesToCheck.insert({ currentStatementPreviousSpecific, previousStatementUseVariableIndexes });
+							statementsFromPreviousProcedures.pop();
 						}
 					}
 				}
@@ -445,6 +488,8 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectedByThi
 			// Used by the algorithm to keep track of its progress
 			std::set<int> statementNumbersOfStatementsAlreadyChecked;
 			std::stack<StatementTableStatement*> statementsToCheck;
+			// This stack is only used by the bonus implementation
+			std::stack<StatementTableStatement*> statementsFromPreviousProcedures;
 
 			// Use to keep track of the current statement being processed by the algorithm
 			StatementTableStatement* currentStatementToCheck;
@@ -453,6 +498,7 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectedByThi
 
 			// Use to obtain the next node(s) of the current statement
 			// being processed to be added into the statementsToCheck stack
+			StatementTableStatement* nextStatement;
 			std::vector<StatementTableStatement*>* currentStatementNext;
 			int currentStatementNextSize;
 			if (getNext()->size() > 0) {
@@ -485,23 +531,75 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectedByThi
 					}
 				}
 
+				currentStatementNext = currentStatementToCheck->getNext();
+				currentStatementNextSize = currentStatementNext->size();
 				// If it does not modify, we continue down the CFG
-				if ((currentStatementToCheck->getType() != Assign) || (currentStatementToCheck->getModifies(0) != variableIndex)) {
-					currentStatementNext = currentStatementToCheck->getNext();
-					currentStatementNextSize = currentStatementNext->size();
-					for (int i = 0; i < currentStatementNextSize; i++) {
-						StatementTableStatement* nextStatement = currentStatementNext->at(i);
-						if (statementNumbersOfStatementsAlreadyChecked.count(nextStatement->getStatementNumber()) == 0) {
-							statementsToCheck.push(nextStatement);
+				if ((currentStatementToCheck->getType() != Assign) ||
+					((currentStatementToCheck->getType() == Assign) && (currentStatementToCheck->getModifies(0) != variableIndex))) {
+					if (currentStatementToCheck->getType() == Call) {
+						if (bonusImplementation) {
+
+							// Push in information about next into statementsFromPreviousProcedures stack
+							for (int i = 0; i < currentStatementNextSize; i++) {
+								nextStatement = currentStatementNext->at(i);
+								if (statementNumbersOfStatementsAlreadyChecked.count(nextStatement->getStatementNumber()) == 0) {
+									statementsFromPreviousProcedures.push(nextStatement);
+								}
+							}
+
+							// Trace through the statements in the procedure being called
+							nextStatement = *currentStatementToCheck->getFirstCalls();
+							if (statementNumbersOfStatementsAlreadyChecked.count(nextStatement->getStatementNumber()) == 0) {
+								statementsToCheck.push(nextStatement);
+							}
+						}
+						else {
+							// Push the next statement (if any) if this procedure does not modify variable
+							bool doesModifyVariable = false;
+							int currentStatementModifiesSize = currentStatementToCheck->getModifiesSize();
+							for (int i = 0; i < currentStatementModifiesSize; i++) {
+								if (currentStatementToCheck->getModifies(i) == variableIndex) {
+									doesModifyVariable = true;
+									i = currentStatementModifiesSize;
+								}
+							}
+							if (!doesModifyVariable) {
+								for (int i = 0; i < currentStatementNextSize; i++) {
+									nextStatement = currentStatementNext->at(i);
+									if (statementNumbersOfStatementsAlreadyChecked.count(nextStatement->getStatementNumber()) == 0) {
+										statementsToCheck.push(nextStatement);
+									}
+								}
+								// If no more next, check the statementsFromPreviousProcedures stack,
+								// which will only have statements pushed onto it in the bonus implementation
+								if ((currentStatementNextSize == 0) && (!statementsFromPreviousProcedures.empty())) {
+									statementsToCheck.push(statementsFromPreviousProcedures.top());
+									statementsFromPreviousProcedures.pop();
+								}
+							}
 						}
 					}
+					else {
+						for (int i = 0; i < currentStatementNextSize; i++) {
+							StatementTableStatement* nextStatement = currentStatementNext->at(i);
+							if (statementNumbersOfStatementsAlreadyChecked.count(nextStatement->getStatementNumber()) == 0) {
+								statementsToCheck.push(nextStatement);
+							}
+						}
+						// If no more next, check the statementsFromPreviousProcedures stack,
+						// which will only have statements pushed onto it in the bonus implementation
+						if ((currentStatementNextSize == 0) && (!statementsFromPreviousProcedures.empty())) {
+							statementsToCheck.push(statementsFromPreviousProcedures.top());
+							statementsFromPreviousProcedures.pop();
+						}
 
-					// If this is a while with only 1 next, and parent is a while, its parent should be its second next
-					// (stupid fix for Wilson's next)
-					StatementTableStatement* currentStatementParent = currentStatementToCheck->parent;
-					if ((currentStatementToCheck->getType() == While) && (currentStatementNextSize == 1) && (currentStatementParent != NULL) &&
-						(currentStatementParent->getType() == While) && (statementNumbersOfStatementsAlreadyChecked.count(currentStatementParent->getStatementNumber()) == 0)) {
-						statementsToCheck.push(currentStatementParent);
+						// If this is a while with only 1 next, and parent is a while, its parent should be its second next
+						// (stupid fix for Wilson's next)
+						StatementTableStatement* currentStatementParent = currentStatementToCheck->parent;
+						if ((currentStatementToCheck->getType() == While) && (currentStatementNextSize == 1) && (currentStatementParent != NULL) &&
+							(currentStatementParent->getType() == While) && (statementNumbersOfStatementsAlreadyChecked.count(currentStatementParent->getStatementNumber()) == 0)) {
+							statementsToCheck.push(currentStatementParent);
+						}
 					}
 				}
 
@@ -571,12 +669,18 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectsThisSta
 						if (getProcedureIndexNumber() == currentStatement->getProcedureIndexNumber()) {
 							// Found a statement affected by this statement, add it into the list to be returned
 							affectsThisStar.push_back(currentStatement);
+
+							// NOTE: Copy and paste the three lines below and bring it out of this if-statement if 
+							// variables used by statements in a procedure cannot affect statements in another procedure
+							// Add in variables to affect the next statements
+							int currStmtUsesSize = currentStatement->getUsesSize();
+							for (int x = 0; x < currStmtUsesSize; x++) {
+								newUsesVariables.push_back(currentStatement->getUses(x));
+							}
 						}
-						// Add in variables to affect the next statements
-						int currStmtUsesSize = currentStatement->getUsesSize();
-						for (int x = 0; x < currStmtUsesSize; x++) {
-							newUsesVariables.push_back(currentStatement->getUses(x));
-						}
+
+						// NOTE: Code goes here if variables used by statements in
+						// a procedure can affect statements in another procedure
 					}
 				}
 
@@ -883,62 +987,25 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectsThisSta
 			break;
 			case Call:
 			{
-				// Add information about its previous statement in the same procedure
-				std::vector<StatementTableStatement*>* currStatementPreviousStmts = currentStatement->getPrevious();
-				int currStatementPreviousStmtsSize = currStatementPreviousStmts->size();
-				StatementTableStatement* currStatementPreviousStmt;
-				for (int i = 0; i < currStatementPreviousStmtsSize; i++) {
-					currStatementPreviousStmt = currStatementPreviousStmts->at(i);
-					int currStatementPreviousStmtNumber = currStatementPreviousStmt->getStatementNumber();
-					statementNumbersAndStatements.insert({ currStatementPreviousStmtNumber, currStatementPreviousStmt });
-					if (smallestStatementNumberThatWeKnowOf > currStatementPreviousStmtNumber) {
-						smallestStatementNumberThatWeKnowOf = currStatementPreviousStmtNumber;
-					}
-
-					std::vector<int> newUsesVariables = statementsAndUsesVariablesToCheck.at(currentStatementNumber);
-					if (statementsAndUsesVariablesToCheck.count(currStatementPreviousStmtNumber) > 0) {
-						// If information about the variables to be checked for this next statement exists,
-						// update said information to include all variables
-						std::set<int> newVariables;
-						std::vector<int> existingVariables = statementsAndUsesVariablesToCheck.at(currStatementPreviousStmtNumber);
-						int existingVariablesSize = existingVariables.size();
-						int newUsesVariablesSize = newUsesVariables.size();
-						for (int i = 0; i < existingVariablesSize; i++) {
-							newVariables.insert(existingVariables[i]);
-						}
-						for (int i = 0; i < newUsesVariablesSize; i++) {
-							newVariables.insert(newUsesVariables[i]);
-						}
-						std::vector<int> newVariablesToBeAdded;
-						std::set<int>::iterator end = newVariables.end();
-						for (std::set<int>::iterator it = newVariables.begin(); it != end; it++) {
-							newVariablesToBeAdded.push_back(*it);
-						}
-						statementsAndUsesVariablesToCheck.insert({ currStatementPreviousStmtNumber, newVariablesToBeAdded });
-					}
-					else {
-						statementsAndUsesVariablesToCheck.insert({ currStatementPreviousStmtNumber, newUsesVariables });
-					}
-				}
-
-				// Add information about the last statement of the procedure that it calls
-				bool hasGotPrevious = false;
-				StatementTableStatement** pointerToPointer = currentStatement->getLastCalls();
-				if (pointerToPointer != NULL) {
-					StatementTableStatement* currentStatementPrevious = *pointerToPointer;
-					if (currentStatementPrevious != NULL) {
-						int currentStatementPreviousNumber = currentStatementPrevious->getStatementNumber();
-						statementNumbersAndStatements.insert({ currentStatementPreviousNumber, currentStatementPrevious });
-						if (smallestStatementNumberThatWeKnowOf > currentStatementPreviousNumber) {
-							smallestStatementNumberThatWeKnowOf = currentStatementPreviousNumber;
+				if (bonusImplementation) {
+					// Add information about its previous statement in the same procedure
+					std::vector<StatementTableStatement*>* currStatementPreviousStmts = currentStatement->getPrevious();
+					int currStatementPreviousStmtsSize = currStatementPreviousStmts->size();
+					StatementTableStatement* currStatementPreviousStmt;
+					for (int i = 0; i < currStatementPreviousStmtsSize; i++) {
+						currStatementPreviousStmt = currStatementPreviousStmts->at(i);
+						int currStatementPreviousStmtNumber = currStatementPreviousStmt->getStatementNumber();
+						statementNumbersAndStatements.insert({ currStatementPreviousStmtNumber, currStatementPreviousStmt });
+						if (smallestStatementNumberThatWeKnowOf > currStatementPreviousStmtNumber) {
+							smallestStatementNumberThatWeKnowOf = currStatementPreviousStmtNumber;
 						}
 
 						std::vector<int> newUsesVariables = statementsAndUsesVariablesToCheck.at(currentStatementNumber);
-						if (statementsAndUsesVariablesToCheck.count(currentStatementPreviousNumber) > 0) {
+						if (statementsAndUsesVariablesToCheck.count(currStatementPreviousStmtNumber) > 0) {
 							// If information about the variables to be checked for this next statement exists,
 							// update said information to include all variables
 							std::set<int> newVariables;
-							std::vector<int> existingVariables = statementsAndUsesVariablesToCheck.at(currentStatementPreviousNumber);
+							std::vector<int> existingVariables = statementsAndUsesVariablesToCheck.at(currStatementPreviousStmtNumber);
 							int existingVariablesSize = existingVariables.size();
 							int newUsesVariablesSize = newUsesVariables.size();
 							for (int i = 0; i < existingVariablesSize; i++) {
@@ -952,37 +1019,148 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectsThisSta
 							for (std::set<int>::iterator it = newVariables.begin(); it != end; it++) {
 								newVariablesToBeAdded.push_back(*it);
 							}
-							statementsAndUsesVariablesToCheck.insert({ currentStatementPreviousNumber, newVariablesToBeAdded });
+							statementsAndUsesVariablesToCheck.insert({ currStatementPreviousStmtNumber, newVariablesToBeAdded });
 						}
 						else {
-							statementsAndUsesVariablesToCheck.insert({ currentStatementPreviousNumber, newUsesVariables });
+							statementsAndUsesVariablesToCheck.insert({ currStatementPreviousStmtNumber, newUsesVariables });
 						}
+					}
 
-						// Have algorithm jump to the last statement of the procedure it calls
-						currentStatementNumber = currentStatementPreviousNumber;
-						switch (currStatementPreviousStmtsSize) {
-						case 1: // If one previous, push it into directly onto statementNumbersBeforeCalls stack
-							statementNumbersBeforeCalls.push(currStatementPreviousStmts->at(0)->getStatementNumber());
+					// Add information about the last statement of the procedure that it calls
+					bool hasGotPrevious = false;
+					StatementTableStatement** pointerToPointer = currentStatement->getLastCalls();
+					if (pointerToPointer != NULL) {
+						StatementTableStatement* currentStatementPrevious = *pointerToPointer;
+						if (currentStatementPrevious != NULL) {
+							int currentStatementPreviousNumber = currentStatementPrevious->getStatementNumber();
+							statementNumbersAndStatements.insert({ currentStatementPreviousNumber, currentStatementPrevious });
+							if (smallestStatementNumberThatWeKnowOf > currentStatementPreviousNumber) {
+								smallestStatementNumberThatWeKnowOf = currentStatementPreviousNumber;
+							}
+
+							std::vector<int> newUsesVariables = statementsAndUsesVariablesToCheck.at(currentStatementNumber);
+							if (statementsAndUsesVariablesToCheck.count(currentStatementPreviousNumber) > 0) {
+								// If information about the variables to be checked for this next statement exists,
+								// update said information to include all variables
+								std::set<int> newVariables;
+								std::vector<int> existingVariables = statementsAndUsesVariablesToCheck.at(currentStatementPreviousNumber);
+								int existingVariablesSize = existingVariables.size();
+								int newUsesVariablesSize = newUsesVariables.size();
+								for (int i = 0; i < existingVariablesSize; i++) {
+									newVariables.insert(existingVariables[i]);
+								}
+								for (int i = 0; i < newUsesVariablesSize; i++) {
+									newVariables.insert(newUsesVariables[i]);
+								}
+								std::vector<int> newVariablesToBeAdded;
+								std::set<int>::iterator end = newVariables.end();
+								for (std::set<int>::iterator it = newVariables.begin(); it != end; it++) {
+									newVariablesToBeAdded.push_back(*it);
+								}
+								statementsAndUsesVariablesToCheck.insert({ currentStatementPreviousNumber, newVariablesToBeAdded });
+							}
+							else {
+								statementsAndUsesVariablesToCheck.insert({ currentStatementPreviousNumber, newUsesVariables });
+							}
+
+							// Have algorithm jump to the last statement of the procedure it calls
+							currentStatementNumber = currentStatementPreviousNumber;
+							switch (currStatementPreviousStmtsSize) {
+							case 1: // If one previous, push it into directly onto statementNumbersBeforeCalls stack
+								statementNumbersBeforeCalls.push(currStatementPreviousStmts->at(0)->getStatementNumber());
+								break;
+							case 2: // If two previous, push the one with a greater statement number onto stack
+							{
+								int previous1StatementNumber = currStatementPreviousStmts->at(0)->getStatementNumber();
+								int previous2StatementNumber = currStatementPreviousStmts->at(1)->getStatementNumber();
+								statementNumbersBeforeCalls.push((previous1StatementNumber > previous2StatementNumber) ? previous1StatementNumber : previous2StatementNumber);
+							}
 							break;
-						case 2: // If two previous, push the one with a greater statement number onto stack
-						{
-							int previous1StatementNumber = currStatementPreviousStmts->at(0)->getStatementNumber();
-							int previous2StatementNumber = currStatementPreviousStmts->at(1)->getStatementNumber();
-							statementNumbersBeforeCalls.push((previous1StatementNumber > previous2StatementNumber) ? previous1StatementNumber : previous2StatementNumber);
+							}
+							hasGotPrevious = true;
 						}
-							break;
+					}
+
+					if (!hasGotPrevious) {
+						if (!statementNumbersBeforeCalls.empty()) {
+							currentStatementNumber = statementNumbersBeforeCalls.top();
+							statementNumbersBeforeCalls.pop();
 						}
-						hasGotPrevious = true;
+						else {
+							currentStatementNumber--;
+						}
 					}
 				}
-
-				if (!hasGotPrevious) {
-					if (!statementNumbersBeforeCalls.empty()) {
-						currentStatementNumber = statementNumbersBeforeCalls.top();
-						statementNumbersBeforeCalls.pop();
+				else {
+					if (currentStatement->getPrevious()->size() == 0) {
+						currentStatementNumber = smallestStatementNumberThatWeKnowOf - 1;
 					}
 					else {
-						currentStatementNumber--;
+						// Prepare the uses variables of the procedure being called to be compared
+						std::vector<int> usesVariables = statementsAndUsesVariablesToCheck.at(currentStatementNumber);
+						int usesVariablesSize = usesVariables.size();
+						int modifyVariablesSize = currentStatement->getModifiesSize();
+						// Make a copy to modify and use for the further next nodes, if applicable
+						std::vector<int> newUsesVariables;
+
+						// Check if this statement modifies any uses variables - if it does, remove it from the list
+						for (int i = 0; i < usesVariablesSize; i++) {
+							for (int j = 0; j < modifyVariablesSize; j++) {
+								if (currentStatement->getModifies(j) != usesVariables[i]) {
+									newUsesVariables.push_back(usesVariables[i]);
+								}
+							}
+						}
+
+						// NOTE: Uncomment the three lines below if variables used by
+						// statements in a procedure can affect statements in another procedure
+						/*
+						int currStmtUsesSize = currentStatement->getUsesSize();
+						for (int x = 0; x < currStmtUsesSize; x++) {
+							newUsesVariables.push_back(currentStatement->getUses(x));
+						}
+						*/
+
+						// Add information regarding the previous node(s) to the data structures for our algorithm's processing
+						int maximum = currentStatementNumber - 1;
+						std::vector<StatementTableStatement*>* currentStatementPreviouses = currentStatement->getPrevious();
+						int currentStatementPreviousesSize = currentStatementPreviouses->size();
+						for (int i = 0; i < currentStatementPreviousesSize; i++) {
+							StatementTableStatement* currentStatementPrevious = currentStatementPreviouses->at(i);
+							int currentStatementPreviousNumber = currentStatementPrevious->getStatementNumber();
+							statementNumbersAndStatements.insert({ currentStatementPreviousNumber, currentStatementPrevious });
+							if (smallestStatementNumberThatWeKnowOf > currentStatementPreviousNumber) {
+								smallestStatementNumberThatWeKnowOf = currentStatementPreviousNumber;
+							}
+							if (currentStatementPreviousNumber > maximum) {
+								maximum = currentStatementPreviousNumber;
+							}
+
+							if (statementsAndUsesVariablesToCheck.count(currentStatementPreviousNumber) > 0) {
+								// If information about the variables to be checked for this previous statement exists,
+								// update said information to include all variables
+								std::set<int> newVariables;
+								std::vector<int> vectorFromTable = statementsAndUsesVariablesToCheck.at(currentStatementPreviousNumber);
+								int vectorFromTableSize = vectorFromTable.size();
+								int newUsesVariablesSize = newUsesVariables.size();
+								for (int i = 0; i < vectorFromTableSize; i++) {
+									newVariables.insert(vectorFromTable[i]);
+								}
+								for (int i = 0; i < newUsesVariablesSize; i++) {
+									newVariables.insert(newUsesVariables[i]);
+								}
+								std::vector<int> newVariablesToBeAdded;
+								std::set<int>::iterator end = newVariables.end();
+								for (std::set<int>::iterator it = newVariables.begin(); it != end; it++) {
+									newVariablesToBeAdded.push_back(*it);
+								}
+								statementsAndUsesVariablesToCheck.at(currentStatementPreviousNumber) = newVariablesToBeAdded;
+							}
+							else {
+								statementsAndUsesVariablesToCheck.insert({ currentStatementPreviousNumber, newUsesVariables });
+							}
+							currentStatementNumber = maximum;
+						}
 					}
 				}
 			}
@@ -1040,27 +1218,6 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThis
 		}
 
 		while (currentStatement != NULL) {
-			/*
-			std::cout << "Hello once again: " << currentStatementNumber;
-			if (currentStatement->getType() == Assign) {
-				std::cout << ", its uses variables = ";
-				for (int i = 0; i < currentStatement->getUsesSize(); i++) {
-					std::cout << currentStatement->getUses(i) << " ";
-				}
-			}
-			std::cout << ", modify variables to check = ";
-			std::vector<int> yay = statementsAndModifyVariablesToCheck.at(currentStatementNumber);
-			for (unsigned int i = 0; i < yay.size(); i++) {
-				std::cout << yay[i] << " ";
-			}
-			std::cout << ", next = ";
-			std::vector<StatementTableStatement*>* lol = currentStatement->getNext();
-			for (unsigned int i = 0; i < lol->size(); i++) {
-				std::cout << lol->at(i)->getStatementNumber() << " ";
-			}
-			std::cout << std::endl;
-			*/
-
 			// Execution varies depending on the type of statement
 			switch (currentStatement->getType()) {
 			case Assign:
@@ -1096,9 +1253,14 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThis
 									// Found a statement affected by this statement, add it into the list to be returned)
 									affectedByThisStar.push_back(currentStatement);
 								}
+								// NOTE: Copy and paste the three lines below and bring it out of this if-statement if 
+								// variables used by statements in a procedure cannot affect statements in another procedure
+								// Add in variables to affect the next statements
+								newModifyVariables.push_back(currentStatement->getModifies(0));
 							}
-							// Add in variables to affect the next statements
-							newModifyVariables.push_back(currentStatement->getModifies(0));
+							// NOTE: Code goes here if variables used by statements in
+							// a procedure can affect statements in another procedure
+
 							// Break out of both loops
 							x = modifyVariablesSize;
 							y = useVariablesSize;
@@ -1426,62 +1588,25 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThis
 				break;
 			case Call:
 			{
-				// Add information about its next statement in the same procedure
-				std::vector<StatementTableStatement*>* currStatementNextStmts = currentStatement->getNext();
-				int currStatementNextStmtsSize = currStatementNextStmts->size();
-				StatementTableStatement* currStatementNextStmt;
-				for (int i = 0; i < currStatementNextStmtsSize; i++) {
-					currStatementNextStmt = currStatementNextStmts->at(i);
-					int currStatementNextNumber = currStatementNextStmt->getStatementNumber();
-					statementNumbersAndStatements.insert({ currStatementNextNumber, currStatementNextStmt });
-					if (biggestStatementNumberThatWeKnowOf < currStatementNextNumber) {
-						biggestStatementNumberThatWeKnowOf = currStatementNextNumber;
-					}
-
-					std::vector<int> newModifyVariables = statementsAndModifyVariablesToCheck.at(currentStatementNumber);
-					if (statementsAndModifyVariablesToCheck.count(currStatementNextNumber) > 0) {
-						// If information about the variables to be checked for this next statement exists,
-						// update said information to include all variables
-						std::set<int> newVariables;
-						std::vector<int> existingVariables = statementsAndModifyVariablesToCheck.at(currStatementNextNumber);
-						int existingVariablesSize = existingVariables.size();
-						int newModifyVariablesSize = newModifyVariables.size();
-						for (int i = 0; i < existingVariablesSize; i++) {
-							newVariables.insert(existingVariables[i]);
-						}
-						for (int i = 0; i < newModifyVariablesSize; i++) {
-							newVariables.insert(newModifyVariables[i]);
-						}
-						std::vector<int> newVariablesToBeAdded;
-						std::set<int>::iterator end = newVariables.end();
-						for (std::set<int>::iterator it = newVariables.begin(); it != end; it++) {
-							newVariablesToBeAdded.push_back(*it);
-						}
-						statementsAndModifyVariablesToCheck.insert({ currStatementNextNumber, newVariablesToBeAdded });
-					}
-					else {
-						statementsAndModifyVariablesToCheck.insert({ currStatementNextNumber, newModifyVariables });
-					}
-				}
-
-				// Add information about the first statement of the procedure that it calls
-				bool hasGotNext = false;
-				StatementTableStatement** pointerToPointer = currentStatement->getFirstCalls();
-				if (pointerToPointer != NULL) {
-					StatementTableStatement* currentStatementNext = *pointerToPointer;
-					if (currentStatementNext != NULL) {
-						int currentStatementNextNumber = currentStatementNext->getStatementNumber();
-						statementNumbersAndStatements.insert({ currentStatementNextNumber, currentStatementNext });
-						if (biggestStatementNumberThatWeKnowOf < currentStatementNextNumber) {
-							biggestStatementNumberThatWeKnowOf = currentStatementNextNumber;
+				if (bonusImplementation) {
+					// Add information about its next statement in the same procedure
+					std::vector<StatementTableStatement*>* currStatementNextStmts = currentStatement->getNext();
+					int currStatementNextStmtsSize = currStatementNextStmts->size();
+					StatementTableStatement* currStatementNextStmt;
+					for (int i = 0; i < currStatementNextStmtsSize; i++) {
+						currStatementNextStmt = currStatementNextStmts->at(i);
+						int currStatementNextNumber = currStatementNextStmt->getStatementNumber();
+						statementNumbersAndStatements.insert({ currStatementNextNumber, currStatementNextStmt });
+						if (biggestStatementNumberThatWeKnowOf < currStatementNextNumber) {
+							biggestStatementNumberThatWeKnowOf = currStatementNextNumber;
 						}
 
 						std::vector<int> newModifyVariables = statementsAndModifyVariablesToCheck.at(currentStatementNumber);
-						if (statementsAndModifyVariablesToCheck.count(currentStatementNextNumber) > 0) {
+						if (statementsAndModifyVariablesToCheck.count(currStatementNextNumber) > 0) {
 							// If information about the variables to be checked for this next statement exists,
 							// update said information to include all variables
 							std::set<int> newVariables;
-							std::vector<int> existingVariables = statementsAndModifyVariablesToCheck.at(currentStatementNextNumber);
+							std::vector<int> existingVariables = statementsAndModifyVariablesToCheck.at(currStatementNextNumber);
 							int existingVariablesSize = existingVariables.size();
 							int newModifyVariablesSize = newModifyVariables.size();
 							for (int i = 0; i < existingVariablesSize; i++) {
@@ -1495,28 +1620,135 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThis
 							for (std::set<int>::iterator it = newVariables.begin(); it != end; it++) {
 								newVariablesToBeAdded.push_back(*it);
 							}
-							statementsAndModifyVariablesToCheck.insert({ currentStatementNextNumber, newVariablesToBeAdded });
+							statementsAndModifyVariablesToCheck.insert({ currStatementNextNumber, newVariablesToBeAdded });
+						}
+						else {
+							statementsAndModifyVariablesToCheck.insert({ currStatementNextNumber, newModifyVariables });
+						}
+					}
+
+					// Add information about the first statement of the procedure that it calls
+					bool hasGotNext = false;
+					StatementTableStatement** pointerToPointer = currentStatement->getFirstCalls();
+					if (pointerToPointer != NULL) {
+						StatementTableStatement* currentStatementNext = *pointerToPointer;
+						if (currentStatementNext != NULL) {
+							int currentStatementNextNumber = currentStatementNext->getStatementNumber();
+							statementNumbersAndStatements.insert({ currentStatementNextNumber, currentStatementNext });
+							if (biggestStatementNumberThatWeKnowOf < currentStatementNextNumber) {
+								biggestStatementNumberThatWeKnowOf = currentStatementNextNumber;
+							}
+
+							std::vector<int> newModifyVariables = statementsAndModifyVariablesToCheck.at(currentStatementNumber);
+							if (statementsAndModifyVariablesToCheck.count(currentStatementNextNumber) > 0) {
+								// If information about the variables to be checked for this next statement exists,
+								// update said information to include all variables
+								std::set<int> newVariables;
+								std::vector<int> existingVariables = statementsAndModifyVariablesToCheck.at(currentStatementNextNumber);
+								int existingVariablesSize = existingVariables.size();
+								int newModifyVariablesSize = newModifyVariables.size();
+								for (int i = 0; i < existingVariablesSize; i++) {
+									newVariables.insert(existingVariables[i]);
+								}
+								for (int i = 0; i < newModifyVariablesSize; i++) {
+									newVariables.insert(newModifyVariables[i]);
+								}
+								std::vector<int> newVariablesToBeAdded;
+								std::set<int>::iterator end = newVariables.end();
+								for (std::set<int>::iterator it = newVariables.begin(); it != end; it++) {
+									newVariablesToBeAdded.push_back(*it);
+								}
+								statementsAndModifyVariablesToCheck.insert({ currentStatementNextNumber, newVariablesToBeAdded });
+							}
+							else {
+								statementsAndModifyVariablesToCheck.insert({ currentStatementNextNumber, newModifyVariables });
+							}
+
+							// Have algorithm jump to the first statement of the procedure it calls
+							currentStatementNumber = currentStatementNextNumber;
+							if (currStatementNextStmtsSize > 0) {
+								statementNumbersAfterCalls.push(currStatementNextStmts->at(0)->getStatementNumber());
+							}
+							hasGotNext = true;
+						}
+					}
+
+					if (!hasGotNext) {
+						if (!statementNumbersAfterCalls.empty()) {
+							currentStatementNumber = statementNumbersAfterCalls.top();
+							statementNumbersAfterCalls.pop();
+						}
+						else {
+							currentStatementNumber++;
+						}
+					}
+				}
+				else {
+					// Prepare the modify variables of the current statement to be compared
+					std::vector<int> modifyVariables = statementsAndModifyVariablesToCheck.at(currentStatementNumber);
+					int modifyVariablesSize = modifyVariables.size();
+					int currentStatementModifyVariablesSize = currentStatement->getModifiesSize();
+					// Make a copy to modify and use for the further next nodes, if applicable
+					std::vector<int> newModifyVariables;
+
+					// Check if this statement modifies any modify variables
+					for (int x = 0; x < modifyVariablesSize; x++) {
+						for (int y = 0; y < currentStatementModifyVariablesSize; y++) {
+							if (modifyVariables[x] != currentStatement->getModifies(y)) {
+								newModifyVariables.push_back(modifyVariables[x]);
+							}
+						}
+					}
+
+					// NOTE: Uncomment the three lines below if variables modified by 
+					// statements in a procedure can affect statements in another procedure
+					/*
+					for (int i = 0; i < currentStatementModifyVariablesSize; i++) {
+						newModifyVariables.push_back(currentStatement->getModifies(i));
+					}
+					*/
+
+					// Add information regarding the next node(s) to the data structures for our algorithm's processing
+					int minimum = currentStatementNumber + 1;
+					std::vector<StatementTableStatement*>* currentStatementNexts = currentStatement->getNext();
+					if (currentStatementNexts->size() > 0) {
+						StatementTableStatement* currentStatementNext = currentStatementNexts->at(0);
+						int currentStatementNextNumber = currentStatementNext->getStatementNumber();
+						statementNumbersAndStatements.insert({ currentStatementNextNumber, currentStatementNext });
+						if (biggestStatementNumberThatWeKnowOf < currentStatementNextNumber) {
+							biggestStatementNumberThatWeKnowOf = currentStatementNextNumber;
+						}
+						if (currentStatementNextNumber < minimum) {
+							minimum = currentStatementNextNumber;
+						}
+
+						if (statementsAndModifyVariablesToCheck.count(currentStatementNextNumber) > 0) {
+							// If information about the variables to be checked for this next statement exists,
+							// update said information to include all variables
+							std::set<int> newVariables;
+							std::vector<int> vectorFromTable = statementsAndModifyVariablesToCheck.at(currentStatementNextNumber);
+							int vectorFromTableSize = vectorFromTable.size();
+							int newModifyVariablesSize = newModifyVariables.size();
+							for (int i = 0; i < vectorFromTableSize; i++) {
+								newVariables.insert(vectorFromTable[i]);
+							}
+							for (int i = 0; i < newModifyVariablesSize; i++) {
+								newVariables.insert(newModifyVariables[i]);
+							}
+							std::vector<int> newVariablesToBeAdded;
+							std::set<int>::iterator end = newVariables.end();
+							for (std::set<int>::iterator it = newVariables.begin(); it != end; it++) {
+								newVariablesToBeAdded.push_back(*it);
+							}
+							statementsAndModifyVariablesToCheck.at(currentStatementNextNumber) = newVariablesToBeAdded;
 						}
 						else {
 							statementsAndModifyVariablesToCheck.insert({ currentStatementNextNumber, newModifyVariables });
 						}
-
-						// Have algorithm jump to the first statement of the procedure it calls
-						currentStatementNumber = currentStatementNextNumber;
-						if (currStatementNextStmtsSize > 0) {
-							statementNumbersAfterCalls.push(currStatementNextStmts->at(0)->getStatementNumber());
-						}
-						hasGotNext = true;
-					}
-				}
-
-				if (!hasGotNext) {
-					if (!statementNumbersAfterCalls.empty()) {
-						currentStatementNumber = statementNumbersAfterCalls.top();
-						statementNumbersAfterCalls.pop();
+						currentStatementNumber = minimum;
 					}
 					else {
-						currentStatementNumber++;
+						currentStatementNumber = biggestStatementNumberThatWeKnowOf + 1;
 					}
 				}
 			}
