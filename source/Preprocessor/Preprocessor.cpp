@@ -13,10 +13,12 @@ const regex partOfExpressionRegex("(^_\")[[:space:]]*([[:alpha:]]([[:alnum:]]|#)
 
 const regex designEntityRegex("^(procedure|stmtLst|stmt|assign|call|while|if|variable|constant|prog_line|plus|minus|times)$",icase);
 const regex attrNameRegex("^(procName|varName|value|stmt#)$", icase);
-const regex stmtDesignEntityRegex("^(stmtLst|stmt|assign|while|if|prog_line)$", icase);
-const regex lineDesignEntityRegex("^(stmtLst|stmt|assign|call|while|if|prog_line)$", icase);
-const regex entDesignEntityRegex("^(assign|if|while|procedure)$", icase);
-const regex varDesignEntityRegex("^(variable)$", icase);
+
+const regex stmtRegex("^(stmtLst|stmt|assign|while|if|prog_line|placeholder|integer)$", icase);
+const regex lineRegex("^(stmtLst|stmt|assign|call|while|if|prog_line|placeholder|integer)$", icase);
+const regex entRegex("^(assign|if|while|procedure|placeholder|expr|integer)$", icase);
+const regex varRegex("^(variable|placeholder|expr)$", icase);
+const regex exprRegex("^(placeholder|part_of_expr|expr)$", icase);
 const regex patternRegex("^(assign|while|if)$", icase);
 
 const regex entVarRefRefRegex("^(modifies|uses)$", icase);
@@ -270,24 +272,27 @@ void Preprocessor::addSuchThatClause(string rawClause) {
 		secondVariable = trim(secondVariable);
 		Ref var1 = createSuchThatRef(firstVariable);
 		Ref var2 = createSuchThatRef(secondVariable);
+		string var1Type = var1.getType();
+		string var2Type = var2.getType();
 		
 		if (regex_match(condition, entVarRefRefRegex) || regex_match(condition, stmtVarRefRefRegex)) {
-			if (!((isEntRef(var1) || isStmtRef(var1)) && isVarRef(var2))) {
+			if (!((regex_match(var1Type, entRegex) || regex_match(var1Type, stmtRegex))
+				&& regex_match(var2Type, varRegex))) {
 				throw "invalid entVarRefRef or stmtVarRefRef";
 			}
 		}
 		else if (regex_match(condition, ententRefRefRegex)) {
-			if (!(isEntRef(var1) && isEntRef(var2))) {
+			if (!(regex_match(var1Type, entRegex) && regex_match(var2Type, entRegex))) {
 				throw "invalid entEntRefRef";
 			}
 		}
 		else if (regex_match(condition, stmtstmtRefRefRegex)) {
-			if (!(isStmtRef(var1) && isStmtRef(var2))) {
+			if (!(regex_match(var1Type, stmtRegex) && regex_match(var2Type, stmtRegex))) {
 				throw "invalid stmtstmtRefRef";
 			}
 		}
 		else if (regex_match(condition, linelineRefRefRegex)) {
-			if (!(isLineRef(var1) && isLineRef(var2))) {
+			if (!(regex_match(var1Type, lineRegex) && regex_match(var2Type, lineRegex))) {
 				throw "invalid lineLineRefRef";
 			}
 		}
@@ -352,7 +357,7 @@ void Preprocessor::addPatternClause(string rawClause) {
 	}
 	Ref var2 = createPatternRef(secondVariable);
 
-	if (isEntRef(var1) && isExprSpec(var2)) {
+	if (regex_match(var1.getType(), entRegex) && regex_match(var2.getType(), exprRegex)) {
 		QueryTree::Instance()->addClause(new PatternClause("PATTERN", var1, var2, assignedVar));
 	}
 	else {
@@ -509,40 +514,6 @@ Ref Preprocessor::createAttrRef(string name) {
 	}
 
 	return Ref(synonym, type);
-}
-
-bool Preprocessor::isStmtRef(Ref v) {
-	string type = v.getType();
-	
-	return (type == "placeholder" || type == "integer" ||
-		regex_match(type, stmtDesignEntityRegex));
-}
-
-bool Preprocessor::isLineRef(Ref v) {
-	string type = v.getType();
-
-	return (type == "placeholder" || type == "integer" ||
-		regex_match(type, lineDesignEntityRegex));
-}
-
-bool Preprocessor::isEntRef(Ref v) {
-	string type = v.getType();
-
-	return (type == "placeholder" || type == "expr" || type == "integer" ||
-		regex_match(type, entDesignEntityRegex));
-}
-
-bool Preprocessor::isVarRef(Ref v) {
-	string type = v.getType();
-
-	return (type == "placeholder" || type == "expr" ||
-		regex_match(type, varDesignEntityRegex));
-}
-
-bool Preprocessor::isExprSpec(Ref v) {
-	string type = v.getType();
-
-	return (type == "placeholder" || type == "part_of_expr" || type == "expr");
 }
 
 string Preprocessor::getDeclarationType(string name) {

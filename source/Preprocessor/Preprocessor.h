@@ -117,31 +117,6 @@ private:
 	return a ref of attrRef with type derived from name. Input must consist of "."
 	*/
 	Ref createAttrRef(string name);
-	//! Check if type is stmtRef
-	/*!
-	return true if type is stmtRef
-	*/
-	static bool isStmtRef(Ref v);
-	//! Check if type is lineRef
-	/*!
-	return true if type is lineRef
-	*/
-	static bool isLineRef(Ref v);
-	//! Check if type is EntRef
-	/*!
-	return true if type is EntRef
-	*/
-	static bool isEntRef(Ref v);
-	//! Check if type is VarRef
-	/*!
-	return true if type is VarRef
-	*/
-	static bool isVarRef(Ref v);
-	//! Check if type is ExprSpec
-	/*!
-	return true if type is ExprSpec
-	*/
-	static bool isExprSpec(Ref v);
 	//! Return declaration type given a declaration name
 	/*!
 	Return declaration type given a declaration name. Throw error if name not found
