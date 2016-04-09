@@ -4,7 +4,7 @@ std::vector<std::string> Projector::process(vector<vector<string>> rawResult) {
 	vector<string> result;
 	string temp;
 
-	if (rawResult.at(0).size() == 1) {
+	if (rawResult.at(0).size() <= 1) {
 		for (unsigned int i = 0; i < rawResult.size(); i++) {
 			result.push_back(rawResult.at(i).at(0));
 		}
