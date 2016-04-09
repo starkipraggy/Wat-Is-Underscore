@@ -271,10 +271,7 @@ void Preprocessor::addSuchThatClause(string rawClause) {
 		Ref var1 = createSuchThatRef(firstVariable);
 		Ref var2 = createSuchThatRef(secondVariable);
 		
-		if (var1.equals(var2) && regex_match(var1.getType(), designEntityRegex)) {
-			throw "cannot same synonym ref";
-		}
-		else if (regex_match(condition, entVarRefRefRegex) || regex_match(condition, stmtVarRefRefRegex)) {
+		if (regex_match(condition, entVarRefRefRegex) || regex_match(condition, stmtVarRefRefRegex)) {
 			if (!((isEntRef(var1) || isStmtRef(var1)) && isVarRef(var2))) {
 				throw "invalid entVarRefRef or stmtVarRefRef";
 			}
