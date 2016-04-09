@@ -360,7 +360,7 @@ void Preprocessor::addPatternClause(string rawClause) {
 	}
 	Ref var2 = createPatternRef(secondVariable);
 
-	if (regex_match(var1.getType(), entRefRegex) && regex_match(var2.getType(), exprRegex)) {
+	if (regex_match(var1.getType(), varRefRegex) && regex_match(var2.getType(), exprRegex)) {
 		QueryTree::Instance()->addClause(new PatternClause("PATTERN", var1, var2, assignedVar));
 	}
 	else {
