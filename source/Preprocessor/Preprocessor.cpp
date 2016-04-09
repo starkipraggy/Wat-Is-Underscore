@@ -2,24 +2,21 @@
 using namespace std;
 using namespace std::regex_constants;
 
-const regex tupleRegex("^<[[:space:]]*[[:alpha:]]([#[:alnum:]])*([[:space:]]*,[[:space:]]*[[:alpha:]]([#[:alnum:]])*)*[[:space:]]*>$");
-
-const regex identRegex("^[[:alpha:]]([#[:alnum:]]*$)");
+//Lexical rules
 const regex integerRegex("^[[:digit:]]+$");
-const regex placeholderRegex("^_$");
-const regex expressionRegex("(^\"[[:alpha:]])([[:alnum:]]*|#*)*\"$");
-const regex patternExpressionRegex("(^\")[[:space:]]*([[:alpha:]]([[:alnum:]]|#)*|[[:digit:]]+)([[:space:]]*(\\+|\\-|\\*)[[:space:]]*([[:alpha:]]([[:alnum:]]|#)*|[[:digit:]]+))*[[:space:]]*(\"$)");
-const regex partOfExpressionRegex("(^_\")[[:space:]]*([[:alpha:]]([[:alnum:]]|#)*|[[:digit:]]+)([[:space:]]*(\\+|\\-|\\*)[[:space:]]*([[:alpha:]]([[:alnum:]]|#)*|[[:digit:]]+))*[[:space:]]*(\"_$)");
+const regex identRegex("^[[:alpha:]]([#[:alnum:]]*$)"); 
 
-const regex designEntityRegex("^(procedure|stmtLst|stmt|assign|call|while|if|variable|constant|prog_line|plus|minus|times)$",icase);
+//Auxiliary grammer rules
+const regex tupleRegex("^<[[:space:]]*[[:alpha:]]([#[:alnum:]])*([[:space:]]*,[[:space:]]*[[:alpha:]]([#[:alnum:]])*)*[[:space:]]*>$");
 const regex attrNameRegex("^(procName|varName|value|stmt#)$", icase);
+const regex entRefRegex("^(assign|if|while|procedure|placeholder|expr|integer)$", icase);
+const regex stmtRefRegex("^(stmtLst|stmt|assign|while|if|prog_line|placeholder|integer)$", icase);
+const regex lineRefRegex("^(stmtLst|stmt|assign|call|while|if|prog_line|placeholder|integer)$", icase);
+const regex designEntityRegex("^(procedure|stmtLst|stmt|assign|call|while|if|variable|constant|prog_line|plus|minus|times)$", icase);
 
-const regex stmtRegex("^(stmtLst|stmt|assign|while|if|prog_line|placeholder|integer)$", icase);
-const regex lineRegex("^(stmtLst|stmt|assign|call|while|if|prog_line|placeholder|integer)$", icase);
-const regex entRegex("^(assign|if|while|procedure|placeholder|expr|integer)$", icase);
-const regex varRegex("^(variable|placeholder|expr)$", icase);
-const regex exprRegex("^(placeholder|part_of_expr|expr)$", icase);
-const regex patternRegex("^(assign|while|if)$", icase);
+//Grammer rules for select clause
+const regex clauseRegex("such that+|pattern+|with+|and+", icase);
+const regex expressionRegex("(^\"[[:alpha:]])([[:alnum:]]*|#*)*\"$"); //'"' IDENT '"'
 
 const regex entVarRefRefRegex("^(modifies|uses)$", icase);
 const regex stmtVarRefRefRegex("^(modifies|uses)$", icase);
@@ -27,8 +24,14 @@ const regex ententRefRefRegex("^(calls|calls\\*)$", icase);
 const regex stmtstmtRefRefRegex("^(parent|parent\\*|follows|follows\\*|affects|affects\\*)$", icase);
 const regex linelineRefRefRegex("^(next|next\\*)$", icase);
 
-const regex clauseRegex("such that+|pattern+|with+|and+", icase);
-const regex booleanRegex("^(BOOLEAN)$", icase);
+const regex patternRegex("^(assign|while|if)$", icase);
+const regex varRefRegex("^(variable|placeholder|expr)$", icase);
+const regex exprRegex("^(placeholder|part_of_expr|expr)$", icase);
+
+const regex placeholderRegex("^_$");
+const regex patternExpressionRegex("(^\")[[:space:]]*([[:alpha:]]([[:alnum:]]|#)*|[[:digit:]]+)([[:space:]]*(\\+|\\-|\\*)[[:space:]]*([[:alpha:]]([[:alnum:]]|#)*|[[:digit:]]+))*[[:space:]]*(\"$)");
+const regex partOfExpressionRegex("(^_\")[[:space:]]*([[:alpha:]]([[:alnum:]]|#)*|[[:digit:]]+)([[:space:]]*(\\+|\\-|\\*)[[:space:]]*([[:alpha:]]([[:alnum:]]|#)*|[[:digit:]]+))*[[:space:]]*(\"_$)");
+
 
 void Preprocessor::process(string statement) {
 	try {
@@ -154,7 +157,7 @@ void Preprocessor::setSelect() {
 
 	for (unsigned int i = 0; i < eachSelect.size(); i++) {
 		selectPart = trim(eachSelect.at(i));
-		if (regex_match(selectPart, booleanRegex)) {
+		if (StringToUpper(selectPart) == "BOOLEAN") {
 			ref = Ref("", "boolean");
 		}
 		else if (selectPart.find(".") != string::npos) {
@@ -276,23 +279,23 @@ void Preprocessor::addSuchThatClause(string rawClause) {
 		string var2Type = var2.getType();
 		
 		if (regex_match(condition, entVarRefRefRegex) || regex_match(condition, stmtVarRefRefRegex)) {
-			if (!((regex_match(var1Type, entRegex) || regex_match(var1Type, stmtRegex))
-				&& regex_match(var2Type, varRegex))) {
+			if (!((regex_match(var1Type, entRefRegex) || regex_match(var1Type, stmtRefRegex))
+				&& regex_match(var2Type, varRefRegex))) {
 				throw "invalid entVarRefRef or stmtVarRefRef";
 			}
 		}
 		else if (regex_match(condition, ententRefRefRegex)) {
-			if (!(regex_match(var1Type, entRegex) && regex_match(var2Type, entRegex))) {
+			if (!(regex_match(var1Type, entRefRegex) && regex_match(var2Type, entRefRegex))) {
 				throw "invalid entEntRefRef";
 			}
 		}
 		else if (regex_match(condition, stmtstmtRefRefRegex)) {
-			if (!(regex_match(var1Type, stmtRegex) && regex_match(var2Type, stmtRegex))) {
+			if (!(regex_match(var1Type, stmtRefRegex) && regex_match(var2Type, stmtRefRegex))) {
 				throw "invalid stmtstmtRefRef";
 			}
 		}
 		else if (regex_match(condition, linelineRefRefRegex)) {
-			if (!(regex_match(var1Type, lineRegex) && regex_match(var2Type, lineRegex))) {
+			if (!(regex_match(var1Type, lineRefRegex) && regex_match(var2Type, lineRefRegex))) {
 				throw "invalid lineLineRefRef";
 			}
 		}
@@ -357,7 +360,7 @@ void Preprocessor::addPatternClause(string rawClause) {
 	}
 	Ref var2 = createPatternRef(secondVariable);
 
-	if (regex_match(var1.getType(), entRegex) && regex_match(var2.getType(), exprRegex)) {
+	if (regex_match(var1.getType(), entRefRegex) && regex_match(var2.getType(), exprRegex)) {
 		QueryTree::Instance()->addClause(new PatternClause("PATTERN", var1, var2, assignedVar));
 	}
 	else {
