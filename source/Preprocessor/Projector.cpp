@@ -11,12 +11,11 @@ std::vector<std::string> Projector::process(vector<vector<string>> rawResult) {
 	}
 	else {
 		for (unsigned int i = 0; i < rawResult.size(); i++) {
-			temp = "<";
+			temp = "";
 			for (unsigned int j = 0; j < rawResult.at(i).size(); j++) {
-				temp += rawResult.at(i).at(j) + ",";
+				temp += rawResult.at(i).at(j) + " ";
 			}
-			temp = temp.substr(0, temp.length() - 1);
-			temp += ">";
+			temp = trim(temp);
 
 			result.push_back(temp);
 		}

@@ -9,6 +9,8 @@ for output. It also generate output in the desired format
 
 #include <string>
 #include <vector>
+#include "StringUlti.h"
+
 using namespace std;
 
 class Projector {
