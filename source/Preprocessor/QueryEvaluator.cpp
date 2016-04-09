@@ -28,18 +28,46 @@ vector<vector<string>> QueryEvaluator::process() {
 				PatternClause* p = dynamic_cast<PatternClause*>(x);
 				Ref assignVar = p->getAssignedVariable();
 
-				unordered_map<string, int>::const_iterator item = directory.find(assignVar.getName());
+				unordered_map<string, int>::const_iterator assign = directory.find(assignVar.getName());
 
-				if (item == directory.end()) {
-					queryResult = pkb->PQLPattern(toTNodeType(assignVar.getType()), var1, var2);
-					add(queryResult, assignVar.getName());
+				if (regex_match(var1.getType(), designEntityRegex)) {
+					unordered_map<string, int>::const_iterator item1 = directory.find(var1.getName());
+
+					if (assign != directory.end() && item1 != directory.end()) {
+
+					}
+					else if (assign != directory.end()) {
+
+					}
+					else {
+						if (item1 == directory.end()) {
+
+						}
+						tempResult = {};
+						for (unsigned int i = 0; i < result.size(); i++) {
+
+							queryResult = pkb->PQLPattern(toTNodeType(assignVar.getType()), Ref(result.at(i).at(item1->second), var1.getType()), var2);
+							tempResult = add(queryResult, i, tempResult);
+
+						}
+						result = tempResult;
+
+						addDirectory(assignVar.getName());
+					}
+
 				}
 				else {
-					queryResult = pkb->PQLPattern(toTNodeType(assignVar.getType()), var1, var2);
-					for (vector<vector<string>>::iterator it = result.begin(); it != result.end();) {
+					if (assign == directory.end()) {
+						queryResult = pkb->PQLPattern(toTNodeType(assignVar.getType()), var1, var2);
+						add(queryResult, assignVar.getName());
+					}
+					else {
+						queryResult = pkb->PQLPattern(toTNodeType(assignVar.getType()), var1, var2);
+						for (vector<vector<string>>::iterator it = result.begin(); it != result.end();) {
 
-						it = query(queryResult, it, item->second);
+							it = query(queryResult, it, assign->second);
 
+						}
 					}
 				}
 			}
