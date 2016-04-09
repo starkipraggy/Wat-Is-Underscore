@@ -395,6 +395,7 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis()
 
 				// Obtain its corresponding use variables to check with
 				thisStatementUseVariableIndexes = statementsAndUseVariablesToCheck.at(currentStatementToCheck);
+				thisStatementUseVariableIndexesSize = thisStatementUseVariableIndexes.size();
 				previousStatementUseVariableIndexes.clear();
 
 				// Make sure we check only assign statements
@@ -402,7 +403,7 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis()
 					// Check its modify variables and see if there are any 
 					// that matches the uses variables that this statement has
 					for (int i = 0; i < thisStatementUseVariableIndexesSize; i++) {
-						if (currentStatementToCheck->getModifies(i) == thisStatementUseVariableIndexes[i]) {
+						if (currentStatementToCheck->getModifies(0) == thisStatementUseVariableIndexes[i]) {
 							affectsThis->push_back(currentStatementToCheck); // Add it into the list to be returned
 						}
 						else {
@@ -468,7 +469,7 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectedByThi
 				currentStatementToCheck = statementsToCheck.top();
 				statementsToCheck.pop();
 				currentStatementNumber = currentStatementToCheck->getStatementNumber();
-				
+
 				// Make sure we check only assign statements
 				if (currentStatementToCheck->getType() == Assign) {
 					// Check its uses variables and see if there are any 
@@ -494,9 +495,15 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectedByThi
 							statementsToCheck.push(nextStatement);
 						}
 					}
+
+					// If this is a while with only 1 next, and parent is a while, its parent should be its second next
+					// (stupid fix for Wilson's next)
+					StatementTableStatement* currentStatementParent = currentStatementToCheck->parent;
+					if ((currentStatementToCheck->getType() == While) && (currentStatementNextSize == 1) && (currentStatementParent != NULL) &&
+						(currentStatementParent->getType() == While) && (statementNumbersOfStatementsAlreadyChecked.count(currentStatementParent->getStatementNumber()) == 0)) {
+						statementsToCheck.push(currentStatementParent);
+					}
 				}
-
-
 
 				statementNumbersOfStatementsAlreadyChecked.insert(currentStatementNumber);
 			}
@@ -1342,6 +1349,40 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThis
 										}
 
 										currentStatementNumber = currentStatementParentNumber;
+									}
+									else if (!statementNumbersAfterCalls.empty()) {
+										// Jump back to the statement after the Call statement that 
+										// called the procedure that the current statement is in
+										int nextStatementNumber = statementNumbersAfterCalls.top();
+										statementNumbersAfterCalls.pop();
+
+										std::vector<int> newModifyVariables = statementsAndModifyVariablesToCheck.at(currentStatementNumber);
+										// Populate that statement with information it has obtained so far
+										if (statementsAndModifyVariablesToCheck.count(nextStatementNumber) > 0) {
+											// If information about the variables to be checked for this next statement exists,
+											// update said information to include all variables
+											std::set<int> newVariables;
+											std::vector<int> vectorFromTable = statementsAndModifyVariablesToCheck.at(nextStatementNumber);
+											int vectorFromTableSize = vectorFromTable.size();
+											int newModifyVariablesSize = newModifyVariables.size();
+											for (int i = 0; i < vectorFromTableSize; i++) {
+												newVariables.insert(vectorFromTable[i]);
+											}
+											for (int i = 0; i < newModifyVariablesSize; i++) {
+												newVariables.insert(newModifyVariables[i]);
+											}
+											std::vector<int> newVariablesToBeAdded;
+											std::set<int>::iterator end = newVariables.end();
+											for (std::set<int>::iterator it = newVariables.begin(); it != end; it++) {
+												newVariablesToBeAdded.push_back(*it);
+											}
+											statementsAndModifyVariablesToCheck.at(nextStatementNumber) = newVariablesToBeAdded;
+										}
+										else {
+											statementsAndModifyVariablesToCheck.insert({ nextStatementNumber, newModifyVariables });
+										}
+
+										currentStatementNumber = nextStatementNumber;
 									}
 									else {
 										// If it is not, shut this thing down?
