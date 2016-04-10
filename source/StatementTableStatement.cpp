@@ -647,6 +647,7 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectsThisSta
 		currentStatement = thisPreviousWithLargerStatementNumber;
 
 		while (currentStatement != NULL) {
+
 			// Execution varies depending on the type of statement
 			switch (currentStatement->getType()) {
 			case Assign:
@@ -662,7 +663,17 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectsThisSta
 				// Check if this statement modifies any uses variables - if it does, remove it from the list
 				for (int i = 0; i < usesVariablesSize; i++) {
 					if ((isAddedIntoList) || (modifyVariableIndex != usesVariables[i])) {
-						newUsesVariables.push_back(usesVariables[i]);
+						// Check if adding duplicate
+						bool isDuplicate = false;
+						int newUsesVariablesSize = newUsesVariables.size();
+						for (int x = 0; x < newUsesVariablesSize; x++) {
+							if (newUsesVariables[x] == usesVariables[i]) {
+								isDuplicate = true;
+							}
+						}
+						if (!isDuplicate) {
+							newUsesVariables.push_back(usesVariables[i]);
+						}
 					}
 					else {
 						isAddedIntoList = true;
@@ -1105,10 +1116,15 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectsThisSta
 
 						// Check if this statement modifies any uses variables - if it does, remove it from the list
 						for (int i = 0; i < usesVariablesSize; i++) {
+							bool shouldAdd = true;
 							for (int j = 0; j < modifyVariablesSize; j++) {
-								if (currentStatement->getModifies(j) != usesVariables[i]) {
-									newUsesVariables.push_back(usesVariables[i]);
+								if (currentStatement->getModifies(j) == usesVariables[i]) {
+									shouldAdd = false;
+									j = modifyVariablesSize;
 								}
+							}
+							if (shouldAdd) {
+								newUsesVariables.push_back(usesVariables[i]);
 							}
 						}
 
@@ -1121,45 +1137,47 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectsThisSta
 						}
 						*/
 
-						// Add information regarding the previous node(s) to the data structures for our algorithm's processing
-						int maximum = currentStatementNumber - 1;
-						std::vector<StatementTableStatement*>* currentStatementPreviouses = currentStatement->getPrevious();
-						int currentStatementPreviousesSize = currentStatementPreviouses->size();
-						for (int i = 0; i < currentStatementPreviousesSize; i++) {
-							StatementTableStatement* currentStatementPrevious = currentStatementPreviouses->at(i);
-							int currentStatementPreviousNumber = currentStatementPrevious->getStatementNumber();
-							statementNumbersAndStatements.insert({ currentStatementPreviousNumber, currentStatementPrevious });
-							if (smallestStatementNumberThatWeKnowOf > currentStatementPreviousNumber) {
-								smallestStatementNumberThatWeKnowOf = currentStatementPreviousNumber;
-							}
-							if (currentStatementPreviousNumber > maximum) {
-								maximum = currentStatementPreviousNumber;
-							}
+						if (newUsesVariables.size() > 0) {
+							// Add information regarding the previous node(s) to the data structures for our algorithm's processing
+							int maximum = currentStatementNumber - 1;
+							std::vector<StatementTableStatement*>* currentStatementPreviouses = currentStatement->getPrevious();
+							int currentStatementPreviousesSize = currentStatementPreviouses->size();
+							for (int i = 0; i < currentStatementPreviousesSize; i++) {
+								StatementTableStatement* currentStatementPrevious = currentStatementPreviouses->at(i);
+								int currentStatementPreviousNumber = currentStatementPrevious->getStatementNumber();
+								statementNumbersAndStatements.insert({ currentStatementPreviousNumber, currentStatementPrevious });
+								if (smallestStatementNumberThatWeKnowOf > currentStatementPreviousNumber) {
+									smallestStatementNumberThatWeKnowOf = currentStatementPreviousNumber;
+								}
+								if (currentStatementPreviousNumber > maximum) {
+									maximum = currentStatementPreviousNumber;
+								}
 
-							if (statementsAndUsesVariablesToCheck.count(currentStatementPreviousNumber) > 0) {
-								// If information about the variables to be checked for this previous statement exists,
-								// update said information to include all variables
-								std::set<int> newVariables;
-								std::vector<int> vectorFromTable = statementsAndUsesVariablesToCheck.at(currentStatementPreviousNumber);
-								int vectorFromTableSize = vectorFromTable.size();
-								int newUsesVariablesSize = newUsesVariables.size();
-								for (int i = 0; i < vectorFromTableSize; i++) {
-									newVariables.insert(vectorFromTable[i]);
+								if (statementsAndUsesVariablesToCheck.count(currentStatementPreviousNumber) > 0) {
+									// If information about the variables to be checked for this previous statement exists,
+									// update said information to include all variables
+									std::set<int> newVariables;
+									std::vector<int> vectorFromTable = statementsAndUsesVariablesToCheck.at(currentStatementPreviousNumber);
+									int vectorFromTableSize = vectorFromTable.size();
+									int newUsesVariablesSize = newUsesVariables.size();
+									for (int i = 0; i < vectorFromTableSize; i++) {
+										newVariables.insert(vectorFromTable[i]);
+									}
+									for (int i = 0; i < newUsesVariablesSize; i++) {
+										newVariables.insert(newUsesVariables[i]);
+									}
+									std::vector<int> newVariablesToBeAdded;
+									std::set<int>::iterator end = newVariables.end();
+									for (std::set<int>::iterator it = newVariables.begin(); it != end; it++) {
+										newVariablesToBeAdded.push_back(*it);
+									}
+									statementsAndUsesVariablesToCheck.at(currentStatementPreviousNumber) = newVariablesToBeAdded;
 								}
-								for (int i = 0; i < newUsesVariablesSize; i++) {
-									newVariables.insert(newUsesVariables[i]);
+								else {
+									statementsAndUsesVariablesToCheck.insert({ currentStatementPreviousNumber, newUsesVariables });
 								}
-								std::vector<int> newVariablesToBeAdded;
-								std::set<int>::iterator end = newVariables.end();
-								for (std::set<int>::iterator it = newVariables.begin(); it != end; it++) {
-									newVariablesToBeAdded.push_back(*it);
-								}
-								statementsAndUsesVariablesToCheck.at(currentStatementPreviousNumber) = newVariablesToBeAdded;
+								currentStatementNumber = maximum;
 							}
-							else {
-								statementsAndUsesVariablesToCheck.insert({ currentStatementPreviousNumber, newUsesVariables });
-							}
-							currentStatementNumber = maximum;
 						}
 					}
 				}
@@ -1218,6 +1236,13 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThis
 		}
 
 		while (currentStatement != NULL) {
+			std::cout << "statement = " << currentStatementNumber << ", modify = ";
+			std::vector<int> mod = statementsAndModifyVariablesToCheck.at(currentStatementNumber);
+			for (unsigned int i = 0; i < mod.size(); i++) {
+				std::cout << mod[i] << " ";
+			}
+			std::cout << std::endl;
+
 			// Execution varies depending on the type of statement
 			switch (currentStatement->getType()) {
 			case Assign:
@@ -1693,10 +1718,15 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThis
 
 					// Check if this statement modifies any modify variables
 					for (int x = 0; x < modifyVariablesSize; x++) {
+						bool shouldAdd = true;
 						for (int y = 0; y < currentStatementModifyVariablesSize; y++) {
-							if (modifyVariables[x] != currentStatement->getModifies(y)) {
-								newModifyVariables.push_back(modifyVariables[x]);
+							if (modifyVariables[x] == currentStatement->getModifies(y)) {
+								shouldAdd = false;
+								y = currentStatementModifyVariablesSize;
 							}
+						}
+						if (shouldAdd) {
+							newModifyVariables.push_back(modifyVariables[x]);
 						}
 					}
 
@@ -1711,7 +1741,7 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThis
 					// Add information regarding the next node(s) to the data structures for our algorithm's processing
 					int minimum = currentStatementNumber + 1;
 					std::vector<StatementTableStatement*>* currentStatementNexts = currentStatement->getNext();
-					if (currentStatementNexts->size() > 0) {
+					if ((newModifyVariables.size() > 0) && (currentStatementNexts->size() > 0)) {
 						StatementTableStatement* currentStatementNext = currentStatementNexts->at(0);
 						int currentStatementNextNumber = currentStatementNext->getStatementNumber();
 						statementNumbersAndStatements.insert({ currentStatementNextNumber, currentStatementNext });
