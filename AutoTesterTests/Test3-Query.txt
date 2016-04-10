@@ -93,15 +93,15 @@ assign a;
 Select a pattern a(_, _"c+d"_)
 none
 5000
-20 - Wrong Pattern Tree
+20 - Correct Pattern Tree
 assign a;
 Select a pattern a(_, _"b + c + d"_)
-
+1
 5000
 21 - Correct Pattern Tree
 assign a; stmt s;
 Select s pattern a(_, _"d * a"_)
-11
+1,2,3,4,5,6,7,8,9,10,11
 5000
 22 - 3 patterns
 while w; stmt s,s1;
@@ -136,12 +136,12 @@ Select ifstmt such that Follows*(3, s) and Parent(w, 10) pattern a("c", _)
 28 - check common synonym
 stmt s;
 Select s such that Modifies(s, "j") and Uses(s, "j") pattern s("j", _)
- 
+
 5000
 29 - Test odd combinations
 stmt s,s1;
-Select s such that Uses(s,k) and Parent*(s,s1)
-9
+Select s such that Uses(s,"k") and Parent*(s,s1)
+2,7,9
 5000
 30 - check common synonym but different stmt
 assign a; stmt s;
