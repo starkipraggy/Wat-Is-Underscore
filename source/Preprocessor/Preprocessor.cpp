@@ -289,6 +289,9 @@ void Preprocessor::addSuchThatClause(string rawClause) {
 				&& regex_match(var2Type, varRefRegex))) {
 				throw "invalid entVarRefRef or stmtVarRefRef";
 			}
+			if (var1.getType() == "placeholder" && var2.getType() == "expr") {
+				throw "ambiguity";
+			}
 		}
 		else if (regex_match(condition, ententRefRefRegex)) {
 			if (!(regex_match(var1Type, entRefRegex) && regex_match(var2Type, entRefRegex))) {
