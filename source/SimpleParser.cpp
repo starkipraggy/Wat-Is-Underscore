@@ -277,6 +277,7 @@ int SimpleParser::checkProcedure(unsigned int position, std::vector<std::string>
 	}
 	catch (std::exception& e) {
 		std::cout << "PROCEDURE must contain a statement" << std::endl;
+		e;
 		isErrorDetected = true;
 	}
 
@@ -332,6 +333,7 @@ int SimpleParser::checkWhile(unsigned int position, std::vector<std::string> tok
 	}
 	catch (std::exception& e) {
 		std::cout << "Error in parsing WHILE! " << std::endl;
+		e;
 		isErrorDetected = true;
 	}
 
@@ -346,6 +348,7 @@ int SimpleParser::checkWhile(unsigned int position, std::vector<std::string> tok
 	}
 	catch (std::exception& e) {
 		std::cout << "WHILE must contain a statement" << std::endl;
+		e;
 		isErrorDetected = true;
 	}
 	return position;
@@ -412,6 +415,7 @@ int SimpleParser::checkIf(unsigned int position, std::vector<std::string> tokens
 	}
 	catch (std::exception& e) {
 		std::cout << "Error in parsing IF! " << std::endl;
+		e;
 		isErrorDetected = true;
 	}
 
@@ -426,6 +430,7 @@ int SimpleParser::checkIf(unsigned int position, std::vector<std::string> tokens
 	}
 	catch (std::exception& e) {
 		std::cout << "IF block must contain a statement" << std::endl;
+		e;
 		isErrorDetected = true;
 	}
 
@@ -473,6 +478,7 @@ int SimpleParser::checkElse(unsigned int position, std::vector<std::string> toke
 		}
 		catch (std::exception& e) {
 			std::cout << "Error in parsing ELSE! " << std::endl;
+			e;
 			isErrorDetected = true;
 		}
 	}
@@ -488,6 +494,7 @@ int SimpleParser::checkElse(unsigned int position, std::vector<std::string> toke
 	}
 	catch (std::exception& e) {
 		std::cout << "ELSE must contain a statement" << std::endl;
+		e;
 		isErrorDetected = true;
 	}
 
@@ -584,6 +591,7 @@ int SimpleParser::checkCall(unsigned int position, std::vector<std::string> toke
 	}
 	catch (std::exception& e) {
 		std::cout << "Error in parsing Call! " << std::endl;
+		e;
 		isErrorDetected = true;
 	}
 	return position;
@@ -639,6 +647,7 @@ int SimpleParser::checkAssign(unsigned int position, std::vector<std::string> to
 		catch (std::exception& e) {
 			std::cout << "Error parsing the closing brace! " << std::endl;
 			isErrorDetected = true;
+			e;
 			return position;
 		}
 	}
@@ -721,7 +730,7 @@ int SimpleParser::checkAssign(unsigned int position, std::vector<std::string> to
 				else if (checkLeftVar == true && checkEqualsOperator == true 
 					&& checkRightVar == true && checkOperator == false) {
 					checkOperator = true;
-					checkRightVar == false;
+					checkRightVar = false;
 					rightVariables.push_back(tokens[position]);
 					types.push_back(Operator);
 				}
@@ -806,6 +815,7 @@ int SimpleParser::checkAssign(unsigned int position, std::vector<std::string> to
 						catch (std::exception& e) {
 							std::cout << "Error parsing the assignment parenthesis! " << std::endl;
 							isErrorDetected = true;
+							e;
 							return position;
 						}
 					}
