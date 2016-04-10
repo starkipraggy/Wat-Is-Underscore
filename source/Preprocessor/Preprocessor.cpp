@@ -32,6 +32,12 @@ const regex placeholderRegex("^_$");
 const regex patternExpressionRegex("(^\")[[:space:]]*([[:alpha:]]([[:alnum:]]|#)*|[[:digit:]]+)([[:space:]]*(\\+|\\-|\\*)[[:space:]]*([[:alpha:]]([[:alnum:]]|#)*|[[:digit:]]+))*[[:space:]]*(\"$)");
 const regex partOfExpressionRegex("(^_\")[[:space:]]*([[:alpha:]]([[:alnum:]]|#)*|[[:digit:]]+)([[:space:]]*(\\+|\\-|\\*)[[:space:]]*([[:alpha:]]([[:alnum:]]|#)*|[[:digit:]]+))*[[:space:]]*(\"_$)");
 
+//Additional
+const regex procNameRegex("^(procedure)$", icase);
+const regex stmtNoRegex("^(stmtlst|stmt|assign|while|if|prog_line)$", icase);
+const regex varNameRegex("^(variable)$", icase);
+const regex valueRegex("^(constant)$", icase);
+
 
 void Preprocessor::process(string statement) {
 	try {
@@ -487,22 +493,22 @@ Ref Preprocessor::createAttrRef(string name) {
 		throw msg;
 	}
 
-	if (StringToUpper(type) == "PROCEDURE") {
+	if (regex_match(type, procNameRegex)) {
 		if (attrName != "PROCNAME") {
 			throw "wrong procedure type";
 		}
 	}
-	else if (StringToUpper(type) == "STMT" || StringToUpper(type) == "STMTLST") {
+	else if (regex_match(type, stmtNoRegex)) {
 		if (attrName != "STMT#") {
 			throw "wrong stmt type";
 		}
 	}
-	else if (StringToUpper(type) == "VARIABLE") {
+	else if (regex_match(type, varNameRegex)) {
 		if (attrName != "VARNAME") {
 			throw "wrong variable type";
 		}
 	}
-	else if (StringToUpper(type) == "CONSTANT") {
+	else if (regex_match(type, valueRegex)) {
 		if (attrName != "VALUE") {
 			throw "wrong constant type";
 		}
