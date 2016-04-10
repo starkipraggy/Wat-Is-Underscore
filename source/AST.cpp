@@ -126,7 +126,7 @@ TNode* AST::constructExpressionTree(std::vector<std::string> &tokens){
         return NULL;
     }
 
-    for (unsigned int i = 0; i < tokens.size(); i++) {
+    for (int i = ((int)tokens.size() - 1); i > -1; i--) {
         //ignore underscores
         if (tokens[i] == "_") {
             continue;
@@ -145,8 +145,8 @@ TNode* AST::constructExpressionTree(std::vector<std::string> &tokens){
                 operandstk.pop();
                 TNode* op1 = operandstk.top();
                 operandstk.pop();
-                opr->addChild(op1);
                 opr->addChild(op2);
+                opr->addChild(op1);
                 operandstk.push(opr);
             }
             operatorstk.push(node);
@@ -159,8 +159,8 @@ TNode* AST::constructExpressionTree(std::vector<std::string> &tokens){
                 operandstk.pop();
                 TNode* op1 = operandstk.top();
                 operandstk.pop();
-                opr->addChild(op1);
                 opr->addChild(op2);
+                opr->addChild(op1);
                 operandstk.push(opr);
             }
             operatorstk.push(node);
@@ -169,22 +169,22 @@ TNode* AST::constructExpressionTree(std::vector<std::string> &tokens){
             node->setNodeType(OperatorTimes);
             operatorstk.push(node);
         }
-        else if (tokens[i] == "(") {
-            node->setNodeType(LeftParenthesis);
+        else if (tokens[i] == ")") {
+            node->setNodeType(RightParenthesis);
             operatorstk.push(node);
         }
         //except for ). Resolve all operators until you meet a LeftParenthesis
-        else if (tokens[i] == ")") {
-            node->setNodeType(RightParenthesis);
-            while (!operatorstk.empty() && operatorstk.top()->getNodeType() != LeftParenthesis) {
+        else if (tokens[i] == "(") {
+            node->setNodeType(LeftParenthesis);
+            while (!operatorstk.empty() && operatorstk.top()->getNodeType() != RightParenthesis) {
                 TNode* opr = operatorstk.top();
                 operatorstk.pop();
                 TNode* op2 = operandstk.top();
                 operandstk.pop();
                 TNode* op1 = operandstk.top();
                 operandstk.pop();
-                opr->addChild(op1);
                 opr->addChild(op2);
+                opr->addChild(op1);
                 operandstk.push(opr);
             }
             //get rid of the left parenthesis
@@ -206,8 +206,8 @@ TNode* AST::constructExpressionTree(std::vector<std::string> &tokens){
         operandstk.pop();
         TNode* op1 = operandstk.top();
         operandstk.pop();
-        opr->addChild(op1);
         opr->addChild(op2);
+        opr->addChild(op1);
         operandstk.push(opr);
     }
 

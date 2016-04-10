@@ -15,25 +15,25 @@ namespace UnitTesting
         TNode* advancedTree = new TNode();
         
         TEST_METHOD_INITIALIZE(InitialiseTrees) {
-            basicTree->setNodeType(OperatorPlus);
-            basicTree->addChild(new TNode(VariableName, "a"));
-            basicTree->addChild(new TNode(OperatorMinus, ""));
-            basicTree->getChildNodes()[1]->addChild(new TNode(OperatorPlus, ""));
-            basicTree->getChildNodes()[1]->addChild(new TNode(VariableName, "d"));
-            basicTree->getChildNodes()[1]->getChildNodes()[0]->addChild(new TNode(VariableName, "b"));
-            basicTree->getChildNodes()[1]->getChildNodes()[0]->addChild(new TNode(VariableName, "c"));
+            basicTree->setNodeType(OperatorMinus);
+            basicTree->addChild(new TNode(OperatorPlus, ""));
+            basicTree->addChild(new TNode(VariableName, "d"));
+            basicTree->getChildNodes()[0]->addChild(new TNode(VariableName, "a"));
+            basicTree->getChildNodes()[0]->addChild(new TNode(OperatorPlus, ""));
+            basicTree->getChildNodes()[0]->getChildNodes()[1]->addChild(new TNode(VariableName, "b"));
+            basicTree->getChildNodes()[0]->getChildNodes()[1]->addChild(new TNode(VariableName, "c"));
 
-            advancedTree->setNodeType(OperatorMinus);
-            advancedTree->addChild(new TNode(VariableName, "hewlett"));
-            advancedTree->addChild(new TNode(OperatorPlus, ""));
-            advancedTree->getChildNodes()[1]->addChild(new TNode(OperatorPlus, ""));
-            advancedTree->getChildNodes()[1]->addChild(new TNode(VariableName, "euler"));
-            advancedTree->getChildNodes()[1]->getChildNodes()[0]->addChild(new TNode(VariableName, "a"));
-            advancedTree->getChildNodes()[1]->getChildNodes()[0]->addChild(new TNode(OperatorTimes, ""));
-            advancedTree->getChildNodes()[1]->getChildNodes()[0]->getChildNodes()[1]->addChild(new TNode(OperatorPlus, ""));
-            advancedTree->getChildNodes()[1]->getChildNodes()[0]->getChildNodes()[1]->addChild(new TNode(VariableName, "d"));
-            advancedTree->getChildNodes()[1]->getChildNodes()[0]->getChildNodes()[1]->getChildNodes()[0]->addChild(new TNode(VariableName, "b"));
-            advancedTree->getChildNodes()[1]->getChildNodes()[0]->getChildNodes()[1]->getChildNodes()[0]->addChild(new TNode(VariableName, "c"));
+            advancedTree->setNodeType(OperatorPlus);
+            advancedTree->addChild(new TNode(OperatorMinus, ""));
+            advancedTree->addChild(new TNode(VariableName, "euler"));
+            advancedTree->getChildNodes()[0]->addChild(new TNode(VariableName, "hewlett"));
+            advancedTree->getChildNodes()[0]->addChild(new TNode(OperatorPlus, ""));
+            advancedTree->getChildNodes()[0]->getChildNodes()[1]->addChild(new TNode(VariableName, "a"));
+            advancedTree->getChildNodes()[0]->getChildNodes()[1]->addChild(new TNode(OperatorTimes, ""));
+            advancedTree->getChildNodes()[0]->getChildNodes()[1]->getChildNodes()[1]->addChild(new TNode(OperatorPlus, ""));
+            advancedTree->getChildNodes()[0]->getChildNodes()[1]->getChildNodes()[1]->addChild(new TNode(VariableName, "d"));
+            advancedTree->getChildNodes()[0]->getChildNodes()[1]->getChildNodes()[1]->getChildNodes()[0]->addChild(new TNode(VariableName, "b"));
+            advancedTree->getChildNodes()[0]->getChildNodes()[1]->getChildNodes()[1]->getChildNodes()[0]->addChild(new TNode(VariableName, "c"));
         }
 
         TEST_METHOD(TestAST_CompareTrees) {
@@ -53,6 +53,18 @@ namespace UnitTesting
             bool success = AST::compareTrees(basicTree, advancedTree);
 
             //Assert
+            Assert::IsFalse(success);
+        }
+
+        TEST_METHOD(FindNoSubtreeInTree) {
+            //Arrange
+            TNode* tree = AST::constructExpressionTree("x*y + d + y*a");
+            TNode* subtree = AST::constructExpressionTree("d+y*a");
+
+            //Act
+            bool success = AST::findSubtreeInTree(subtree, tree);
+
+            //Arrange
             Assert::IsFalse(success);
         }
 		

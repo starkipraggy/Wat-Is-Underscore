@@ -93,10 +93,10 @@ assign a;
 Select a pattern a(_, _"c+d"_)
 none
 5000
-20 - Correct Pattern Tree
+20 - Wrong Pattern Tree
 assign a;
 Select a pattern a(_, _"b + c + d"_)
-1
+
 5000
 21 - Correct Pattern Tree
 assign a; stmt s;
