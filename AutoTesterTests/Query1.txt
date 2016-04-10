@@ -2026,7 +2026,7 @@ Select n such that Next(n, 28)
 406. Basic Next Queries
 prog_line n;
 Select n such that Next(n, 29)
-28
+23
 5000
 407. Basic Next Queries
 prog_line n;
@@ -2221,7 +2221,7 @@ none
 445. Basic Next* Queries
 prog_line n;
 Select n such that Next*(n, 2)
-1
+1,2,3,4,5,6,7,8,9,10,11,12
 5000
 446. Basic Next* Queries
 prog_line n;
@@ -2321,42 +2321,42 @@ Select n such that Next*(n, 21)
 465. Basic Next* Queries
 prog_line n;
 Select n such that Next*(n, 22)
-20,21
+20,21,22,23,24,25,26,27,28,29
 5000
 466. Basic Next* Queries
 prog_line n;
 Select n such that Next*(n, 23)
-20,21,22
+20,21,22,23,24,25,26,27,28,29
 5000
 467. Basic Next* Queries
 prog_line n;
 Select n such that Next*(n, 24)
-20,21,22,23
+20,21,22,23,24,25,26,27,28,29
 5000
 468. Basic Next* Queries
 prog_line n;
 Select n such that Next*(n, 25)
-20,21,22,23,24
+20,21,22,23,24,25,26,27,28,29
 5000
 469. Basic Next* Queries
 prog_line n;
 Select n such that Next*(n, 26)
-20,21,22,23,24,25
+20,21,22,23,24,25,26,27,28,29
 5000
 470. Basic Next* Queries
 prog_line n;
 Select n such that Next*(n, 27)
-20,21,22,23,24,25,26
+20,21,22,23,24,25,26,27,28,29
 5000
 471. Basic Next* Queries
 prog_line n;
 Select n such that Next*(n, 28)
-20,21,22,23,24,25,26,27
+20,21,22,23,24,25,26,27,28,29
 5000
 472. Basic Next* Queries
 prog_line n;
 Select n such that Next*(n, 29)
-20,21,22,23,24,25,26,27,28
+20,21,22,23,24,25,26,27,28,29
 5000
 473. Basic Next* Queries
 prog_line n;
@@ -2371,10 +2371,10 @@ none
 475. Basic Next* Queries
 prog_line n;
 Select n such that Next*(n, 32)
-none
+31
 5000
 476. Basic Next* Queries
 prog_line n;
 Select n such that Next*(n, 33)
-none
+31,32
 5000
