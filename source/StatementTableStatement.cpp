@@ -409,7 +409,9 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis()
 					// Check the list of uses variables and see if there are any 
 					// that matches the modify variable that this statement has
 					for (int i = 0; i < thisStatementUseVariableIndexesSize; i++) {
-						if (currentStatementToCheck->getModifies(0) == thisStatementUseVariableIndexes[i]) {
+						// Make sure same procedure as statement calling this function
+						if ((currentStatementToCheck->getModifies(0) == thisStatementUseVariableIndexes[i]) &&
+							(getProcedureIndexNumber() == currentStatementToCheck->getProcedureIndexNumber())) {
 							affectsThis->push_back(currentStatementToCheck); // Add it into the list to be returned
 						}
 						else {
@@ -522,7 +524,9 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectedByThi
 					// that matches the modifies variable that this statement has
 					currentStatementUsesSize = currentStatementToCheck->getUsesSize();
 					for (int i = 0; i < currentStatementUsesSize; i++) {
-						if (variableIndex == currentStatementToCheck->getUses(i)) {
+						// Make sure same procedure as the statement calling this function
+						if ((variableIndex == currentStatementToCheck->getUses(i)) &&
+							(getProcedureIndexNumber() == currentStatementToCheck->getProcedureIndexNumber())) {
 							// Add it into the list to be returned
 							affectedByThis->push_back(currentStatementToCheck);
 							// Break out of for-loop
