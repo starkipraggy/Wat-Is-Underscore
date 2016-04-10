@@ -452,12 +452,7 @@ Ref Preprocessor::createWithRef(string name) {
 	else if (regex_match(name, identRegex)) {
 		try {
 			string type = getDeclarationType(name);
-			if (type == "prog_line") {
-				ref = Ref(name, type);
-			}
-			else {
-				throw "with ref need to be prog_line";
-			}
+			ref = Ref(name, type);
 		}
 		catch (const char* msg) {
 			throw msg;

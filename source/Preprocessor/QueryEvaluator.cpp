@@ -107,11 +107,14 @@ vector<vector<string>> QueryEvaluator::process() {
 					if (item1 == directory.end()) {
 						queryResult = pkb->PQLSelect(toTNodeType(var1.getType()));
 						add(queryResult, var1.getName());
-
+					}
+					if (item2 == directory.end()) {
 						queryResult = pkb->PQLSelect(toTNodeType(var2.getType()));
 						add(queryResult, var2.getName());
 					}
-						
+					
+					item1 = directory.find(var1.getName());
+					item2 = directory.find(var2.getName());
 					remove(item1->second, item2->second);
 				}
 				else if (regex_match(var1.getType(), designEntityRegex)) {
