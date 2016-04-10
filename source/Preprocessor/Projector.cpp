@@ -21,5 +21,8 @@ std::vector<std::string> Projector::process(vector<vector<string>> rawResult) {
 		}
 	}
 
+    std::sort(result.begin(), result.end());
+    result.erase( std::unique(result.begin(), result.end()), result.end());
+
 	return result;
 }
