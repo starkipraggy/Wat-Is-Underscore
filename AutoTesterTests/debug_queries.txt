@@ -86,7 +86,7 @@ Select a1 such that Affects*(a1,a2) with a2.stmt# = 17
 17.
 assign a; while w; variable v; 
 Select <w,a> such that Next(w,a)
-12 13,16 17,16 18,23 24,23 33,5 20,5 6,7 8,9 10,9 19
+4 5,5 20,5 6,7 8,7 9,9 10,9 19,11 12,12 13,12 16,16 17,16 18,22 23,23 24,23 33
 5000
 18.
 assign a; while w; variable v; 
