@@ -103,19 +103,45 @@ vector<vector<string>> QueryEvaluator::process() {
 					unordered_map<string, int>::const_iterator item1 = directory.find(var1.getName());
 					unordered_map<string, int>::const_iterator item2 = directory.find(var2.getName());
 					
-
-					if (item1 == directory.end()) {
-						queryResult = pkb->PQLSelect(toTNodeType(var1.getType()));
-						add(queryResult, var1.getName());
-					}
-					if (item2 == directory.end()) {
+					if (item1 == directory.end() && item2 == directory.end()) {
+						//default add item2
 						queryResult = pkb->PQLSelect(toTNodeType(var2.getType()));
 						add(queryResult, var2.getName());
+						item2 = directory.find(var2.getName());
 					}
-					
-					item1 = directory.find(var1.getName());
-					item2 = directory.find(var2.getName());
-					remove(item1->second, item2->second);
+
+					if (item1 == directory.end() || item2 == directory.end()) {
+						string name, type;
+						int pos;
+						if (item1 == directory.end()) {
+							name = var1.getName();
+							type = var1.getType();
+							pos = item2->second;
+						}
+						else { //item2 == directory.end();
+							name = var2.getName();
+							type = var2.getType();
+							pos = item1->second;
+						}
+
+						for (vector<vector<string>>::iterator it = result.begin(); it != result.end();) {
+
+							queryResult = pkb->PQLSelect(toTNodeType(type));
+							it = query(queryResult, it, pos);
+
+						}
+
+						string target;
+						for (unsigned int i = 0; i < result.size(); i++) {
+							target = result.at(i).at(pos);
+							result.at(i).push_back(target);
+						}
+						addDirectory(name);
+						
+					}
+					else { //item1 != directory.end() && item2 != directory.end()
+						remove(item1->second, item2->second);
+					}
 				}
 				else if (regex_match(var1.getType(), designEntityRegex)) {
 					unordered_map<string, int>::const_iterator item1 = directory.find(var1.getName());
