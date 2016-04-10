@@ -110,7 +110,7 @@ bool SimpleParser::parseSimple(std::vector<std::string> tokens) {
 		std::cout << "Parsing Simple Program " << std::endl << std::endl;
 		std::cout << "\t";
 		char a = 177, b = 219;
-		for (unsigned int k = 0;k < 80;k++)
+		for (unsigned int k = 0;k < 65;k++)
 			std::cout << a;
 		std::cout << "\r";
 		std::cout << "\t";
@@ -118,7 +118,7 @@ bool SimpleParser::parseSimple(std::vector<std::string> tokens) {
 
 		for (unsigned int i = 0; i < tokens.size(); i++) {
 			// Progress Bar Foreground
-			int  j = (double)i / (double)tokens.size()*80.0;
+			int  j = (double)i / (double)tokens.size()*65.0;
 			for (h; h<= j; h++) {
 				std::cout << b;
 			}
