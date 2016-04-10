@@ -101,7 +101,7 @@ Select a pattern a(_, _"x * y + z")
 21 - Pattern 3
 assign a;
 Select a pattern a(_, _"z + x"_)
-11,13,14
+11,14
 5000
 22 - Mix 1
 assign a; while w;
