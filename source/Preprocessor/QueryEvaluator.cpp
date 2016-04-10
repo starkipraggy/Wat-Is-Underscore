@@ -406,12 +406,7 @@ void QueryEvaluator::add(vector<string> queryResult, string name) {
 	}
 	else {
 		for (unsigned int i = 0; i < result.size(); i++) {
-			for (unsigned int j = 0; j < queryResult.size(); j++) {
-				eachTemp = {};
-				eachTemp.assign(result.at(i).begin(), result.at(i).end());
-				eachTemp.push_back(queryResult.at(j));
-				temp.push_back(eachTemp);
-			}
+			temp = add(queryResult, i, temp);
 		}
 	}
 
