@@ -7,7 +7,8 @@ procedure SimpleProcOne {
             while d {            //6
                 d = d + 1;       //7
                 a = a + 2; }     //8
-            c = 1; } else {      //9
+            c = 1; }             //9
+        else {      
             d = 10;              //10
             e = 92 + b; }        //11
         f = 666; }               //12
@@ -16,8 +17,10 @@ procedure SimpleProcOne {
     d = f + 29;                  //15
     call SimpleProcThree;        //16
     if d then {                  //17
-        a = 1; } else {          //18
+        a = 1; }                 //18
+    else {          
         d = 1; } }               //19
+               
 
 procedure SimpleProcTwo {
     a = 2;                       //20
@@ -28,7 +31,8 @@ procedure SimpleProcTwo {
             g = g + 2;           //25
             while g {            //26
                 f = 9 + b; }     //27
-            h = 21 + a; } else { //28
+            h = 21 + a; }        //28 
+        else { 
             e = 999; } }         //29
     call SimpleProcThree; }      //30
 

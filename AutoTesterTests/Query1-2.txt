@@ -1,0 +1,105 @@
+1. Uses & Modifies
+stmt s;
+Select s such that Uses(s,"a") and Modifies(s, "a")
+2,4,5,6,8,13
+5000
+2. Uses & Modifies
+stmt s; variable v;
+Select s such that Uses(s, v) such that Modifies(11, v)
+2,4,13,22
+5000
+3. Modifies & Follows
+stmt s1, s2;
+Select s1 such that Follows(s1, s2) such that Modifies(s2, "z")
+2,15,22,32
+5000
+4. 2*Modifies & Follows, and
+stmt s1, s2; procedure p; variable v;
+Select s1 such that Follows(s1, s2) such that Modifies(s1, "y") and Modifies(s2, "z")
+32
+5000
+5. 2*Modifies & Follows, such that
+stmt s1, s2; procedure p; variable v;
+Select s1 such that Follows(s1, s2) such that Modifies(s1, "y") such that Modifies(s2, "z")
+32
+5000
+6. Uses & Modifies
+procedure p;
+Select p such that Modifies(p, "z") and Uses(p, "c")
+SimpleProcOne, SimpleProcTwo
+5000
+7. Calls Debugging
+procedure p;
+Select p such that calls(p,"SimpleProcThree")
+SimpleProcOne, SimpleProcTwo
+5000
+8. Calls Debugging
+procedure p, q;
+Select p such that calls(p,q)
+SimpleProcOne, SimpleProcTwo
+5000
+9. Calls Debugging
+procedure p, q;
+Select q such that calls(p,q)
+SimpleProcTwo, SimpleProcThree
+5000
+10. Calls Debugging
+procedure q;
+Select q such that calls("SimpleProcOne", q)
+SimpleProcTwo, SimpleProcThree
+5000
+11. Follows/Modifies/Calls
+stmt s1,s2; variable v; procedure p;
+Select s1 such that Follows*(s1,s2) such that Modifies(s1, "y") such that Modifies(s2, "z") such that Calls(p, "SimpleProcTwo")
+13,32
+5000
+12. Calls, Calls and Calls
+procedure p, q, r;
+Select p such that Calls(p, q) such that Calls(q, r) and Calls*(p, r)
+SimpleProcOne
+5000
+13. Uses, Follows, Calls* and Modifies
+procedure p; stmt s; variable v;
+Select v such that Modifies(p, v) such that Calls(p, "SimpleProcTwo") such that Uses(s, v) such that Follows*(s, 6)
+a
+5000
+14. Affects, Uses, Modifies
+procedure p; stmt s1, s2; variable v;
+Select s1 such that Affects(s1, s2) such that Uses(s1, v) such that Modifies(s2, v) and Uses(p, v)
+5, 7, 8, 25
+5000
+15. Affects*, Uses, Modifies
+procedure p; stmt s1, s2; variable v;
+Select s1 such that Affects*(s1, s2) such that Uses(s1, v) such that Modifies(s2, v) and Uses(p, v)
+3, 5, 7, 8, 25
+5000
+16. Affects, Next 
+stmt s1, s2; variable v;
+Select s2 such that Affects(s1, s2) such that Next(s1, 6) and Next(7, s2) such that Uses(s2, v) and Modifies(5, v)
+8
+5000
+17. Affects, Next*
+stmt s1, s2; variable v; procedure p;
+Select s1 such that Next*(s1, s2) such that Affects*(s1, s2) such that Calls*(p, q) and Calls*(q, "SimpleProcOne")
+none
+5000
+18. Affects*, Next*
+stmt s1, s2;
+Select s1 such that Affects*(s1, s2) and Affects*(s2, s1) such that Next*(s1, s2) and Next*(s2, s1)
+5, 7, 8, 25
+5000
+19. Affects*, Next*
+stmt s1, s2;
+Select s1 such that Affects*(s1, s1) such that Next*(s1, s1) such that Next*(s1, s2)
+5, 7, 8, 25
+5000
+20. Affects*, Next*
+stmt s1, s2;
+Select s1 such that Affects*(s1, s1) such that Next*(s1, s1) such that Next*(s1, s2) such that Uses(s1, "a")
+5, 8
+5000
+30. Last Tuple
+stmt s1, s2, s3, s4;
+Select <s1, s2, s3, s4> such that Uses(s1, "g") such that Next*(s1, s2) such that Follows(s3, s4) such that Next(s2, s4)
+13 14 14 15,13 15 15 16,13 16 16 17, 22 22 22 30, 22 24 24 25, 22 25 25 26, 22 26 26 28, 22 27 25 26, 22 28 21 22, 22 29 21 22, 23 22 22 30, 23 24 24 25, 23 25 25 26, 23 26 26 28, 23 27 25 26, 23 28 21 22, 23 29 21 22, 25 22 22 30, 25 24 24 25, 25 25 25 26, 25 26 26 28, 25 27 25 26, 25 28 21 22, 25 29 21 22, 26 22 22 30, 26 24 24 25, 26 25 25 26, 26 26 26 28, 26 27 25 26, 26 28 21 22, 26 29 21 22
+50000
