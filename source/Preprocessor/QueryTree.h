@@ -11,6 +11,7 @@ it to be evaluated by the Evaluator
 #include <vector>
 #include <regex>
 #include <list>
+#include <iostream>
 
 #include "Clause.h"
 #include "PatternClause.h"
@@ -62,10 +63,14 @@ private:
 	static QueryTree* m_pInstance;
 	vector<Ref> selects; /**< collection of select clause */
 	std::vector<Clause*> clauses; /**< collection of clauses */
+	std::vector<std::pair <Clause*, int>> weightedClauses; /**< collection of weightedClauses */
 
 	QueryTree();
 	QueryTree(QueryTree const&) {};
 	QueryTree& operator=(QueryTree const&) {};
+	int QueryTree::determineWeight(Clause* c);
+	bool sorted = false;
+	std::vector<Clause*> wClauses = {};
 };
 
 #endif
