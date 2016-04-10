@@ -20,6 +20,7 @@ namespace UnitTesting {
 			stmtVar, assignVar, whileVar, variableVar, constantVar, progLineVar, 
 			invalidVar, boolVar, withVar, procedureVar, ifVar;
 		Clause* usesClause;
+		Clause* callsClause;
 		Clause* patternClause;
 		Clause* patternIfClause;
 		Clause* withClause;
@@ -30,6 +31,7 @@ namespace UnitTesting {
 			simpleTupleQuery = "assign a; variable v; select <a,v>",
 			usesQuery = "variable v; assign a; select v such that uses(a, v)",
 			usesTupleQuery = "variable v; assign a; select <a,v> such that uses(a, v)",
+			callsQuery = "procedure p; select p such that calls(p, \"abc\")",
 			patternQuery = "assign a; select a pattern a(_,\"abc\")",
 			patternIfQuery = "if ifstmt; select ifstmt pattern ifstmt(\"abc\",_,_)",
 			withQuery = "procedure p; select p with p.procName = \"abc\"",
@@ -52,6 +54,7 @@ namespace UnitTesting {
 			ifVar = Ref("ifstmt", "if");
 
 			usesClause = new Clause("USES", assignVar, variableVar);
+			callsClause = new Clause("CALLS", procedureVar, exprVar);
 			patternClause = new PatternClause("PATTERN", placeholderVar, exprVar, assignVar);
 			patternIfClause = new PatternClause("PATTERN", exprVar, placeholderVar, ifVar);
 			withClause = new Clause("WITH", procedureVar, exprVar);
@@ -142,6 +145,16 @@ namespace UnitTesting {
 
 			Assert::IsTrue(select.at(0).equals(stmtVar));
 			Assert::IsTrue(clauses.at(0)->equals(new Clause("follows*", stmtVar, integerVar)));
+		}
+
+		TEST_METHOD(TestPreprocessor_CallsQuery)
+		{
+			p.process(callsQuery);
+			select = QueryTree::Instance()->getSelect();
+			clauses = QueryTree::Instance()->getClauses();
+
+			Assert::IsTrue(select.at(0).equals(procedureVar));
+			Assert::IsTrue(clauses.at(0)->equals(callsClause));
 		}
 
 		TEST_METHOD(TestPreprocessor_PatternQuery)
