@@ -16,7 +16,7 @@ const regex designEntityRegex("^(procedure|stmtLst|stmt|assign|call|while|if|var
 
 //Grammer rules for select clause
 const regex clauseRegex("such that+|pattern+|with+|and+", icase);
-const regex expressionRegex("^\"[[:alpha:]][#[:alnum:]]*\"$"); //'"' IDENT '"'
+const regex expressionRegex("^\"[[:alpha:]][[:alnum:]]*\"$"); //'"' IDENT '"'
 
 const regex entVarRefRefRegex("^(modifies|uses)$", icase);
 const regex stmtVarRefRefRegex("^(modifies|uses)$", icase);
@@ -29,8 +29,8 @@ const regex varRefRegex("^(variable|placeholder|expr)$", icase);
 const regex exprRegex("^(placeholder|part_of_expr|expr)$", icase);
 
 const regex placeholderRegex("^_$");
-const regex patternExpressionRegex("(^\")[[:space:]]*([[:alpha:]]([#[:alnum:]])*|[[:digit:]]+)([[:space:]]*(\\+|\\-|\\*)[[:space:]]*([[:alpha:]]([#[:alnum:]])*|[[:digit:]]+))*[[:space:]]*(\"$)");
-const regex partOfExpressionRegex("(^_\")[[:space:]]*([[:alpha:]]([#[:alnum:]])*|[[:digit:]]+)([[:space:]]*(\\+|\\-|\\*)[[:space:]]*([[:alpha:]]([#[:alnum:]])*|[[:digit:]]+))*[[:space:]]*(\"_$)");
+const regex patternExpressionRegex("(^\")[[:space:]]*([[:alpha:]]([[:alnum:]])*|[[:digit:]]+)([[:space:]]*(\\+|\\-|\\*)[[:space:]]*([[:alpha:]]([[:alnum:]])*|[[:digit:]]+))*[[:space:]]*(\"$)");
+const regex partOfExpressionRegex("(^_\")[[:space:]]*([[:alpha:]]([[:alnum:]])*|[[:digit:]]+)([[:space:]]*(\\+|\\-|\\*)[[:space:]]*([[:alpha:]]([[:alnum:]])*|[[:digit:]]+))*[[:space:]]*(\"_$)");
 
 //Additional
 const regex procNameRegex("^(procedure)$", icase);
