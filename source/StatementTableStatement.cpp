@@ -1240,12 +1240,18 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThis
 		}
 
 		while (currentStatement != NULL) {
+			/*
 			std::cout << "statement = " << currentStatementNumber << ", modify = ";
 			std::vector<int> mod = statementsAndModifyVariablesToCheck.at(currentStatementNumber);
 			for (unsigned int i = 0; i < mod.size(); i++) {
 				std::cout << mod[i] << " ";
 			}
-			std::cout << std::endl;
+			std::cout << "next = ";
+			std::vector<StatementTableStatement*>* wtf = currentStatement->getNext();
+			for (unsigned int i = 0; i < wtf->size(); i++) {
+				std::cout << wtf->at(i)->getStatementNumber() << " ";
+			}
+			std::cout << std::endl;*/
 
 			// Execution varies depending on the type of statement
 			switch (currentStatement->getType()) {
@@ -1486,14 +1492,12 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThis
 							// variables matches the list of modify variables we have currently
 							if (hasPatternRepeat) {
 								// If our current list matches with this list in history, we break out of the for-loop (as no 
-								// point checking the ones after this), and execute the statement with a larger statement
-								// number among its two Next statements next (the statement with the smaller statement number
-								// is the first statement in the statement list of this while loop [ie. that Next statement
-								// has this While statement as parent]) in order to break out of the for-loop
+								// point checking the ones after this), and execute the statement that does not have this
+								// statement as a parent among its two Next statements next in order to break out of the for-loop
 								if (currentStatementNexts->size() > 1) {
-									int next1 = currentStatementNexts->at(0)->getStatementNumber();
-									int next2 = currentStatementNexts->at(1)->getStatementNumber();
-									currentStatementNumber = (next1 > next2) ? next1 : next2;
+									StatementTableStatement* next1 = currentStatementNexts->at(0);
+									StatementTableStatement* next2 = currentStatementNexts->at(1);
+									currentStatementNumber = ((next1->parent != currentStatement) ? next1 : next2)->getStatementNumber();
 								}
 								else {
 									// Check if its parent is a while loop. If it is, exit back to parent
