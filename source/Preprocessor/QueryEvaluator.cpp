@@ -317,31 +317,38 @@ vector<vector<string>> QueryEvaluator::process() {
 void QueryEvaluator::processOneSynonym(Ref source, Ref des, string clause, int pos) {
 	vector<string> queryResult;
 	unordered_map<string, int>::const_iterator item = directory.find(source.getName());
+
+	if (des.getType() == "placeholder") {
+		vector<string> temp;
+
+		if (pos == 1) {
+			pos = 2;
+		}
+		else { //pos == 2
+			pos = 1;
+		}
+
+		queryResult = pkb->PQLSelect(toTNodeType(source.getType()));
+
+		for (vector<string>::iterator it = queryResult.begin(); it != queryResult.end();) {
+
+			temp = queryPKB(clause, *it, pos, source.getType());
+			if (temp.empty()) {
+				it = queryResult.erase(it);
+			}
+			else {
+				++it;
+			}
+
+		}
+
+		add(queryResult, source.getName());
+
+	}
+
 	if (item == directory.end()) {
 
 		if (des.getType() == "placeholder") {
-			vector<string> temp;
-
-			if (pos == 1) {
-				pos = 2;
-			}
-			else { //pos == 2
-				pos = 1;
-			}
-
-			queryResult = pkb->PQLSelect(toTNodeType(source.getType()));
-			
-			for (vector<string>::iterator it = queryResult.begin(); it != queryResult.end();) {
-
-				temp = queryPKB(clause, *it, pos, source.getType());
-				if (temp.empty()) {
-					it = queryResult.erase(it);
-				}
-				else {
-					++it;
-				}
-				
-			}
 
 			add(queryResult, source.getName());
 
@@ -355,16 +362,9 @@ void QueryEvaluator::processOneSynonym(Ref source, Ref des, string clause, int p
 	}
 	else {
 		if (des.getType() == "placeholder") {
-			if (pos == 1) {
-				pos = 2;
-			}
-			else { //pos == 2
-				pos = 1;
-			}
 
 			for (vector<vector<string>>::iterator it = result.begin(); it != result.end();) {
 
-				queryResult = queryPKB(clause, it->at(item->second), pos, source.getType());
 				it = query(queryResult, it, item->second);
 
 			}
