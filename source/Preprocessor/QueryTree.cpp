@@ -40,44 +40,44 @@ int QueryTree::determineWeight(Clause* c) {
 	if (clau.compare("WITH") == 0) {
 		return 10;
 	}
-	else if (clau.compare("MODIFIES") == 0) {
-		return 20;
-	}
-	else if (clau.compare("USES") == 0) {
-		return 25;
-	}
-	else if (clau.compare("FOLLOWS") == 0) {
+	else if (clau.compare("CALLS") == 0) {
 		return 30;
-	}
-	else if (clau.compare("FOLLOWS*") == 0) {
-		return 40;
 	}
 	else if (clau.compare("PARENT") == 0) {
 		return 50;
 	}
-	else if (clau.compare("PARENT*") == 0) {
-		return 60;
-	}
-	else if (clau.compare("CALLS") == 0) {
+	else if (clau.compare("CALLS*") == 0) {
 		return 70;
 	}
-	else if (clau.compare("NEXT") == 0) {
-		return 80;
-	}
-	else if (clau.compare("PATTERN") == 0) {
+	else if (clau.compare("MODIFIES") == 0) {
 		return 90;
 	}
-	else if (clau.compare("CALLS*") == 0) {
-		return 100;
-	}
-	else if (clau.compare("NEXT*") == 0) {
+	else if (clau.compare("USES") == 0) {
 		return 110;
 	}
+	else if (clau.compare("FOLLOWS") == 0) {
+		return 130;
+	}
+	else if (clau.compare("PARENT*") == 0) {
+		return 150;
+	}
+	else if (clau.compare("FOLLOWS*") == 0) {
+		return 170;
+	}
+	else if (clau.compare("NEXT") == 0) {
+		return 190;
+	}
 	else if (clau.compare("AFFECTS") == 0) {
-		return 120;
+		return 210;
+	}
+	else if (clau.compare("PATTERN") == 0) {
+		return 230;
+	}
+	else if (clau.compare("NEXT*") == 0) {
+		return 250;
 	}
 	else if (clau.compare("AFFECTS*") == 0) {
-		return 130;
+		return 270;
 	}
 	else {
 		return 500;
