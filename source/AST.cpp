@@ -276,7 +276,7 @@ bool AST::findSubtreeInTree(TNode * subtree, TNode * tree){
         return true;
     } else {
         for (unsigned int i = 0; i < tree->getChildNodes().size(); i++) {
-            if (compareTrees(subtree, tree->getChildNodes()[i])) {
+            if (findSubtreeInTree(subtree, tree->getChildNodes()[i])) {
                 return true;
             }
         }
