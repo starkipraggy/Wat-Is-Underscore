@@ -37,13 +37,13 @@ void QueryTree::addClause(Clause* c) {
 
 int QueryTree::determineWeight(Clause* c) {
 	string clau = StringToUpper(c->getClause());
-	if (clau.compare("USES") == 0) {
+	if (clau.compare("WITH") == 0) {
 		return 10;
 	}
 	else if (clau.compare("MODIFIES") == 0) {
 		return 20;
 	}
-	else if (clau.compare("WITH") == 0) {
+	else if (clau.compare("USES") == 0) {
 		return 25;
 	}
 	else if (clau.compare("FOLLOWS") == 0) {
