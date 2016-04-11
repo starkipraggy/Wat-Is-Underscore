@@ -240,19 +240,42 @@ vector<vector<string>> QueryEvaluator::process() {
 							add(queryResult, var1.getName());
 						}
 						else {
-							queryResult = pkb->PQLSelect(toTNodeType(var1.getType()));
-							add(queryResult, var1.getName());
+							vector<vector<string>> temp;
+							vector<string> tempOne, tempTwo, eachTemp, selectResult;
 
-							item1 = directory.find(var1.getName());
-							tempResult = {};
-							for (unsigned int i = 0; i < result.size(); i++) {
+							selectResult = pkb->PQLSelect(toTNodeType(var1.getType()));
 
-								queryResult = queryPKB(clause, result.at(i).at(item1->second), 2, var2.getType());
-								tempResult = add(queryResult, i, tempResult);
+							for (unsigned int i = 0; i < selectResult.size(); i++) {
 
+								queryResult = queryPKB(clause, selectResult.at(i), 2, var2.getType());
+								
+								for (unsigned int j = 0; j < queryResult.size(); j++) {
+									tempOne.push_back(selectResult.at(i));
+									tempTwo.push_back(queryResult.at(j));
+								}
 							}
-							result = tempResult;
-
+							
+							if (result.empty()) {
+								for (unsigned int i = 0; i < tempOne.size(); i++) {
+									eachTemp = {};
+									eachTemp.push_back(tempOne.at(i));
+									eachTemp.push_back(tempTwo.at(i));
+									result.push_back(eachTemp);
+								}
+							}
+							else {
+								for (unsigned int i = 0; i < result.size(); i++) {
+									for (unsigned int j = 0; j < tempOne.size(); j++) {
+										eachTemp = {};
+										eachTemp.assign(result.at(i).begin(), result.at(i).end());
+										eachTemp.push_back(tempOne.at(j));
+										eachTemp.push_back(tempTwo.at(j));
+										temp.push_back(eachTemp);
+									}
+								}
+								result = temp;
+							}
+							addDirectory(var1.getName());
 							addDirectory(var2.getName());
 						}
 					}
