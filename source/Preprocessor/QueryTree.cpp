@@ -43,6 +43,9 @@ int QueryTree::determineWeight(Clause* c) {
 	else if (clau.compare("MODIFIES") == 0) {
 		return 20;
 	}
+	else if (clau.compare("WITH") == 0) {
+		return 25;
+	}
 	else if (clau.compare("FOLLOWS") == 0) {
 		return 30;
 	}
