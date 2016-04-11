@@ -979,10 +979,12 @@ std::vector<std::string> PKB::PQLNext(int statementNumber, bool isDirect) {
 	return returnList;
 }
 
-std::vector<std::string> PKB::PQLAffectsThis(int statementNumber, bool isDirect) {
+std::vector<std::string> PKB::PQLAffectsThis(int statementNumber, bool isDirect, bool isBip) {
 	std::vector<std::string> returnList;
 	StatementTableStatement* currentStatement = statementTable->getStatementUsingStatementNumber(statementNumber);
 	int size;
+
+	StatementTableStatement::bonusImplementation = isBip;
 
 	if (isDirect) {
 		std::vector<StatementTableStatement*>* affectsThisList = currentStatement->getAffectsThis();
@@ -998,13 +1000,16 @@ std::vector<std::string> PKB::PQLAffectsThis(int statementNumber, bool isDirect)
 			returnList.push_back(std::to_string(affectsThisStarList[i]->getStatementNumber()));
 		}
 	}
+
 	return returnList;
 }
 
-std::vector<std::string> PKB::PQLAffectedByThis(int statementNumber, bool isDirect) {
+std::vector<std::string> PKB::PQLAffectedByThis(int statementNumber, bool isDirect, bool isBip) {
 	std::vector<std::string> returnList;
 	StatementTableStatement* currentStatement = statementTable->getStatementUsingStatementNumber(statementNumber);
 	int size;
+
+	StatementTableStatement::bonusImplementation = isBip;
 
 	if (isDirect) {
 		std::vector<StatementTableStatement*>* affectedByThisList = currentStatement->getAffectedByThis();

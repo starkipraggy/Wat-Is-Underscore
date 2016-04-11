@@ -333,7 +333,7 @@ public:
 		 \param isDirectCalls True for direct (Affects), and false for indirect (Affects*)
 		 \return The vector<string> of the statement numbers of statements that affects this statement
 	 */
-	 virtual std::vector<std::string> PQLAffectsThis(int statementNumber, bool isDirect);
+	 virtual std::vector<std::string> PQLAffectsThis(int statementNumber, bool isDirect, bool isBip = false);
 
 	 //! Returns a list of statements that this statement affects, whether directly or indirectly
 	 /*!
@@ -343,7 +343,7 @@ public:
 		 \param isDirectCalls True for direct (Affects), and false for indirect (Affects*)
 		 \return The vector<string> of the statement numbers of statements that this statement affects
 	 */
-	 virtual std::vector<std::string> PQLAffectedByThis(int statementNumber, bool isDirect);
+	 virtual std::vector<std::string> PQLAffectedByThis(int statementNumber, bool isDirect, bool isBip = false);
 
 	 //! Returns a list of statements that this statement has as siblings
 	 /*!

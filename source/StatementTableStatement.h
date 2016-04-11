@@ -65,6 +65,8 @@ private:
 	std::vector<StatementTableStatement*>* affectsThis;		/**< A list of pointers to statements that affects this statement */
 	std::vector<StatementTableStatement*>* affectedByThis;	/**< A list of pointers to statements that this statement affects */
 public:
+	static bool bonusImplementation;						/**< Boolean to control whether the Affects functions checks between inter functions */
+
 	//! Constructor for the StatementTableStatement.
 	/*!
 		This is the constructor used to create a StatementTableStatement object.

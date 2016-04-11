@@ -5,6 +5,8 @@
 #include "StatementTableStatement.h"
 #include "CFG.h"
 
+bool StatementTableStatement::bonusImplementation = false;
+
 void StatementTableStatement::childrenStarHasBeingModified() {
 	hasItsChildrenStarChanged = true;
 }
@@ -348,10 +350,6 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getNextStar() {
     nextStar = result;
     return result;
 }
-
-// Set to true if statements in procedures being called should be traced for Affects
-// Set to false if going to simply regard the variables modified by the procedure
-bool bonusImplementation = false;
 
 std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis() {
 	if (affectsThis == NULL) {
