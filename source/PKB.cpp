@@ -18,6 +18,7 @@ PKB::PKB() {
 	procedureTable = new ProcedureTable();
 	statementTable = new StatementTable();
 	variableTable = new VariableTable();
+	constantTable = new ConstantTable();
     GlobalCFG.setStmtTable(statementTable);
 	currentProcedure = NULL;
 	statementStackTrace = new std::stack<int>();
@@ -28,6 +29,7 @@ PKB::~PKB() {
 	delete procedureTable;
 	delete statementTable;
 	delete variableTable;
+	delete constantTable;
 	delete statementStackTrace;
 }
 
@@ -192,6 +194,10 @@ bool PKB::AssignStatement(NAME variable, std::vector<std::string> tokens, std::v
 	for (unsigned int i = 0; i < size; i++) {
 		if (types[i] == Variable) {
 			rightVariables.push_back(variableTable->getVariableUsingName(tokens[i]));
+		}
+		else if (types[i] == Constant) {
+			// Add constants into a constant table
+			constantTable->addConstant(std::stoi(tokens[i]));
 		}
 	}
 	int rightVariablesSize = rightVariables.size();
@@ -538,7 +544,16 @@ std::vector<std::string> PKB::PQLSelect(TNodeType outputType) {
 			returnList.push_back(variableTable->getVariableUsingVectorIndexNumber(i)->getName());
 		}
 		return returnList;
+	}
 
+	// return all constants
+	if (outputType == IntegerValue) {
+		unsigned int constantTableSize = constantTable->getNumberOfConstants();
+		for (unsigned int i = 0; i < constantTableSize; i++) {
+			returnList.push_back(std::to_string(constantTable->getConstant(i)));
+		}
+		return returnList;
+		
 	}
 
 	// If outputType is not Assign, If, While, or Call, return all statements

@@ -13,6 +13,7 @@
 #include "ProcedureTable.h"
 #include "StatementTable.h"
 #include "VariableTable.h"
+#include "ConstantTable.h"
 #include "Preprocessor/Ref.h"
 #include <string>
 #include <stack>
@@ -40,6 +41,7 @@ private:
 	ProcedureTable* procedureTable;
 	StatementTable* statementTable;
 	VariableTable* variableTable;
+	ConstantTable* constantTable;
     std::vector<AST*> procedureAST;
 
 	ProcedureTableProcedure* currentProcedure;	/**< Used during SIMPLE parsing, this pointer points to the current procedure
@@ -203,7 +205,7 @@ public:
 		\param argumentPosition If 1, look for statements and procedures that uses the variable named "input"
 								If 2, look for variables that the statement with statement type "input" or
 								      the procedure with procedure name "input" uses
-		\param outputType The type of conditions to check for (eg. "procedure", "statement", "assign", "while", "if", "call")
+		\param outputType The type of conditions to check for (eg. "procedure", "statement", "assign", "while", "if", "call", "integer value" (constant))
 		\return The vector<string> of the statement numbers or variable names.
 	*/
 	 virtual std::vector<std::string> PQLUses(std::string input, int argumentPosition, std::string outputType);

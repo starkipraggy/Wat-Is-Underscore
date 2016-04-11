@@ -189,6 +189,12 @@
     <ClInclude Include="..\source\CFG.h">
       <Filter>Header\PKB</Filter>
     </ClInclude>
+    <ClInclude Include="..\source\ConstantTable.cpp">
+      <Filter>Header\PKB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\ConstantTable.h">
+      <Filter>Source\PKB</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header">
