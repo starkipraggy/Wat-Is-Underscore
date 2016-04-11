@@ -201,8 +201,13 @@ std::vector<int> CFG::nextStmt(int stmtNum){
                 result.push_back(thisNode->getChd1()->getLeftLmt());
             }
         }
-        if (thisNode->getChd2() != NULL && thisNode->getChd2()->getType() != Unused) {
-            result.push_back(thisNode->getChd2()->getLeftLmt());
+        if (thisNode->getChd2() != NULL) {
+            if (thisNode->getChd2()->getType() != Unused) {
+                result.push_back(thisNode->getChd2()->getLeftLmt());
+            } else if (thisNode->getChd2()->getChd1() != NULL) {
+                thisNode = thisNode->getChd2();
+                result.push_back(thisNode->getChd1()->getLeftLmt());
+            }
         }
     }
     return result;

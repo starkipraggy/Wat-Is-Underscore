@@ -277,6 +277,42 @@ namespace UnitTesting
             Assert::IsTrue(result[0] == 2);
         }
 
+        TEST_METHOD(CFGNextEdgeCase) {
+            //Arrange
+            testCFG.newProcedure();
+            testCFG.addWhileStmt();
+            testCFG.addWhileStmt();
+            testCFG.addStmt();
+            testCFG.addWhileStmt();
+            testCFG.addStmt();
+            testCFG.addWhileStmt();
+            testCFG.addStmt();
+            testCFG.addWhileStmt();
+            testCFG.addWhileStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.addStmt();
+            testCFG.endWhileStmt();
+            testCFG.addWhileStmt();
+            testCFG.addStmt();
+            testCFG.endWhileStmt();
+            testCFG.addStmt();
+            testCFG.endWhileStmt();
+            testCFG.endWhileStmt();
+            testCFG.addStmt();
+            testCFG.endWhileStmt();
+            testCFG.addStmt();
+            testCFG.endWhileStmt();
+
+            //Act
+            std::vector<int> answer = testCFG.nextStmt(8);
+
+            //Assert
+            Assert::IsTrue(answer.size() == 2);
+            Assert::IsTrue(answer[0] == 9);
+            Assert::IsTrue(answer[1] == 6);
+        }
+
         TEST_METHOD(CFGPrev) {
             //Arrange
             testCFG.addWhileStmt();
