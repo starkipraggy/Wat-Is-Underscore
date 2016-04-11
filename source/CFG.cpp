@@ -174,15 +174,21 @@ std::vector<int> CFG::prevStmt(int stmtNum){
     if (stmtNum > thisNode->getLeftLmt()) {
         result.push_back(stmtNum - 1);
     } else {
-        for (size_t i = 0; i < thisNode->getParents().size(); i++) {
-            if (thisNode->getParents()[i]->getType() == Unused) {
-                for (size_t j = 0; j < thisNode->getParents()[i]->getParents().size(); j++) {
-                    result.push_back(thisNode->getParents()[i]->getParents()[j]->getRightLmt());
-                }
-            } else {
-                result.push_back(thisNode->getParents()[i]->getRightLmt());
+        std::stack<CFGNode*> parentNodes;
+        do {
+            if (!parentNodes.empty()) {
+                thisNode = parentNodes.top();
+                parentNodes.pop();
             }
-        }
+
+            for (size_t i = 0; i < thisNode->getParents().size(); i++) {
+                if (thisNode->getParents()[i]->getType() == Unused) {
+                    parentNodes.push(thisNode->getParents()[i]);
+                } else {
+                    result.push_back(thisNode->getParents()[i]->getRightLmt());
+                }
+            }
+        } while (!parentNodes.empty());
     }
     return result;
 }
