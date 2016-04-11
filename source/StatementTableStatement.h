@@ -483,4 +483,12 @@ public:
 		\return List of pointers to statements that this statement directly or indirectly affects
 	*/
 	std::vector<StatementTableStatement*> getAffectedByThisStar();
+
+	//! Getter function for statement numbers of statements that has this statement as sibling
+	/*!
+		Getter function for statement numbers of statements that has this statement as sibling; use this function 
+		to retrieve a vector of statement numbers of statements s which Sibling(this, s)/Sibling(s, this) is true
+		\return List of statement numbers of statements that has this statement as sibling
+	*/
+	std::vector<int> getSiblings();
 };

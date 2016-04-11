@@ -345,6 +345,15 @@ public:
 	 */
 	 virtual std::vector<std::string> PQLAffectedByThis(int statementNumber, bool isDirect);
 
+	 //! Returns a list of statements that this statement has as siblings
+	 /*!
+		 One of the API functions that allows the PQL parser to extract information from the PKB.
+		 Call this function for Sibling clauses.
+		 \param statementNumber The statement number of the statement
+		 \return The vector<string> of the statement numbers of statements that this statement has as siblings
+	 */
+	 virtual std::vector<std::string> PQLSibling(int statementNumber);
+
 	// ---------------------------------------------------------------------------------
 	// API FUNCTIONS FOR PQL PARSER ENDS HERE!!!
 	// ---------------------------------------------------------------------------------

@@ -1834,3 +1834,16 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThis
 
 	return affectedByThisStar;
 }
+
+std::vector<int> StatementTableStatement::getSiblings() {
+	std::vector<int> siblings;
+	int sibling;
+	int size = parent->getChildrenSize();
+	for (int i = 0; i < size; i++) {
+		sibling = parent->getChildren(i);
+		if (sibling != statementNumber) {
+			siblings.push_back(sibling);
+		}
+	}
+	return siblings;
+}

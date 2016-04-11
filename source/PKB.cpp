@@ -1022,3 +1022,16 @@ std::vector<std::string> PKB::PQLAffectedByThis(int statementNumber, bool isDire
 	}
 	return returnList;
 }
+
+std::vector<std::string> PKB::PQLSibling(int statementNumber) {
+	std::vector<std::string> returnList;
+
+	std::vector<int> statementsInInteger = statementTable->getStatementUsingStatementNumber(statementNumber)->getSiblings();
+	int statementsInIntegerSize = statementsInInteger.size();
+
+	for (int i = 0; i < statementsInIntegerSize; i++) {
+		returnList.push_back(std::to_string(statementsInInteger[i]));
+	}
+
+	return returnList;
+}
