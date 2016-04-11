@@ -493,7 +493,7 @@ TNodeType QueryEvaluator::toTNodeType(string type) {
 		return ProcedureName;
 	}
 	else if (type == "STMTLST") {
-		return Undefined;
+		return StmtLst;
 	}
 	else if (type == "STMT") {
 		return Undefined; // Just Undefined will do, I will know that it's a statement. - Wei Liang
