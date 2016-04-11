@@ -304,7 +304,7 @@ TNode* AST::addWhileTNode(NAME variable, int statementNumber) {
 }
 
 TNode* AST::addIfTNode(NAME variable, int statementNumber) {
-	TNode* newNode = this->appendNewStmtNode(If);
+	TNode* newNode = this->appendNewStmtNode(If, "", statementNumber);
 	this->getLastAddedNode()->addChild(new TNode(VariableName, variable));
 	this->getLastAddedNode()->addChild(new TNode(StmtLst));
     return newNode;
