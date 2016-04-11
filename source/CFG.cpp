@@ -193,7 +193,30 @@ std::vector<int> CFG::nextStmt(int stmtNum){
     if (stmtNum < thisNode->getRightLmt()) {
         result.push_back(stmtNum + 1);
     } else {
-        if (thisNode->getChd1() != NULL) {
+        std::stack<CFGNode*> childNodes;
+        do {
+            if (!childNodes.empty()) {
+                thisNode = childNodes.top();
+                childNodes.pop();
+            }
+
+            if (thisNode->getChd1() != NULL) {
+                if (thisNode->getChd1()->getType() != Unused) {
+                    result.push_back(thisNode->getChd1()->getLeftLmt());
+                } else {
+                    childNodes.push(thisNode->getChd1());
+                }
+            }
+
+            if (thisNode->getChd2() != NULL) {
+                if (thisNode->getChd2()->getType() != Unused) {
+                    result.push_back(thisNode->getChd2()->getLeftLmt());
+                } else {
+                    childNodes.push(thisNode->getChd2());
+                }
+            }
+        } while (!childNodes.empty());
+       /* if (thisNode->getChd1() != NULL) {
             if (thisNode->getChd1()->getType() != Unused) {
                 result.push_back(thisNode->getChd1()->getLeftLmt());
             } else if (thisNode->getChd1()->getChd1() != NULL){
@@ -208,7 +231,7 @@ std::vector<int> CFG::nextStmt(int stmtNum){
                 thisNode = thisNode->getChd2();
                 result.push_back(thisNode->getChd1()->getLeftLmt());
             }
-        }
+        }*/
     }
     return result;
 }
