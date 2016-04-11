@@ -651,6 +651,18 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectsThisSta
 		currentStatement = thisPreviousWithLargerStatementNumber;
 
 		while (currentStatement != NULL) {
+			std::cout << "statement = " << currentStatementNumber;
+			std::vector<int> wtf = statementsAndUsesVariablesToCheck.at(currentStatementNumber);
+			std::cout << ", uses = ";
+			for (unsigned int i = 0; i < wtf.size(); i++) {
+				std::cout << wtf.at(i) << " ";
+			}
+			std::cout << ", next = ";
+			std::vector<StatementTableStatement*>* lol = currentStatement->getNext();
+			for (unsigned int i = 0; i < lol->size(); i++) {
+				std::cout << lol->at(i)->getStatementNumber() << " ";
+			}
+			std::cout << std::endl;
 
 			// Execution varies depending on the type of statement
 			switch (currentStatement->getType()) {
@@ -1141,12 +1153,15 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectsThisSta
 						}
 						*/
 
+						std::cout << "dakara poi tte poi tte shinai de yo" << std::endl;
 						if (newUsesVariables.size() > 0) {
+							std::cout << "kyou mo poi tte shinai de yo" << std::endl;
 							// Add information regarding the previous node(s) to the data structures for our algorithm's processing
 							int maximum = currentStatementNumber - 1;
 							std::vector<StatementTableStatement*>* currentStatementPreviouses = currentStatement->getPrevious();
 							int currentStatementPreviousesSize = currentStatementPreviouses->size();
 							for (int i = 0; i < currentStatementPreviousesSize; i++) {
+								std::cout << "ashita e to aseranai tte ne" << std::endl;
 								StatementTableStatement* currentStatementPrevious = currentStatementPreviouses->at(i);
 								int currentStatementPreviousNumber = currentStatementPrevious->getStatementNumber();
 								statementNumbersAndStatements.insert({ currentStatementPreviousNumber, currentStatementPrevious });
@@ -1158,6 +1173,7 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectsThisSta
 								}
 
 								if (statementsAndUsesVariablesToCheck.count(currentStatementPreviousNumber) > 0) {
+									std::cout << "yukkuri asoubou (yoroshiku ne~)" << std::endl;
 									// If information about the variables to be checked for this previous statement exists,
 									// update said information to include all variables
 									std::set<int> newVariables;
@@ -1182,6 +1198,9 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectsThisSta
 								}
 								currentStatementNumber = maximum;
 							}
+						}
+						else {
+							currentStatementNumber = smallestStatementNumberThatWeKnowOf - 1;
 						}
 					}
 				}
