@@ -547,7 +547,7 @@ std::vector<std::string> PKB::PQLSelect(TNodeType outputType) {
 	}
 
 	// return all constants
-	if (outputType == IntegerValue) {
+	if (outputType == Const) {
 		unsigned int constantTableSize = constantTable->getNumberOfConstants();
 		for (unsigned int i = 0; i < constantTableSize; i++) {
 			returnList.push_back(std::to_string(constantTable->getConstant(i)));
