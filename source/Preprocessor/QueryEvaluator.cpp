@@ -320,16 +320,30 @@ void QueryEvaluator::processOneSynonym(Ref source, Ref des, string clause, int p
 	if (item == directory.end()) {
 
 		if (des.getType() == "placeholder") {
-			tempResult = {};
-			for (unsigned int i = 0; i < result.size(); i++) {
+			vector<string> temp;
 
-				queryResult = queryPKB(clause, result.at(i).at(item->second), pos, source.getType());
-				tempResult = add(queryResult, i, tempResult);
-
+			if (pos == 1) {
+				pos = 2;
 			}
-			result = tempResult;
+			else { //pos == 2
+				pos = 1;
+			}
 
-			addDirectory(source.getName());
+			queryResult = pkb->PQLSelect(toTNodeType(source.getType()));
+			
+			for (vector<string>::iterator it = queryResult.begin(); it != queryResult.end();) {
+
+				temp = queryPKB(clause, *it, pos, source.getType());
+				if (temp.empty()) {
+					it = queryResult.erase(it);
+				}
+				else {
+					++it;
+				}
+				
+			}
+
+			add(queryResult, source.getName());
 
 		}
 		else {
@@ -341,6 +355,13 @@ void QueryEvaluator::processOneSynonym(Ref source, Ref des, string clause, int p
 	}
 	else {
 		if (des.getType() == "placeholder") {
+			if (pos == 1) {
+				pos = 2;
+			}
+			else { //pos == 2
+				pos = 1;
+			}
+
 			for (vector<vector<string>>::iterator it = result.begin(); it != result.end();) {
 
 				queryResult = queryPKB(clause, it->at(item->second), pos, source.getType());
