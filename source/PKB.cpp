@@ -558,7 +558,7 @@ std::vector<std::string> PKB::PQLSelect(TNodeType outputType) {
 
 	// If outputType is not Assign, If, While, or Call, return all statements
 	bool returnAllStatements = true;
-	if ((outputType == Assign) || (outputType == If) || (outputType == While) || (outputType == Call)) {
+	if ((outputType == Assign) || (outputType == If) || (outputType == While) || (outputType == Call) || (outputType == StmtLst)) {
 		returnAllStatements = false;
 	}
 
@@ -566,7 +566,7 @@ std::vector<std::string> PKB::PQLSelect(TNodeType outputType) {
 	int statementTableSize = statementTable->getNumberOfStatements();
 	for (int i = 0; i < statementTableSize; i++) {
 		statement = statementTable->getStatementUsingVectorIndexNumber(i);
-		if ((returnAllStatements) || (statement->getType() == outputType)) {
+		if ((returnAllStatements) || (statement->getType() == outputType) || ((outputType == StmtLst) && (!statement->hasFollows()))) {
 			returnList.push_back(std::to_string(statement->getStatementNumber()));
 		}
 	}
