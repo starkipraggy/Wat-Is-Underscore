@@ -216,20 +216,45 @@ vector<vector<string>> QueryEvaluator::process() {
 
 					}
 					else {//item1 == directory.end() && item2 == directory.end()
-						queryResult = pkb->PQLSelect(toTNodeType(var1.getType()));
-						add(queryResult, var1.getName());
+						if (var1.equals(var2)) {
+							vector<string> temp;
 
-						item1 = directory.find(var1.getName());
-						tempResult = {};
-						for (unsigned int i = 0; i < result.size(); i++) {
+							queryResult = pkb->PQLSelect(toTNodeType(var1.getType()));
 
-							queryResult = queryPKB(clause, result.at(i).at(item1->second), 2, var2.getType());
-							tempResult = add(queryResult, i, tempResult);
+							for (vector<string>::iterator it = queryResult.begin(); it != queryResult.end();) {
 
+								temp = queryPKB(clause, *it, 2, var2.getType());
+								if (temp.empty()) {
+									it = queryResult.erase(it);
+								}
+								else {
+									if (find(temp.begin(), temp.end(), *it) == temp.end()) {
+										it = queryResult.erase(it);
+									}
+									else {
+										++it;
+									}
+								}
+							}
+
+							add(queryResult, var1.getName());
 						}
-						result = tempResult;
+						else {
+							queryResult = pkb->PQLSelect(toTNodeType(var1.getType()));
+							add(queryResult, var1.getName());
 
-						addDirectory(var2.getName());
+							item1 = directory.find(var1.getName());
+							tempResult = {};
+							for (unsigned int i = 0; i < result.size(); i++) {
+
+								queryResult = queryPKB(clause, result.at(i).at(item1->second), 2, var2.getType());
+								tempResult = add(queryResult, i, tempResult);
+
+							}
+							result = tempResult;
+
+							addDirectory(var2.getName());
+						}
 					}
 				}
 				else if (regex_match(var1.getType(), designEntityRegex)) {
