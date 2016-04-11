@@ -56,6 +56,18 @@ namespace UnitTesting
             Assert::IsFalse(success);
         }
 
+        TEST_METHOD(FindSubtreeInTree) {
+            //Arrange
+            TNode* tree = AST::constructExpressionTree("delta+l+width+Romeo");
+            TNode* subtree = AST::constructExpressionTree("delta+l");
+
+            //Act
+            bool success = AST::findSubtreeInTree(subtree, tree);
+
+            //Arrange
+            Assert::IsTrue(success);
+        }
+
         TEST_METHOD(FindNoSubtreeInTree) {
             //Arrange
             TNode* tree = AST::constructExpressionTree("x*y + d + y*a");
