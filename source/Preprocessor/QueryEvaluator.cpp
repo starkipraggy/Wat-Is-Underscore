@@ -414,14 +414,30 @@ vector<vector<string>> QueryEvaluator::process() {
 							add(queryResult, var1.getName());
 						}
 						else {
+							Ref source, des;
+							int pos;
 							vector<vector<string>> temp;
-							vector<string> tempOne, tempTwo, eachTemp, selectResult;
+							vector<string> tempOne, tempTwo, eachTemp, selectResult, select1Result, select2Result;
+							select1Result = pkb->PQLSelect(toTNodeType(var1.getType()));
+							select2Result = pkb->PQLSelect(toTNodeType(var2.getType()));
 
-							selectResult = pkb->PQLSelect(toTNodeType(var1.getType()));
+							if (select1Result.size() < select2Result.size()) {
+								selectResult = select1Result;
+								source = var1;
+								des = var2;
+								pos = 2;
+
+							}
+							else {
+								selectResult = select2Result;
+								source = var2;
+								des = var1;
+								pos = 1;
+							}
 
 							for (unsigned int i = 0; i < selectResult.size(); i++) {
 
-								queryResult = queryPKB(clause, selectResult.at(i), 2, var2.getType());
+								queryResult = queryPKB(clause, selectResult.at(i), pos, des.getType());
 								
 								for (unsigned int j = 0; j < queryResult.size(); j++) {
 									tempOne.push_back(selectResult.at(i));
@@ -449,8 +465,8 @@ vector<vector<string>> QueryEvaluator::process() {
 								}
 								result = temp;
 							}
-							addDirectory(var1.getName());
-							addDirectory(var2.getName());
+							addDirectory(source.getName());
+							addDirectory(des.getName());
 						}
 					}
 				}
