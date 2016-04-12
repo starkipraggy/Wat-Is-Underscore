@@ -430,6 +430,7 @@ public:
 	/*!
 		Getter function for list of pointers to statements that has this statement after directly in the CFG;
 		use this function to retrieve a vector of pointers to statements s which Next(s, this) is true
+		\param isBip Set this to true to include inter-procedures, or false to exclude
 		\return List of pointers to statements that this statement has this statement after directlyin the CFG
 	*/
 	std::vector<StatementTableStatement*>* getPrevious(bool isBip = false);
@@ -438,6 +439,7 @@ public:
 	/*!
 		Getter function for list of pointers to statements that comes after this statement directly in the CFG;
 		use this function to retrieve a vector of pointers to statements s which Next(this, s) is true
+		\param isBip Default is false. Set this to true to include inter-procedures
 		\return List of pointers to statements that comes after this statement directly in the CFG
 	*/
 	std::vector<StatementTableStatement*>* getNext(bool isBip = false);
@@ -446,17 +448,19 @@ public:
 	/*!
 		Getter function for list of pointers to statements that has this statement after directly or indirectly in the CFG;
 		use this function to retrieve a vector of pointers to statements s which Next*(s, this) is true
+		\param isBip Default is false. Set this to true to include inter-procedures
 		\return List of pointers to statements that this statement has this statement after directly or indirectly in the CFG
 	*/
-	std::vector<StatementTableStatement*>* getPreviousStar(bool isBip = false);
+	std::vector<StatementTableStatement*>* getPreviousStar(bool isBip);
 
 	//! Getter function for the list of pointers to statements that comes after this statement directly or indirectly in the CFG
 	/*!
 		Getter function for list of pointers to statements that comes after this statement directly or indirectly in the CFG;
 		use this function to retrieve a vector of pointers to statements s which Next*(this, s) is true
+		\param isBip Set this to true to include inter-procedures, or false to exclude
 		\return List of pointers to statements that comes after this statement directly or indirectly in the CFG
 	*/
-	std::vector<StatementTableStatement*>* getNextStar(bool isBip = false);
+	std::vector<StatementTableStatement*>* getNextStar(bool isBip);
 
 	//! Getter function for the list of pointers to statements that directly affects this statement
 	/*!

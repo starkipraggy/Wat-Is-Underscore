@@ -937,19 +937,19 @@ std::vector<std::string> PKB::PQLCalledBy(std::string procedureName, bool isDire
 	return returnList;
 }
 
-std::vector<std::string> PKB::PQLPrevious(int statementNumber, bool isDirect) {
+std::vector<std::string> PKB::PQLPrevious(int statementNumber, bool isDirect, bool isBip) {
 	std::vector<std::string> returnList;
 	StatementTableStatement* currentStatement = statementTable->getStatementUsingStatementNumber(statementNumber);
 	int size;
 
     if (isDirect) {
-        std::vector<StatementTableStatement*>* previousList = currentStatement->getPrevious();
+        std::vector<StatementTableStatement*>* previousList = currentStatement->getPrevious(isBip);
         size = previousList->size();
         for (int i = 0; i < size; i++) {
             returnList.push_back(std::to_string(previousList->at(i)->getStatementNumber()));
         }
     } else {
-        std::vector<StatementTableStatement*>* previousStarList = currentStatement->getPreviousStar();
+        std::vector<StatementTableStatement*>* previousStarList = currentStatement->getPreviousStar(isBip);
         size = previousStarList->size();
         for (int i = 0; i < size; i++) {
             returnList.push_back(std::to_string(previousStarList->at(i)->getStatementNumber()));
@@ -958,19 +958,19 @@ std::vector<std::string> PKB::PQLPrevious(int statementNumber, bool isDirect) {
 	return returnList;
 }
 
-std::vector<std::string> PKB::PQLNext(int statementNumber, bool isDirect) {
+std::vector<std::string> PKB::PQLNext(int statementNumber, bool isDirect, bool isBip) {
 	std::vector<std::string> returnList;
 	StatementTableStatement* currentStatement = statementTable->getStatementUsingStatementNumber(statementNumber);
 	int size;
 
     if (isDirect) {
-        std::vector<StatementTableStatement*>* nextList = currentStatement->getNext();
+        std::vector<StatementTableStatement*>* nextList = currentStatement->getNext(isBip);
         size = nextList->size();
         for (int i = 0; i < size; i++) {
             returnList.push_back(std::to_string(nextList->at(i)->getStatementNumber()));
         }
     } else {
-        std::vector<StatementTableStatement*>* nextStarList = currentStatement->getNextStar();
+        std::vector<StatementTableStatement*>* nextStarList = currentStatement->getNextStar(isBip);
         size = nextStarList->size();
         for (int i = 0; i < size; i++) {
             returnList.push_back(std::to_string(nextStarList->at(i)->getStatementNumber()));

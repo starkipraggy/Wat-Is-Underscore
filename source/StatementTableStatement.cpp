@@ -371,7 +371,7 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getPreviousStar(
 			for (int i = 0; i < previousStarSize; i++) {
 				previousStarStatement = previousStar->at(i);
 				if (previousStarStatement->getType() == Call) {
-					std::vector<StatementTableStatement*>* stmtCallPreviousStar = (*previousStarStatement->getLastCalls())->getPreviousStar();
+					std::vector<StatementTableStatement*>* stmtCallPreviousStar = (*previousStarStatement->getLastCalls())->getPreviousStar(true);
 					previousStarBIP->push_back(*previousStarStatement->getLastCalls());
 					int stmtCallPreviousStarSize = stmtCallPreviousStar->size();
 					for (int j = 0; j < stmtCallPreviousStarSize; j++) {
@@ -404,7 +404,7 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getNextStar(bool
 				nextStarStatement = nextStar->at(i);
 				nextStarBIP->push_back(nextStarStatement);
 				if (getType() == Call) {
-					std::vector<StatementTableStatement*>* stmtCallNextStar = (*nextStarStatement->getFirstCalls())->getNextStar();
+					std::vector<StatementTableStatement*>* stmtCallNextStar = (*nextStarStatement->getFirstCalls())->getNextStar(true);
 					nextStarBIP->push_back(*nextStarStatement->getFirstCalls());
 					int stmtCallNextStarSize = stmtCallNextStar->size();
 					for (int j = 0; j < stmtCallNextStarSize; j++) {

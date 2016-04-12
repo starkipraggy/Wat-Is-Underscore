@@ -307,23 +307,25 @@ public:
 
 	 //! Returns a list of statements that has this statement after, whether directly or indirectly, in the CFG
 	 /*!
-		 One of the API functions that allows the PQL parser to extract information from the PKB.
-		 Call this function for Next and Next* clauses.
-		 \param statementNumber The statement number of the statement
-		 \param isDirectCalls True for direct (Next), and false for indirect (Next*)
-		 \return The vector<string> of the statement numbers of statements that has this statement after in the CFG
+		One of the API functions that allows the PQL parser to extract information from the PKB.
+		Call this function for Next and Next* clauses.
+		\param statementNumber The statement number of the statement
+		\param isDirectCalls True for direct (Next), and false for indirect (Next*)
+		\param isBip Default is false. Set this to true to include inter-procedures
+		\return The vector<string> of the statement numbers of statements that has this statement after in the CFG
 	 */
-	 virtual std::vector<std::string> PQLPrevious(int statementNumber, bool isDirect);
+	 virtual std::vector<std::string> PQLPrevious(int statementNumber, bool isDirect, bool isBIP = false);
 
 	 //! Returns a list of statements that comes after this statement, whether directly or indirectly, in the CFG
 	 /*!
-		 One of the API functions that allows the PQL parser to extract information from the PKB.
-		 Call this function for Next and Next* clauses.
-		 \param statementNumber The statement number of the statement
-		 \param isDirectCalls True for direct (Next), and false for indirect (Next*)
-		 \return The vector<string> of the statement numbers of statements that comes after this statement after in the CFG
+		One of the API functions that allows the PQL parser to extract information from the PKB.
+		Call this function for Next and Next* clauses.
+		\param statementNumber The statement number of the statement
+		\param isDirectCalls True for direct (Next), and false for indirect (Next*)
+		\param isBip Default is false. Set this to true to include inter-procedures
+		\return The vector<string> of the statement numbers of statements that comes after this statement after in the CFG
 	 */
-	 virtual std::vector<std::string> PQLNext(int statementNumber, bool isDirect);
+	 virtual std::vector<std::string> PQLNext(int statementNumber, bool isDirect, bool isBIP = false);
 
 	 //! Returns a list of statements that affects this statement, whether directly or indirectly
 	 /*!
