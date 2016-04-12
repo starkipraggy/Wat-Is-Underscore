@@ -84,7 +84,7 @@ int QueryTree::determineWeight(Clause* c) {
 		weight += 15;
 	}
 
-	cout << "QEUERU "<< c->getQuery() << endl;
+	//cout << "QEUERU "<< c->getQuery() << endl;
 	string var1 = c->getRefOne().getType();
 	string var2 = c->getRefTwo().getType();
 	if ((var1 == "expr" || var1 == "constant")&&(var2 == "expr" || var2 == "constant")) {
@@ -111,11 +111,11 @@ std::vector<Clause*> QueryTree::getClauses() {
 			//}
 			sort(weightedClauses.begin(), weightedClauses.end(), less_than_key());
 
-			cout << "SIZE " << weightedClauses.size() << endl;
+			//cout << "SIZE " << weightedClauses.size() << endl;
 			for (auto x : weightedClauses) {
-				cout << "CLAUSe " << x.first->getClause() << endl;
-				cout << "CLAUSe " << x.first->getQuery() << endl;
-				cout << "WEIGHT " << x.second << endl;
+				//cout << "CLAUSe " << x.first->getClause() << endl;
+				//cout << "CLAUSe " << x.first->getQuery() << endl;
+				//cout << "WEIGHT " << x.second << endl;
 				tempClauses.push_back(x.first);
 			}
 			sorted = true;
