@@ -11,7 +11,7 @@ ProcedureTableProcedure::ProcedureTableProcedure(std::string name, int index) {
 	uses = new std::vector<int>();
 	procedureCalls = new std::vector<ProcedureTableProcedure*>();
 	procedureCallBy = new std::vector<ProcedureTableProcedure*>();
-	statementCallBy = new std::vector<int>();
+	statementCallBy = new std::vector<StatementTableStatement*>();
 
 	indirectProcedureCalls = new std::set<int>();
 	isIndirectProcedureCallsModified = false;
@@ -159,7 +159,7 @@ std::set<int>* ProcedureTableProcedure::getIndirectProcedureCallBy() {
 }
 
 int ProcedureTableProcedure::getStatementCallBy(int index) {
-	return statementCallBy->at(index);
+	return statementCallBy->at(index)->getStatementNumber();
 }
 
 int ProcedureTableProcedure::getStatementCallBySize() {
@@ -169,6 +169,10 @@ int ProcedureTableProcedure::getStatementCallBySize() {
 void ProcedureTableProcedure::addStatement(StatementTableStatement* statement) {
 	if (statements->size() == 0) {
 		firstStatement = statement;
+		int size = getStatementCallBySize();
+		for (int i = 0; i < size; i++) {
+			statement->addPreviousBIP(statementCallBy->at(i));
+		}
 	}
 	lastStatement = statement;
 	statements->push_back(statement->getStatementNumber());
@@ -192,7 +196,7 @@ bool ProcedureTableProcedure::addProcedureCallBy(ProcedureTableProcedure* proced
 	return DataStructureObject::addIntoVector(procedure, procedureCallBy);
 }
 
-bool ProcedureTableProcedure::addStatementsCallBy(int statementIndexNumber) {
+bool ProcedureTableProcedure::addStatementsCallBy(StatementTableStatement* statementIndexNumber) {
 	return DataStructureObject::addIntoVector(statementIndexNumber, statementCallBy);
 }
 

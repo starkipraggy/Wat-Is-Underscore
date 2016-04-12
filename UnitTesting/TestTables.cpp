@@ -805,8 +805,9 @@ namespace UnitTesting
             Assert::AreEqual(3, newStatementTable.getNumberOfStatements());
 
             // Calls relationships between Stmt-Proc
-            newProcedureTable.getProcedure(1)->addStatementsCallBy(0);
-            newProcedureTable.getProcedure(2)->addStatementsCallBy(1);
+            //newProcedureTable.getProcedure(1)->addStatementsCallBy(0);
+            //newProcedureTable.getProcedure(2)->addStatementsCallBy(1);
+			// @sorry
             Assert::AreEqual(0, newProcedureTable.getProcedure(testProcName)->getStatementCallBySize());
             Assert::AreEqual(1, newProcedureTable.getProcedure(testProcName2)->getStatementCallBySize());
             Assert::AreEqual(1, newProcedureTable.getProcedure(testProcName3)->getStatementCallBySize());
