@@ -59,9 +59,13 @@ private:
 	void followedByStarHasBeingModified();
 
 	std::vector<StatementTableStatement*>* previous;		/**< A list of pointers to statements that comes directly before this statement in the CFG */
+	std::vector<StatementTableStatement*>* previousBIP;		/**< A list of pointers to statements that comes directly before this statement in the inter-procedure CFG */
     std::vector<StatementTableStatement*>* previousStar;    /**< A list of pointers to all statements that comes before this statement in the CFG */
-	std::vector<StatementTableStatement*>* next;			/**< A list of pointers to statements that comes after this statement directly in the CFG */
+    std::vector<StatementTableStatement*>* previousStarBIP;	/**< A list of pointers to all statements that comes before this statement in the inter-procedure CFG */
+	std::vector<StatementTableStatement*>* next;			/**< A list of pointers to statements that comes directly after this statement in the CFG */
+	std::vector<StatementTableStatement*>* nextBIP;			/**< A list of pointers to statements that comes directly after this statement in the inter-procedure CFG */
     std::vector<StatementTableStatement*>* nextStar;        /**< A list of pointers to all statements that comes after this statement in the CFG */
+    std::vector<StatementTableStatement*>* nextStarBIP;		/**< A list of pointers to all statements that comes after this statement in the inter-procedure CFG */
 	std::vector<StatementTableStatement*>* affectsThis;		/**< A list of pointers to statements that affects this statement */
 	std::vector<StatementTableStatement*>* affectedByThis;	/**< A list of pointers to statements that this statement affects */
 public:
@@ -428,7 +432,7 @@ public:
 		use this function to retrieve a vector of pointers to statements s which Next(s, this) is true
 		\return List of pointers to statements that this statement has this statement after directlyin the CFG
 	*/
-	std::vector<StatementTableStatement*>* getPrevious();
+	std::vector<StatementTableStatement*>* getPrevious(bool isBip = false);
 
 	//! Getter function for the list of pointers to statements that comes after this statement directly in the CFG
 	/*!
@@ -436,7 +440,7 @@ public:
 		use this function to retrieve a vector of pointers to statements s which Next(this, s) is true
 		\return List of pointers to statements that comes after this statement directly in the CFG
 	*/
-	std::vector<StatementTableStatement*>* getNext();
+	std::vector<StatementTableStatement*>* getNext(bool isBip = false);
 
 	//! Getter function for the list of pointers to statements that has this statement after directly or indirectly in the CFG
 	/*!
@@ -444,7 +448,7 @@ public:
 		use this function to retrieve a vector of pointers to statements s which Next*(s, this) is true
 		\return List of pointers to statements that this statement has this statement after directly or indirectly in the CFG
 	*/
-	std::vector<StatementTableStatement*>* getPreviousStar();
+	std::vector<StatementTableStatement*>* getPreviousStar(bool isBip = false);
 
 	//! Getter function for the list of pointers to statements that comes after this statement directly or indirectly in the CFG
 	/*!
@@ -452,7 +456,7 @@ public:
 		use this function to retrieve a vector of pointers to statements s which Next*(this, s) is true
 		\return List of pointers to statements that comes after this statement directly or indirectly in the CFG
 	*/
-	std::vector<StatementTableStatement*>* getNextStar();
+	std::vector<StatementTableStatement*>* getNextStar(bool isBip = false);
 
 	//! Getter function for the list of pointers to statements that directly affects this statement
 	/*!

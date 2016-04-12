@@ -41,9 +41,13 @@ StatementTableStatement::StatementTableStatement(int statementNumber) {
 	hasItsFollowedByStarChanged = false;
 
 	previous = NULL;
+	previousBIP = NULL;
 	previousStar = NULL;
+	previousStarBIP = NULL;
 	next = NULL;
+	nextBIP = NULL;
 	nextStar = NULL;
+	nextStarBIP = NULL;
 	affectsThis = NULL;
 	affectedByThis = NULL;
 }
@@ -59,9 +63,13 @@ StatementTableStatement::~StatementTableStatement() {
 	delete followedByStar;
 
 	if (previous != NULL) { delete previous; }
+	if (previousBIP != NULL) { delete previousBIP; }
 	if (previousStar != NULL) { delete previousStar; }
+	if (previousStarBIP != NULL) { delete previousStarBIP; }
 	if (next != NULL) { delete next; }
+	if (nextBIP != NULL) { delete nextBIP; }
 	if (nextStar != NULL) { delete nextStar; }
+	if (nextStarBIP != NULL) { delete nextStarBIP; }
 	if (affectsThis != NULL) { delete affectsThis; }
 	if (affectedByThis != NULL) { delete affectedByThis; }
 }
@@ -299,56 +307,116 @@ void StatementTableStatement::fetchNewCopyOfChildrenStar() {
 	}
 }
 
-std::vector<StatementTableStatement*>* StatementTableStatement::getPrevious() {
-    if (previous != NULL) {
-        return previous;
-    }
+std::vector<StatementTableStatement*>* StatementTableStatement::getPrevious(bool isBip) {
+	if (previous == NULL) {
+		CFG GlobalCFG = CFG::getGlobalCFG();
+		std::vector<int> intermediate = GlobalCFG.prevStmt(statementNumber);
+		previous = new std::vector<StatementTableStatement*>();
+		GlobalCFG.convertIntToStatement(intermediate, *previous);
+	}
 
-    CFG GlobalCFG = CFG::getGlobalCFG();
-    std::vector<int> intermediate = GlobalCFG.prevStmt(statementNumber);
-    std::vector<StatementTableStatement*>* result = new std::vector<StatementTableStatement*>();
-    GlobalCFG.convertIntToStatement(intermediate, *result);
-    previous = result;
-    return result;
+	if (isBip) {
+		if (previousBIP == NULL) {
+			previousBIP = new std::vector<StatementTableStatement*>();
+			int previousSize = previous->size();
+			StatementTableStatement* previousStatement;
+			for (int i = 0; i < previousSize; i++) {
+				previousStatement = previous->at(i);
+				previousBIP->push_back((previousStatement->getType() == Call) ? (*previousStatement->getLastCalls()) : (previousStatement));
+			}
+		}
+		return previousBIP;
+	}
+
+    return previous;
 }
 
-std::vector<StatementTableStatement*>* StatementTableStatement::getNext() {
-    if (next != NULL) {
-        return next;
+std::vector<StatementTableStatement*>* StatementTableStatement::getNext(bool isBip) {
+    if (next == NULL) {
+		CFG GlobalCFG = CFG::getGlobalCFG();
+		std::vector<int> intermediate = GlobalCFG.nextStmt(statementNumber);
+		next = new std::vector<StatementTableStatement*>();
+		GlobalCFG.convertIntToStatement(intermediate, *next);
     }
 
-    CFG GlobalCFG = CFG::getGlobalCFG();
-    std::vector<int> intermediate = GlobalCFG.nextStmt(statementNumber);
-    std::vector<StatementTableStatement*>* result = new std::vector<StatementTableStatement*>();
-    GlobalCFG.convertIntToStatement(intermediate, *result);
-    next = result;
-    return result;
+	if (isBip) {
+		if (nextBIP == NULL) {
+			nextBIP = new std::vector<StatementTableStatement*>();
+			int nextSize = next->size();
+			StatementTableStatement* nextStatement;
+			for (int i = 0; i < nextSize; i++) {
+				nextStatement = next->at(i);
+				nextBIP->push_back((getType() == Call) ? (*getFirstCalls()) : (nextStatement));
+			}
+		}
+		return nextBIP;
+	}
+
+	return next;
 }
 
-std::vector<StatementTableStatement*>* StatementTableStatement::getPreviousStar() {
-    if (previousStar != NULL) {
-        return previousStar;
+std::vector<StatementTableStatement*>* StatementTableStatement::getPreviousStar(bool isBip) {
+    if (previousStar == NULL) {
+		CFG GlobalCFG = CFG::getGlobalCFG();
+		std::vector<int> intermediate = GlobalCFG.prevStmtStar(statementNumber);
+		previousStar = new std::vector<StatementTableStatement*>();
+		GlobalCFG.convertIntToStatement(intermediate, *previousStar);
     }
 
-    CFG GlobalCFG = CFG::getGlobalCFG();
-    std::vector<int> intermediate = GlobalCFG.prevStmtStar(statementNumber);
-    std::vector<StatementTableStatement*>* result = new std::vector<StatementTableStatement*>();
-    GlobalCFG.convertIntToStatement(intermediate, *result);
-    previousStar = result;
-    return result;
+	if (isBip) {
+		if (previousStarBIP == NULL) {
+			previousStarBIP = new std::vector<StatementTableStatement*>();
+			int previousStarSize = previousStar->size();
+			StatementTableStatement* previousStarStatement;
+			for (int i = 0; i < previousStarSize; i++) {
+				previousStarStatement = previousStar->at(i);
+				if (previousStarStatement->getType() == Call) {
+					std::vector<StatementTableStatement*>* stmtCallPreviousStar = (*previousStarStatement->getLastCalls())->getPreviousStar();
+					previousStarBIP->push_back(*previousStarStatement->getLastCalls());
+					int stmtCallPreviousStarSize = stmtCallPreviousStar->size();
+					for (int j = 0; j < stmtCallPreviousStarSize; j++) {
+						previousStarBIP->push_back(stmtCallPreviousStar->at(j));
+					}
+				}
+				previousStarBIP->push_back(previousStarStatement);
+			}
+		}
+		return previousStarBIP;
+	}
+
+	return previousStar;
 }
 
-std::vector<StatementTableStatement*>* StatementTableStatement::getNextStar() {
-    if (nextStar != NULL) {
-        return nextStar;
+std::vector<StatementTableStatement*>* StatementTableStatement::getNextStar(bool isBip) {
+    if (nextStar == NULL) {
+		CFG GlobalCFG = CFG::getGlobalCFG();
+		std::vector<int> intermediate = GlobalCFG.nextStmtStar(statementNumber);
+		nextStar = new std::vector<StatementTableStatement*>();
+		GlobalCFG.convertIntToStatement(intermediate, *nextStar);
     }
 
-    CFG GlobalCFG = CFG::getGlobalCFG();
-    std::vector<int> intermediate = GlobalCFG.nextStmtStar(statementNumber);
-    std::vector<StatementTableStatement*>* result = new std::vector<StatementTableStatement*>();
-    GlobalCFG.convertIntToStatement(intermediate, *result);
-    nextStar = result;
-    return result;
+	if (isBip) {
+		if (nextStarBIP == NULL) {
+			nextStarBIP = new std::vector<StatementTableStatement*>();
+			int nextStarSize = nextStar->size();
+			StatementTableStatement* nextStarStatement;
+			for (int i = 0; i < nextStarSize; i++) {
+				nextStarStatement = nextStar->at(i);
+				nextStarBIP->push_back(nextStarStatement);
+				if (getType() == Call) {
+					std::vector<StatementTableStatement*>* stmtCallNextStar = (*nextStarStatement->getFirstCalls())->getNextStar();
+					nextStarBIP->push_back(*nextStarStatement->getFirstCalls());
+					int stmtCallNextStarSize = stmtCallNextStar->size();
+					for (int j = 0; j < stmtCallNextStarSize; j++) {
+						nextStarBIP->push_back(stmtCallNextStar->at(j));
+					}
+				}
+			}
+		}
+		return nextStarBIP;
+	}
+
+	return nextStar;
 }
 
 std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis() {
