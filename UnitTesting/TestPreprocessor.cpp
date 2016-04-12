@@ -194,8 +194,8 @@ namespace UnitTesting {
 			clauses = QueryTree::Instance()->getClauses();
 
 			Assert::IsTrue(select.at(0).equals(assignVar));
-			Assert::IsTrue(clauses.at(0)->equals(usesClause));
-			Assert::IsTrue(patternClause->equals(clauses.at(1)));
+			Assert::IsTrue(clauses.at(1)->equals(usesClause));
+			Assert::IsTrue(clauses.at(0)->equals(patternClause));
 		}
 	};
 }

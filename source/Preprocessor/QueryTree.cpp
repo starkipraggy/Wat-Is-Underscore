@@ -1,5 +1,8 @@
 #include "QueryTree.h"
-using namespace std;
+
+const regex designEntityRegex("^(procedure|stmtLst|stmt|assign|call|while|if|variable|constant|prog_line|plus|minus|times)$", icase);
+const regex nonDesignEntityRegex("^(expr|integer|part_of_expr)$", icase);
+
 
 QueryTree::QueryTree() {}
 
@@ -29,10 +32,10 @@ struct less_than_key
 };
 
 void QueryTree::addClause(Clause* c) {
-	std::pair <Clause*, int> ClausePair(c, determineWeight(c));
-	weightedClauses.push_back(ClausePair);
+	//std::pair <Clause*, int> ClausePair(c, determineWeight(c));
+	//weightedClauses.push_back(ClausePair);
 	clauses.push_back(c);
-	sorted = false;
+	//sorted = false;
 }
 
 int QueryTree::determineWeight(Clause* c) {
@@ -87,10 +90,10 @@ int QueryTree::determineWeight(Clause* c) {
 	//cout << "QEUERU "<< c->getQuery() << endl;
 	string var1 = c->getRefOne().getType();
 	string var2 = c->getRefTwo().getType();
-	if ((var1 == "expr" || var1 == "constant")&&(var2 == "expr" || var2 == "constant")) {
+	if (regex_match(var1, nonDesignEntityRegex) && regex_match(var2, nonDesignEntityRegex)) {
 		weight += 100;
 	}
-	else if ((var1 == "expr" || var1 == "constant") || (var2 == "expr" || var2 == "constant")) {
+	else 	if (regex_match(var1, nonDesignEntityRegex) || regex_match(var2, nonDesignEntityRegex)) {
 		weight += 200;
 	}
 	else {
@@ -100,7 +103,9 @@ int QueryTree::determineWeight(Clause* c) {
 }
 
 std::vector<Clause*> QueryTree::getClauses() {
-	if (clauses.size() > 1) {
+	buildTree();
+
+	if (weightedClauses.size() > 1) {
 
 		if (sorted) {
 			return tempClauses;
@@ -122,9 +127,16 @@ std::vector<Clause*> QueryTree::getClauses() {
 			return tempClauses;
 		}
 	}
-	else {
-		return clauses;
+	else if(weightedClauses.size() == 1){
+		return{ weightedClauses.at(0).first };
 	}
+	else {
+		return {};
+	}
+}
+
+std::vector<Clause*> QueryTree::getBoolClauses() {
+	return boolClauses;
 }
 
 void QueryTree::newTree() {
@@ -134,28 +146,71 @@ void QueryTree::newTree() {
 	tempClauses = {};
 }
 
-/*void QueryTree::buildTree() {
-	std::list<Clause*> tree;
-	std::list<Clause*> remaining;
-	std::list<Clause*> temp(clauses.begin(), clauses.end());
-	std::list<Variable> newLink;
-	newLink.push_back(selectVariable);
-	Variable currentVariable;
+void QueryTree::buildTree() {
+	vector<string> currSet, nextSet;
+	Ref ref1, ref2;
+	string name1, name2, type1, type2;
+	bool find1, find2;
+	int weight = 1000;
 
-	while (!newLink.empty()) {
-		currentVariable = newLink.front();
-		newLink.pop_front();
-		for (auto& x : temp) {
-			if (x->hasVariable(currentVariable)) {
-				tree.push_back(x);
-				if (x->hasLinkedVariable(currentVariable)) {
-					newLink.push_back(x->getLinkedVariable(currentVariable));
-				}
+	if (StringToUpper(selects.at(0).getType()) != "BOOLEAN") {
+		for (unsigned int i = 0; i < selects.size(); i++) {
+			currSet.push_back(selects.at(i).getName());
+		}
+	}
+
+	while (!currSet.empty()) {
+		for (vector<Clause*>::iterator it = clauses.begin(); it != clauses.end();) {
+			Clause* c = *it;
+
+			if (StringToUpper(c->getClause()) == "PATTERN") {
+				PatternClause* p = dynamic_cast<PatternClause*>(c);
+				ref1 = p->getRefOne();
+				ref2 = p->getAssignedVariable();
 			}
 			else {
-				remaining.push_back(x);
+				ref1 = c->getRefOne();
+				ref2 = c->getRefTwo();
+			}
+			name1 = ref1.getName();
+			name2 = ref2.getName();
+			type1 = ref1.getType();
+			type2 = ref2.getType();
+			find1 = false;
+			find2 = false;
+
+			if (regex_match(type1, designEntityRegex)) {
+				if (find(currSet.begin(), currSet.end(), name1) != currSet.end()) {
+					find1 = true;
+				}
+			}
+			if (regex_match(type2, designEntityRegex)) {
+				if (find(currSet.begin(), currSet.end(), name2) != currSet.end()) {
+					find2 = true;
+				}
+			}
+
+			if (find1 || find2) {
+				if (!find1 && regex_match(type1, designEntityRegex)) {
+					nextSet.push_back(name1);
+				}
+				if (!find2 && regex_match(type2, designEntityRegex)) {
+					nextSet.push_back(name2);
+				}
+				std::pair <Clause*, int> ClausePair(c, weight + determineWeight(c));
+				weightedClauses.push_back(ClausePair);
+				sorted = false;
+				it = clauses.erase(it);
+			}
+			else {
+				++it;
 			}
 		}
-		temp.assign(remaining.begin(), remaining.end());
+
+		currSet = nextSet;
+		nextSet = {};
+		weight += 1000;
 	}
-}*/
+
+	boolClauses = clauses;
+}

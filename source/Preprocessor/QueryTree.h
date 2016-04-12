@@ -4,8 +4,8 @@
 This this the main component to store the processed query done by the Preprocessor for
 it to be evaluated by the Evaluator
 */
-#ifndef ProcessQuery_H
-#define ProcessQuery_H
+#ifndef QueryTree_H
+#define QueryTree_H
 
 #include <string>
 #include <vector>
@@ -17,6 +17,7 @@ it to be evaluated by the Evaluator
 #include "PatternClause.h"
 #include "StringUlti.h"
 using namespace std;
+using namespace std::regex_constants;
 
 class QueryTree {
 public:
@@ -50,6 +51,11 @@ public:
 	*/
 	std::vector<Clause*> getClauses();
 
+	//! Getter for Boolean Clauses
+	/*!
+	Return the collection of Boolean Clause
+	*/
+	std::vector<Clause*> getBoolClauses();
 
 	//! Set a new Tree
 	/*!
@@ -63,6 +69,7 @@ private:
 	static QueryTree* m_pInstance;
 	vector<Ref> selects; /**< collection of select clause */
 	std::vector<Clause*> clauses; /**< collection of clauses */
+	std::vector<Clause*> boolClauses; /**< collection of bool clauses */
 	std::vector<std::pair <Clause*, int>> weightedClauses; /**< collection of weightedClauses */
 
 	QueryTree();
@@ -71,6 +78,13 @@ private:
 	int QueryTree::determineWeight(Clause* c);
 	bool sorted = false;
 	std::vector<Clause*> tempClauses = {};
+
+	//! Sort Clauses into a tree structure
+	/*!
+	Sort Clauses into a tree structure with clauses related to select infront follow by its 
+	dependencies
+	*/
+	void buildTree();
 };
 
 #endif
