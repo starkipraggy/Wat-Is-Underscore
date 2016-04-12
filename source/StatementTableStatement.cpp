@@ -647,6 +647,7 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectsThisSta
 			statementsAndUsesVariablesToCheck.insert({ currentStatementNumber, useVariables });
 		}
 		currentStatement = thisPreviousWithLargerStatementNumber;
+		currentStatementNumber = currentStatement->getStatementNumber();
 
 		while (currentStatement != NULL) {
 			/*
@@ -923,25 +924,25 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectsThisSta
 
 				if (isLooping) {
 					// If while with 1 previous, jump to that previous
-					// If while with 2 previous, jump to the previous with bigger statement number
+					// If while with 2 previous, jump to the previous that has this as parent
 					if (currentStatementPreviousesSize == 1) {
 						currentStatementNumber = currentStatementPreviouses->at(0)->getStatementNumber();
 					}
 					else {
 						int previous1StatementNumber = currentStatementPreviouses->at(0)->getStatementNumber();
 						int previous2StatementNumber = currentStatementPreviouses->at(1)->getStatementNumber();
-						currentStatementNumber = (previous1StatementNumber > previous2StatementNumber) ? previous1StatementNumber : previous2StatementNumber;
+						currentStatementNumber = (currentStatementPreviouses->at(0)->parent == currentStatement) ? previous1StatementNumber : previous2StatementNumber;
 					}
 				}
 				else {
-					// If while with 2 previous, jump to the previous with smaller statement number
+					// If while with 2 previous, jump to the previous that does not have this as parent
 					// If while with 1 previous or If with no previous, jump out of current procedure
 					// If If with 2 previous, jump to the previous with bigger statement number
 					if (currentStatementPreviousesSize == 2) {
 						if (currentStatement->getType() == While) { // While with 2 previous
 							int previous1StatementNumber = currentStatementPreviouses->at(0)->getStatementNumber();
 							int previous2StatementNumber = currentStatementPreviouses->at(1)->getStatementNumber();
-							currentStatementNumber = (previous1StatementNumber < previous2StatementNumber) ? previous1StatementNumber : previous2StatementNumber;
+							currentStatementNumber = (currentStatementPreviouses->at(0)->parent != currentStatement) ? previous1StatementNumber : previous2StatementNumber;
 						}
 						else { // If with 2 previous
 							int previous1StatementNumber = currentStatementPreviouses->at(0)->getStatementNumber();
@@ -1484,13 +1485,13 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThis
 					else {
 						// This while-loop has been processed by the algorithm before. Check its current modify
 						// variables with its history of modify variables to see whether it has been repeated before
-						bool hasPatternRepeat = true;
-						bool isTerminatingForLoop = false;
+						bool hasPatternRepeat = false;
 						std::vector<std::vector<int>> vectorOfVectors = whileStatementsAndHistoryOfModifiesVariables.at(currentStatement);
 						int vectorOfVectorsSize = vectorOfVectors.size();
 						std::vector<int> latestVector = statementsAndModifyVariablesToCheck.at(currentStatementNumber);
 						int latestVectorSize = latestVector.size();
 						for (int x = 0; x < vectorOfVectorsSize; x++) {
+							hasPatternRepeat = true;
 							if (vectorOfVectors[x].size() == latestVectorSize) {
 								for (int y = 0; y < latestVectorSize; y++) {
 									if (vectorOfVectors[x][y] != latestVector[y]) {
@@ -1498,85 +1499,48 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThis
 										y = latestVectorSize; // Break out of for-loop
 									}
 								}
+								if (hasPatternRepeat) {
+									x = vectorOfVectorsSize;
+									// Break out of for-loop
+								}
 							}
 							else {
 								hasPatternRepeat = false;
 							}
+						}
 
-							// Execution differs on whether this current history of modify 
-							// variables matches the list of modify variables we have currently
-							if (hasPatternRepeat) {
-								// If our current list matches with this list in history, we break out of the for-loop (as no 
-								// point checking the ones after this), and execute the statement that does not have this
-								// statement as a parent among its two Next statements next in order to break out of the for-loop
-								if (currentStatementNexts->size() > 1) {
-									StatementTableStatement* next1 = currentStatementNexts->at(0);
-									StatementTableStatement* next2 = currentStatementNexts->at(1);
-									currentStatementNumber = ((next1->parent != currentStatement) ? next1 : next2)->getStatementNumber();
-								}
-								else {
-									// Check if its parent is a while loop. If it is, exit back to parent
-									// (Stupid fix since Wilson's Next is not giving me the answers I need, but oh well)
-									StatementTableStatement* currentStatementParent = currentStatement->parent;
-									if ((currentStatementParent != NULL) && (currentStatementParent->getType() == While)) {
-										int currentStatementParentNumber = currentStatementParent->getStatementNumber();
-										// Check if information regarding its parent exists
-										if (statementNumbersAndStatements.count(currentStatementParentNumber) == 0) {
-											statementNumbersAndStatements.insert({ currentStatementParentNumber, currentStatementParent });
-										}
-										if (statementsAndModifyVariablesToCheck.count(currentStatementParentNumber) > 0) {
-											if (statementsAndModifyVariablesToCheck.count(currentStatementNumber) > 0) {
-												// If information about the variables to be checked for this next statement exists,
-												// update said information to include all variables
-												std::set<int> newVariables;
-												std::vector<int> newModifyVariables = statementsAndModifyVariablesToCheck.at(currentStatementNumber);
-												std::vector<int> existingVariables = statementsAndModifyVariablesToCheck.at(currentStatementParentNumber);
-												int existingVariablesSize = existingVariables.size();
-												int newModifyVariablesSize = newModifyVariables.size();
-												for (int i = 0; i < existingVariablesSize; i++) {
-													newVariables.insert(existingVariables[i]);
-												}
-												for (int i = 0; i < newModifyVariablesSize; i++) {
-													newVariables.insert(newModifyVariables[i]);
-												}
-												std::vector<int> newVariablesToBeAdded;
-												std::set<int>::iterator end = newVariables.end();
-												for (std::set<int>::iterator it = newVariables.begin(); it != end; it++) {
-													newVariablesToBeAdded.push_back(*it);
-												}
-												statementsAndModifyVariablesToCheck.at(currentStatementParentNumber) = newVariablesToBeAdded;
-											}
-										}
-										else {
-											if (statementsAndModifyVariablesToCheck.count(currentStatementNumber) > 0) {
-												statementsAndModifyVariablesToCheck.insert({ currentStatementParentNumber, statementsAndModifyVariablesToCheck.at(currentStatementNumber) });
-											}
-											else {
-												// I do not think that this would ever be true, but let's just add this just to be sure
-												std::vector<int> newEmptyVariables;
-												statementsAndModifyVariablesToCheck.insert({ currentStatementParentNumber, newEmptyVariables });
-											}
-										}
-
-										currentStatementNumber = currentStatementParentNumber;
+						// Execution differs on whether this current history of modify 
+						// variables matches the list of modify variables we have currently
+						if (hasPatternRepeat) {
+							// If our current list matches with this list in history, we break out of the for-loop (as no 
+							// point checking the ones after this), and execute the statement that does not have this
+							// statement as a parent among its two Next statements next in order to break out of the for-loop
+							if (currentStatementNexts->size() > 1) {
+								StatementTableStatement* next1 = currentStatementNexts->at(0);
+								StatementTableStatement* next2 = currentStatementNexts->at(1);
+								currentStatementNumber = ((next1->parent != currentStatement) ? next1 : next2)->getStatementNumber();
+							}
+							else {
+								// Check if its parent is a while loop. If it is, exit back to parent
+								// (Stupid fix since Wilson's Next is not giving me the answers I need, but oh well)
+								StatementTableStatement* currentStatementParent = currentStatement->parent;
+								if ((currentStatementParent != NULL) && (currentStatementParent->getType() == While)) {
+									int currentStatementParentNumber = currentStatementParent->getStatementNumber();
+									// Check if information regarding its parent exists
+									if (statementNumbersAndStatements.count(currentStatementParentNumber) == 0) {
+										statementNumbersAndStatements.insert({ currentStatementParentNumber, currentStatementParent });
 									}
-									else if (!statementNumbersAfterCalls.empty()) {
-										// Jump back to the statement after the Call statement that 
-										// called the procedure that the current statement is in
-										int nextStatementNumber = statementNumbersAfterCalls.top();
-										statementNumbersAfterCalls.pop();
-
-										std::vector<int> newModifyVariables = statementsAndModifyVariablesToCheck.at(currentStatementNumber);
-										// Populate that statement with information it has obtained so far
-										if (statementsAndModifyVariablesToCheck.count(nextStatementNumber) > 0) {
+									if (statementsAndModifyVariablesToCheck.count(currentStatementParentNumber) > 0) {
+										if (statementsAndModifyVariablesToCheck.count(currentStatementNumber) > 0) {
 											// If information about the variables to be checked for this next statement exists,
 											// update said information to include all variables
 											std::set<int> newVariables;
-											std::vector<int> vectorFromTable = statementsAndModifyVariablesToCheck.at(nextStatementNumber);
-											int vectorFromTableSize = vectorFromTable.size();
+											std::vector<int> newModifyVariables = statementsAndModifyVariablesToCheck.at(currentStatementNumber);
+											std::vector<int> existingVariables = statementsAndModifyVariablesToCheck.at(currentStatementParentNumber);
+											int existingVariablesSize = existingVariables.size();
 											int newModifyVariablesSize = newModifyVariables.size();
-											for (int i = 0; i < vectorFromTableSize; i++) {
-												newVariables.insert(vectorFromTable[i]);
+											for (int i = 0; i < existingVariablesSize; i++) {
+												newVariables.insert(existingVariables[i]);
 											}
 											for (int i = 0; i < newModifyVariablesSize; i++) {
 												newVariables.insert(newModifyVariables[i]);
@@ -1586,39 +1550,71 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThis
 											for (std::set<int>::iterator it = newVariables.begin(); it != end; it++) {
 												newVariablesToBeAdded.push_back(*it);
 											}
-											statementsAndModifyVariablesToCheck.at(nextStatementNumber) = newVariablesToBeAdded;
+											statementsAndModifyVariablesToCheck.at(currentStatementParentNumber) = newVariablesToBeAdded;
 										}
-										else {
-											statementsAndModifyVariablesToCheck.insert({ nextStatementNumber, newModifyVariables });
-										}
-
-										currentStatementNumber = nextStatementNumber;
 									}
 									else {
-										// If it is not, shut this thing down?
-										currentStatementNumber = biggestStatementNumberThatWeKnowOf + 1;
+										if (statementsAndModifyVariablesToCheck.count(currentStatementNumber) > 0) {
+											statementsAndModifyVariablesToCheck.insert({ currentStatementParentNumber, statementsAndModifyVariablesToCheck.at(currentStatementNumber) });
+										}
+										else {
+											// I do not think that this would ever be true, but let's just add this just to be sure
+											std::vector<int> newEmptyVariables;
+											statementsAndModifyVariablesToCheck.insert({ currentStatementParentNumber, newEmptyVariables });
+										}
 									}
+
+									currentStatementNumber = currentStatementParentNumber;
 								}
-								x = vectorOfVectorsSize; // Break out of for-loop
-								isTerminatingForLoop = true;
-							}
-							else {
-								// Reset for verification with next history
-								hasPatternRepeat = true;
+								else if (!statementNumbersAfterCalls.empty()) {
+									// Jump back to the statement after the Call statement that 
+									// called the procedure that the current statement is in
+									int nextStatementNumber = statementNumbersAfterCalls.top();
+									statementNumbersAfterCalls.pop();
+
+									std::vector<int> newModifyVariables = statementsAndModifyVariablesToCheck.at(currentStatementNumber);
+									// Populate that statement with information it has obtained so far
+									if (statementsAndModifyVariablesToCheck.count(nextStatementNumber) > 0) {
+										// If information about the variables to be checked for this next statement exists,
+										// update said information to include all variables
+										std::set<int> newVariables;
+										std::vector<int> vectorFromTable = statementsAndModifyVariablesToCheck.at(nextStatementNumber);
+										int vectorFromTableSize = vectorFromTable.size();
+										int newModifyVariablesSize = newModifyVariables.size();
+										for (int i = 0; i < vectorFromTableSize; i++) {
+											newVariables.insert(vectorFromTable[i]);
+										}
+										for (int i = 0; i < newModifyVariablesSize; i++) {
+											newVariables.insert(newModifyVariables[i]);
+										}
+										std::vector<int> newVariablesToBeAdded;
+										std::set<int>::iterator end = newVariables.end();
+										for (std::set<int>::iterator it = newVariables.begin(); it != end; it++) {
+											newVariablesToBeAdded.push_back(*it);
+										}
+										statementsAndModifyVariablesToCheck.at(nextStatementNumber) = newVariablesToBeAdded;
+									}
+									else {
+										statementsAndModifyVariablesToCheck.insert({ nextStatementNumber, newModifyVariables });
+									}
+
+									currentStatementNumber = nextStatementNumber;
+								}
+								else {
+									// If it is not, shut this thing down?
+									currentStatementNumber = biggestStatementNumberThatWeKnowOf + 1;
+								}
 							}
 						}
-
-						// Current list of modify variables does not match any lists in history
-						if (!isTerminatingForLoop) {
+						else { // Current list of modify variables does not match any lists in history
 							// Add current list into history for reference later
 							vectorOfVectors.push_back(latestVector);
 							whileStatementsAndHistoryOfModifiesVariables.at(currentStatement) = vectorOfVectors;
-							// Have algorithm traverse into the Next statement with the smaller statement number (ie. the
-							// first statement in the statement list of this while-loop) to continue looping through it
+							// Have algorithm traverse into its first child to continue looping through it
 							if (currentStatementNexts->size() > 1) {
 								int next1 = currentStatement->getNext()->at(0)->getStatementNumber();
 								int next2 = currentStatement->getNext()->at(1)->getStatementNumber();
-								currentStatementNumber = (next1 < next2) ? next1 : next2;
+								currentStatementNumber = (currentStatement->getNext()->at(0)->parent == currentStatement) ? next1 : next2;
 							}
 							else {
 								// Surely a while-loop has AT LEAST one Next, right?
