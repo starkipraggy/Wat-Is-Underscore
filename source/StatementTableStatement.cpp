@@ -68,7 +68,7 @@ StatementTableStatement::~StatementTableStatement() {
 	if (previousBIP != NULL) { delete previousBIP; }
 	if (previousStar != NULL) { delete previousStar; }
 	if (previousStarBIP != NULL) { delete previousStarBIP; }
-	if (previousStarBIPCallsOnly != NULL) { delete previousStarBIPCallsOnly; }
+	delete previousStarBIPCallsOnly;
 	if (next != NULL) { delete next; }
 	if (nextBIP != NULL) { delete nextBIP; }
 	if (nextStar != NULL) { delete nextStar; }
@@ -358,6 +358,15 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getNext(bool isB
 				nextStatement = next->at(i);
 				nextBIP->push_back((getType() == Call) ? (*getFirstCalls()) : (nextStatement));
 			}
+			int previousStarBIPCallsOnlySize = previousStarBIPCallsOnly->size();
+			std::vector<StatementTableStatement*>* next;
+			for (int i = 0; i < previousStarBIPCallsOnlySize; i++) {
+				next = previousStarBIPCallsOnly->at(i)->getNext();
+				int nextSize = next->size();
+				for (int j = 0; j < nextSize; j++) {
+					nextBIP->push_back(next->at(j));
+				}
+			}
 		}
 		return nextBIP;
 	}
@@ -482,7 +491,7 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis()
 				previousStatementUseVariableIndexes.clear();
 
 				// Debug cout
-
+				/*
 				std::cout << "statement = " << currentStatementNumber;
 				std::cout << ", uses (" << thisStatementUseVariableIndexesSize << ") = ";
 				for (int i = 0; i < thisStatementUseVariableIndexesSize; i++) {
@@ -493,6 +502,7 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis()
 					std::cout << currentStatementToCheck->getPrevious()->at(i)->getStatementNumber() << " ";
 				}
 				std::cout << std::endl;
+				*/
 
 				// Make sure we check only assign statements
 				if (currentStatementToCheck->getType() == Assign) {

@@ -362,9 +362,12 @@ void PKB::CallStatement(std::string procedure) {
 		}
 	}
 
-	StatementTableStatement** firstStatement = procedureBeingCalled->getFirstStatementPointer();
-	if (*firstStatement != NULL) {
-		(*firstStatement)->addPreviousBIP(currentStatement);
+	StatementTableStatement** statement;
+	for (int i = 0; i < 2; i++) {
+		statement = (i == 0) ? procedureBeingCalled->getFirstStatementPointer() : procedureBeingCalled->getLastStatementPointer();
+		if (*statement != NULL) {
+			(*statement)->addPreviousBIP(currentStatement);
+		}
 	}
 
     //AST

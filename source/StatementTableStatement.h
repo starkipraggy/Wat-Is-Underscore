@@ -507,8 +507,7 @@ public:
 	/*!
 		Setter function for pointers to statements that has this statement after directly in the CFG;
 		use this function to set pointers to statements s which NextBIP(s, this) is true.
-		\param isBip Default is false. Set this to true to include inter-procedures
-		\return List of pointers to statements that this statement has this statement after directly or indirectly in the CFG
+		\param callStatement Pointer to statements that has this statement after directly in the CFG
 	*/
 	void addPreviousBIP(StatementTableStatement* callStatement);
 };
