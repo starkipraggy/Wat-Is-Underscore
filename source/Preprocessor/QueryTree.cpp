@@ -58,22 +58,22 @@ int QueryTree::determineWeight(Clause* c) {
 	else if (clau.compare("FOLLOWS") == 0) {
 		return 130;
 	}
-	else if (clau.compare("PARENT*") == 0) {
+	else if (clau.compare("FOLLOWS*") == 0) {
 		return 150;
 	}
-	else if (clau.compare("FOLLOWS*") == 0) {
+	else if (clau.compare("NEXT") == 0) {
 		return 170;
 	}
-	else if (clau.compare("NEXT") == 0) {
+	else if (clau.compare("AFFECTS") == 0) {
 		return 190;
 	}
-	else if (clau.compare("AFFECTS") == 0) {
+	else if (clau.compare("PATTERN") == 0) {
 		return 210;
 	}
-	else if (clau.compare("PATTERN") == 0) {
+	else if (clau.compare("NEXT*") == 0) {
 		return 230;
 	}
-	else if (clau.compare("NEXT*") == 0) {
+	else if (clau.compare("PARENT*") == 0) {
 		return 250;
 	}
 	else if (clau.compare("AFFECTS*") == 0) {
@@ -85,7 +85,7 @@ int QueryTree::determineWeight(Clause* c) {
 }
 
 std::vector<Clause*> QueryTree::getClauses() {
-	if (clauses.size() > 3) {
+	if (clauses.size() > 1) {
 
 		if (sorted) {
 			return wClauses;
