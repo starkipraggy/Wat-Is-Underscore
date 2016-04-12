@@ -33,7 +33,7 @@ const regex patternExpressionRegex("(^\")[[:space:]]*([[:alpha:]]([[:alnum:]])*|
 const regex partOfExpressionRegex("(^_\")[[:space:]]*([[:alpha:]]([[:alnum:]])*|[[:digit:]]+)([[:space:]]*(\\+|\\-|\\*)[[:space:]]*([[:alpha:]]([[:alnum:]])*|[[:digit:]]+))*[[:space:]]*(\"_$)");
 
 //Additional
-const regex procNameRegex("^(procedure)$", icase);
+const regex procNameRegex("^(procedure|call)$", icase);
 const regex stmtNoRegex("^(stmtlst|stmt|assign|while|if|prog_line)$", icase);
 const regex varNameRegex("^(variable)$", icase);
 const regex valueRegex("^(constant)$", icase);
