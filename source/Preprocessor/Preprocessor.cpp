@@ -192,6 +192,7 @@ void Preprocessor::setQueryTree() {
 		processClauses(clausesPart);
 
 	}
+	QueryTree::Instance()->buildTree();
 }
 
 void Preprocessor::processClauses(string declarationQueries) {

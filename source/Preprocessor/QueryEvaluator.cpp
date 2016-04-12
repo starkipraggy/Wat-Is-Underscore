@@ -11,13 +11,160 @@ PKB* pkb;
 vector<vector<string>> QueryEvaluator::process() {
 	vector<Ref> select = QueryTree::Instance()->getSelect();
 	vector<Clause*> clauses = QueryTree::Instance()->getClauses();
-	vector<string> queryResult;
+	vector<Clause*> boolClauses = QueryTree::Instance()->getBoolClauses();
+	vector<string> selectResult, queryResult;
 	pkb = PKB::getInstance();
 
 	isTrueStatement = false;
 	directoryIndex = 0;
 	directory = {};
 	result = {};
+
+	if (!boolClauses.empty()) {
+		for (auto& x : boolClauses) {
+			string clause = x->getClause();
+			Ref var1 = x->getRefOne();
+			Ref var2 = x->getRefTwo();
+
+			if (StringToUpper(clause) == "PATTERN") {
+				PatternClause* p = dynamic_cast<PatternClause*>(x);
+				Ref assignVar = p->getAssignedVariable();
+
+				if (regex_match(var1.getType(), designEntityRegex)) {
+					selectResult = pkb->PQLSelect(toTNodeType(var1.getType()));
+					for (unsigned int i = 0; i < selectResult.size(); i++) {
+						queryResult = pkb->PQLPattern(toTNodeType(assignVar.getType()), Ref(selectResult.at(i), var1.getType()), var2);
+						if (!queryResult.empty()) {
+							isTrueStatement = true;
+							break;
+						}
+					}
+
+				}
+				else {
+					queryResult = pkb->PQLPattern(toTNodeType(assignVar.getType()), var1, var2);
+					if (!queryResult.empty()) {
+						isTrueStatement = true;
+					}
+				}
+			}
+			else if (StringToUpper(clause) == "WITH") {
+				if (regex_match(var1.getType(), designEntityRegex) && regex_match(var2.getType(), designEntityRegex)) {
+					vector<string> select1Result, select2Result;
+
+					if (var1.getType() != var2.getType()) {
+						select1Result = pkb->PQLSelect(toTNodeType(var1.getType()));
+						select2Result = pkb->PQLSelect(toTNodeType(var2.getType()));
+
+						for (unsigned int i = 0; i < select1Result.size(); i++) {
+							for (unsigned int j = 0; j < select2Result.size(); j++) {
+								if (select1Result.at(i) == select2Result.at(j)) {
+									isTrueStatement = true;
+									break;
+								}
+							}
+						}
+					}
+				}
+				else if (regex_match(var1.getType(), designEntityRegex) || regex_match(var2.getType(), designEntityRegex)) {
+					Ref synonym, nonSynonym;
+
+					if (regex_match(var1.getType(), designEntityRegex)) {
+						synonym = var1;
+						nonSynonym = var2;
+					}
+					else {
+						synonym = var2;
+						nonSynonym = var1;
+					}
+
+					selectResult = pkb->PQLSelect(toTNodeType(synonym.getType()));
+
+					for (unsigned int i = 0; i < selectResult.size(); i++) {
+						if (selectResult.at(i) == nonSynonym.getName()) {
+							isTrueStatement = true;
+							break;
+						}
+					}
+				}
+				else {
+					if (var1.getName() == var2.getName()) {
+						isTrueStatement = true;
+					}
+				}
+			}
+			else { //such that
+				if (regex_match(var1.getType(), designEntityRegex) && regex_match(var2.getType(), designEntityRegex)) {
+					selectResult = pkb->PQLSelect(toTNodeType(var1.getType()));
+					for (unsigned int i = 0; i < selectResult.size(); i++) {
+						queryResult = queryPKB(clause, selectResult.at(i), 2, var2.getType());
+						if (!queryResult.empty()) {
+							isTrueStatement = true;
+							break;
+						}
+					}
+				}
+				else if (regex_match(var1.getType(), designEntityRegex)) {
+					if (var2.getType() == "placeholder") {
+						selectResult = pkb->PQLSelect(toTNodeType(var1.getType()));
+						for (unsigned int i = 0; i < selectResult.size(); i++) {
+							queryResult = queryPKB(clause, selectResult.at(i), 2, var1.getType());
+							if (!queryResult.empty()) {
+								isTrueStatement = true;
+								break;
+							}
+						}
+					}
+					else {
+						queryResult = queryPKB(clause, var2.getName(), 1, var1.getType());
+						if (!queryResult.empty()) {
+							isTrueStatement = true;
+						}
+					}
+				}
+				else if(regex_match(var2.getType(), designEntityRegex)) {
+					if (var1.getType() == "placeholder") {
+						selectResult = pkb->PQLSelect(toTNodeType(var2.getType()));
+						for (unsigned int i = 0; i < selectResult.size(); i++) {
+							queryResult = queryPKB(clause, selectResult.at(i), 1, var2.getType());
+							if (!queryResult.empty()) {
+								isTrueStatement = true;
+								break;
+							}
+						}
+					}
+					else {
+						queryResult = queryPKB(clause, var1.getName(), 2, var2.getType());
+						if (!queryResult.empty()) {
+							isTrueStatement = true;
+						}
+					}
+				}
+				else {
+					string type;
+					if (clause == "calls" || clause == "calls*") {
+						type = "procedure";
+					}
+					else {
+						type = "stmt";
+					}
+					queryResult = queryPKB(clause, var1.getName(), 2, type);
+					if (find(queryResult.begin(), queryResult.end(), var2.getName()) != queryResult.end()) {
+						isTrueStatement = true;
+					}
+				}
+			}
+
+			if (!isTrueStatement) {
+				if (StringToUpper(select.at(0).getType()) == "BOOLEAN") {
+					return{ { "false" } };
+				}
+				else {
+					throw "false";
+				}
+			}
+		}
+	}
 
 	if (!clauses.empty()) {
 		for (auto& x : clauses) {
@@ -34,8 +181,8 @@ vector<vector<string>> QueryEvaluator::process() {
 					unordered_map<string, int>::const_iterator item1 = directory.find(var1.getName());
 
 					if (assign != directory.end() && item1 != directory.end()) {
-						queryResult = pkb->PQLPattern(toTNodeType(assignVar.getType()), var1, var2);
 						for (vector<vector<string>>::iterator it = result.begin(); it != result.end();) {
+							queryResult = pkb->PQLPattern(toTNodeType(assignVar.getType()), Ref(it->at(item1->second), var1.getType()), var2);
 							it = query(queryResult, it, assign->second);
 						}
 
@@ -45,9 +192,9 @@ vector<vector<string>> QueryEvaluator::process() {
 						}
 
 					}
-					else if (assign != directory.end()) {
-						queryResult = pkb->PQLPattern(toTNodeType(assignVar.getType()), var1, var2);
+					else if (assign != directory.end()) { //item1 == directory.end()
 						for (vector<vector<string>>::iterator it = result.begin(); it != result.end();) {
+							queryResult = pkb->PQLPattern(toTNodeType(assignVar.getType()), Ref(it->at(item1->second), var1.getType()), var2);
 							it = query(queryResult, it, assign->second);
 						}
 
@@ -57,29 +204,56 @@ vector<vector<string>> QueryEvaluator::process() {
 							add(queryResult, i, tempResult);
 						}
 						result = tempResult;
-
+						addDirectory(var1.getName());
 					}
-					else{
-						if (assign == directory.end()) {
-							queryResult = pkb->PQLPattern(toTNodeType(assignVar.getType()), var1, var2);
-							add(queryResult, assignVar.getName());
-						}
-						else {
-							queryResult = pkb->PQLPattern(toTNodeType(assignVar.getType()), var1, var2);
-							for (vector<vector<string>>::iterator it = result.begin(); it != result.end();) {
-								it = query(queryResult, it, assign->second);
-							}
-						}
-
-						//item1 == directory.end()
+					else if(item1 != directory.end()){ //assign == directory.end()
 						tempResult = {};
 						for (unsigned int i = 0; i < result.size(); i++) {
-							queryResult = pkb->PQLModifies(result.at(i).at(assign->second), 2, "variable");
+							queryResult = pkb->PQLPattern(toTNodeType(assignVar.getType()), Ref(result.at(i).at(item1->second), var1.getType()), var2);
 							add(queryResult, i, tempResult);
 						}
 						result = tempResult;
+						addDirectory(assignVar.getName());
+					}
+					else{ //assign == directory.end() && item1 == directory.end()
+						vector<vector<string>> temp;
+						vector<string> tempOne, tempTwo, eachTemp, selectResult;
 
+						selectResult = pkb->PQLSelect(toTNodeType(var1.getType()));
+
+						for (unsigned int i = 0; i < selectResult.size(); i++) {
+
+							queryResult = pkb->PQLPattern(toTNodeType(assignVar.getType()), Ref(selectResult.at(i), var1.getType()), var2);
+
+
+							for (unsigned int j = 0; j < queryResult.size(); j++) {
+								tempOne.push_back(selectResult.at(i));
+								tempTwo.push_back(queryResult.at(j));
+							}
+						}
+
+						if (result.empty()) {
+							for (unsigned int i = 0; i < tempOne.size(); i++) {
+								eachTemp = {};
+								eachTemp.push_back(tempOne.at(i));
+								eachTemp.push_back(tempTwo.at(i));
+								result.push_back(eachTemp);
+							}
+						}
+						else {
+							for (unsigned int i = 0; i < result.size(); i++) {
+								for (unsigned int j = 0; j < tempOne.size(); j++) {
+									eachTemp = {};
+									eachTemp.assign(result.at(i).begin(), result.at(i).end());
+									eachTemp.push_back(tempOne.at(j));
+									eachTemp.push_back(tempTwo.at(j));
+									temp.push_back(eachTemp);
+								}
+							}
+							result = temp;
+						}
 						addDirectory(var1.getName());
+						addDirectory(assignVar.getName());
 					}
 
 				}
@@ -240,14 +414,30 @@ vector<vector<string>> QueryEvaluator::process() {
 							add(queryResult, var1.getName());
 						}
 						else {
+							Ref source, des;
+							int pos;
 							vector<vector<string>> temp;
-							vector<string> tempOne, tempTwo, eachTemp, selectResult;
+							vector<string> tempOne, tempTwo, eachTemp, selectResult, select1Result, select2Result;
+							select1Result = pkb->PQLSelect(toTNodeType(var1.getType()));
+							select2Result = pkb->PQLSelect(toTNodeType(var2.getType()));
 
-							selectResult = pkb->PQLSelect(toTNodeType(var1.getType()));
+							if (select1Result.size() < select2Result.size()) {
+								selectResult = select1Result;
+								source = var1;
+								des = var2;
+								pos = 2;
+
+							}
+							else {
+								selectResult = select2Result;
+								source = var2;
+								des = var1;
+								pos = 1;
+							}
 
 							for (unsigned int i = 0; i < selectResult.size(); i++) {
 
-								queryResult = queryPKB(clause, selectResult.at(i), 2, var2.getType());
+								queryResult = queryPKB(clause, selectResult.at(i), pos, des.getType());
 								
 								for (unsigned int j = 0; j < queryResult.size(); j++) {
 									tempOne.push_back(selectResult.at(i));
@@ -275,8 +465,8 @@ vector<vector<string>> QueryEvaluator::process() {
 								}
 								result = temp;
 							}
-							addDirectory(var1.getName());
-							addDirectory(var2.getName());
+							addDirectory(source.getName());
+							addDirectory(des.getName());
 						}
 					}
 				}
@@ -389,8 +579,6 @@ void QueryEvaluator::processOneSynonym(Ref source, Ref des, string clause, int p
 			}
 
 		}
-
-		add(queryResult, source.getName());
 
 	}
 
