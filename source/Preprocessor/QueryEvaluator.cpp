@@ -644,26 +644,34 @@ vector<string> QueryEvaluator::queryPKB(string clause, string input, int argumen
 		}
 		else if (clause == "NEXTBIP") {
 			if (argumentPosition == 1) {
+				output = pkb->PQLPrevious(value, true, true);
 			}
 			else { //argumentPosition == 2
+				output = pkb->PQLNext(value, true, true);
 			}
 		}
 		else if (clause == "NEXTBIP*") {
 			if (argumentPosition == 1) {
+				output = pkb->PQLPrevious(value, false, true);
 			}
 			else { //argumentPosition == 2
+				output = pkb->PQLNext(value, false, true);
 			}
 		}
 		else if (clause == "AFFECTSBIP") {
 			if (argumentPosition == 1) {
+				output = pkb->PQLAffectsThis(value, true, true);
 			}
 			else { //argumentPosition == 2
+				output = pkb->PQLAffectedByThis(value, true, true);
 			}
 		}
 		else if (clause == "AFFECTSBIP*") {
 			if (argumentPosition == 1) {
+				output = pkb->PQLAffectsThis(value, false, true);
 			}
 			else { //argumentPosition == 2
+				output = pkb->PQLAffectedByThis(value, false, true);
 			}
 		}
 	}
