@@ -329,21 +329,23 @@ public:
 
 	 //! Returns a list of statements that affects this statement, whether directly or indirectly
 	 /*!
-		 One of the API functions that allows the PQL parser to extract information from the PKB.
-		 Call this function for Affects and Affects* clauses.
-		 \param statementNumber The statement number of the statement
-		 \param isDirectCalls True for direct (Affects), and false for indirect (Affects*)
-		 \return The vector<string> of the statement numbers of statements that affects this statement
+		One of the API functions that allows the PQL parser to extract information from the PKB.
+		Call this function for Affects and Affects* clauses.
+		\param statementNumber The statement number of the statement
+		\param isDirectCalls True for direct (Affects), and false for indirect (Affects*)
+		\param isBip Default is false. Set this to true to include inter-procedures
+		\return The vector<string> of the statement numbers of statements that affects this statement
 	 */
 	 virtual std::vector<std::string> PQLAffectsThis(int statementNumber, bool isDirect, bool isBip = false);
 
 	 //! Returns a list of statements that this statement affects, whether directly or indirectly
 	 /*!
-		 One of the API functions that allows the PQL parser to extract information from the PKB.
-		 Call this function for Affects and Affects* clauses.
-		 \param statementNumber The statement number of the statement
-		 \param isDirectCalls True for direct (Affects), and false for indirect (Affects*)
-		 \return The vector<string> of the statement numbers of statements that this statement affects
+		One of the API functions that allows the PQL parser to extract information from the PKB.
+		Call this function for Affects and Affects* clauses.
+		\param statementNumber The statement number of the statement
+		\param isDirectCalls True for direct (Affects), and false for indirect (Affects*)
+		\param isBip Default is false. Set this to true to include inter-procedures
+		\return The vector<string> of the statement numbers of statements that this statement affects
 	 */
 	 virtual std::vector<std::string> PQLAffectedByThis(int statementNumber, bool isDirect, bool isBip = false);
 

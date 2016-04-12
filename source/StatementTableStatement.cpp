@@ -322,7 +322,10 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getPrevious(bool
 			StatementTableStatement* previousStatement;
 			for (int i = 0; i < previousSize; i++) {
 				previousStatement = previous->at(i);
-				previousBIP->push_back((previousStatement->getType() == Call) ? (*previousStatement->getLastCalls()) : (previousStatement));
+				while (previousStatement->getType() == Call) {
+					previousStatement = *previousStatement->getLastCalls();
+				}
+				previousBIP->push_back(previousStatement);
 			}
 		}
 		return previousBIP;
@@ -370,9 +373,10 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getPreviousStar(
 			StatementTableStatement* previousStarStatement;
 			for (int i = 0; i < previousStarSize; i++) {
 				previousStarStatement = previousStar->at(i);
-				if (previousStarStatement->getType() == Call) {
-					std::vector<StatementTableStatement*>* stmtCallPreviousStar = (*previousStarStatement->getLastCalls())->getPreviousStar(true);
-					previousStarBIP->push_back(*previousStarStatement->getLastCalls());
+				while (previousStarStatement->getType() == Call) {
+					previousStarStatement = *previousStarStatement->getLastCalls();
+					std::vector<StatementTableStatement*>* stmtCallPreviousStar = previousStarStatement->getPreviousStar(true);
+					previousStarBIP->push_back(previousStarStatement);
 					int stmtCallPreviousStarSize = stmtCallPreviousStar->size();
 					for (int j = 0; j < stmtCallPreviousStarSize; j++) {
 						previousStarBIP->push_back(stmtCallPreviousStar->at(j));
@@ -464,6 +468,12 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis()
 				currentStatementToCheck = statementsToCheck.top();
 				statementsToCheck.pop();
 				currentStatementNumber = currentStatementToCheck->getStatementNumber();
+
+				// Debug cout
+				/*
+				std::cout << "statement = " << currentStatementNumber;
+				std::cout << std::endl;
+				*/
 
 				// Obtain its corresponding use variables to check with
 				thisStatementUseVariableIndexes = statementsAndUseVariablesToCheck.at(currentStatementToCheck);
@@ -584,6 +594,12 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectedByThi
 				statementsToCheck.pop();
 				currentStatementNumber = currentStatementToCheck->getStatementNumber();
 
+				// Debug cout
+				/*
+				std::cout << "statement = " << currentStatementNumber;
+				std::cout << std::endl;
+				*/
+
 				// Make sure we check only assign statements
 				if (currentStatementToCheck->getType() == Assign) {
 					// Check its uses variables and see if there are any 
@@ -623,29 +639,28 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectedByThi
 								statementsToCheck.push(nextStatement);
 							}
 						}
-						else {
-							// Push the next statement (if any) if this procedure does not modify variable
-							bool doesModifyVariable = false;
-							int currentStatementModifiesSize = currentStatementToCheck->getModifiesSize();
-							for (int i = 0; i < currentStatementModifiesSize; i++) {
-								if (currentStatementToCheck->getModifies(i) == variableIndex) {
-									doesModifyVariable = true;
-									i = currentStatementModifiesSize;
+
+						// Push the next statement (if any) if this procedure does not modify variable
+						bool doesModifyVariable = false;
+						int currentStatementModifiesSize = currentStatementToCheck->getModifiesSize();
+						for (int i = 0; i < currentStatementModifiesSize; i++) {
+							if (currentStatementToCheck->getModifies(i) == variableIndex) {
+								doesModifyVariable = true;
+								i = currentStatementModifiesSize;
+							}
+						}
+						if (!doesModifyVariable) {
+							for (int i = 0; i < currentStatementNextSize; i++) {
+								nextStatement = currentStatementNext->at(i);
+								if (statementNumbersOfStatementsAlreadyChecked.count(nextStatement->getStatementNumber()) == 0) {
+									statementsToCheck.push(nextStatement);
 								}
 							}
-							if (!doesModifyVariable) {
-								for (int i = 0; i < currentStatementNextSize; i++) {
-									nextStatement = currentStatementNext->at(i);
-									if (statementNumbersOfStatementsAlreadyChecked.count(nextStatement->getStatementNumber()) == 0) {
-										statementsToCheck.push(nextStatement);
-									}
-								}
-								// If no more next, check the statementsFromPreviousProcedures stack,
-								// which will only have statements pushed onto it in the bonus implementation
-								if ((currentStatementNextSize == 0) && (!statementsFromPreviousProcedures.empty())) {
-									statementsToCheck.push(statementsFromPreviousProcedures.top());
-									statementsFromPreviousProcedures.pop();
-								}
+							// If no more next, check the statementsFromPreviousProcedures stack,
+							// which will only have statements pushed onto it in the bonus implementation
+							if ((currentStatementNextSize == 0) && (!statementsFromPreviousProcedures.empty())) {
+								statementsToCheck.push(statementsFromPreviousProcedures.top());
+								statementsFromPreviousProcedures.pop();
 							}
 						}
 					}
@@ -720,6 +735,7 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectsThisSta
 			/*
 			std::cout << "statement = " << currentStatementNumber;
 			std::vector<int> wtf = statementsAndUsesVariablesToCheck.at(currentStatementNumber);
+			std::cout << ", modify = " << currentStatement->getModifies(0);
 			std::cout << ", uses = ";
 			for (unsigned int i = 0; i < wtf.size(); i++) {
 				std::cout << wtf.at(i) << " ";
@@ -763,21 +779,15 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectsThisSta
 					}
 					else {
 						isAddedIntoList = true;
-						if (getProcedureIndexNumber() == currentStatement->getProcedureIndexNumber()) {
+						if ((bonusImplementation) || (getProcedureIndexNumber() == currentStatement->getProcedureIndexNumber())) {
 							// Found a statement affected by this statement, add it into the list to be returned
 							affectsThisStar.push_back(currentStatement);
 
-							// NOTE: Copy and paste the three lines below and bring it out of this if-statement if 
-							// variables used by statements in a procedure cannot affect statements in another procedure
-							// Add in variables to affect the next statements
 							int currStmtUsesSize = currentStatement->getUsesSize();
 							for (int x = 0; x < currStmtUsesSize; x++) {
 								newUsesVariables.push_back(currentStatement->getUses(x));
 							}
 						}
-
-						// NOTE: Code goes here if variables used by statements in
-						// a procedure can affect statements in another procedure
 					}
 				}
 
@@ -1360,7 +1370,8 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThis
 				for (int x = 0; x < modifyVariablesSize; x++) {
 					for (int y = 0; y < useVariablesSize; y++) {
 						if (modifyVariables[x] == currentStatement->getUses(y)) {
-							if (getProcedureIndexNumber() == currentStatement->getProcedureIndexNumber()) {
+
+							if ((!bonusImplementation) || (getProcedureIndexNumber() == currentStatement->getProcedureIndexNumber())) {
 								// Make sure we are not entering a duplicate
 								int affectedByThisStarSize = affectedByThisStar.size();
 								bool isDuplicate = false;
@@ -1373,13 +1384,9 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThis
 									// Found a statement affected by this statement, add it into the list to be returned)
 									affectedByThisStar.push_back(currentStatement);
 								}
-								// NOTE: Copy and paste the three lines below and bring it out of this if-statement if 
-								// variables used by statements in a procedure cannot affect statements in another procedure
-								// Add in variables to affect the next statements
+
 								newModifyVariables.push_back(currentStatement->getModifies(0));
 							}
-							// NOTE: Code goes here if variables used by statements in
-							// a procedure can affect statements in another procedure
 
 							// Break out of both loops
 							x = modifyVariablesSize;
@@ -1713,31 +1720,6 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThis
 						if (biggestStatementNumberThatWeKnowOf < currStatementNextNumber) {
 							biggestStatementNumberThatWeKnowOf = currStatementNextNumber;
 						}
-
-						std::vector<int> newModifyVariables = statementsAndModifyVariablesToCheck.at(currentStatementNumber);
-						if (statementsAndModifyVariablesToCheck.count(currStatementNextNumber) > 0) {
-							// If information about the variables to be checked for this next statement exists,
-							// update said information to include all variables
-							std::set<int> newVariables;
-							std::vector<int> existingVariables = statementsAndModifyVariablesToCheck.at(currStatementNextNumber);
-							int existingVariablesSize = existingVariables.size();
-							int newModifyVariablesSize = newModifyVariables.size();
-							for (int i = 0; i < existingVariablesSize; i++) {
-								newVariables.insert(existingVariables[i]);
-							}
-							for (int i = 0; i < newModifyVariablesSize; i++) {
-								newVariables.insert(newModifyVariables[i]);
-							}
-							std::vector<int> newVariablesToBeAdded;
-							std::set<int>::iterator end = newVariables.end();
-							for (std::set<int>::iterator it = newVariables.begin(); it != end; it++) {
-								newVariablesToBeAdded.push_back(*it);
-							}
-							statementsAndModifyVariablesToCheck.insert({ currStatementNextNumber, newVariablesToBeAdded });
-						}
-						else {
-							statementsAndModifyVariablesToCheck.insert({ currStatementNextNumber, newModifyVariables });
-						}
 					}
 
 					// Add information about the first statement of the procedure that it calls
@@ -1779,8 +1761,8 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectedByThis
 
 							// Have algorithm jump to the first statement of the procedure it calls
 							currentStatementNumber = currentStatementNextNumber;
-							if (currStatementNextStmtsSize > 0) {
-								statementNumbersAfterCalls.push(currStatementNextStmts->at(0)->getStatementNumber());
+							if (currentStatement->getNext()->size() > 0) {
+								statementNumbersAfterCalls.push(currentStatement->getNext()->at(0)->getStatementNumber());
 							}
 							hasGotNext = true;
 						}
