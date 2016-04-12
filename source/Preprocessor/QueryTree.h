@@ -70,7 +70,7 @@ private:
 	QueryTree& operator=(QueryTree const&) {};
 	int QueryTree::determineWeight(Clause* c);
 	bool sorted = false;
-	std::vector<Clause*> wClauses = {};
+	std::vector<Clause*> tempClauses = {};
 };
 
 #endif

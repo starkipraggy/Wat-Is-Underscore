@@ -24,7 +24,7 @@ struct less_than_key
 {
 	inline bool operator() (std::pair <Clause*, int> ClausePair1, std::pair <Clause*, int> ClausePair2)
 	{
-		return (ClausePair1.second < ClausePair2.second);
+		return (ClausePair1.second < ClausePair2.second);		
 	}
 };
 
@@ -37,58 +37,73 @@ void QueryTree::addClause(Clause* c) {
 
 int QueryTree::determineWeight(Clause* c) {
 	string clau = StringToUpper(c->getClause());
+	int weight = 0;
 	if (clau.compare("WITH") == 0) {
-		return 10;
+		weight += 1;
 	}
 	else if (clau.compare("CALLS") == 0) {
-		return 30;
+		weight += 2;
 	}
 	else if (clau.compare("PARENT") == 0) {
-		return 50;
+		weight += 3;
 	}
 	else if (clau.compare("CALLS*") == 0) {
-		return 70;
+		weight += 4;
 	}
 	else if (clau.compare("MODIFIES") == 0) {
-		return 90;
+		weight += 5;
 	}
 	else if (clau.compare("USES") == 0) {
-		return 110;
+		weight += 6;
 	}
 	else if (clau.compare("FOLLOWS") == 0) {
-		return 130;
+		weight += 7;
 	}
 	else if (clau.compare("FOLLOWS*") == 0) {
-		return 150;
+		weight += 8;
 	}
 	else if (clau.compare("NEXT") == 0) {
-		return 170;
+		weight += 9;
 	}
 	else if (clau.compare("AFFECTS") == 0) {
-		return 190;
+		weight += 10;
 	}
 	else if (clau.compare("PATTERN") == 0) {
-		return 210;
+		weight += 11;
 	}
 	else if (clau.compare("NEXT*") == 0) {
-		return 230;
+		weight += 12;
 	}
 	else if (clau.compare("PARENT*") == 0) {
-		return 250;
+		weight += 13;
 	}
 	else if (clau.compare("AFFECTS*") == 0) {
-		return 270;
+		weight += 14;
 	}
 	else {
-		return 500;
+		weight += 15;
 	}
+
+	cout << "QEUERU "<< c->getQuery() << endl;
+	string var1 = c->getRefOne().getType();
+	string var2 = c->getRefTwo().getType();
+	if ((var1 == "expr" || var1 == "constant")&&(var2 == "expr" || var2 == "constant")) {
+		weight += 100;
+	}
+	else if ((var1 == "expr" || var1 == "constant") || (var2 == "expr" || var2 == "constant")) {
+		weight += 200;
+	}
+	else {
+		weight += 300;
+	}
+	return weight;
 }
 
 std::vector<Clause*> QueryTree::getClauses() {
 	if (clauses.size() > 1) {
 
 		if (sorted) {
-			return wClauses;
+			return tempClauses;
 		}
 		else {
 			//for (auto x : clauses) {
@@ -96,15 +111,15 @@ std::vector<Clause*> QueryTree::getClauses() {
 			//}
 			sort(weightedClauses.begin(), weightedClauses.end(), less_than_key());
 
-			//cout << "SIZE " << weightedClauses.size() << endl;
+			cout << "SIZE " << weightedClauses.size() << endl;
 			for (auto x : weightedClauses) {
-				//cout << "CLAUSe " << x.first->getClause() << endl;
-				//cout << "CLAUSe " << x.first->getQuery() << endl;
-				//cout << "WEIGHT " << x.second << endl;
-				wClauses.push_back(x.first);
+				cout << "CLAUSe " << x.first->getClause() << endl;
+				cout << "CLAUSe " << x.first->getQuery() << endl;
+				cout << "WEIGHT " << x.second << endl;
+				tempClauses.push_back(x.first);
 			}
 			sorted = true;
-			return wClauses;
+			return tempClauses;
 		}
 	}
 	else {
@@ -116,7 +131,7 @@ void QueryTree::newTree() {
 	selects = {};
 	clauses = {};
 	weightedClauses = {};
-	wClauses = {};
+	tempClauses = {};
 }
 
 /*void QueryTree::buildTree() {
