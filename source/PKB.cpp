@@ -297,7 +297,7 @@ void PKB::CallStatement(std::string procedure) {
 
 	// Add the procedure you're calling into the Calls relationship of the procedure that this statement belongs to
 	ProcedureTableProcedure* procedureBeingCalled = procedureTable->getProcedure(procedure);
-	procedureBeingCalled->addStatementsCallBy(currentStatement->getStatementNumber());
+	procedureBeingCalled->addStatementsCallBy(currentStatement);
 	procedureBeingCalled->addProcedureCallBy(currentProcedure);
 	currentProcedure->addProcedureCalls(procedureBeingCalled);
 	currentStatement->setFirstCalls(procedureBeingCalled->getFirstStatementPointer());
@@ -360,6 +360,11 @@ void PKB::CallStatement(std::string procedure) {
 		for (int j = 0; j < tempStatementCallsSize; j++) {
 			addRelationship(tempVariable, tempStatementCalls[j], Uses);
 		}
+	}
+
+	StatementTableStatement** firstStatement = procedureBeingCalled->getFirstStatementPointer();
+	if (*firstStatement != NULL) {
+		(*firstStatement)->addPreviousBIP(currentStatement);
 	}
 
     //AST

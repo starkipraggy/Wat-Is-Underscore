@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 #include <stack>
 #include <queue>
 #include <unordered_map>
@@ -44,6 +45,7 @@ StatementTableStatement::StatementTableStatement(int statementNumber) {
 	previousBIP = NULL;
 	previousStar = NULL;
 	previousStarBIP = NULL;
+	previousStarBIPCallsOnly = new std::vector<StatementTableStatement*>();
 	next = NULL;
 	nextBIP = NULL;
 	nextStar = NULL;
@@ -66,6 +68,7 @@ StatementTableStatement::~StatementTableStatement() {
 	if (previousBIP != NULL) { delete previousBIP; }
 	if (previousStar != NULL) { delete previousStar; }
 	if (previousStarBIP != NULL) { delete previousStarBIP; }
+	if (previousStarBIPCallsOnly != NULL) { delete previousStarBIPCallsOnly; }
 	if (next != NULL) { delete next; }
 	if (nextBIP != NULL) { delete nextBIP; }
 	if (nextStar != NULL) { delete nextStar; }
@@ -318,14 +321,18 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getPrevious(bool
 	if (isBip) {
 		if (previousBIP == NULL) {
 			previousBIP = new std::vector<StatementTableStatement*>();
-			int previousSize = previous->size();
 			StatementTableStatement* previousStatement;
-			for (int i = 0; i < previousSize; i++) {
-				previousStatement = previous->at(i);
-				while (previousStatement->getType() == Call) {
-					previousStatement = *previousStatement->getLastCalls();
+			for (int x = 0; x < 2; x++) {
+				int previousSize = (x == 0) ? previous->size() : previousStarBIPCallsOnly->size();
+				for (int i = 0; i < previousSize; i++) {
+					previousStatement = (x == 0) ? previous->at(i) : previousStarBIPCallsOnly->at(i);
+					if (x == 0) {
+						while (previousStatement->getType() == Call) {
+							previousStatement = *previousStatement->getLastCalls();
+						}
+					}
+					previousBIP->push_back(previousStatement);
 				}
-				previousBIP->push_back(previousStatement);
 			}
 		}
 		return previousBIP;
@@ -369,20 +376,22 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getPreviousStar(
 	if (isBip) {
 		if (previousStarBIP == NULL) {
 			previousStarBIP = new std::vector<StatementTableStatement*>();
-			int previousStarSize = previousStar->size();
 			StatementTableStatement* previousStarStatement;
-			for (int i = 0; i < previousStarSize; i++) {
-				previousStarStatement = previousStar->at(i);
-				while (previousStarStatement->getType() == Call) {
-					previousStarStatement = *previousStarStatement->getLastCalls();
-					std::vector<StatementTableStatement*>* stmtCallPreviousStar = previousStarStatement->getPreviousStar(true);
-					previousStarBIP->push_back(previousStarStatement);
-					int stmtCallPreviousStarSize = stmtCallPreviousStar->size();
-					for (int j = 0; j < stmtCallPreviousStarSize; j++) {
-						previousStarBIP->push_back(stmtCallPreviousStar->at(j));
+			for (int x = 0; x < 2; x++) {
+				int previousStarSize = (x == 0) ? previousStar->size() : previousStarBIPCallsOnly->size();
+				for (int i = 0; i < previousStarSize; i++) {
+					previousStarStatement = (x == 0) ? previousStar->at(i) : previousStarBIPCallsOnly->at(i);
+					while (previousStarStatement->getType() == Call) {
+						previousStarStatement = *previousStarStatement->getLastCalls();
+						std::vector<StatementTableStatement*>* stmtCallPreviousStar = previousStarStatement->getPreviousStar(true);
+						previousStarBIP->push_back(previousStarStatement);
+						int stmtCallPreviousStarSize = stmtCallPreviousStar->size();
+						for (int j = 0; j < stmtCallPreviousStarSize; j++) {
+							previousStarBIP->push_back(stmtCallPreviousStar->at(j));
+						}
 					}
+					previousStarBIP->push_back(previousStarStatement);
 				}
-				previousStarBIP->push_back(previousStarStatement);
 			}
 		}
 		return previousStarBIP;
@@ -430,8 +439,6 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis()
 			// Used by the algorithm to keep track of its progress
 			std::set<int> statementNumbersOfStatementsAlreadyChecked;
 			std::stack<StatementTableStatement*> statementsToCheck;
-			// This stack is only used by the bonus implementation
-			std::stack<StatementTableStatement*> statementsFromPreviousProcedures;
 			std::unordered_map<StatementTableStatement*, std::vector<int>> statementsAndUseVariablesToCheck;
 
 			// Use to keep track of the current statement being processed by the algorithm
@@ -468,17 +475,24 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis()
 				currentStatementToCheck = statementsToCheck.top();
 				statementsToCheck.pop();
 				currentStatementNumber = currentStatementToCheck->getStatementNumber();
-
-				// Debug cout
-				/*
-				std::cout << "statement = " << currentStatementNumber;
-				std::cout << std::endl;
-				*/
-
+				
 				// Obtain its corresponding use variables to check with
 				thisStatementUseVariableIndexes = statementsAndUseVariablesToCheck.at(currentStatementToCheck);
 				thisStatementUseVariableIndexesSize = thisStatementUseVariableIndexes.size();
 				previousStatementUseVariableIndexes.clear();
+
+				// Debug cout
+
+				std::cout << "statement = " << currentStatementNumber;
+				std::cout << ", uses (" << thisStatementUseVariableIndexesSize << ") = ";
+				for (int i = 0; i < thisStatementUseVariableIndexesSize; i++) {
+					std::cout << thisStatementUseVariableIndexes[i] << " ";
+				}
+				std::cout << ", prev (" << currentStatementToCheck->getPrevious()->size() << ") = ";
+				for (int i = 0; i < currentStatementToCheck->getPrevious()->size(); i++) {
+					std::cout << currentStatementToCheck->getPrevious()->at(i)->getStatementNumber() << " ";
+				}
+				std::cout << std::endl;
 
 				// Make sure we check only assign statements
 				if (currentStatementToCheck->getType() == Assign) {
@@ -487,7 +501,7 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis()
 					for (int i = 0; i < thisStatementUseVariableIndexesSize; i++) {
 						// Make sure same procedure as statement calling this function
 						if ((currentStatementToCheck->getModifies(0) == thisStatementUseVariableIndexes[i]) &&
-							(getProcedureIndexNumber() == currentStatementToCheck->getProcedureIndexNumber())) {
+							((getProcedureIndexNumber() == currentStatementToCheck->getProcedureIndexNumber()) || (bonusImplementation))) {
 							affectsThis->push_back(currentStatementToCheck); // Add it into the list to be returned
 						}
 						else {
@@ -513,41 +527,60 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectsThis()
 
 				// Continue up the CFG - make sure there is still at least one remaining use variables
 				// that we have to check with before adding it into the statementsToCheck stack
-				if (previousStatementUseVariableIndexes.size() > 0) {
-					if ((currentStatementToCheck->getType() == Call) && (bonusImplementation)) {
-						currentStatementPreviousSpecific = *currentStatementToCheck->getLastCalls();
+				int previousStatementUseVariableIndexesSize = previousStatementUseVariableIndexes.size();
+				if (previousStatementUseVariableIndexesSize > 0) {
+					currentStatementPrevious = currentStatementToCheck->getPrevious(bonusImplementation);
+					currentStatementPreviousSize = currentStatementPrevious->size();
+					for (int i = 0; i < currentStatementPreviousSize; i++) {
+						currentStatementPreviousSpecific = currentStatementPrevious->at(i);
+						bool tryToAddAgain = false;
 						if (statementNumbersOfStatementsAlreadyChecked.count(currentStatementPreviousSpecific->getStatementNumber()) == 0) {
-							statementsToCheck.push(currentStatementPreviousSpecific);
-							statementsAndUseVariablesToCheck.insert({ currentStatementPreviousSpecific, previousStatementUseVariableIndexes });
-						}
-						currentStatementPrevious = currentStatementToCheck->getPrevious();
-						currentStatementPreviousSize = currentStatementPrevious->size();
-						if (currentStatementPreviousSize > 0) {
-							// Call should only have 0~1 Next
-							currentStatementPreviousSpecific = currentStatementPrevious->at(0);
-							if (statementNumbersOfStatementsAlreadyChecked.count(currentStatementPreviousSpecific->getStatementNumber()) == 0) {
-								statementsFromPreviousProcedures.push(currentStatementPreviousSpecific);
-							}
-						}
-					}
-					else {
-						currentStatementPrevious = currentStatementToCheck->getPrevious();
-						currentStatementPreviousSize = currentStatementPrevious->size();
-						for (int i = 0; i < currentStatementPreviousSize; i++) {
-							currentStatementPreviousSpecific = currentStatementPrevious->at(i);
-							if (statementNumbersOfStatementsAlreadyChecked.count(currentStatementPreviousSpecific->getStatementNumber()) == 0) {
+							if (statementsAndUseVariablesToCheck.count(currentStatementPreviousSpecific) == 0) {
 								statementsToCheck.push(currentStatementPreviousSpecific);
 								statementsAndUseVariablesToCheck.insert({ currentStatementPreviousSpecific, previousStatementUseVariableIndexes });
 							}
+							else {
+								tryToAddAgain = true;
+							}
+						}
+						else {
+							tryToAddAgain = true;
 						}
 
-						// If statement has no next, and there is a previous procedure
-						// that called the procedure this statement is in, we try to jump back
-						if ((currentStatementPreviousSize == 0) && (!statementsFromPreviousProcedures.empty())) {
-							currentStatementPreviousSpecific = statementsFromPreviousProcedures.top();
-							statementsToCheck.push(currentStatementPreviousSpecific);
-							statementsAndUseVariablesToCheck.insert({ currentStatementPreviousSpecific, previousStatementUseVariableIndexes });
-							statementsFromPreviousProcedures.pop();
+						if (tryToAddAgain) {
+							std::vector<int> oldUseVariableIndexes = statementsAndUseVariablesToCheck.at(currentStatementPreviousSpecific);
+							int oldUseVariableIndexesSize = oldUseVariableIndexes.size();
+							bool add = false;
+							if (previousStatementUseVariableIndexesSize == oldUseVariableIndexesSize) {
+								std::sort(previousStatementUseVariableIndexes.begin(), previousStatementUseVariableIndexes.end());
+								std::sort(oldUseVariableIndexes.begin(), oldUseVariableIndexes.end());
+								for (int x = 0; x < previousStatementUseVariableIndexesSize; x++) {
+									if (previousStatementUseVariableIndexes[x] != previousStatementUseVariableIndexes[x]) {
+										add = true;
+										x = previousStatementUseVariableIndexesSize;
+									}
+								}
+							}
+							else {
+								add = true;
+							}
+
+							if (add) {
+								statementsToCheck.push(currentStatementPreviousSpecific);
+								std::set<int> newVariables;
+								for (int x = 0; x < previousStatementUseVariableIndexesSize; x++) {
+									newVariables.insert(previousStatementUseVariableIndexes[x]);
+								}
+								for (int x = 0; x < oldUseVariableIndexesSize; x++) {
+									newVariables.insert(oldUseVariableIndexes[x]);
+								}
+								std::vector<int> newVariablesToBeAdded;
+								std::set<int>::iterator end = newVariables.end();
+								for (std::set<int>::iterator it = newVariables.begin(); it != end; it++) {
+									newVariablesToBeAdded.push_back(*it);
+								}
+								statementsAndUseVariablesToCheck.at(currentStatementPreviousSpecific) = newVariablesToBeAdded;
+							}
 						}
 					}
 				}
@@ -608,7 +641,7 @@ std::vector<StatementTableStatement*>* StatementTableStatement::getAffectedByThi
 					for (int i = 0; i < currentStatementUsesSize; i++) {
 						// Make sure same procedure as the statement calling this function
 						if ((variableIndex == currentStatementToCheck->getUses(i)) &&
-							(getProcedureIndexNumber() == currentStatementToCheck->getProcedureIndexNumber())) {
+							((getProcedureIndexNumber() == currentStatementToCheck->getProcedureIndexNumber()) || (bonusImplementation))) {
 							// Add it into the list to be returned
 							affectedByThis->push_back(currentStatementToCheck);
 							// Break out of for-loop
@@ -1891,4 +1924,8 @@ std::vector<int> StatementTableStatement::getSiblings() {
 		}
 	}
 	return siblings;
+}
+
+void StatementTableStatement::addPreviousBIP(StatementTableStatement* callStatement) {
+	previousStarBIPCallsOnly->push_back(callStatement);
 }

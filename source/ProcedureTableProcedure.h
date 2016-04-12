@@ -27,7 +27,7 @@ private:
 	std::vector<int>* uses;									/**< A list of the index numbers of variables that this procedure uses */
 	std::vector<ProcedureTableProcedure*>* procedureCalls;	/**< A list of pointers to procedures that this procedure calls */
 	std::vector<ProcedureTableProcedure*>* procedureCallBy;	/**< A list of pointers to procedures that call this procedure */
-	std::vector<int>* statementCallBy;						/**< A list of the index numbers of statements that call this procedure */
+	std::vector<StatementTableStatement*>* statementCallBy;	/**< A list of pointers to statements that call this procedure */
 
 	std::set<int>* indirectProcedureCalls;					/**< This set is used as a cache for the getIndirectProcedureCalls() function,
 															as the function is computationally expensive when data set is large */
@@ -249,10 +249,10 @@ public:
 	//! Allows the adding of statements that calls this procedure.
 	/*!
 		This function is used by the SIMPLE parser API to add statements that call this procedure.
-		\param statementIndexNumber The index number of the statement that call this procedure.
+		\param statementIndexNumber The pointer to the statement that call this procedure.
 		\return True if this statement is successfully added, and false if this statement is already inside.
 	*/
-	bool addStatementsCallBy(int statementIndexNumber);
+	bool addStatementsCallBy(StatementTableStatement* statementIndexNumber);
 	
 	//! Getter function for members of the uses vector.
 	/*!

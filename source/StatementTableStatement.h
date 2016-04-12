@@ -15,59 +15,60 @@
 
 class StatementTableStatement {
 private:
-	int statementNumber;									/**< The statement number of this statement */
-	TNodeType type;											/**< The type of this statement */
-	std::string rightHandSideExpression;					/**< Right hand side expression, specifically for assign statements, for pattern clauses */
-	NAME controlVariable;									/**< Control variable, specifically for if and while statements, for pattern clauses.
-																 Also used for left hand side expression for assign statements, for Affects clauses */
-	int procedureIndexNumber;								/**< Index number of the procedure that it belongs to */
+	int statementNumber;												/**< The statement number of this statement */
+	TNodeType type;														/**< The type of this statement */
+	std::string rightHandSideExpression;								/**< Right hand side expression, specifically for assign statements, for pattern clauses */
+	NAME controlVariable;												/**< Control variable, specifically for if and while statements, for pattern clauses.
+																 			 Also used for left hand side expression for assign statements, for Affects clauses */
+	int procedureIndexNumber;											/**< Index number of the procedure that it belongs to */
 
-	StatementTableStatement** firstCalls;					/**< The pointer to the pointer pointing to the first statement of the procedure
-																 that this Calls statement calls, or NULL if it is not a Calls statement*/
-	StatementTableStatement** lastCalls;					/**< The pointer to the pointer pointing to the last statement of the procedure
-																 that this Calls statement calls, or NULL if it is not a Calls statement*/
-	StatementTableStatement* follows;						/**< The pointer to the statement that this statement follows
-																 (this statement appears immediately after the one it follows) */
-	StatementTableStatement* followedBy;					/**< The statement number of the statement that this statement is followed
-																 (that statement appears immediately after this statement ) */
-	StatementTableStatement* parent;						/**< The pointer to the statement that is parent to this statement */
-	std::vector<StatementTableStatement*>* children;		/**< A list of pointers to statements that have this statement as parent */
-	std::vector<int>* modifies;								/**< A list of the index numbers of variables that this statement modifies */
-	std::vector<int>* uses;									/**< A list of the index numbers of variables that this statement uses */
+	StatementTableStatement** firstCalls;								/**< The pointer to the pointer pointing to the first statement of the procedure
+																 			 that this Calls statement calls, or NULL if it is not a Calls statement*/
+	StatementTableStatement** lastCalls;								/**< The pointer to the pointer pointing to the last statement of the procedure
+																 			 that this Calls statement calls, or NULL if it is not a Calls statement*/
+	StatementTableStatement* follows;									/**< The pointer to the statement that this statement follows
+																 			 (this statement appears immediately after the one it follows) */
+	StatementTableStatement* followedBy;								/**< The statement number of the statement that this statement is followed
+																 			 (that statement appears immediately after this statement ) */
+	StatementTableStatement* parent;									/**< The pointer to the statement that is parent to this statement */
+	std::vector<StatementTableStatement*>* children;					/**< A list of pointers to statements that have this statement as parent */
+	std::vector<int>* modifies;											/**< A list of the index numbers of variables that this statement modifies */
+	std::vector<int>* uses;												/**< A list of the index numbers of variables that this statement uses */
 
-	std::vector<int>* parentStar;							/**< A list of statement numbers; has its parent, its parent's parent, etc.
-																 Used for the Parent* relationship */
-	std::vector<int>* followsStar;							/**< A list of statement numbers; has the statement it follows, its follow's follow, etc.
-																 Used for the Follows* relationship */
+	std::vector<int>* parentStar;										/**< A list of statement numbers; has its parent, its parent's parent, etc.
+																  			 Used for the Parent* relationship */
+	std::vector<int>* followsStar;										/**< A list of statement numbers; has the statement it follows, its follow's follow, etc.
+																 			 Used for the Follows* relationship */
 
-	std::set<int>* childrenStar;							/**< A list of statement numbers; has its children, its children's children, etc.
-																 Used for the Parent* relationship */
-	bool hasItsChildrenStarChanged;							/**< Boolean control to check if a new childrenStar set should be fetched, or just use the one cached */
+	std::set<int>* childrenStar;										/**< A list of statement numbers; has its children, its children's children, etc.
+																 			 Used for the Parent* relationship */
+	bool hasItsChildrenStarChanged;										/**< Boolean control to check if a new childrenStar set should be fetched, or just use the one cached */
 	//! Used to set "hasItsChildrenStarChanged" boolean to true, so that it can no longer used cached childrenStar set
 	/*!
 		Used to set "hasItsChildrenStarChanged" boolean to true, so that it can no longer used cached childrenStar set
 	*/
 	void childrenStarHasBeingModified();
 
-	std::vector<int>* followedByStar;						/**< A list of statement numbers; has the one following it, the one following the one following it, etc.
-																 Used for the Follows* relationship */
-	bool hasItsFollowedByStarChanged;						/**< Boolean control to check if a new followedByStar vector should be fetched, or just use the one cached */
+	std::vector<int>* followedByStar;									/**< A list of statement numbers; has the one following it, the one following the one following it, etc.
+																 			 Used for the Follows* relationship */
+	bool hasItsFollowedByStarChanged;									/**< Boolean control to check if a new followedByStar vector should be fetched, or just use the one cached */
 	//! Used to set "hasItsFollowedByStarChanged" boolean to true, so that it can no longer used cached followedByStar vector
 	/*!
 		Used to set "hasItsFollowedByStarChanged" boolean to true, so that it can no longer used cached followedByStar vector
 	*/
 	void followedByStarHasBeingModified();
 
-	std::vector<StatementTableStatement*>* previous;		/**< A list of pointers to statements that comes directly before this statement in the CFG */
-	std::vector<StatementTableStatement*>* previousBIP;		/**< A list of pointers to statements that comes directly before this statement in the inter-procedure CFG */
-    std::vector<StatementTableStatement*>* previousStar;    /**< A list of pointers to all statements that comes before this statement in the CFG */
-    std::vector<StatementTableStatement*>* previousStarBIP;	/**< A list of pointers to all statements that comes before this statement in the inter-procedure CFG */
-	std::vector<StatementTableStatement*>* next;			/**< A list of pointers to statements that comes directly after this statement in the CFG */
-	std::vector<StatementTableStatement*>* nextBIP;			/**< A list of pointers to statements that comes directly after this statement in the inter-procedure CFG */
-    std::vector<StatementTableStatement*>* nextStar;        /**< A list of pointers to all statements that comes after this statement in the CFG */
-    std::vector<StatementTableStatement*>* nextStarBIP;		/**< A list of pointers to all statements that comes after this statement in the inter-procedure CFG */
-	std::vector<StatementTableStatement*>* affectsThis;		/**< A list of pointers to statements that affects this statement */
-	std::vector<StatementTableStatement*>* affectedByThis;	/**< A list of pointers to statements that this statement affects */
+	std::vector<StatementTableStatement*>* previous;					/**< A list of pointers to statements that comes directly before this statement in the CFG */
+	std::vector<StatementTableStatement*>* previousBIP;					/**< A list of pointers to statements that comes directly before this statement in the inter-procedure CFG */
+    std::vector<StatementTableStatement*>* previousStar;    			/**< A list of pointers to all statements that comes before this statement in the CFG */
+    std::vector<StatementTableStatement*>* previousStarBIP;				/**< A list of pointers to all statements that comes before this statement in the inter-procedure CFG */
+    std::vector<StatementTableStatement*>* previousStarBIPCallsOnly;	/**< A list of pointers to all statements that comes before this statement in the inter-procedure CFG, for call statements *ONLY* */
+	std::vector<StatementTableStatement*>* next;						/**< A list of pointers to statements that comes directly after this statement in the CFG */
+	std::vector<StatementTableStatement*>* nextBIP;						/**< A list of pointers to statements that comes directly after this statement in the inter-procedure CFG */
+    std::vector<StatementTableStatement*>* nextStar;					/**< A list of pointers to all statements that comes after this statement in the CFG */
+    std::vector<StatementTableStatement*>* nextStarBIP;					/**< A list of pointers to all statements that comes after this statement in the inter-procedure CFG */
+	std::vector<StatementTableStatement*>* affectsThis;					/**< A list of pointers to statements that affects this statement */
+	std::vector<StatementTableStatement*>* affectedByThis;				/**< A list of pointers to statements that this statement affects */
 public:
 	static bool bonusImplementation;						/**< Boolean to control whether the Affects functions checks between inter functions */
 
@@ -501,4 +502,13 @@ public:
 		\return List of statement numbers of statements that has this statement as sibling
 	*/
 	std::vector<int> getSiblings();
+
+	//! Setter function for pointers to statements that has this statement after directly in the CFG
+	/*!
+		Setter function for pointers to statements that has this statement after directly in the CFG;
+		use this function to set pointers to statements s which NextBIP(s, this) is true.
+		\param isBip Default is false. Set this to true to include inter-procedures
+		\return List of pointers to statements that this statement has this statement after directly or indirectly in the CFG
+	*/
+	void addPreviousBIP(StatementTableStatement* callStatement);
 };
