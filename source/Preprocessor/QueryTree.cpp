@@ -1,7 +1,7 @@
 #include "QueryTree.h"
 
 const regex designEntityRegex("^(procedure|stmtLst|stmt|assign|call|while|if|variable|constant|prog_line|plus|minus|times)$", icase);
-const regex nonDesignEntityRegex("^(expr|integer|part_of_expr)$", icase);
+const regex nonDesignEntityRegex("^(expr|integer|part_of_expr|placeholder)$", icase);
 
 
 QueryTree::QueryTree() {}

@@ -564,8 +564,6 @@ void QueryEvaluator::processOneSynonym(Ref source, Ref des, string clause, int p
 
 		}
 
-		add(queryResult, source.getName());
-
 	}
 
 	if (item == directory.end()) {
