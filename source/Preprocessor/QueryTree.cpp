@@ -147,70 +147,77 @@ void QueryTree::newTree() {
 }
 
 void QueryTree::buildTree() {
-	vector<string> currSet, nextSet;
-	Ref ref1, ref2;
-	string name1, name2, type1, type2;
-	bool find1, find2;
-	int weight = 1000;
+	if (StringToUpper(selects.at(0).getType()) == "BOOLEAN") {
+		for (unsigned int i = 0; i < clauses.size(); i++) {
+			std::pair <Clause*, int> ClausePair(clauses.at(i), determineWeight(clauses.at(i)));
+			weightedClauses.push_back(ClausePair);
+		}
+		sorted = false;
+	}
+	else {
+		vector<string> currSet, nextSet;
+		Ref ref1, ref2;
+		string name1, name2, type1, type2;
+		bool find1, find2;
+		int weight = 1000;
 
-	if (StringToUpper(selects.at(0).getType()) != "BOOLEAN") {
 		for (unsigned int i = 0; i < selects.size(); i++) {
 			currSet.push_back(selects.at(i).getName());
 		}
-	}
 
-	while (!currSet.empty()) {
-		for (vector<Clause*>::iterator it = clauses.begin(); it != clauses.end();) {
-			Clause* c = *it;
+		while (!currSet.empty()) {
+			for (vector<Clause*>::iterator it = clauses.begin(); it != clauses.end();) {
+				Clause* c = *it;
 
-			if (StringToUpper(c->getClause()) == "PATTERN") {
-				PatternClause* p = dynamic_cast<PatternClause*>(c);
-				ref1 = p->getRefOne();
-				ref2 = p->getAssignedVariable();
-			}
-			else {
-				ref1 = c->getRefOne();
-				ref2 = c->getRefTwo();
-			}
-			name1 = ref1.getName();
-			name2 = ref2.getName();
-			type1 = ref1.getType();
-			type2 = ref2.getType();
-			find1 = false;
-			find2 = false;
+				if (StringToUpper(c->getClause()) == "PATTERN") {
+					PatternClause* p = dynamic_cast<PatternClause*>(c);
+					ref1 = p->getRefOne();
+					ref2 = p->getAssignedVariable();
+				}
+				else {
+					ref1 = c->getRefOne();
+					ref2 = c->getRefTwo();
+				}
+				name1 = ref1.getName();
+				name2 = ref2.getName();
+				type1 = ref1.getType();
+				type2 = ref2.getType();
+				find1 = false;
+				find2 = false;
 
-			if (regex_match(type1, designEntityRegex)) {
-				if (find(currSet.begin(), currSet.end(), name1) != currSet.end()) {
-					find1 = true;
+				if (regex_match(type1, designEntityRegex)) {
+					if (find(currSet.begin(), currSet.end(), name1) != currSet.end()) {
+						find1 = true;
+					}
+				}
+				if (regex_match(type2, designEntityRegex)) {
+					if (find(currSet.begin(), currSet.end(), name2) != currSet.end()) {
+						find2 = true;
+					}
+				}
+
+				if (find1 || find2) {
+					if (!find1 && regex_match(type1, designEntityRegex)) {
+						nextSet.push_back(name1);
+					}
+					if (!find2 && regex_match(type2, designEntityRegex)) {
+						nextSet.push_back(name2);
+					}
+					std::pair <Clause*, int> ClausePair(c, weight + determineWeight(c));
+					weightedClauses.push_back(ClausePair);
+					sorted = false;
+					it = clauses.erase(it);
+				}
+				else {
+					++it;
 				}
 			}
-			if (regex_match(type2, designEntityRegex)) {
-				if (find(currSet.begin(), currSet.end(), name2) != currSet.end()) {
-					find2 = true;
-				}
-			}
 
-			if (find1 || find2) {
-				if (!find1 && regex_match(type1, designEntityRegex)) {
-					nextSet.push_back(name1);
-				}
-				if (!find2 && regex_match(type2, designEntityRegex)) {
-					nextSet.push_back(name2);
-				}
-				std::pair <Clause*, int> ClausePair(c, weight + determineWeight(c));
-				weightedClauses.push_back(ClausePair);
-				sorted = false;
-				it = clauses.erase(it);
-			}
-			else {
-				++it;
-			}
+			currSet = nextSet;
+			nextSet = {};
+			weight += 1000;
 		}
 
-		currSet = nextSet;
-		nextSet = {};
-		weight += 1000;
+		boolClauses = clauses;
 	}
-
-	boolClauses = clauses;
 }
