@@ -60,6 +60,7 @@ namespace UnitTesting {
 		TEST_METHOD(TestEvaluator_SelectEvaluation)
 		{
 			QueryTree::Instance()->setSelect({ variableVar });
+			QueryTree::Instance()->buildTree();
 			
 			output = q.process();
 			
@@ -69,6 +70,7 @@ namespace UnitTesting {
 		TEST_METHOD(TestEvaluator_TupleEvaluation)
 		{
 			QueryTree::Instance()->setSelect({ variableVar, assignVar });
+			QueryTree::Instance()->buildTree();
 
 			output = q.process();
 
@@ -80,6 +82,7 @@ namespace UnitTesting {
 		{
 			QueryTree::Instance()->setSelect({ assignVar });
 			QueryTree::Instance()->addClause(usesClauseFirst);
+			QueryTree::Instance()->buildTree();
 
 			output = q.process();
 
@@ -90,6 +93,7 @@ namespace UnitTesting {
 		{
 			QueryTree::Instance()->setSelect({ stmtVar });
 			QueryTree::Instance()->addClause(usesClauseSecond);
+			QueryTree::Instance()->buildTree();
 
 			output = q.process();
 
@@ -100,6 +104,7 @@ namespace UnitTesting {
 		{
 			QueryTree::Instance()->setSelect({ stmtVar });
 			QueryTree::Instance()->addClause(usesClauseBoth);
+			QueryTree::Instance()->buildTree();
 
 			output = q.process();
 
@@ -110,6 +115,7 @@ namespace UnitTesting {
 		{
 			QueryTree::Instance()->setSelect({ assignVar });
 			QueryTree::Instance()->addClause(patternClause);
+			QueryTree::Instance()->buildTree();
 
 			output = q.process();
 
@@ -120,6 +126,7 @@ namespace UnitTesting {
 		{
 			QueryTree::Instance()->setSelect({ assignVar });
 			QueryTree::Instance()->addClause(withClause);
+			QueryTree::Instance()->buildTree();
 
 			output = q.process();
 
@@ -131,6 +138,7 @@ namespace UnitTesting {
 			QueryTree::Instance()->setSelect({ assignVar });
 			QueryTree::Instance()->addClause(usesClauseFirst);
 			QueryTree::Instance()->addClause(patternClause);
+			QueryTree::Instance()->buildTree();
 
 			output = q.process();
 

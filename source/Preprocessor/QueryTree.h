@@ -63,7 +63,12 @@ public:
 	*/
 	void newTree();
 
-	//void buildTree();
+	//! Sort Clauses into a tree structure
+	/*!
+	Sort Clauses into a tree structure with clauses related to select infront follow by its
+	dependencies
+	*/
+	void buildTree();
 		
 private:
 	static QueryTree* m_pInstance;
@@ -79,12 +84,6 @@ private:
 	bool sorted = false;
 	std::vector<Clause*> tempClauses = {};
 
-	//! Sort Clauses into a tree structure
-	/*!
-	Sort Clauses into a tree structure with clauses related to select infront follow by its 
-	dependencies
-	*/
-	void buildTree();
 };
 
 #endif
