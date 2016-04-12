@@ -647,7 +647,6 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectsThisSta
 			statementsAndUsesVariablesToCheck.insert({ currentStatementNumber, useVariables });
 		}
 		currentStatement = thisPreviousWithLargerStatementNumber;
-		currentStatementNumber = currentStatement->getStatementNumber();
 
 		while (currentStatement != NULL) {
 			/*
@@ -664,6 +663,8 @@ std::vector<StatementTableStatement*> StatementTableStatement::getAffectsThisSta
 			}
 			std::cout << std::endl;
 			*/
+
+			currentStatementNumber = currentStatement->getStatementNumber();
 
 			// Execution varies depending on the type of statement
 			switch (currentStatement->getType()) {
