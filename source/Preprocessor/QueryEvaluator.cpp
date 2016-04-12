@@ -642,6 +642,30 @@ vector<string> QueryEvaluator::queryPKB(string clause, string input, int argumen
 				output = pkb->PQLAffectedByThis(value, false);
 			}
 		}
+		else if (clause == "NEXTBIP") {
+			if (argumentPosition == 1) {
+			}
+			else { //argumentPosition == 2
+			}
+		}
+		else if (clause == "NEXTBIP*") {
+			if (argumentPosition == 1) {
+			}
+			else { //argumentPosition == 2
+			}
+		}
+		else if (clause == "AFFECTSBIP") {
+			if (argumentPosition == 1) {
+			}
+			else { //argumentPosition == 2
+			}
+		}
+		else if (clause == "AFFECTSBIP*") {
+			if (argumentPosition == 1) {
+			}
+			else { //argumentPosition == 2
+			}
+		}
 	}
 
 	return output;

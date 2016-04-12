@@ -21,8 +21,8 @@ const regex expressionRegex("^\"[[:alpha:]][[:alnum:]]*\"$"); //'"' IDENT '"'
 const regex entVarRefRefRegex("^(modifies|uses)$", icase);
 const regex stmtVarRefRefRegex("^(modifies|uses)$", icase);
 const regex ententRefRefRegex("^(calls|calls\\*)$", icase);
-const regex stmtstmtRefRefRegex("^(parent|parent\\*|follows|follows\\*|affects|affects\\*)$", icase);
-const regex linelineRefRefRegex("^(next|next\\*)$", icase);
+const regex stmtstmtRefRefRegex("^(parent|parent\\*|follows|follows\\*|affects|affects\\*|affectsBip|affectsBip\\*)$", icase);
+const regex linelineRefRefRegex("^(next|next\\*|NextBip|NextBip\\*)$", icase);
 
 const regex patternRegex("^(assign|while|if)$", icase);
 const regex varRefRegex("^(variable|placeholder|expr)$", icase);
