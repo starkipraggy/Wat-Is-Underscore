@@ -93,17 +93,20 @@ int QueryTree::determineWeight(Clause* c) {
 	if (regex_match(var1, nonDesignEntityRegex) && regex_match(var2, nonDesignEntityRegex)) {
 		weight += 100;
 	}
-	else 	if (regex_match(var1, nonDesignEntityRegex) || regex_match(var2, nonDesignEntityRegex)) {
+	else if (regex_match(var1, nonDesignEntityRegex) || regex_match(var2, nonDesignEntityRegex)) {
 		weight += 200;
 	}
 	else {
 		weight += 300;
 	}
+
+	if (clau == "WITH" && regex_match(var1, nonDesignEntityRegex) || regex_match(var2, nonDesignEntityRegex)) {
+		weight = -10000;
+	}
 	return weight;
 }
 
 std::vector<Clause*> QueryTree::getClauses() {
-	buildTree();
 
 	if (weightedClauses.size() > 1) {
 
@@ -197,10 +200,10 @@ void QueryTree::buildTree() {
 				}
 
 				if (find1 || find2) {
-					if (!find1 && regex_match(type1, designEntityRegex)) {
+					if ((!find1) && regex_match(type1, designEntityRegex)) {
 						nextSet.push_back(name1);
 					}
-					if (!find2 && regex_match(type2, designEntityRegex)) {
+					if ((!find2) && regex_match(type2, designEntityRegex)) {
 						nextSet.push_back(name2);
 					}
 					std::pair <Clause*, int> ClausePair(c, weight + determineWeight(c));
