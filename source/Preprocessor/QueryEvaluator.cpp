@@ -1,5 +1,5 @@
 #include "QueryEvaluator.h"
-#include <windows.h>
+
 using namespace std;
 using namespace std::regex_constants;
 
@@ -183,19 +183,31 @@ vector<vector<string>> QueryEvaluator::process() {
 					if (assign != directory.end() && item1 != directory.end()) {
 						for (vector<vector<string>>::iterator it = result.begin(); it != result.end();) {
 							queryResult = pkb->PQLPattern(toTNodeType(assignVar.getType()), Ref(it->at(item1->second), var1.getType()), var2);
-							it = query(queryResult, it, assign->second);
+							unordered_set<string> set;
+							for (unsigned int i = 0; i < queryResult.size(); i++) {
+								set.insert(queryResult.at(i));
+							}
+							it = query(set, it, assign->second);
 						}
 
 						for (vector<vector<string>>::iterator it = result.begin(); it != result.end();) {
 							queryResult = pkb->PQLModifies(it->at(assign->second), 2, "variable");
-							it = query(queryResult, it, item1->second);
+							unordered_set<string> set;
+							for (unsigned int i = 0; i < queryResult.size(); i++) {
+								set.insert(queryResult.at(i));
+							}
+							it = query(set, it, item1->second);
 						}
 
 					}
 					else if (assign != directory.end()) { //item1 == directory.end()
 						for (vector<vector<string>>::iterator it = result.begin(); it != result.end();) {
 							queryResult = pkb->PQLPattern(toTNodeType(assignVar.getType()), Ref(it->at(item1->second), var1.getType()), var2);
-							it = query(queryResult, it, assign->second);
+							unordered_set<string> set;
+							for (unsigned int i = 0; i < queryResult.size(); i++) {
+								set.insert(queryResult.at(i));
+							}
+							it = query(set, it, assign->second);
 						}
 
 						tempResult = {};
@@ -244,7 +256,8 @@ vector<vector<string>> QueryEvaluator::process() {
 							for (unsigned int i = 0; i < result.size(); i++) {
 								for (unsigned int j = 0; j < tempOne.size(); j++) {
 									eachTemp = {};
-									eachTemp.assign(result.at(i).begin(), result.at(i).end());
+									//eachTemp.assign(result.at(i).begin(), result.at(i).end());
+									eachTemp = result.at(i);
 									eachTemp.push_back(tempOne.at(j));
 									eachTemp.push_back(tempTwo.at(j));
 									temp.push_back(eachTemp);
@@ -264,9 +277,13 @@ vector<vector<string>> QueryEvaluator::process() {
 					}
 					else {
 						queryResult = pkb->PQLPattern(toTNodeType(assignVar.getType()), var1, var2);
+						unordered_set<string> set;
+						for (unsigned int i = 0; i < queryResult.size(); i++) {
+							set.insert(queryResult.at(i));
+						}
 						for (vector<vector<string>>::iterator it = result.begin(); it != result.end();) {
 
-							it = query(queryResult, it, assign->second);
+							it = query(set, it, assign->second);
 
 						}
 					}
@@ -298,10 +315,14 @@ vector<vector<string>> QueryEvaluator::process() {
 							pos = item1->second;
 						}
 
+						queryResult = pkb->PQLSelect(toTNodeType(type));
+						unordered_set<string> set;
+						for (unsigned int i = 0; i < queryResult.size(); i++) {
+							set.insert(queryResult.at(i));
+						}
 						for (vector<vector<string>>::iterator it = result.begin(); it != result.end();) {
 
-							queryResult = pkb->PQLSelect(toTNodeType(type));
-							it = query(queryResult, it, pos);
+							it = query(set, it, pos);
 
 						}
 
@@ -357,16 +378,32 @@ vector<vector<string>> QueryEvaluator::process() {
 						for (vector<vector<string>>::iterator it = result.begin(); it != result.end();) {
 
 							queryResult = queryPKB(clause, it->at(item1->second), 2, var2.getType());
-							it = query(queryResult, it, item2->second);
+							unordered_set<string> set;
+							for (unsigned int i = 0; i < queryResult.size(); i++) {
+								set.insert(queryResult.at(i));
+							}
+							it = query(set, it, item2->second);
 
 						}
 					}
 					else if (item1 != directory.end()) {
-
 						tempResult = {};
+						string q;
+						unordered_map<string, vector<string>> cache;
+						unordered_map<string, vector<string>>::const_iterator got;
 						for (unsigned int i = 0; i < result.size(); i++) {
+							
+							q = result.at(i).at(item1->second);
+							got = cache.find(q);
 
-							queryResult = queryPKB(clause, result.at(i).at(item1->second), 2, var2.getType());
+							if (got == cache.end()) {
+								queryResult = queryPKB(clause, q, 2, var2.getType());
+								pair<string, vector<string>> p(q, queryResult);
+								cache.insert(p);
+							}
+							else {
+								queryResult = got->second;
+							}
 							tempResult = add(queryResult, i, tempResult);
 
 						}
@@ -378,9 +415,21 @@ vector<vector<string>> QueryEvaluator::process() {
 					else if (item2 != directory.end()) {
 						
 						tempResult = {};
+						string q;
+						unordered_map<string, vector<string>> cache;
+						unordered_map<string, vector<string>>::const_iterator got;
 						for (unsigned int i = 0; i < result.size(); i++) {
+							q = result.at(i).at(item2->second);
+							got = cache.find(q);
 
-							queryResult = queryPKB(clause, result.at(i).at(item2->second), 1, var1.getType());
+							if (got == cache.end()) {
+								queryResult = queryPKB(clause, q, 1, var1.getType());
+								pair<string, vector<string>> p(q, queryResult);
+								cache.insert(p);
+							}
+							else {
+								queryResult = got->second;
+							}
 							tempResult = add(queryResult, i, tempResult);
 
 						}
@@ -457,7 +506,8 @@ vector<vector<string>> QueryEvaluator::process() {
 								for (unsigned int i = 0; i < result.size(); i++) {
 									for (unsigned int j = 0; j < tempOne.size(); j++) {
 										eachTemp = {};
-										eachTemp.assign(result.at(i).begin(), result.at(i).end());
+										//eachTemp.assign(result.at(i).begin(), result.at(i).end());
+										eachTemp = result.at(i);
 										eachTemp.push_back(tempOne.at(j));
 										eachTemp.push_back(tempTwo.at(j));
 										temp.push_back(eachTemp);
@@ -599,18 +649,28 @@ void QueryEvaluator::processOneSynonym(Ref source, Ref des, string clause, int p
 	else {
 		if (des.getType() == "placeholder") {
 
+			unordered_set<string> set;
+			for (unsigned int i = 0; i < queryResult.size(); i++) {
+				set.insert(queryResult.at(i));
+			}
+
 			for (vector<vector<string>>::iterator it = result.begin(); it != result.end();) {
 
-				it = query(queryResult, it, item->second);
+				it = query(set, it, item->second);
 
 			}
 		}
 		else {
 			queryResult = queryPKB(clause, des.getName(), pos, source.getType());
 
+			unordered_set<string> set;
+			for (unsigned int i = 0; i < queryResult.size(); i++) {
+				set.insert(queryResult.at(i));
+			}
+
 			for (vector<vector<string>>::iterator it = result.begin(); it != result.end();) {
 
-				it = query(queryResult, it, item->second);
+				it = query(set, it, item->second);
 
 			}
 		}
@@ -676,7 +736,8 @@ vector<vector<string>> QueryEvaluator::add(vector<string> queryResult, int i, ve
 
 	for (unsigned int j = 0; j < queryResult.size(); j++) {
 		eachTemp = {};
-		eachTemp.assign(result.at(i).begin(), result.at(i).end());
+		//eachTemp.assign(result.at(i).begin(), result.at(i).end());
+		eachTemp = result.at(i);
 		eachTemp.push_back(queryResult.at(j));
 		temp.push_back(eachTemp);
 	}
@@ -684,9 +745,11 @@ vector<vector<string>> QueryEvaluator::add(vector<string> queryResult, int i, ve
 	return temp;
 }
 
-vector<vector<string>>::iterator QueryEvaluator::query(vector<string> queryResult, vector<vector<string>>::iterator it, int col) {
+vector<vector<string>>::iterator QueryEvaluator::query(unordered_set<string> queryResult, vector<vector<string>>::iterator it, int col) {
 
-	if (std::find(queryResult.begin(), queryResult.end(), it->at(col)) == queryResult.end()) {
+	std::unordered_set<std::string>::const_iterator got = queryResult.find(it->at(col));
+
+	if (got == queryResult.end()) {
 		it = result.erase(it);
 	}
 	else {

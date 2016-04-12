@@ -163,10 +163,10 @@ void QueryTree::buildTree() {
 		string name1, name2, type1, type2;
 		bool find1, find2;
 		int weight = 1000;
+		int selectCount = 1;
 
-		for (unsigned int i = 0; i < selects.size(); i++) {
-			currSet.push_back(selects.at(i).getName());
-		}
+
+		currSet.push_back(selects.at(0).getName());
 
 		while (!currSet.empty()) {
 			for (vector<Clause*>::iterator it = clauses.begin(); it != clauses.end();) {
@@ -208,6 +208,7 @@ void QueryTree::buildTree() {
 					}
 					std::pair <Clause*, int> ClausePair(c, weight + determineWeight(c));
 					weightedClauses.push_back(ClausePair);
+					//cout << "print"<< c->getQuery() << endl;
 					sorted = false;
 					it = clauses.erase(it);
 				}
@@ -216,6 +217,12 @@ void QueryTree::buildTree() {
 				}
 			}
 
+			if (nextSet.empty()) {
+				if (selects.size() > selectCount) {
+					nextSet.push_back(selects.at(selectCount).getName());
+					selectCount++;
+				}
+			}
 			currSet = nextSet;
 			nextSet = {};
 			weight += 1000;

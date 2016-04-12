@@ -4,14 +4,15 @@
 This this the main component to read query from QueryTree and define and evaluate each
 Query base and call PKB to process them
 */
-#ifndef Source_H
-#define Source_H
+#ifndef QueryEvaluator_H
+#define QueryEvaluator_H
 
 #include <vector>
 #include <string>
 #include <regex>
 #include <set>
 #include <unordered_map>
+#include <unordered_set>
 #include "Clause.h"
 #include "PatternClause.h"
 #include "QueryTree.h"
@@ -56,7 +57,7 @@ private:
 	/*!
 	Internal method of process to query a such that clause given the vector, its iterator and col number
 	*/
-	vector<vector<string>>::iterator query(vector<string> queryResult, vector<vector<string>>::iterator it, int col);
+	vector<vector<string>>::iterator query(unordered_set<string> queryResult, vector<vector<string>>::iterator it, int col);
 
 	//! Convert a string type to its TNodeType
 	/*!
