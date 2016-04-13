@@ -268,272 +268,272 @@ assign a;
 select a such that affects(a,43)
 none
 5000
-1.
+55.
 assign a;
 select a such that affects*(1,a)
 none
 5000
-2.
+56.
 assign a;
 select a such that affects*(2,a)
 none
 5000
-3.
+57.
 assign a;
 select a such that affects*(3,a)
 17
 5000
-4.
+58.
 assign a;
 select a such that affects*(6,a)
 13,15,17
 5000
-5.
+59.
 assign a;
 select a such that affects*(8,a)
 13,15,17
 5000
-6.
+60.
 assign a;
 select a such that affects*(10,a)
 10,18
 5000
-7.
+61.
 assign a;
 select a such that affects*(13,a)
 15,17
 5000
-8.
+62.
 assign a;
 select a such that affects*(14,a)
 none
 5000
-9.
+63.
 assign a;
 select a such that affects*(15,a)
 17
 5000
-10.
+64.
 assign a;
 select a such that affects*(17,a)
 17
 5000
-11.
+65.
 assign a;
 select a such that affects*(18,a)
 10,18
 5000
-12.
+66.
 assign a;
 select a such that affects*(19,a)
 none
 5000
-13.
+67.
 assign a;
 select a such that affects*(20,a)
 20
 5000
-14.
+68.
 assign a;
 select a such that affects*(21,a)
 27,31
 5000
-15.
+69.
 assign a;
 select a such that affects*(24,a)
 24,27,31
 5000
-16.
+70.
 assign a;
 select a such that affects*(25,a)
 31
 5000
-17.
+71.
 assign a;
 select a such that affects*(27,a)
 31
 5000
-18.
+72.
 assign a;
 select a such that affects*(28,a)
 24,27,31
 5000
-19.
+73.
 assign a;
 select a such that affects*(29,a)
 none
 5000
-20.
+74.
 assign a;
 select a such that affects*(30,a)
 25,30,31,32
 5000
-21.
+75.
 assign a;
 select a such that affects*(31,a)
 none
 5000
-22.
+76.
 assign a;
 select a such that affects*(32,a)
 25,31
 5000
-23.
+77.
 assign a;
 select a such that affects*(33,a)
 38
 5000
-24.
+78.
 assign a;
 select a such that affects*(35,a)
 37,38
 5000
-25.
+79.
 assign a;
 select a such that affects*(37,a)
 none
 5000
-26.
+80.
 assign a;
 select a such that affects*(38,a)
 none
 5000
-27.
+81.
 assign a;
 select a such that affects*(43,a)
 none
 5000
-29.
+82.
 assign a;
 select a such that affects*(a,2)
 none
 5000
-30.
+83.
 assign a;
 select a such that affects*(a,3)
 none
 5000
-31.
+84.
 assign a;
 select a such that affects*(a,6)
 none
 5000
-32.
+85.
 assign a;
 select a such that affects*(a,8)
 none
 5000
-33.
+86.
 assign a;
 select a such that affects*(a,10)
 10,18
 5000
-34.
+87.
 assign a;
 select a such that affects*(a,13)
 6,8
 5000
-35.
+88.
 assign a;
 select a such that affects*(a,14)
 none
 5000
-36.
+89.
 assign a;
 select a such that affects*(a,15)
 6,8,13
 5000
-37.
+90.
 assign a;
 select a such that affects*(a,17)
 3,6,8,13,15,17
 5000
-38.
+91.
 assign a;
 select a such that affects*(a,18)
 10,18
 5000
-39.
+92.
 assign a;
 select a such that affects*(a,19)
 none
 5000
-40.
+93.
 assign a;
 select a such that affects*(a,20)
 20
 5000
-43.
+94.
 assign a;
 select a such that affects*(a,25)
 30,32
 5000
-44.
+95.
 assign a;
 select a such that affects*(a,27)
 21,24,28
 5000
-48.
+96.
 assign a;
 select a such that affects*(a,31)
 21,24,25,27,28,30,32
 5000
-50.
+97.
 assign a;
 select a such that affects*(a,33)
 none
 5000
-52.
+98.
 assign a;
 select a such that affects*(a,37)
 35
 5000
-53.
+99.
 assign a;
 select a such that affects*(a,38)
 33,35
 5000
-54.
+100.
 assign a;
 select a such that affects*(a,43)
 none
 5000
-42.
+101.
 assign a;
 select a such that affects*(a,24)
 24,28
 5000
-45.
+102.
 assign a;
 select a such that affects*(a,28)
 none
 5000
-46.
+103.
 assign a;
 select a such that affects*(a,29)
 none
 5000
-47.
+104.
 assign a;
 select a such that affects*(a,30)
 30
 5000
-49.
+105.
 assign a;
 select a such that affects*(a,32)
 30
 5000
-51.
+106.
 assign a;
 select a such that affects*(a,35)
 none
 5000
-28.
+107.
 assign a;
 select a such that affects*(a,1)
 none
 5000
-41.
+108.
 assign a;
 select a such that affects*(a,21)
 none
