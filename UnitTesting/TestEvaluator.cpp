@@ -100,17 +100,6 @@ namespace UnitTesting {
 			Assert::IsTrue(output.at(0).at(0) == "AnswerForUses");
 		}
 
-		TEST_METHOD(TestEvaluator_UsesBothEvaluation)
-		{
-			QueryTree::Instance()->setSelect({ stmtVar });
-			QueryTree::Instance()->addClause(usesClauseBoth);
-			QueryTree::Instance()->buildTree();
-
-			output = q.process();
-
-			Assert::IsTrue(output.at(0).at(0) == "AnswerForUses");
-		}
-
 		TEST_METHOD(TestEvaluator_PatternEvaluation)
 		{
 			QueryTree::Instance()->setSelect({ assignVar });

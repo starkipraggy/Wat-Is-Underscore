@@ -41,36 +41,6 @@ int ProcedureTableProcedure::getIndex() {
 }
 
 StatementTableStatement** ProcedureTableProcedure::getFirstStatementPointer() {
-	/*
-	ddddddddhdmdy+/-....``````..`.```--:.:..::-:::---.```.`-::://:/-.``./:-.`.....`.........hhhhhhhhdddd
-	ddddddddhmmdy+/.....``````--..`..-:/-/--/:.:/:----```.`::::-///:-.../::.....-.`..`......syhhhyhhhddd
-	ddddddddhmmdy+/.....``````-:.-.--:/+:/:./:.::/::::.....//--:/::::..::/:-..---....`......ohhhhhhhhhdd
-	ddddddddhmmdy+/.....`.````-:-:..-:::-//++/------...-----...-/::+-.:-./::.-:--....`......ohhhhhhhhddd
-	ddddddddhmmdy+/-........``-:.::.:/oyhhhhddho.```.`````````.ohhdhhhyo+/::.-::-.....-.....ohhhhhhhhddd
-	ddddddddhmmdy+/-`..........:--:+yhshyyyyyyy+:`````````````.:ohyyyyyyhys:/.-:-.....-.....shhhhhhhhddd
-	ddddddddhmmdy+/:...........:/.+do/yyysysosy..``````````````.ysooyosyh+oho.-:......-.....shhhhhhhdddd
-	ddddddddhmmdy+/:...........-:/d+-`+//+so+os-```````````````.+:/+s++os:-+h/::......-.....yhhhhhhhhhhh
-	ddddddddhdmdy+//...-........--h/```:/+/:/+o`````````````````.///::/+y.`-y/:-......:.....yhhhhhhhhhhh
-	ddddddddhmmdy+/:-...-.......-`.:.``-//:-/+.``````````````````:+/-:+o-``.:`:.......:-....hhhhhhhhhhhh
-	ddddddddhdmdy+/::...:.........`````.--:/-.````````````````````.-//-.``````:......./:...-hhhhhhhhhhhd
-	ddddddddhmmdy+/::...:-........```````````````````````````````````````````.-.......//...-hhhhhhhhhhhd
-	ddddddddhdmmy+/:/.-.::.......-``````````````````````.````````````````````-.......-//-..-yhhhhhhhhhhd
-	ddddddddhmmmy+/::---:/-..-.....`````````````````````````````````````````.-.......///:...syhhhhhhhhhd
-	ddddddddhmmmy+/:::--:/:..-.....``````````````-----:::--...``````````````.....-..-/+//-..+hhddddddddd
-	dddddddddmNmy+/::/.-///-.-......````````````.+//:::::://++:`````````````-...--..:/+///-.-hyhhhhhhhhh
-	ddddddddhmmmy+:://.:///:.--....:````````````::::::::::::::/````````````-....:-.-//++//:--+hyhhhsssyy
-	dddddddddmNmy+///::/+///--/....:-```````````-::::::::::::::````````````:..../-.:::/+//+:--shyhysssyy
-	dddddddddmNdsooo/::/+////-/-...-/:.`````````./::::::::::::.``````````./-...-+---.:::oyddhyshhysssyyy
-	dddddddddmmdddddddy+-/+/+-/-..../:/:.````````.-::::::::::.`````````.-:+....-/-:/-:yddddddddddhsosyyy
-	hhhhhhhhhhddddddddddh/-/+/::....//://:....`````...-----.````````.-::://....:/-/-sdddddddddddddhysysy
-	ssssssssydddddddddddddy--o/:....:+/:////-....`.........`..```.-////:/+:.-..:/:odddddddddddddddddhssy
-	ysssssshdddddddddddddddm+-+/...-:+///////oo:...............-:/++//://+---..:/+mddmdddddddddddddddyss
-	yyyssyydddddddddddddmddmmyo/..--:++/://///s//::--......--:://:+//://++--.-.:+sddmdddddddddddddddddyh
-	hyyhhhdddddddddddddddmddmmy:..--:+::/://////:::::::::::::://:///////++:---.-oyddmdddddddddddddddddhh
-	hhhhhodddddddddddddddmdddmd:.---:+/.-:///////:::::::::::::/:////////o+:-----+ddddddddddddddddddddddy
-	ddds/ydddddddddddddddddddmd-----:++...://///+/:::::::::::://+/////:-++/-----+ddddddddddddddddddddddo
-	dd+/+hdddddddddddddddddddms-----/++.....:////+//:::::::////+///:-..-+++-----+dddmdddddddddddddddddds
-	*/
 	return &firstStatement;
 }
 
