@@ -2,7 +2,7 @@
 
 #include <list>
 #include <limits.h>
-#include <stdafx.h>
+#include "stdafx.h"
 
 class Graph
 {

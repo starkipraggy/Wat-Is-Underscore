@@ -222,22 +222,6 @@ std::vector<int> CFG::nextStmt(int stmtNum){
                 }
             }
         } while (!childNodes.empty());
-       /* if (thisNode->getChd1() != NULL) {
-            if (thisNode->getChd1()->getType() != Unused) {
-                result.push_back(thisNode->getChd1()->getLeftLmt());
-            } else if (thisNode->getChd1()->getChd1() != NULL){
-                thisNode = thisNode->getChd1();
-                result.push_back(thisNode->getChd1()->getLeftLmt());
-            }
-        }
-        if (thisNode->getChd2() != NULL) {
-            if (thisNode->getChd2()->getType() != Unused) {
-                result.push_back(thisNode->getChd2()->getLeftLmt());
-            } else if (thisNode->getChd2()->getChd1() != NULL) {
-                thisNode = thisNode->getChd2();
-                result.push_back(thisNode->getChd1()->getLeftLmt());
-            }
-        }*/
     }
     return result;
 }

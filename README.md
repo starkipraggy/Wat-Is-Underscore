@@ -9,12 +9,6 @@ A piece of software designed to evaluate a program written in a fictional langua
     # Clone Dependencies Repository (for use later)
     git submodule update --init --recursive
 
-Please download all dependencies libraries which is available 
-in team shared drive, "vendor-libs" folder into project "Library" folder.
-This includes:
-- libyaml-cppmd.lib
-- libyaml-cppmdd.lib
-- libboost_date_time-vc140-mt-gd-1_59.lib
 
 # Branch Naming:
 
