@@ -1,5 +1,5 @@
-# SPA-Program-Assesssment
-A piece of software designed to evaluate a program written in a fictional language SIMPLE and return queries based on the structure of the program
+# Wat Is Underscore
+A piece of software designed to evaluate a program written in a fictional language SIMPLE and return queries based on the structure of the program except for underscores
 
 # Setup
 
@@ -31,6 +31,8 @@ You can find the XSL file for viewing the output.xml file in the root directory 
     
     # Bug, Error Fix, Etc...
     fix/<fix-label>
+    
+    Actually we didn't use any of these but they were good to have
     
 # External libraries
     ## Doxygen (documentation, install to run only)
